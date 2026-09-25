@@ -1,0 +1,9 @@
+[project]
+name = "env-vllm"
+version = "0.1.0"
+description = "vLLM, isolated: it pins its own torch"
+requires-python = ">=3.12,<3.13"
+dependencies = ["vllm"]
+
+[tool.uv]
+package = false
