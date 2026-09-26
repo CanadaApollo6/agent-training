@@ -44,6 +44,10 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   knowledge-work task is a Docker environment with mock business systems served as MCP tools over SQLite, plus a
   rubric verifier: gates, then binary LLM-judge items, then a weighted mean. This is the template for Module 4
   environments, for Smart Data client environments, and for a Songbird environment.
+- [Strata](https://github.com/Niko1221/Strata): runs Qwen3.8-Flash-Next (125B MoE, 24,576 experts) at 2–3 bits on
+  one 12–24 GB card. Hot experts are cached in VRAM, the CPU computes the rest from RAM in parallel, an n-gram
+  table sits on SSD, and MTP drafts are exact. Measured only on an RTX 5070; its 3090 figures (100–140 tok/s) are
+  estimates (±20%). It needs 64 GB of RAM, and this PC has 32 GB. A good worked example of MoE decode bytes.
 - [Self-Play Pretraining with Zero Data](https://arxiv.org/abs/2609.30063) (Cowsik, Dolev, Li et al., 2026): a
   generator writes Brainf*ck programs, and a learner does next-byte prediction on their outputs. The generator is
   RL-trained on a learning-progress reward: how well the learner's gradient aligns with its recent parameter
