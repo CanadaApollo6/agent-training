@@ -44,4 +44,11 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   knowledge-work task is a Docker environment with mock business systems served as MCP tools over SQLite, plus a
   rubric verifier: gates, then binary LLM-judge items, then a weighted mean. This is the template for Module 4
   environments, for Smart Data client environments, and for a Songbird environment.
+- [Self-Play Pretraining with Zero Data](https://arxiv.org/abs/2609.30063) (Cowsik, Dolev, Li et al., 2026): a
+  generator writes Brainf*ck programs, and a learner does next-byte prediction on their outputs. The generator is
+  RL-trained on a learning-progress reward: how well the learner's gradient aligns with its recent parameter
+  movement. There's no natural data, yet zero-shot loss on text, images, audio and code improves as a power law.
+  Models are under 25M parameters, and absolute losses are far from useful (text only drops from ~8 to ~4.5
+  bits/byte). No code released. A toy reproduction fits Module 3 (and the 3090), and the reward design fits
+  Module 4, next to Ornith's task proposer.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
