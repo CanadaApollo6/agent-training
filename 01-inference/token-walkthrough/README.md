@@ -6,7 +6,7 @@ more box, and every hand-written piece is checked against the model's own output
 | Part | Script | Opens |
 |---|---|---|
 | 1 | `skeleton.py`, `lens.py` | The whole model as a loop: tokens → embedding row → 24 layers → LM head → next token |
-| 2 | | Inside a layer: RMSNorm and the MLP |
+| 2 | `mine.py` (you write), `check.py` | Inside a layer: RMSNorm and the MLP |
 | 3 | | Full attention and the KV cache |
 | 4 | | Gated DeltaNet: memory that doesn't grow |
 | 5 | | Decoding: sampling, and why decode is one token at a time |
