@@ -35,4 +35,9 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
 - [TensorFold](https://github.com/ashhart/TensorFold): exact speculative decoding with hand-written per-family
   kernels. Its [CUDA recipe book](https://github.com/ashhart/TensorFold/blob/main/docs/recipes/cuda.md) is a
   worked example of Module 1 and 2 ideas. Its CUDA engine is only tested on DGX Spark; the 3090 is untried.
+- [MiMo-V2.6-RL-oss](https://huggingface.co/datasets/XiaomiMiMo/MiMo-V2.6-RL-oss): Xiaomi's released agentic RL
+  environments. 7.8K tasks: SWE with executable tests, cyber, enterprise knowledge work, webdev and music. Each
+  knowledge-work task is a Docker environment with mock business systems served as MCP tools over SQLite, plus a
+  rubric verifier: gates, then binary LLM-judge items, then a weighted mean. This is the template for Module 4
+  environments, for Smart Data client environments, and for a Songbird environment.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
