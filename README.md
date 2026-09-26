@@ -31,6 +31,10 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
 
 - [wafer-ai/gpu-perf-engineering-resources](https://github.com/wafer-ai/gpu-perf-engineering-resources): the kernel and inference track. Skip Hopper/Blackwell-only material (TMA, DeepGEMM, tcgen05, FlashAttention 3/4).
 - [Kev](https://github.com/jaredpalmer/kev) and [Jev's Architecture Unmasked](https://archerhume.com/posts/jevs-architecture-unmasked): System One decision models.
+  [Julia 1](https://huggingface.co/SupersonicLabs/Julia-1) makes the opposite bet to Kev: a 144M-parameter
+  mmBERT-small encoder with a decision head, not a LoRA on a 4–9B LLM. It uses Jev's interface (state, question,
+  2–20 options, choice/score/Boolean), runs on CPU, and is Apache 2.0. Its Jev comparisons are 100-example pilots
+  against supplied reference numbers, not head-to-head runs. Planned: Jev vs Kev vs Julia on the Songbird gold set.
 - [interference-search](https://github.com/Badtheorylabs/interference-search): beam search with merged states and a learned judge; a Countdown baseline for Module 4.
 - [TensorFold](https://github.com/ashhart/TensorFold): exact speculative decoding with hand-written per-family
   kernels. Its [CUDA recipe book](https://github.com/ashhart/TensorFold/blob/main/docs/recipes/cuda.md) is a
