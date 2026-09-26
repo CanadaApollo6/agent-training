@@ -32,4 +32,7 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
 - [wafer-ai/gpu-perf-engineering-resources](https://github.com/wafer-ai/gpu-perf-engineering-resources): the kernel and inference track. Skip Hopper/Blackwell-only material (TMA, DeepGEMM, tcgen05, FlashAttention 3/4).
 - [Kev](https://github.com/jaredpalmer/kev) and [Jev's Architecture Unmasked](https://archerhume.com/posts/jevs-architecture-unmasked): System One decision models.
 - [interference-search](https://github.com/Badtheorylabs/interference-search): beam search with merged states and a learned judge; a Countdown baseline for Module 4.
+- [TensorFold](https://github.com/ashhart/TensorFold): exact speculative decoding with hand-written per-family
+  kernels. Its [CUDA recipe book](https://github.com/ashhart/TensorFold/blob/main/docs/recipes/cuda.md) is a
+  worked example of Module 1 and 2 ideas. Its CUDA engine is only tested on DGX Spark; the 3090 is untried.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
