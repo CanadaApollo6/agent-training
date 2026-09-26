@@ -19,14 +19,16 @@ def main():
     answer = logits.argmax().item()
 
     print(f"prompt {args.prompt!r}; the full model's answer is {tok.decode(answer)!r}")
-    print(f"{'after layer':<12}{'type':<9}{'top 3 guesses':<52}{f'P({tok.decode(answer)!r})':>12}")
+    print(f"{'after layer':<12}{'type':<9}{'top 3 guesses':<52}{f'P({tok.decode(answer)!r})':>12}{'rank':>9}")
     with torch.inference_mode():
         for i, h in enumerate(stream):
-            probs = (model.model.norm(h[:, -1]) @ E.T).float().softmax(-1)[0]
+            logits_i = (model.model.norm(h[:, -1]) @ E.T).float()[0]
+            probs = logits_i.softmax(-1)
+            rank = (logits_i > logits_i[answer]).sum().item() + 1  # 1 = top guess, 248,320 = last
             top = probs.topk(3)
             guesses = "  ".join(f"{tok.decode(t)!r} {p:.0%}" for p, t in zip(top.values.tolist(), top.indices.tolist()))
             kind = "-" if i == 0 else {"linear_attention": "DeltaNet", "full_attention": "full"}[model.config.layer_types[i - 1]]
-            print(f"{i:<12}{kind:<9}{guesses:<52}{probs[answer].item():>12.2%}")
+            print(f"{i:<12}{kind:<9}{guesses:<52}{probs[answer].item():>12.2%}{rank:>9,}")
 
 
 if __name__ == "__main__":

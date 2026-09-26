@@ -67,6 +67,37 @@ to rank 248,320 candidates. That is why small models with big vocabularies are d
 Applying the final norm and the LM head after *any* layer shows what the stream would predict if the model stopped
 there. Row 0 means no layers: the embedding goes straight to the LM head.
 
-Predictions, written before running:
+Riel's predictions, written before running:
 
-- *(pending)*
+1. With zero layers the model predicts `'.'` or `' Star'`.
+2. `' Mah'` becomes the top guess in the middle layers.
+
+**Result 1: zero layers predicts `' Patrick'` at 100%.**
+
+| Token | Logit | Rank of 248,320 | Cosine with the `' Patrick'` row |
+|---|---|---|---|
+| `' Patrick'` | 63.75 | 1 | 1.000 |
+| `'Patrick'` (no space) | 54.0 | 2 | 0.78 |
+| `' Mah'` | 6.75 | 65,465 | 0.10 |
+| `' Star'` | 1.75 | 219,575 | 0.02 |
+| `'.'` | -9.88 | 248,316 | -0.09 |
+
+With no layers, the LM head computes the dot product of the `' Patrick'` row with every row, including itself. A
+vector always points exactly along itself (cosine 1). In 1024 dimensions, unrelated rows are close to perpendicular
+(median cosine 0.06). A logit gap of about 10 between first and second place is a factor of e^10 ≈ 22,000 in
+probability, so softmax gives 100%. `' Star'` and `'.'` are good guesses for *what follows* Patrick. But "what
+follows" is knowledge, and knowledge lives in the layers. The embedding table only says what each token *is*.
+Without layers the model is an identity map: it predicts its own input.
+
+**Result 2: `' Mah'` is the top guess only after layer 24.** Its rank shows the answer being built:
+
+| After layer | 0–14 | 15 | 16 | 17 | 18 | 21 | 22 | 23 | 24 |
+|---|---|---|---|---|---|---|---|---|---|
+| Rank of `' Mah'` | 65K–212K | 40,485 | 7,532 | 1,734 | 611 | 188 | 37 | 14 | **1** |
+
+Through layer 14, `' Mah'` sits no better than a random token. It climbs steadily from layer 15 on and wins only at
+the end. There's a caveat on reading this. The lens assumes every layer writes in the "language" the LM head
+reads, and for a model this small that is only true near the end. The middle rows are garbage tokens at 1–4%
+confidence (`'ablemente'`, `'不是吗'`). That is what it looks like to read a vector in a working format the head
+can't decode. It doesn't prove the model knows nothing about Mahomes before layer 15. It shows that the knowledge
+isn't in vocabulary form until then. A "tuned lens" trains a small translator for each layer to read the middle.
