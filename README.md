@@ -49,6 +49,8 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   RL-trained on a learning-progress reward: how well the learner's gradient aligns with its recent parameter
   movement. There's no natural data, yet zero-shot loss on text, images, audio and code improves as a power law.
   Models are under 25M parameters, and absolute losses are far from useful (text only drops from ~8 to ~4.5
-  bits/byte). No code released. A toy reproduction fits Module 3 (and the 3090), and the reward design fits
-  Module 4, next to Ornith's task proposer.
+  bits/byte). [Code](https://github.com/nourya-aliz/self_play_pretraining) covers figures, evaluation, program
+  logs and [learner checkpoints](https://huggingface.co/nourya-cohen/solomonoff-paper) (100K–24M, Llama-style),
+  but not the self-play loop (generator, interpreter, reward). A toy reproduction fits Module 3 (and the 3090),
+  with their checkpoints as the yardstick. The reward design fits Module 4, next to Ornith's task proposer.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
