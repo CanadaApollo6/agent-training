@@ -1,0 +1,9 @@
+[project]
+name = "env-prism-llama"
+version = "0.1.0"
+description = "CUDA 12 runtime libraries for PrismML's prebuilt llama.cpp (the CUDA 13.3 build crashes on some systems), plus the eval client"
+requires-python = ">=3.12,<3.13"
+dependencies = ["nvidia-cuda-runtime-cu12==12.8.*", "nvidia-cublas-cu12==12.8.*", "openai", "datasets", "math-verify"]
+
+[tool.uv]
+package = false

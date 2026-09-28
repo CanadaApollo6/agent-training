@@ -151,3 +151,30 @@ Notes:
 10. **Long context costs more than its bytes.** An 83K-token int4 cache adds 1.6 GB per step, which predicts about 10%
     slower decode. It measured 20% slower, because the quantized cache is unpacked inside attention. Prefill also
     slows (939 → 714 tok/s) as each new token attends to more history.
+
+## Going to 2 bits: speed first, quality next
+
+Two ~2-bit builds of the same base model:
+- **EXL3 2.0 bpw**: compressed after training, no retraining; 11 GB on disk.
+- **Bonsai 2 (PQ2_0)**: trained to be ternary, run in [PrismML's llama.cpp](https://github.com/PrismML-Eng/llama.cpp)
+  (prebuilt CUDA 12.8 binary; `01-inference/envs/prism-llama` supplies its CUDA 12 runtime libraries).
+
+| | EXL3 4.0 bpw | EXL3 2.0 bpw | Bonsai 2 PQ2_0 |
+|---|---|---|---|
+| Weights in VRAM (approx.) | 13.4 GiB | ~8 GiB | 6.7 GiB |
+| Decode, batch 1 | 33 tok/s | 40.6 tok/s | **55.4 tok/s** (llama-bench tg128) |
+| Decode with MTP ×4 | 61.6 | 62.8 short, 78.6 long | not tested |
+| Batch 8, 32K window | 185 tok/s | 186 tok/s | not tested |
+| Prefill | 939 tok/s at 20K | 984 tok/s at 10K | 1,154 tok/s (pp512) |
+| Sanity check (thinking off, greedy) | `9` | **`8` (wrong)** | not tested |
+
+- Halving the bits bought only 23% more speed in EXL3 (33 → 40.6 tok/s, about 37% of its byte ceiling). Unpacking
+  the trellis code is arithmetic, and on Ampere that arithmetic, not memory, sets the pace at 2 bits.
+- Bonsai's plain ternary format is cheaper to unpack and runs faster at a similar size.
+- The wrong sheep answer is a single greedy sample, not evidence. The long-reasoning test below is what counts.
+
+**Open question.** Prism reports IQ2_XXS (a 2-bit build with no training) collapsing on long reasoning: AIME26
+94.6 → 57.5, MATH-500 99.8 → 84.6. Bonsai 2 holds (95.8, 98.8). Does EXL3 2.0, which adds a rotation and a trellis
+code but still no training, collapse too?
+
+**Riel's prediction (2026-09-28): EXL3 2.0 collapses the way IQ2_XXS did.**
