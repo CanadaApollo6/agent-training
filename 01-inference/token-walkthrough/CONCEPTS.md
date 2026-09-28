@@ -613,7 +613,7 @@ Once greedy repeats a phrase, the repeat makes the same phrase even more likely,
 out. Too much randomness fails the other way. A small model like this one loops even at common settings, which
 is why real deployments also add repetition penalties.
 
-**4. Sampling produces confident fiction.** 200 samples of the Patrick prompt at T = 1: Mahomes about 76 times,
+**4. Sampling produces confident fiction.** 200 samples of the Patrick prompt at T = 1: Mahomes 78 times,
 Ewing 10, "Mahoney" 2, "J. Brown" 2, and 115 distinct continuations in total. Every one reads fluently. If a
 wrong token is drawn early, the model builds a fluent sentence on top of it. This is one everyday source of
 hallucination.
