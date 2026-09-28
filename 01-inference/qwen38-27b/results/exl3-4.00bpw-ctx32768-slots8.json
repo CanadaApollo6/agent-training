@@ -1,0 +1,25 @@
+{
+ "model": "turboderp/Qwen3.8-27B-exl3",
+ "revision": "4.00bpw",
+ "ctx": 32768,
+ "cache_bits": 4,
+ "load_s": 6.827281984034926,
+ "gpu_idle_mib": 1240,
+ "gpu_loaded_mib": 16499,
+ "slots": 8,
+ "draft": 0,
+ "kv_cache_mib": 576.0,
+ "deltanet_state_mib": 1182.0,
+ "bpw_layers": 4.01609483074739,
+ "bpw_head": 6.003189458158827,
+ "decode_short_tok_s": 33.61355680517727,
+ "prefill_tokens": 19881,
+ "prefill_s": 21.179872101987712,
+ "decode_long_tok_s": 31.393585565427383,
+ "batch": {
+  "1": 32.80293949524069,
+  "4": 107.3678800509224,
+  "8": 185.27400513329752
+ },
+ "sanity": "9"
+}

@@ -1,0 +1,35 @@
+{
+ "model": "turboderp/Qwen3.8-27B-exl3",
+ "revision": "4.00bpw",
+ "ctx": 262144,
+ "cache_bits": 4,
+ "load_s": 7.061501654039603,
+ "gpu_idle_mib": 1240,
+ "gpu_loaded_mib": 20539,
+ "slots": 1,
+ "draft": 4,
+ "kv_cache_mib": 4896.0,
+ "deltanet_state_mib": 727.5,
+ "bpw_layers": 4.01609483074739,
+ "bpw_head": 6.003189458158827,
+ "decode_short_tok_s": 32.5520999842158,
+ "prefill_tokens": 82766,
+ "prefill_s": 115.9238505079993,
+ "decode_long_tok_s": 26.010244094994356,
+ "batch": {
+  "1": 24.025942059009452
+ },
+ "sanity": "9<|im_end|>user\nA farmer has 17 sheep. All but 9 run away.",
+ "mtp": {
+  "short": {
+   "tok_s": 61.5801279866521,
+   "accepted": 162,
+   "rejected": 214
+  },
+  "long": {
+   "tok_s": 53.04313210211658,
+   "accepted": 188,
+   "rejected": 84
+  }
+ }
+}

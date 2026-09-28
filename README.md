@@ -69,7 +69,8 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     bf16.
   - MTP drafting is on by default.
   - Its measured 24 GB rows: **4.0 bpw at the full 262K context with images**, 5.0 bpw at 180–205K, 6.0 bpw at 84K.
-    Compare our vLLM AWQ build: ~10K ([01-inference/qwen38-27b](01-inference/qwen38-27b/)).
+    Compare our vLLM AWQ build: ~10K. Measured here: the 4.0 bpw build loads 262K on the 3090 (one sequence, 20.5
+    GiB in use), decodes at 33 tok/s and 61.6 with MTP ([01-inference/qwen38-27b](01-inference/qwen38-27b/)).
   - turboderp's mean KL vs bf16 by bits per weight: 2.0 → 0.35, 2.5 → 0.30, 3.0 → 0.11, 4.0 → 0.05, 5.0 → 0.014,
     6.0 → 0.007.
   - EXL3 is rotation plus trellis post-training quantization, which makes it the strongest no-training baseline for

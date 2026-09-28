@@ -1,0 +1,18 @@
+[project]
+name = "env-exl3"
+version = "0.1.0"
+description = "ExLlamaV3, isolated: its prebuilt wheel pins torch 2.13 + CUDA 13.2"
+requires-python = ">=3.12,<3.13"
+dependencies = ["torch==2.13.*", "exllamav3", "huggingface_hub"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu132" }
+exllamav3 = { url = "https://github.com/turboderp-org/exllamav3/releases/download/v1.5.3/exllamav3-1.5.3+cu132.torch2.13.0-cp312-cp312-linux_x86_64.whl" }
+
+[[tool.uv.index]]
+name = "pytorch-cu132"
+url = "https://download.pytorch.org/whl/cu132"
+explicit = true
