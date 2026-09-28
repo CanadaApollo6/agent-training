@@ -1,4 +1,4 @@
-"""Part 2: your code. Fill in the two functions, then run
+"""Part 2: RMSNorm and the MLP, written out by hand and checked against the model. Run
 
     uv run 01-inference/token-walkthrough/check.py
 
@@ -26,7 +26,11 @@ def rmsnorm(x, weight, eps=1e-6):
 
     Steps: rms = sqrt(mean of x squared + eps); out = x / rms * (1 + weight)
     """
-    raise NotImplementedError
+    xf = x.float()                                  # bf16 -> fp32
+    mean_sq = xf.pow(2).mean(-1, keepdim=True)      # square, then average over the 1024 numbers
+    out = xf * torch.rsqrt(mean_sq + eps)           # divide by the root-mean-square
+    out = out * (1 + weight.float())                # learned scale, stored as an offset from 1
+    return out.to(torch.bfloat16)
 
 
 def mlp(x, w_gate, w_up, w_down):
@@ -40,4 +44,7 @@ def mlp(x, w_gate, w_up, w_down):
            out = h through w_down
     Stay in bf16 throughout (no .float()), as the model does.
     """
-    raise NotImplementedError
+    gate = x @ w_gate.T                             # [..., 3584]
+    up = x @ w_up.T                                 # [..., 3584]
+    h = gate * torch.sigmoid(gate) * up             # silu(gate) * up
+    return h @ w_down.T                             # [..., 1024]
