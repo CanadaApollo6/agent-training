@@ -44,6 +44,19 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   knowledge-work task is a Docker environment with mock business systems served as MCP tools over SQLite, plus a
   rubric verifier: gates, then binary LLM-judge items, then a weighted mean. This is the template for Module 4
   environments, for Smart Data client environments, and for a Songbird environment.
+- [Automating eval design and hillclimbing](https://claude.dev/blog/automating-eval-design-and-hillclimbing/)
+  (Lance Martin, Anthropic, 2026-09-28): two Claude Code commands, shipped in the
+  [claude-api skill](https://github.com/anthropics/skills/tree/main/skills/claude-api).
+  - `build-eval` samples cases from production transcripts, bug reports and hand-written cases, grades them with
+    code checks or an LLM judge, and checks that the grader is consistent.
+  - `hillclimb` changes prompts, skills, tools or model settings, round by round, and keeps a train/test split. If
+    train improves but test stays flat, it reverts the change as overfitting.
+  - Its rules for a good eval: mirror real use, stronger models score higher, headroom below 100%, low
+    run-to-run variance, and hard cases chosen by human judgement, not by "current models fail here".
+  - It optimizes the harness, not the weights, so it is the cheap step before RL. The numbers are the author's own
+    case studies (ticket cost 4.6¢ → 1¢ with accuracy 74.4% → 98.9%; the claude-api skill 66% → ~88% over 24
+    rounds), not independent benchmarks.
+  - For the Songbird gold set, Smart Data client evals and Module 4.
 - [Strata](https://github.com/Niko1221/Strata): runs Qwen3.8-Flash-Next (125B MoE, 24,576 experts) at 2–3 bits on
   one 12–24 GB card. Hot experts are cached in VRAM, the CPU computes the rest from RAM in parallel, an n-gram
   table sits on SSD, and MTP drafts are exact. Measured only on an RTX 5070; its 3090 figures (100–140 tok/s) are
