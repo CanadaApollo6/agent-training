@@ -31,6 +31,7 @@ parser.add_argument("--steps", type=int, default=100)
 parser.add_argument("--problems", type=int, default=32)
 parser.add_argument("--group", type=int, default=8)
 parser.add_argument("--lr", type=float, default=2e-6)
+parser.add_argument("--beta", type=float, default=0.0, help="KL penalty toward the starting model (0 = none)")
 parser.add_argument("--eval-at", default="0,5,20,100")
 parser.add_argument("--out", default=str(Path(__file__).with_name("results.json")))
 args = parser.parse_args()
@@ -112,6 +113,9 @@ def main():
     tok = AutoTokenizer.from_pretrained(args.model)
     model = Qwen3_5ForCausalLM.from_pretrained(args.model, dtype=torch.float32).cuda()
     model.generation_config.pad_token_id = tok.pad_token_id or tok.eos_token_id
+    ref = None
+    if args.beta > 0:
+        ref = Qwen3_5ForCausalLM.from_pretrained(args.model, dtype=torch.bfloat16).cuda().eval().requires_grad_(False)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.99), weight_decay=0.0)
     eos = {tok.eos_token_id, model.generation_config.pad_token_id} | set(
         model.generation_config.eos_token_id if isinstance(model.generation_config.eos_token_id, list) else [model.generation_config.eos_token_id])
@@ -122,7 +126,7 @@ def main():
         r = random.Random(seed)
         sets[name] = [make(r) for _ in range(n)]
     eval_at = {int(s) for s in args.eval_at.split(",")}
-    log = {"args": vars(args), "evals": {}, "reward": []}
+    log = {"args": vars(args), "evals": {}, "reward": [], "kl": []}
     train_rng = random.Random(0)
 
     for step in range(args.steps + 1):
@@ -161,6 +165,7 @@ def main():
             # Score only the completion positions, 64 sequences at a time: the 248K-wide logits are the memory hog.
             opt.zero_grad(set_to_none=True)
             total = mask.sum()
+            kl_sum = 0.0
             for j in range(0, seqs.shape[0], 64):
                 with torch.autocast(**BF16):
                     logits = model(seqs[j:j + 64], logits_to_keep=MAX_NEW + 1).logits
@@ -168,14 +173,25 @@ def main():
                 logp = -torch.nn.functional.cross_entropy(logits.reshape(-1, logits.shape[-1]), comp[j:j + 64].reshape(-1),
                                                           reduction="none").view(logits.shape[:2])
                 loss = -(adv[j:j + 64].unsqueeze(1) * logp * mask[j:j + 64]).sum() / total
+                if ref is not None:
+                    with torch.no_grad(), torch.autocast(**BF16):
+                        rl = ref(seqs[j:j + 64], logits_to_keep=MAX_NEW + 1).logits[:, -comp.shape[1] - 1:-1].float()
+                    ref_logp = -torch.nn.functional.cross_entropy(rl.reshape(-1, rl.shape[-1]), comp[j:j + 64].reshape(-1),
+                                                                  reduction="none").view(rl.shape[:2])
+                    d = ref_logp - logp
+                    kl = (d.exp() - d - 1) * mask[j:j + 64]   # k3: >= 0, zero when policy and reference agree
+                    loss = loss + args.beta * kl.sum() / total
+                    kl_sum += kl.sum().item()
                 loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step()
             opt.zero_grad(set_to_none=True)  # free the 3.2 GB of gradients before the next rollout
         solved_any = (grouped.max(1).values > 0).float().mean().item()
         log["reward"].append(round(rewards.mean().item(), 4))
+        log["kl"].append(round(kl_sum / mask.sum().item(), 5) if ref is not None and adv.abs().sum() > 0 else 0.0)
         if step % 5 == 0:
-            print(f"   step {step:3d}  mean reward {rewards.mean():5.1%}  groups with any right {solved_any:5.1%}  ({time.time() - t:.1f}s)")
+            print(f"   step {step:3d}  mean reward {rewards.mean():5.1%}  groups with any right {solved_any:5.1%}  "
+                  f"KL {log['kl'][-1]:.4f}  ({time.time() - t:.1f}s)")
 
     Path(args.out).write_text(json.dumps(log, indent=1))
 

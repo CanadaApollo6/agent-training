@@ -1,7 +1,7 @@
 # A first RL loop: GRPO on 3-digit addition
 
 Qwen3.5-0.8B, full fine-tune on the 3090. `grpo.py` does the training and the evaluation. Raw numbers are in
-`results.json`. One run takes about 15 minutes, most of it evaluation.
+`results-kl0.json` (no KL). One run takes about 15 minutes, most of it evaluation.
 
 ## The loop
 
@@ -83,3 +83,32 @@ step 5.
   The multiplication and word-problem drops (9 and 13 problems out of 50) are well beyond that.
 - The answers are 8 tokens long with no reasoning, and it's a 0.8B model. Longer reasoning chains and longer
   training are where the "RL does raise the ceiling" counter-evidence (for example NVIDIA's ProRL) comes from.
+
+## The KL brake (stopped at step 20)
+
+`--beta` adds a KL penalty that pulls sampled tokens back toward a frozen copy of the starting model.
+
+The β = 0.04 run (DeepSeekMath's value) was stopped at step 20 because the room was overheating. A β = 0.4 run
+never started. Partial results are in `results-kl0.04.json`.
+
+Riel predicted that (a) the training reward would climb much more slowly, and (b) the word-problem ceiling would
+barely fall.
+
+| | Step 1 | Step 2 | Step 3 | Step 4 |
+|---|---|---|---|---|
+| Training reward, no KL | 31% | 82% | 93% | 98% |
+| Training reward, β = 0.04 | 38% | 84% | 92% | 95% |
+
+| At step 20 | Multiplication pass@256 | Word problem pass@256 |
+|---|---|---|
+| No KL | 92% | 70% |
+| β = 0.04 | 98% | 68% |
+
+- **(a) was wrong at standard strength.** The climb is the same. KL starts at 0.0008 because the policy *is* the
+  reference, so the brake has nothing to pull on during the 3 steps it takes to solve the task. Measured KL
+  reached 0.25–0.42 per token by steps 4–16.
+- **(b) is untested.** At step 20 the two runs are within noise of each other on word problems. The no-KL collapse
+  (70% → 54%) happened between steps 20 and 100, after this run stopped.
+
+To finish (b), run steps 20–100 at β = 0.04 and 0.4 on a GPU that doesn't heat a bedroom, or with the 3090 power
+limited.
