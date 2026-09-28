@@ -1,7 +1,7 @@
 # The token walkthrough, conceptually
 
-The reference explanation, with no code. Part 1's measurements come from `skeleton.py` and `lens.py`, and Part 2's
-from `anatomy.py` and `check.py`.
+The reference explanation, with no code. Part 1's measurements come from `skeleton.py` and `lens.py`, Part 2's
+from `anatomy.py` and `check.py`, and Part 3's from `attention.py`.
 
 # Part 1: the whole model as a loop
 
@@ -263,3 +263,142 @@ model's own. There were three possible verdicts:
 In bf16, doing the same additions in a different order rounds slightly differently. A difference of a few
 thousandths is two correct answers disagreeing in the last digit. A difference as big as the values themselves
 means the math is wrong.
+
+# Part 3: full attention and the KV cache
+
+## The big picture
+
+The MLP only sees its own token. On its own, "Patrick" could be Patrick Stewart, Saint Patrick, or Patrick Star.
+To predict `Mah`, the vector at "Patrick" needs information from "Chiefs" and "quarterback". The **mixer** moves
+information between tokens, and **attention** is the classic mixer. Qwen3.5 uses it in 6 of its 24 layers (4, 8,
+12, 16, 20, 24). The other 18 layers use DeltaNet (Part 4).
+
+In one sentence: **each token asks a question, every earlier token offers an answer, and the token takes a blend
+of the answers, weighted by how well each one matches the question.**
+
+## Query, key, value
+
+Each token makes three vectors from its (normalized) stream vector:
+
+- **Query**: "what am I looking for?"
+- **Key**: "what do I contain?", like a label on the outside of a folder.
+- **Value**: "what I hand over if I'm picked", the contents of the folder.
+
+For the token doing the looking:
+
+1. **Score**: compare its query with every earlier token's key, using the same dot product ("how aligned?") as
+   before. The scores are divided by 16 (the square root of the 256 numbers per head) so they don't get too big.
+2. **Share out**: softmax turns the scores into shares that add up to 100%. These are the **attention weights**.
+3. **Blend**: take each token's value, multiply it by its share, and add them up. The result is added to the
+   stream (after the gate and an output projection, below).
+
+**Worked example.** There are three earlier tokens, with scores 2, 0 and 1. Softmax: e² = 7.39, e⁰ = 1, e¹ = 2.72,
+and the total is 11.11. The shares are 66.5%, 9.0% and 24.5%. The result is 66.5% of the first token's value, plus
+9.0% of the second's, plus 24.5% of the third's.
+
+**It's like a search engine,** where the query is what you typed, the keys are page titles, and the values are the
+pages. The difference is that you get a blend of every page, weighted by relevance, instead of a list of links.
+
+## The pieces around the core
+
+- **Causal mask.** A token can only look at itself and earlier tokens. The measured weight on later tokens is
+  exactly 0. When generating, the future doesn't exist yet, so training works the same way.
+- **Heads.** Attention runs as 8 independent **heads** in parallel. Each head has its own query, so each can look
+  for something different, like 8 people reading the same sentence for different things. Each head works in 256
+  numbers.
+- **Position (RoPE).** On its own, attention is order-blind: "dog bites man" and "man bites dog" would look the
+  same. **Rotary position embedding** rotates the query and key by an angle that depends on each token's
+  position, like clock hands. Their match score then depends on how far apart the two tokens are. Qwen rotates
+  only 64 of each head's 256 numbers (25%). The other 192 match on content alone.
+- **Query/key norms.** A small RMSNorm on each query and key keeps the scores from blowing up.
+- **Output gate** (Qwen-specific). Each head's result passes through a learned gate, a per-channel valve from 0
+  (closed) to 1 (open). The token being processed computes it, so a head can say "I found nothing useful, let
+  nothing through." It is mostly closed: on average only 3–25% gets through.
+- **Shared keys and values (GQA,** grouped-query attention**).** There are 8 query heads but only 2 sets of keys
+  and values. Each group of 4 heads shares one set. This makes the KV cache 4× smaller (below).
+
+**Where and when:** 6 layers, every token, on the GPU. The attention weights are 14.7 MB per layer. With its MLP, a
+full-attention layer is 36.7 MB. In prefill, all 7 prompt tokens compute their scores at once (a 7 × 7 grid,
+masked to a triangle). In decode, only the new token's row is computed.
+
+## The KV cache
+
+**The observation.** A token only looks backward, so its key and value never change once they are computed. The
+key for "Chiefs" is the same at step 8 as at step 500.
+
+**What happens.** Store every token's keys and values: that store is the **KV cache**. Each decode step computes
+the query, key and value for the one new token only, adds its key and value to the cache, and scores its query
+against everything in the cache.
+
+**Why:** without the cache, step 500 recomputes all 500 tokens from scratch. Measured on this model:
+
+| Generate | Cache on | Cache off | Same text? |
+|---|---|---|---|
+| 64 tokens | 69.0 tok/s | 54.2 tok/s | yes |
+| 512 tokens | 76.7 tok/s | 32.8 tok/s | yes |
+
+The gap grows with length: the cache keeps each step's cost roughly flat, while recomputing gets slower every
+step. (Both are slow here because this runs the plain, unoptimized reference code. The same model runs at
+hundreds of tok/s in vLLM.) The "cache off" run also turns off DeltaNet's memory, which is Part 4's version of the
+same idea.
+
+**The cost: memory that grows with every token.**
+
+| Context length | KV cache |
+|---|---|
+| 1 token | 12,288 bytes (2 for K and V × 2 KV heads × 256 × 2 bytes × 6 layers) |
+| 8,192 tokens | 0.10 GB |
+| 131,072 tokens | 1.61 GB |
+| 262,144 tokens (the maximum) | **3.22 GB, more than the 1.5 GB of weights** |
+
+- Each decode step reads the whole cache, as well as the weights. At 122,000 tokens of context, reading the cache
+  costs as much as reading all the weights, so long-context decode gets slower.
+- Without GQA, the cache would be 4× bigger (49 KB per token).
+- If all 24 layers used full attention, it would be another 4× (again 49 KB per token, 12.9 GB at maximum
+  context).
+- Every user has their own cache. When serving many users on one GPU, the cache, not the weights, is what limits
+  how many fit. That's why serving engines like vLLM manage it carefully (PagedAttention), and why Qwen made 18
+  of 24 layers DeltaNet, whose memory doesn't grow (Part 4).
+
+## What the measurements showed
+
+**1. Layer 4: "Patrick" reads the job and the team.** Averaged over heads: `quarterback` 31%, itself 27%, `Chiefs`
+21%. Per head, four heads (1, 2, 3, 6) put 40–49% on `quarterback` and 21–35% on `Chiefs`. Head 7 looks only at
+itself (90%). `Kansas` and `City` never get more than 8% in any attention layer. The most likely reason is that
+earlier layers have already folded "Kansas City" into the vector at "Chiefs", so reading "Chiefs" is enough.
+
+**2. Layer 16: the attention sink.** `The` gets 51% on average, and heads 0, 4, 5 and 7 put 70–91% on it. `The`
+carries nothing useful. But shares must add up to 100%, so a head with nothing to look up has to put its
+attention *somewhere*. The first token is visible to every token, so models learn to use it as a parking spot.
+This is called an **attention sink**, and it shows up in almost every LLM. Serving tricks for very long text
+(StreamingLLM) always keep the first few tokens in the cache for this reason: remove the parking spot and the
+model breaks. Qwen's output gate was partly designed to make sinks unnecessary (the head can close its gate
+instead), but they still appear here.
+
+**3. Averages hide specialists.** Layer 16 looks idle on average, yet removing it hurts more than removing any other
+attention layer:
+
+| Attention layer removed | P(`Mah`) |
+|---|---|
+| none | 45.3% |
+| 4 | 31.8% |
+| 8 | 42.7% |
+| 12 | 45.8% |
+| **16** | **8.2%** (tied with ` E`) |
+| 20 | 39.3% |
+| 24 | **64.1%** (higher) |
+
+In layer 16, head 1 reads `Chiefs` (39%) and `quarterback` (30%), while its neighbours park on `The`. A few heads
+do the real work.
+
+**4. The last attention layer is a brake.** In layer 24, heads 2 and 6 look almost entirely at "Patrick" itself (95%
+and 99%) and have the most open gates (0.23–0.24). Removing layer 24's attention *raises* `Mah` to 64%. This
+matches Part 2, where layer 24's mixer wrote −3.22 against `Mah`. The final attention layer tempers the model's
+confidence.
+
+(These numbers come from the "eager" attention code, which writes out the attention weights. It rounds slightly
+differently from the fast path, so the baseline is 45.3% here versus 44.6% in Parts 1–2.)
+
+**Unexplained so far:** in layer 16, `The`'s value vector is about 3× larger than the others' (2.02 vs about
+0.7). So the sink isn't simply "look at an empty token". Something else, perhaps the gate, must be cancelling what
+it contributes.

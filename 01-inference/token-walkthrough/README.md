@@ -8,7 +8,7 @@ explains every part in plain English, with no code.
 |---|---|---|
 | 1 | `skeleton.py`, `lens.py` | The whole model as a loop: tokens → embedding row → 24 layers → LM head → next token |
 | 2 | `mine.py`, `check.py`, `try_rmsnorm.py`, `anatomy.py` | Inside a layer: RMSNorm and the MLP |
-| 3 | | Full attention and the KV cache |
+| 3 | `attention.py` | Full attention and the KV cache |
 | 4 | | Gated DeltaNet: memory that doesn't grow |
 | 5 | | Decoding: sampling, and why decode is one token at a time |
 
