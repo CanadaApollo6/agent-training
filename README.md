@@ -61,6 +61,21 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   one 12–24 GB card. Hot experts are cached in VRAM, the CPU computes the rest from RAM in parallel, an n-gram
   table sits on SSD, and MTP drafts are exact. Measured only on an RTX 5070; its 3090 figures (100–140 tok/s) are
   estimates (±20%). It needs 64 GB of RAM, and this PC has 32 GB. A good worked example of MoE decode bytes.
+- [Qwen3.8-27B one-click install for 16–32 GB NVIDIA GPUs](https://github.com/MiaAI-Lab/Qwen3.8-27B-16gb-NVIDIA-GPUs-one-click-install)
+  (Mia's AI Lab, MIT): a serving kit around turboderp's [EXL3 quants](https://huggingface.co/turboderp/Qwen3.8-27B-exl3)
+  in [ExLlamaV3](https://github.com/turboderp-org/exllamav3), plus DeepSeek Harness as the chat UI.
+  - It plans context from the free VRAM.
+  - The KV cache is int4 (the kit reports it within 0.001 KL of fp16), so each token of context costs a quarter of
+    bf16.
+  - MTP drafting is on by default.
+  - Its measured 24 GB rows: **4.0 bpw at the full 262K context with images**, 5.0 bpw at 180–205K, 6.0 bpw at 84K.
+    Compare our vLLM AWQ build: ~10K ([01-inference/qwen38-27b](01-inference/qwen38-27b/)).
+  - turboderp's mean KL vs bf16 by bits per weight: 2.0 → 0.35, 2.5 → 0.30, 3.0 → 0.11, 4.0 → 0.05, 5.0 → 0.014,
+    6.0 → 0.007.
+  - EXL3 is rotation plus trellis post-training quantization, which makes it the strongest no-training baseline for
+    the Ornith quantization work. Qwen3.8-27B exists as both EXL3 2.0 bpw and ternary Bonsai 2 (1.72 bpw, trained),
+    so it's a clean rounding-vs-training comparison on one base model.
+  - The figures are the kit author's measurements. The engine wheels come from turboderp's own releases.
 - [Self-Play Pretraining with Zero Data](https://arxiv.org/abs/2609.30063) (Cowsik, Dolev, Li et al., 2026): a
   generator writes Brainf*ck programs, and a learner does next-byte prediction on their outputs. The generator is
   RL-trained on a learning-progress reward: how well the learner's gradient aligns with its recent parameter
