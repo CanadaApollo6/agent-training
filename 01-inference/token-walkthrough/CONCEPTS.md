@@ -74,7 +74,7 @@ read per token.
 ## Stage 5: Softmax and choosing
 
 **What happens:** **Softmax** turns scores into probabilities that add up to 100%. It exaggerates gaps: a 10-point
-lead becomes about 22,000× more likely. `Mah` got 44.6% and `E` got 9.3%. Then the model picks: **greedy** takes
+lead becomes about 22,000× more likely. `Mah` got 44.6% and ` E` got 9.3%. Then the model picks: **greedy** takes
 the top token, and **sampling** draws at random by probability, with **temperature** controlling how adventurous
 the draw is.
 
