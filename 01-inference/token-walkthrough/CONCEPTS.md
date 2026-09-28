@@ -1,7 +1,7 @@
 # The token walkthrough, conceptually
 
 The reference explanation, with no code. Part 1's measurements come from `skeleton.py` and `lens.py`, Part 2's
-from `anatomy.py` and `check.py`, and Part 3's from `attention.py`.
+from `anatomy.py` and `check.py`, Part 3's from `attention.py`, and Part 4's from `deltanet.py`.
 
 # Part 1: the whole model as a loop
 
@@ -402,3 +402,142 @@ differently from the fast path, so the baseline is 45.3% here versus 44.6% in Pa
 **Unexplained so far:** in layer 16, `The`'s value vector is about 3× larger than the others' (2.02 vs about
 0.7). So the sink isn't simply "look at an empty token". Something else, perhaps the gate, must be cancelling what
 it contributes.
+
+# Part 4: Gated DeltaNet, memory that doesn't grow
+
+## The big picture
+
+Attention keeps every token's key and value forever and re-reads all of them at every step. It works like a
+**notebook**: each token gets a new page, and every step flips through the whole notebook. That's exact, but it
+keeps getting bigger and slower (Part 3).
+
+DeltaNet works like a **whiteboard of fixed size**. Each token updates what's on the board, and each step reads
+the board. It never grows, so it must lose information. The interesting questions are *what* it loses and *who
+decides*.
+
+18 of the 24 layers (every layer except 4, 8, 12, 16, 20 and 24) use DeltaNet as their mixer, in place of
+attention.
+
+## The memory: keys and values folded into one table
+
+DeltaNet uses the same query, key and value idea as attention. The difference is where they go. Attention keeps a
+separate (key, value) pair for every token. DeltaNet **folds all of them into one table**: 128 × 128 numbers per
+head, 16 heads per layer. Writing a (key, value) into the table means that reading the table with that key later
+gives back roughly that value.
+
+- **Read:** the token's query looks the table up and gets back a blend of whatever was stored under similar keys.
+- **Write:** the token stores its own value under its own key.
+
+**Why it's lossy:** a 128-number key gives room for only 128 fully separate "slots" per head. Store more than
+that, or store keys that overlap, and entries start to bleed into each other.
+
+## The three rules for writing ("Gated" + "Delta")
+
+Each token does three things to the table, in order:
+
+1. **Fade (the gate).** Multiply everything on the board by a **keep** amount between 0 and 1. At 0.9, a memory
+   loses 10% per token. The token itself decides how much to keep, so the model can choose to forget quickly
+   (after a sentence ends, say) or hold on.
+2. **Check (the delta).** Before writing, read what the board currently says for this key.
+3. **Correct.** Write only the **difference** between what should be there and what is there, scaled by a
+   **write strength** (0–1) that the token also chooses.
+
+"Delta" means *difference*. It's the same idea as updating a spreadsheet cell instead of adding a new row every
+time.
+
+**Worked example** on a toy board (keys are 2 numbers, values are 1 number):
+
+| Action | Read "Chiefs" | Read "quarterback" |
+|---|---|---|
+| Store Chiefs = 5, quarterback = 3 | 5.00 | 3.00 |
+| Store Chiefs = 5 **again**, with plain adding (no delta) | **10.00** (wrong: it piled up) | 3.00 |
+| Store Chiefs = 5 again, with the delta rule | 5.00 (nothing to correct) | 3.00 |
+| Update Chiefs = 7, delta rule | 7.00 (overwritten) | 3.00 |
+| Update Chiefs = 7, write strength 0.5 | 6.00 (moved halfway) | 3.00 |
+| One step with keep 0.9, nothing new | 4.50 | 2.70 (both faded) |
+| Store a third key, halfway between the two, = 4 | **3.83** | **1.83** (both damaged) |
+
+The last row is the lossy part in miniature. With only 2 numbers per key, there's no room for a third separate
+slot. The new entry is read back perfectly (4.00), but it bleeds into its neighbours. Fading (row 6) and
+collisions (row 7) are the two ways information is lost.
+
+## The pieces around the core
+
+- **Short convolution:** before anything else, each token's inputs are blended with the previous 3 tokens'
+  inputs. It's a tiny, fixed "look back 3 tokens", useful for local patterns such as word pieces (`Mah` + `omes`).
+- **Output gate and norm:** as in Qwen's attention, the result passes through a learned gate and an RMSNorm before
+  being added to the stream.
+
+**Where and when:** 18 layers, every token, on the GPU. Each layer's mixer weights are about 21 MB (43.1 MB
+including its MLP).
+- **Decode** is a simple fixed-cost update: fade, check, correct, read. Step 100,000 costs the same as step 10.
+- **Prefill and training** use a rearranged version of the same maths that processes chunks of 64 tokens in
+  parallel, so GPUs can be kept busy. The fast kernels live in the `flash-linear-attention` package. These
+  experiments ran the plain reference code, which gives the same results more slowly.
+
+## What the measurements showed
+
+**1. The memory really is fixed.**
+
+| Context | DeltaNet state (18 layers) | Attention KV (6 layers) |
+|---|---|---|
+| 7 tokens | 19.76 MB | 0.09 MB |
+| 1,921 tokens | 19.76 MB | 23.61 MB |
+| 262,144 tokens | 19.76 MB | 3.22 GB |
+
+At short context DeltaNet actually uses *more* memory. The fixed state is as big as the KV cache of about 1,600
+tokens. Past that, it wins, and by the maximum context it's 160× smaller. If all 24 layers used attention, the
+cache at maximum context would be 12.9 GB. With the 3:1 mix, it's 3.24 GB.
+
+**2. The heads choose very different memory spans.** Each head's keep amount can be turned into a **half-life**:
+how many tokens until a memory has faded to half. For the "Patrick" token, across all 288 DeltaNet heads (18
+layers × 16):
+
+| Half-life | Heads |
+|---|---|
+| under 2 tokens ("only the last word") | 72 |
+| 2–10 tokens | 54 |
+| 10–100 tokens | 67 |
+| 100–1,000 tokens | 56 |
+| 1,000–10,000 tokens | 31 |
+| over 10,000 tokens ("effectively permanent") | 8 |
+
+It's a spectrum, from scratchpads that hold one word to near-permanent notes. The write strengths also rise
+through the stack: a median of about 0.4 in the first layers and 0.85–0.98 in layers 19–23. The early layers
+write gently, and the late ones overwrite firmly. These are the values chosen at one token. Every token picks its
+own.
+
+**3. What it gives up: exact detail.** This is the pass-key test. A random 4-digit code is stated near the start,
+followed by filler ("The grass is green. The sky is blue. ...") and then the question. The same model was run
+twice: once normally, and once with attention restricted to the last 64 tokens plus the first 4 (the sink from
+Part 3). In the restricted run, once the code is more than 64 tokens back, only the DeltaNet memory can carry it.
+There were 10 codes per row:
+
+| Filler after the code | Full model | Attention restricted (DeltaNet carries it) |
+|---|---|---|
+| 0 tokens | 10/10 codes | 10/10 codes |
+| 25 tokens | 10/10 | 10/10 (still inside the window) |
+| 50 tokens | 10/10 | **0/10** (11 of 40 digits right) |
+| 100 tokens | 10/10 | 0/10 (5 of 40 digits; 7311 → `1731`) |
+| 1,600 tokens | 10/10 | 0/10 (6 of 40 digits; 7311 → `1231`) |
+| 6,400 tokens | 10/10 | 0/10 (5 of 40 digits; 7311 → `1241`) |
+
+Guessing digits at random gets about 4 of 40 right. The moment the code leaves attention's reach, it's gone, even
+just 50 tokens later. The full model, with 6 attention layers, gets every code right at 6,400 tokens.
+
+**The caveat.** This model was trained with attention available, so it had every reason to leave exact recall to
+the attention layers and use DeltaNet for other things. Pure-DeltaNet models, which have nothing else to rely on,
+are reported to do much better on this test at moderate lengths. So the result shows a **division of labour**:
+DeltaNet carries the running gist (recent words, the topic, the kind of text), and the attention layers do exact
+lookups. That's why Qwen kept 6 attention layers instead of 0.
+
+## The answer to "what does it give up?"
+
+Fixed size means information must be dropped. The gates decide what gets dropped: the model learned, per head and
+per token, what's worth keeping and for how long. What goes first is **exact, arbitrary detail**, like a random
+number, a precise quote, or a name mentioned once long ago. The hybrid design puts back just enough attention to
+recover those, at a quarter of the memory cost.
+
+For Smart Data, this is the trade-off behind every long-context model choice: a pure attention model (exact,
+expensive), a pure recurrent model (cheap, forgetful), or a hybrid like this one. Serving many users with long
+histories favours the hybrid.
