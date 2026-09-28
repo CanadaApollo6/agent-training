@@ -1,0 +1,45 @@
+{
+ "model": "cyankiwi/Qwen3.8-27B-AWQ-INT4",
+ "mtp": 0,
+ "ctx": 8192,
+ "util": 0.935,
+ "chunk": 2048,
+ "seqs": 8,
+ "load_s": 111.88003898301395,
+ "gpu_idle_mib": 1237,
+ "gpu_loaded_mib": 21609,
+ "kv_blocks": 21,
+ "block_size": 784,
+ "budget": {
+  "category_bytes": {
+   "LM head (bf16, read in full every token)": 2542796800,
+   "DeltaNet layers": 3296648432,
+   "MLPs": 9893317632,
+   "full-attention layers": 969950208,
+   "embedding table (one row read per token)": 2542796800,
+   "norms and other": 1320960,
+   "vision tower (unused for text)": 921460192,
+   "MTP head (only read when drafting)": 849398784
+  },
+  "full_attention_layers": 16,
+  "deltanet_layers": 48,
+  "kv_bytes_per_token": 65536,
+  "deltanet_state_bytes": 150994944,
+  "streamed_weight_bytes": 16704044272,
+  "ceiling_tok_s": {
+   "0": 48.74740296299628,
+   "16384": 45.85233803414585,
+   "32768": 43.28186645973436
+  }
+ },
+ "decode_short_tok_s": 32.27308712189892,
+ "prefill_tokens": 7825,
+ "prefill_s": 7.8545985170057975,
+ "decode_long_tok_s": 30.933196444256755,
+ "batch": {
+  "1": 31.860130942684865,
+  "4": 111.6444717991188,
+  "8": 116.99348405983092
+ },
+ "sanity": "9"
+}
