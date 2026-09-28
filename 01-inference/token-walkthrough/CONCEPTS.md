@@ -1,7 +1,8 @@
 # The token walkthrough, conceptually
 
 The reference explanation, with no code. Part 1's measurements come from `skeleton.py` and `lens.py`, Part 2's
-from `anatomy.py` and `check.py`, Part 3's from `attention.py`, and Part 4's from `deltanet.py`.
+from `anatomy.py` and `check.py`, Part 3's from `attention.py`, Part 4's from `deltanet.py`, and Part 5's from
+`sampling.py`.
 
 # Part 1: the whole model as a loop
 
@@ -541,3 +542,114 @@ recover those, at a quarter of the memory cost.
 For Smart Data, this is the trade-off behind every long-context model choice: a pure attention model (exact,
 expensive), a pure recurrent model (cheap, forgetful), or a hybrid like this one. Serving many users with long
 histories favours the hybrid.
+
+# Part 5: choosing the next token
+
+## The big picture
+
+Part 1 ended with 248,320 probabilities. The model's job ends there: it never "decides" anything. A separate,
+tiny step called the **decoding strategy**, or **sampler**, turns the probabilities into one chosen token. That
+choice is appended and becomes part of the input for the next step. So the sampler shapes the whole answer, not
+just one word.
+
+## The options
+
+- **Greedy:** always take the top token. It's deterministic: the same prompt always gives the same text.
+- **Sampling:** roll a weighted die. A token with 44.6% probability is picked 44.6% of the time.
+- **Temperature (T):** divide the scores by T before softmax. Below 1 sharpens the distribution toward the top
+  token, and above 1 flattens it toward the long tail. T → 0 becomes greedy.
+- **Truncation:** throw away the long tail before rolling.
+  - **top-k:** keep only the k most likely tokens.
+  - **top-p** (also called **nucleus**): keep the smallest set of tokens that adds up to p, say 90%.
+  - **min-p:** keep tokens at least some fraction as likely as the top one.
+- **Penalties:** lower the scores of tokens that have already appeared, to discourage loops.
+- **Seed:** the starting point of the random-number generator. The same seed and settings reproduce the same
+  "random" text.
+
+**What temperature does to "Patrick":**
+
+| T | P(`Mah`) | Tokens needed to cover 90% of the probability |
+|---|---|---|
+| 0.3 | 99.4% | 1 |
+| 0.7 | 82.1% | 2 |
+| 1.0 | 44.6% | 354 |
+| 1.5 | 6.7% | 29,528 |
+| 3.0 | 0.1% | 159,759 |
+
+The tail is enormous. At T = 1, the top 2 tokens hold 54%, and the remaining 46% is spread across hundreds of
+tokens. That's why truncation exists: without it, every so often the die lands somewhere absurd.
+
+**Where and when:** on the GPU, right after the LM head, once per generated token. It costs almost nothing
+compared with reading 1.5 GB of weights.
+
+## Why not always take the top token?
+
+**1. The most likely next token is not the most likely *answer*.** Greedy looks one step ahead. On `964 + 494 =`,
+the top next token is ` ?` (59%), because the model has seen many worksheets written as "964 + 494 = ?". A space,
+which begins an actual number, is second at 32%. Greedy commits to `?` and writes a worksheet instead of an
+answer:
+
+| Task (30 problems each) | Greedy | One sample (T = 0.8) | Majority of 16 samples | Any of 16 right |
+|---|---|---|---|---|
+| 3-digit addition | **1/30** | 7/30 | **19/30** | 28/30 |
+| 2-digit multiplication | 25/30 | 15/30 | 23/30 | 29/30 |
+| Word problem (a + b × c) | 1/30 | 2/30 | 2/30 | 14/30 |
+
+**2. Consensus helps only when the right answer is the most common one.** Majority voting over samples (called
+**self-consistency**) turns 1/30 into 19/30 on addition. Right answers agree with each other, and wrong ones
+scatter. On word problems, the model is usually wrong in the same way, so the vote just repeats the mistake
+(2/30). Consensus amplifies whatever the model mostly believes, whether that's true or not.
+
+**3. Greedy loops.** On "My favorite thing about the weekend is", with 200 tokens each:
+
+| Strategy | Distinct 4-word runs | What happened |
+|---|---|---|
+| Greedy | 16% | "…The following is a list of the most popular and most important topics in the field of computer science." repeated to the end |
+| T = 0.7, top-p 0.9 | 20% | a short loop about the sun and the earth |
+| T = 1.0, no truncation | 47% | varied, but drifting ("Please feel the air, freely?") |
+| T = 1.5, no truncation | 100% | word salad in six languages |
+
+Once greedy repeats a phrase, the repeat makes the same phrase even more likely, and it can never roll its way
+out. Too much randomness fails the other way. A small model like this one loops even at common settings, which
+is why real deployments also add repetition penalties.
+
+**4. Sampling produces confident fiction.** 200 samples of the Patrick prompt at T = 1: Mahomes about 76 times,
+Ewing 10, "Mahoney" 2, "J. Brown" 2, and 115 distinct continuations in total. Every one reads fluently. If a
+wrong token is drawn early, the model builds a fluent sentence on top of it. This is one everyday source of
+hallucination.
+
+## Is it "fancy autocomplete"?
+
+Mechanically, yes, in *every* mode: the model always predicts one next token, whether that token is then picked
+greedily or sampled. The sampler doesn't change that. What separates it from a **Markov chain** (which predicts
+from only the last word or two) is what goes into the prediction: every token of context read through attention
+and DeltaNet, and facts looked up in the MLPs (Parts 2–4). A random walk through probabilities is actually what a
+Markov chain *is*, so sampling makes the process *more* chain-like, not less. The intelligence, such as it is,
+lives in the distribution, not in the dice.
+
+## Why decode is one token at a time, and the two workarounds
+
+Token 2 depends on which token 1 was chosen, so they can't be computed in parallel. Every step reads the whole
+model (Part 1) to produce one token per sequence. There are two ways around that cost:
+
+- **Batching:** many sequences share one read of the weights per step.
+
+  | Sequences at once | Per sequence | Total |
+  |---|---|---|
+  | 1 | 84 tok/s | 84 tok/s |
+  | 16 | 65 tok/s | 1,039 tok/s |
+  | 64 | 27 tok/s | 1,713 tok/s |
+
+  That's 20× more total output from the same GPU, which is how one 3090 serves many users. Each user's speed
+  drops, but the total rises.
+- **Speculative decoding:** a small, fast model guesses several tokens ahead, and the big model checks all the
+  guesses in one pass (a pass reads the weights once, however many tokens it checks). Correct guesses are kept
+  for free. This is what TensorFold, in the reading spine, does.
+
+## The bridge to RL
+
+On 3-digit addition, greedy gets 1/30, yet some sample gets it right on 28/30. The ability is already in the
+distribution; it just isn't the top choice. **Reinforcement learning** after training works exactly here. It
+samples many answers, rewards the right ones, and shifts probability toward them until the right answer *is* the
+top choice. Problems where no sample is ever right (16 of 30 word problems) give it nothing to learn from.
+Sampling is how a model explores.

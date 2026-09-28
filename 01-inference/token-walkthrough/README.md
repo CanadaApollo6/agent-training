@@ -10,7 +10,7 @@ explains every part in plain English, with no code.
 | 2 | `mine.py`, `check.py`, `try_rmsnorm.py`, `anatomy.py` | Inside a layer: RMSNorm and the MLP |
 | 3 | `attention.py` | Full attention and the KV cache |
 | 4 | `deltanet.py` | Gated DeltaNet: memory that doesn't grow |
-| 5 | | Decoding: sampling, and why decode is one token at a time |
+| 5 | `sampling.py` | Decoding: sampling, and why decode is one token at a time |
 
 ## Words
 
