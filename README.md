@@ -77,6 +77,24 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     the Ornith quantization work. Qwen3.8-27B exists as both EXL3 2.0 bpw and ternary Bonsai 2 (1.72 bpw, trained),
     so it's a clean rounding-vs-training comparison on one base model.
   - The figures are the kit author's measurements. The engine wheels come from turboderp's own releases.
+- [canada-quant](https://huggingface.co/canada-quant) (CQL.ca): a lab that quantizes giant open MoEs (GLM-5.3-Flash,
+  DeepSeek V4, Hunyuan 3) and trains its own DFlash2 speculative drafters. Their
+  [GLM-5.3-Flash W4A16](https://huggingface.co/canada-quant/GLM-5.3-Flash-W4A16-MTP) card is a worked example of MoE
+  quantization done selectively:
+  - Only the 36,288 routed-expert matrices go to INT4 (GPTQ, group 128, 256 calibration samples × 4K tokens).
+    Attention, router, shared experts, embeddings, LM head and MTP head stay bf16. 599 → 178 GiB.
+  - The experts hold most of the bytes and each token touches only 8 of 288, so rounding them costs little. The
+    always-on parts are the sensitive ones. This is the recipe to try first on Ornith 35B-A3B.
+  - Build gates before any eval: exact packed-tensor count, nothing quantized outside the experts, no collapsed expert
+    scales.
+  - On RTX PRO 6000, ≈63% of their AIME deficit was a thinking-budget wall (empty answers at the cap), not rounding.
+    That's our "cap-limited" category in the reasoning probe.
+  - NVIDIA's NVFP4 build loses to plain INT4 on H100 because Hopper has no FP4 math and emulates it. The number
+    format has to match the card's native math: on the 3090, INT4/INT8 yes, FP8/FP4 no.
+  - Drafters: MTP with 2 draft tokens is their sweet spot (5 collapses acceptance). A drafter with its own KV cache
+    raises single-stream speed +46% but shrinks the KV pool ~6×, so aggregate throughput collapses under load.
+  - 178 GiB never fits this PC; read it for method. The figures are the lab's own. They report losses too (NVIDIA's
+    stack won all 28 cells on DGX Spark), which is a credibility signal.
 - [Self-Play Pretraining with Zero Data](https://arxiv.org/abs/2609.30063) (Cowsik, Dolev, Li et al., 2026): a
   generator writes Brainf*ck programs, and a learner does next-byte prediction on their outputs. The generator is
   RL-trained on a learning-progress reward: how well the learner's gradient aligns with its recent parameter
