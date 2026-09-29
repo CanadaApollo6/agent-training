@@ -537,3 +537,28 @@ valid tile. The masked tiles contributed exact zeros, so the bits don't change.
   full head.
 - The dense 4-bit linears run at ~71% of the practical floor. At 85% they'd save ~0.5 ms.
 - R2's shared expert in its own concurrent launch: ~0.1 ms at 4 rows.
+
+### Lever 1: a smaller draft vocabulary (no gain)
+
+Riel asked for the three levers in order and gave no prediction. **Claude predicted +5-7% greedy.** The premise was
+wrong: TensorFold's MTP head already scores a 79,591-token subset (`draft_vocab.txt`), not the full 248K vocabulary.
+- **Cost of the head at 1 row:** 123 µs for the 79.6K subset. At smaller sizes it's 99 µs (64K), 74 (48K), 63 (32K),
+  38 (24K), 31 (16K), and 337 for the full vocabulary. A round runs ~2.4 draft steps.
+- **Ranking:** `tensorfold/draftvocab/coverage.py` ranks ids by frequency in Ornith's own terminal-bench traces (35B
+  and 9B, reasoning, replies and tool arguments). It ranks on half the tasks and holds out the other half. Coverage of
+  the held-out tokens is 92.6% at 16K, 95.9% at 32K, 97.8% at 48K, and 99.4% for the default list. A draft can only
+  be right when its token is in the list.
+- **A/B:** `draftvocab/ab.py` is in-process and interleaved. It uses R2, 6 prompts (4 benchmark and 2 held-out agent
+  tasks), 512 tokens, 2 reps, and swaps heads with their own captured graphs:
+
+| Head | Greedy tok/s | Tokens a round | ms a round | Temperature 1 tok/s |
+|---|---|---|---|---|
+| default 79.6K | 430.1 | 3.36 | 7.81 | 346.7 |
+| 48K | 435.2 (+1.2%) | 3.29 | 7.55 | 342.6 (-1.2%) |
+| 32K | 426.7 (-0.8%) | 3.22 | 7.54 | 348.4 (+0.5%) |
+| 24K | 423.8 (-1.5%) | 3.19 | 7.54 | 348.9 (+0.6%) |
+| 16K | 419.8 (-2.4%) | 3.13 | 7.45 | 336.6 (-2.9%) |
+
+- A smaller head saves the expected 0.26-0.36 ms a round, but the tokens kept per round fall by the same share. The
+  net is within ±1-2%, which is noise. Greedy outputs are identical for every head, as they must be.
+- **Kept the default.** The head is ~4% of a round, so no cut can win much while it costs acceptance.
