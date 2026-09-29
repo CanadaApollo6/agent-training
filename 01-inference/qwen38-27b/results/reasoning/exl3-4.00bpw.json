@@ -1,0 +1,243 @@
+{
+ "label": "exl3-4.00bpw",
+ "n": 20,
+ "cap": 16384,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0
+ },
+ "wall_s": 768.7942808279768,
+ "sanity": "9",
+ "correct": 18,
+ "wrong": 0,
+ "runaway": 2,
+ "cut off": 0,
+ "accuracy": 0.9,
+ "median_tokens": 985,
+ "mean_tokens": 4162.15,
+ "total_tokens": 83243,
+ "per_problem": [
+  {
+   "id": "test/precalculus/902.json",
+   "subject": "Precalculus",
+   "gold": "\\sqrt{66}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "^2(S-2s^2)$ becomes:\n$$112^2 + 32^2 + 2^2 = 13572 = 8s^2(130 - 2s^2)$$\n\nThis quadratic in $s^2$ has positive real solutions, confirming the configuration is geometrically valid.\n\n$$\\boxed{\\sqrt{66}}$$",
+   "finish": "stop",
+   "tokens": 8359,
+   "s": 376.8162125670351
+  },
+  {
+   "id": "test/intermediate_algebra/2015.json",
+   "subject": "Intermediate Algebra",
+   "gold": "\\{1\\pm\\sqrt{5},-2\\}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "+uw+vw)t-uvw=0,\n\\]\n\nso\n\n\\[\nt^3-8t-8=0.\n\\]\n\nFactor:\n\n\\[\nt^3-8t-8=(t+2)(t^2-2t-4).\n\\]\n\nThus\n\n\\[\nt=-2,\\qquad t=1\\pm\\sqrt5.\n\\]\n\nSo the desired unordered set is\n\n\\[\n\\boxed{\\{-2,\\;1+\\sqrt5,\\;1-\\sqrt5\\}}.\n\\]",
+   "finish": "stop",
+   "tokens": 9176,
+   "s": 411.5903311770526
+  },
+  {
+   "id": "test/intermediate_algebra/1454.json",
+   "subject": "Intermediate Algebra",
+   "gold": "70 \\sqrt{2}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\n\n$$\\sqrt{400+400} + \\sqrt{900+900} + \\sqrt{400+900-1600-3000+4100}$$\n$$= \\sqrt{800} + \\sqrt{1800} + \\sqrt{800} = 20\\sqrt{2} + 30\\sqrt{2} + 20\\sqrt{2} = 70\\sqrt{2}$$\n\n## Result\n\n$$\\boxed{70\\sqrt{2}}$$",
+   "finish": "stop",
+   "tokens": 4296,
+   "s": 195.9215120350127
+  },
+  {
+   "id": "test/prealgebra/1512.json",
+   "subject": "Prealgebra",
+   "gold": "7\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " = \\pi(7)^2 - \\pi(6)^2 = 49\\pi - 36\\pi = 13\\pi$$\n\n**Finding the difference:**\n\n- Greatest area: $Y = 20\\pi$\n- Smallest area: $Z = 13\\pi$\n\n$$\\text{Difference} = 20\\pi - 13\\pi = 7\\pi$$\n\n$$\\boxed{7\\pi}$$",
+   "finish": "stop",
+   "tokens": 525,
+   "s": 24.24204633804038
+  },
+  {
+   "id": "test/algebra/2779.json",
+   "subject": "Algebra",
+   "gold": "20",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " 3\\sqrt{3}\n= 11\\sqrt{2} + 9\\sqrt{3}\n\\]\n\nSo this is in the form\n\n\\[\na\\sqrt{2} + b\\sqrt{3} + c\\sqrt{6}\n\\]\n\nwith\n\n\\[\na=11,\\qquad b=9,\\qquad c=0\n\\]\n\nTherefore,\n\n\\[\na+b+c = 11+9+0 = 20\n\\]\n\n\\[\n\\boxed{20}\n\\]",
+   "finish": "stop",
+   "tokens": 681,
+   "s": 31.538502852024976
+  },
+  {
+   "id": "test/number_theory/1128.json",
+   "subject": "Number Theory",
+   "gold": "2",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "then \\(\\gcd(8,2)=2\\), but \\(2\\nmid 1\\), so no solution exists.\n\nThus the only prime for which the congruence has no solutions is\n\n\\[\np=2.\n\\]\n\nTherefore, the sum of all such primes is\n\n\\[\n\\boxed{2}.\n\\]",
+   "finish": "stop",
+   "tokens": 717,
+   "s": 33.44244402903132
+  },
+  {
+   "id": "test/number_theory/769.json",
+   "subject": "Number Theory",
+   "gold": "9",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " \\equiv 9 \\pmod{11}\n\\]\n\n\\[\n8^4 \\equiv 9^2 = 81 \\equiv 4 \\pmod{11}\n\\]\n\n\\[\n8^8 \\equiv 4^2 = 16 \\equiv 5 \\pmod{11}\n\\]\n\nSo\n\n\\[\n8^4+8^8 \\equiv 4+5 = 9 \\pmod{11}.\n\\]\n\nHence the remainder is\n\n\\[\n\\boxed{9}\n\\]",
+   "finish": "stop",
+   "tokens": 790,
+   "s": 36.885159761004616
+  },
+  {
+   "id": "test/intermediate_algebra/2152.json",
+   "subject": "Intermediate Algebra",
+   "gold": "0",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\n\\]\n\nThus \\(p(x)-1\\) is a polynomial of degree at most \\(2\\) with three distinct roots \\(a,b,c\\). Therefore,\n\n\\[\np(x)-1\\equiv 0,\n\\]\n\nso\n\n\\[\np(x)=1.\n\\]\n\nHence the degree of \\(p(x)\\) is\n\n\\[\n\\boxed{0}\n\\]",
+   "finish": "stop",
+   "tokens": 702,
+   "s": 32.606055443000514
+  },
+  {
+   "id": "test/counting_and_probability/1003.json",
+   "subject": "Counting & Probability",
+   "gold": "29",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "+ \\frac{1}{9} = \\frac{45+96}{864} = \\frac{141}{864} = \\frac{47}{288}$ \u2713\n\n## Final Answer\n\nSince $p = \\frac{5}{24}$ with $\\gcd(5,24) = 1$, we have $m = 5$ and $n = 24$.\n\n$$m + n = 5 + 24 = \\boxed{29}$$",
+   "finish": "stop",
+   "tokens": 3051,
+   "s": 163.13489919604035
+  },
+  {
+   "id": "test/number_theory/427.json",
+   "subject": "Number Theory",
+   "gold": "25",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "092\\):\n\n\\[\n1092 = 4 \\cdot 273 = 2^2 \\cdot 3 \\cdot 91 = 2^2 \\cdot 3 \\cdot 7 \\cdot 13\n\\]\n\nThe distinct prime divisors of \\(A\\) are\n\n\\[\n2, 3, 7, 13\n\\]\n\nTheir sum is\n\n\\[\n2+3+7+13 = 25\n\\]\n\n\\[\n\\boxed{25}\n\\]",
+   "finish": "stop",
+   "tokens": 948,
+   "s": 74.97128913505003
+  },
+  {
+   "id": "test/algebra/975.json",
+   "subject": "Algebra",
+   "gold": "-4",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "} x=1.\n\\]\n\n\\[\nx^2+9x+20=(x+4)(x+5)=0 \\implies x=-4 \\text{ or } x=-5.\n\\]\n\nThe only value satisfying both equations is\n\n\\[\nx=-4.\n\\]\n\nTherefore, the only real value not in the domain is\n\n\\[\n\\boxed{-4}\n\\]",
+   "finish": "stop",
+   "tokens": 437,
+   "s": 52.41753798100399
+  },
+  {
+   "id": "test/prealgebra/1128.json",
+   "subject": "Prealgebra",
+   "gold": "64",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "n.\n\n## Calculating Total Combinations\n\nSince each feature is chosen independently, I multiply the number of choices:\n\n$$2 \\times 1 \\times 2 \\times 2 \\times 2 \\times 4 = 64$$\n\n## Answer\n\n$$\\boxed{64}$$",
+   "finish": "stop",
+   "tokens": 696,
+   "s": 65.14619184401818
+  },
+  {
+   "id": "test/precalculus/986.json",
+   "subject": "Precalculus",
+   "gold": "144",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "vmatrix}\nx_1 & y_1 & 1\\\\\nx_2 & y_2 & 1\\\\\nx_3 & y_3 & 1\n\\end{vmatrix}\n\\]\n\nequals twice the signed area of the triangle. Hence its square is\n\n\\[\n\\left(2A\\right)^2=(2\\cdot 6)^2=144.\n\\]\n\n\\[\n\\boxed{144}\n\\]",
+   "finish": "stop",
+   "tokens": 985,
+   "s": 81.45974289800506
+  },
+  {
+   "id": "test/prealgebra/1044.json",
+   "subject": "Prealgebra",
+   "gold": "5.4 \\text{ cents}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "Number of Stamps\n\n12 + 12 + 6 + 13 = **43 stamps**\n\n## Computing the Average\n\n$$\\text{Average} = \\frac{233}{43} = 5.4186\\ldots \\text{ cents}$$\n\nRounded to the nearest tenth of a cent:\n\n$$\\boxed{5.4}$$",
+   "finish": "stop",
+   "tokens": 696,
+   "s": 84.57337430003099
+  },
+  {
+   "id": "test/intermediate_algebra/582.json",
+   "subject": "Intermediate Algebra",
+   "gold": "850",
+   "outcome": "runaway",
+   "finished_thinking": false,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 747.6390361619997
+  },
+  {
+   "id": "test/geometry/686.json",
+   "subject": "Geometry",
+   "gold": "18+2\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "pi$$\n\nThis confirms the **Steiner formula**: the perimeter of a convex shape expanded by radius $r$ equals the original perimeter plus $2\\pi r$:\n$$P = 18 + 2\\pi(1) = 18 + 2\\pi$$\n\n$$\\boxed{18 + 2\\pi}$$",
+   "finish": "stop",
+   "tokens": 1489,
+   "s": 142.3882633370231
+  },
+  {
+   "id": "test/geometry/880.json",
+   "subject": "Geometry",
+   "gold": "2\\sqrt{113}",
+   "outcome": "runaway",
+   "finished_thinking": false,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 759.7176755060209
+  },
+  {
+   "id": "test/prealgebra/954.json",
+   "subject": "Prealgebra",
+   "gold": "10",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "t travels the hallway in 90 seconds at the same speed:\n\n$$\\text{Length} = \\text{Speed} \\times \\text{Time} = \\frac{1}{9} \\text{ m/s} \\times 90 \\text{ s} = 10 \\text{ meters}$$\n\n## Answer\n\n$$\\boxed{10}$$",
+   "finish": "stop",
+   "tokens": 387,
+   "s": 101.76028235303238
+  },
+  {
+   "id": "test/intermediate_algebra/558.json",
+   "subject": "Intermediate Algebra",
+   "gold": "(3,4]",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "mbda x-\\lambda x^2\n= -x+\\left(1+\\frac1\\lambda\\right)\n=y.\n\\]\nThus \\(f(x)=y\\neq x\\), and similarly \\(f(y)=x\\), so \\(f(f(x))=x\\).\n\nHence the desired values of \\(\\lambda\\) are exactly\n\\[\n\\boxed{(3,4]}.\n\\]",
+   "finish": "stop",
+   "tokens": 11443,
+   "s": 589.4986252320232
+  },
+  {
+   "id": "test/intermediate_algebra/1849.json",
+   "subject": "Intermediate Algebra",
+   "gold": "501",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "3: \\(k=0\\)\n\nThe equation is undefined, so it gives no solutions.\n\n---\n\nTherefore, the valid integer values of \\(k\\) are all \\(500\\) negative integers, plus \\(k=8\\).\n\n\\[\n500+1=501\n\\]\n\n\\[\n\\boxed{501}\n\\]",
+   "finish": "stop",
+   "tokens": 5097,
+   "s": 370.3168764070142
+  }
+ ]
+}

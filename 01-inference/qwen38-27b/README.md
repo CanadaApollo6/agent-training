@@ -166,15 +166,59 @@ Two ~2-bit builds of the same base model:
 | Decode with MTP ×4 | 61.6 | 62.8 short, 78.6 long | not tested |
 | Batch 8, 32K window | 185 tok/s | 186 tok/s | not tested |
 | Prefill | 939 tok/s at 20K | 984 tok/s at 10K | 1,154 tok/s (pp512) |
-| Sanity check (thinking off, greedy) | `9` | **`8` (wrong)** | not tested |
+| Sanity check (thinking off, greedy) | `9` | **`8` (wrong)** | `9` (thinking on) |
 
 - Halving the bits bought only 23% more speed in EXL3 (33 → 40.6 tok/s, about 37% of its byte ceiling). Unpacking
   the trellis code is arithmetic, and on Ampere that arithmetic, not memory, sets the pace at 2 bits.
 - Bonsai's plain ternary format is cheaper to unpack and runs faster at a similar size.
-- The wrong sheep answer is a single greedy sample, not evidence. The long-reasoning test below is what counts.
+- The wrong sheep answer is a single greedy sample, not evidence. The long-reasoning test below is what counts. (The
+  first sanity checks in `bench_exl3.py` encoded the chat markers as plain text; the table's answers come from
+  `reasoning_probe.py`, which encodes them properly.)
 
 **Open question.** Prism reports IQ2_XXS (a 2-bit build with no training) collapsing on long reasoning: AIME26
 94.6 → 57.5, MATH-500 99.8 → 84.6. Bonsai 2 holds (95.8, 98.8). Does EXL3 2.0, which adds a rotation and a trellis
 code but still no training, collapse too?
 
 **Riel's prediction (2026-09-28): EXL3 2.0 collapses the way IQ2_XXS did.**
+
+### The test: 20 hard math problems, thinking on
+
+```bash
+uv run --project 01-inference/envs/exl3 01-inference/qwen38-27b/reasoning_probe.py exl3 --revision 2.00bpw
+uv run --project 01-inference/envs/prism-llama 01-inference/qwen38-27b/reasoning_probe.py server --label bonsai2-pq2
+```
+
+The problems are 20 level-5 MATH-500 problems (seed 0). Each gets one sample at the Qwen3.8 card's settings
+(temperature 1.0, top-p 0.95, top-k 20), a 16K-token cap with thinking included, and an 8-bit KV cache. Grading is
+math-verify on the text after `</think>`. Full traces are in `results/reasoning/*.traces.jsonl.gz`. Each run took
+13–20 minutes of GPU, with 10–20 minute cool-downs between runs.
+
+| | EXL3 4.0 bpw | EXL3 2.0 bpw | Bonsai 2 (1.72 bpw, trained) |
+|---|---|---|---|
+| Correct | **18/20** | 12/20 | 16/20 |
+| Wrong answer | 0 | **4** | 0 |
+| Hit the 16K cap without answering | 2 | 4 | 4 |
+| Looping traces (>20% repeated lines) | 0 | **2** | 0 |
+| Median tokens, on the 10 problems all three solved | 717 | **1,367** | 939 |
+| Wall time, 8 at once | 12.8 min | 14.9 min | 20.4 min |
+
+Paired against 4.0: 2.0 lost 7 problems and gained 1 (exact McNemar p = 0.07); Bonsai lost 3 and gained 1 (p = 0.63).
+
+**Verdict on Riel's prediction ("EXL3 2.0 collapses like IQ2_XXS"): right in direction and in kind, but not yet
+proven.**
+- A 30-point drop (90% → 60%) is the size of a collapse. For comparison, IQ2_XXS fell 15 points on all of MATH-500.
+  But 20 problems give p = 0.07: strong evidence, not proof.
+- The failures have the collapse signature. There are loops (one algebra line written 42 times), arithmetic slips
+  that turn into spirals of re-checking until the cap, and reasoning that runs twice as long on the problems it
+  still solves.
+- It's not *only* long reasoning. 2.0 also got two short problems wrong on plain arithmetic (2 + 7 + 17 = "26", a
+  product of 32 instead of 64). Errors happen at every token; long chains just give them more chances to compound.
+
+**Bonsai holds.** It has no wrong answers and no loops. All four of its failures are clean reasoning that ran out
+of room: it thinks at length by design, and one trace had the right fraction just before the cap. A bigger budget
+would probably recover some of them. Trained ternary at 1.72 bpw beats rounding to 2.0 bpw, as Prism claims, though
+on this sample it doesn't reach 4.0.
+
+**For the Ornith quantization plan:** rounding alone (post-training quantization) is safe near 4 bits and breaks
+reasoning at 2. To get below ~3 bits and keep reasoning intact, the model has to be *trained* for its low-bit
+weights (QAT or distillation), which is what Bonsai did.
