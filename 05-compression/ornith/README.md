@@ -62,3 +62,19 @@ reasoning doubled. At 2 bits both look alike (12/20, loops).
 Evidence so far leans Riel's way. IQ3_XXS already loses 3 problems at an average of 3.7 bits, while EXL3 3.0 on the
 27B scored 19/20. It's confounded twice, though: EXL3's rotation plus trellis is a stronger quantizer than llama.cpp's
 IQ formats at the same bits, and the two models start from different baselines (16/20 vs 18/20).
+
+## Ablation: which part of the 35B breaks at 2 bits?
+
+bartowski's IQ2_M puts 88% of its bytes in the routed experts (IQ2_S gate/up, IQ2_S/IQ3_S down). The other 12%, the
+always-on path (attention, DeltaNet projections, shared expert, embeddings, LM head), is mixed at 2–6 bits. Two
+builds split that damage. Both are requantized from Ornith's official Q8_0 with bartowski's imatrix
+(`ablation/*.types`, `llama-quantize --allow-requantize --tensor-type-file`):
+
+- **A, experts-2bit:** experts exactly as in IQ2_M, everything else Q8_0.
+- **B, rest-2bit:** experts Q8_0, everything else exactly as in IQ2_M.
+
+Readout against Q8_0 and IQ2_M on the reasoning probe (20 problems × 4 samples):
+- If A matches IQ2_M, the experts carry the damage (evidence against spare capacity).
+- If B does, the always-on path does (canada-quant's bet).
+
+**Riel's prediction (2026-09-29): B collapses.**
