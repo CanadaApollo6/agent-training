@@ -1,0 +1,243 @@
+{
+ "label": "exl3-2.00bpw",
+ "n": 20,
+ "cap": 16384,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0
+ },
+ "wall_s": 891.166261114995,
+ "sanity": "8",
+ "correct": 12,
+ "wrong": 4,
+ "runaway": 4,
+ "cut off": 0,
+ "accuracy": 0.6,
+ "median_tokens": 2688,
+ "mean_tokens": 5711.5,
+ "total_tokens": 114230,
+ "per_problem": [
+  {
+   "id": "test/precalculus/902.json",
+   "subject": "Precalculus",
+   "gold": "\\sqrt{66}",
+   "outcome": "runaway",
+   "finished_thinking": false,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 755.0824400070123
+  },
+  {
+   "id": "test/intermediate_algebra/2015.json",
+   "subject": "Intermediate Algebra",
+   "gold": "\\{1\\pm\\sqrt{5},-2\\}",
+   "outcome": "runaway",
+   "finished_thinking": false,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 752.4293983170064
+  },
+  {
+   "id": "test/intermediate_algebra/1454.json",
+   "subject": "Intermediate Algebra",
+   "gold": "70 \\sqrt{2}",
+   "outcome": "runaway",
+   "finished_thinking": false,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 752.4294116760138
+  },
+  {
+   "id": "test/prealgebra/1512.json",
+   "subject": "Prealgebra",
+   "gold": "7\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "_Z = \\pi \\cdot 7^2 - \\pi \\cdot 6^2 = 49\\pi - 36\\pi = 13\\pi$$\n\n**Comparing the areas:**\n- Greatest area: $Y = 20\\pi$\n- Smallest area: $Z = 13\\pi$\n\n**Difference:**\n$$20\\pi - 13\\pi = 7\\pi$$\n\n\\boxed{7\\pi}",
+   "finish": "stop",
+   "tokens": 626,
+   "s": 30.818507576012053
+  },
+  {
+   "id": "test/algebra/2779.json",
+   "subject": "Algebra",
+   "gold": "20",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "sqrt{3}$$\n\nThere is no $\\sqrt{6}$ term, so $c = 0$.\n\n**Step 4: Identify the coefficients**\n\n- $a = 11$\n- $b = 9$\n- $c = 0$\n\n**Step 5: Compute $a + b + c$**\n\n$$a + b + c = 11 + 9 + 0 = 20$$\n\n\\boxed{20}",
+   "finish": "stop",
+   "tokens": 1404,
+   "s": 63.16131262399722
+  },
+  {
+   "id": "test/number_theory/1128.json",
+   "subject": "Number Theory",
+   "gold": "2",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "$, giving $x \\equiv 2 \\pmod{5}$. \u2713\n- $p = 7$: $8 \\equiv 1 \\pmod{7}$, so $x \\equiv 1 \\pmod{7}$. \u2713\n\nThe only prime for which no solution exists is $p = 2$.\n\nThe sum of all such primes is $2$.\n\n\\boxed{2}",
+   "finish": "stop",
+   "tokens": 1367,
+   "s": 61.44361445301911
+  },
+  {
+   "id": "test/number_theory/769.json",
+   "subject": "Number Theory",
+   "gold": "9",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "1}$$\n\n**Step 4: Compute $8^8 \\pmod{11}$.**\n\n$$8^8 = (8^4)^2 = 4^2 = 16 \\equiv 5 \\pmod{11}$$\n\n**Step 5: Add the results.**\n\n$$8^{34} + 8^{38} \\equiv 4 + 5 = 9 \\pmod{11}$$\n\nThe remainder is $\\boxed{9}$.",
+   "finish": "stop",
+   "tokens": 1075,
+   "s": 49.36251391598489
+  },
+  {
+   "id": "test/intermediate_algebra/2152.json",
+   "subject": "Intermediate Algebra",
+   "gold": "0",
+   "outcome": "wrong",
+   "finished_thinking": false,
+   "answer_tail": "",
+   "finish": "stop",
+   "tokens": 11827,
+   "s": 554.8668505080277
+  },
+  {
+   "id": "test/counting_and_probability/1003.json",
+   "subject": "Counting & Probability",
+   "gold": "29",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\\frac{32}{288} = \\frac{47}{288}$ \u2713\n\n**Finding m + n:**\n\nThe probability of face F is $\\frac{5}{24}$, so $m = 5$ and $n = 24$. These are relatively prime (gcd = 1).\n\n$$m + n = 5 + 24 = 29$$\n\n\\boxed{29}",
+   "finish": "stop",
+   "tokens": 2688,
+   "s": 146.95630185998743
+  },
+  {
+   "id": "test/number_theory/427.json",
+   "subject": "Number Theory",
+   "gold": "25",
+   "outcome": "wrong",
+   "finished_thinking": true,
+   "answer_tail": "7 = 8 \\times 119 = 952$ \u2713\n\n## Step 4: Find the distinct prime divisors of A\n\nThe distinct prime divisors of 952 are **2, 7, and 17**.\n\n## Step 5: Compute their sum\n\n$$2 + 7 + 17 = 26$$\n\n$$\\boxed{26}$$",
+   "finish": "stop",
+   "tokens": 950,
+   "s": 90.47407806001138
+  },
+  {
+   "id": "test/algebra/975.json",
+   "subject": "Algebra",
+   "gold": "-4",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "+20 = 16 - 36 + 20 = 0$ \u2713\n\nThe denominator is $|0| + |0| = 0$, so $f(-4)$ is undefined.\n\nAt every other real value, at least one absolute value is nonzero, making the denominator positive.\n\n\\boxed{-4}",
+   "finish": "stop",
+   "tokens": 814,
+   "s": 98.45078251301311
+  },
+  {
+   "id": "test/prealgebra/1128.json",
+   "subject": "Prealgebra",
+   "gold": "64",
+   "outcome": "wrong",
+   "finished_thinking": true,
+   "answer_tail": "t we've done above.\n\n**Computing the total:**\n\nSince each part is chosen independently, the total number of wacky personalities is:\n\n$$2 \\times 1 \\times 2 \\times 2 \\times 2 \\times 4 = 32$$\n\n\\boxed{32}",
+   "finish": "stop",
+   "tokens": 736,
+   "s": 95.63497736898717
+  },
+  {
+   "id": "test/precalculus/986.json",
+   "subject": "Precalculus",
+   "gold": "144",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "terminant:\n$$D = 0(0-4) - 0(3-0) + (3\\cdot 4 - 0\\cdot 0) = 12$$\n\nThe area is $6$, and indeed $D = 2 \\times 6 = 12$. \u2713\n\n**Final computation:**\n\n$$D^2 = (2A)^2 = 4 \\cdot A^2 = 4 \\cdot 36 = \\boxed{144}$$",
+   "finish": "stop",
+   "tokens": 2100,
+   "s": 182.96581502299523
+  },
+  {
+   "id": "test/prealgebra/1044.json",
+   "subject": "Prealgebra",
+   "gold": "5.4 \\text{ cents}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "12 + 6 + 13 = 43 \\text{ stamps}$$\n\n## Step 4: Compute the average price\n\n$$\\text{Average price} = \\frac{233}{43} \\approx 5.4186\\text{ cents}$$\n\nRounded to the nearest tenth of a cent:\n\n$$\\boxed{5.4}$$",
+   "finish": "stop",
+   "tokens": 914,
+   "s": 135.80744600703474
+  },
+  {
+   "id": "test/intermediate_algebra/582.json",
+   "subject": "Intermediate Algebra",
+   "gold": "850",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\\pi}{10} = \\cos\\frac{3\\pi}{10} - \\cos\\frac{3\\pi}{10} = 0$\n- $\\cos\\frac{5\\pi}{10} = \\cos\\frac{\\pi}{2} = 0$\n\nThe total cosine sum is $0$.\n\n**Final answer:**\n\n$$5 \\times 170 - 26 \\times 0 = \\boxed{850}$$",
+   "finish": "stop",
+   "tokens": 8845,
+   "s": 519.6543408430298
+  },
+  {
+   "id": "test/geometry/686.json",
+   "subject": "Geometry",
+   "gold": "18+2\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "he straight segments (equal to the original perimeter), the perimeter of $S$ is:\n$$\\text{Perimeter} = \\text{Perimeter of nonagon} + 2\\pi d = 9 \\times 2 + 2\\pi \\times 1 = 18 + 2\\pi$$\n\n\\boxed{18 + 2\\pi}",
+   "finish": "stop",
+   "tokens": 2825,
+   "s": 262.546287478006
+  },
+  {
+   "id": "test/geometry/880.json",
+   "subject": "Geometry",
+   "gold": "2\\sqrt{113}",
+   "outcome": "wrong",
+   "finished_thinking": true,
+   "answer_tail": "Comparing routes:**\n- Ceiling route: 8 + 10\u221a2 \u2248 22.14 ft\n- Back wall route: 12 + 2\u221a34 \u2248 23.66 ft\n- Front wall route: 12 + 2\u221a34 \u2248 23.66 ft\n\nThe shortest path is via the ceiling.\n\n\\boxed{8 + 10\\sqrt{2}}",
+   "finish": "stop",
+   "tokens": 6973,
+   "s": 481.6970920310123
+  },
+  {
+   "id": "test/prealgebra/954.json",
+   "subject": "Prealgebra",
+   "gold": "10",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "the hallway length.**\n\nDistance = Speed \u00d7 Time = 400 meters/hour \u00d7 (1/40) hours = 10 meters\n\n**Verification:**\n- Speed = 1000 m / 9000 s = 1/9 m/s\n- In 90 seconds: 90 \u00d7 (1/9) = 10 meters \u2713\n\n\\boxed{10}",
+   "finish": "stop",
+   "tokens": 549,
+   "s": 207.56373761000577
+  },
+  {
+   "id": "test/intermediate_algebra/558.json",
+   "subject": "Intermediate Algebra",
+   "gold": "(3,4]",
+   "outcome": "runaway",
+   "finished_thinking": false,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 881.1971951849991
+  },
+  {
+   "id": "test/intermediate_algebra/1849.json",
+   "subject": "Intermediate Algebra",
+   "gold": "501",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "= 0$:** $\\log(0)$ undefined \u2192 no solution.\n\n**Counting values in $[-500, 500]$:**\n- $k < 0$: $k = -500, -499, \\ldots, -1$ \u2192 **500 values**\n- $k = 8$: \u2192 **1 value**\n\nTotal: $500 + 1 = 501$\n\n\\boxed{501}",
+   "finish": "stop",
+   "tokens": 5001,
+   "s": 512.6485873140045
+  }
+ ]
+}

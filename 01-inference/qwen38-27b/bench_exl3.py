@@ -91,7 +91,7 @@ def main():
     def gen(generator, prompts, n, ignore_eos=True):
         t = time.perf_counter()
         out = generator.generate(prompt=prompts, max_new_tokens=n, min_new_tokens=n if ignore_eos else 0,
-                                 sampler=ArgmaxSampler(), completion_only=True, return_last_results=True,
+                                 sampler=ArgmaxSampler(), completion_only=True, return_last_results=True, encode_special_tokens=True,
                                  stop_conditions=None if ignore_eos else ["<|im_end|>", tokenizer.single_id("<|im_end|>")])
         return time.perf_counter() - t, out
 
@@ -111,7 +111,7 @@ def main():
 
     n_words = int(args.long * 8 / 14)
     long_prompt = chat(filler(n_words, seed=0))
-    n_long = tokenizer.encode(long_prompt).shape[-1]
+    n_long = tokenizer.encode(long_prompt, encode_special_tokens=True).shape[-1]
     t_pf, _ = gen(plain, long_prompt, 1)  # first pass: nothing cached yet, so this is prefill
     res["prefill_tokens"], res["prefill_s"] = n_long, t_pf
     print(f"== prefill: {n_long} tokens in {t_pf:.2f} s = {n_long / t_pf:.0f} tok/s")

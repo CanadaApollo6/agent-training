@@ -3,7 +3,7 @@ name = "env-exl3"
 version = "0.1.0"
 description = "ExLlamaV3, isolated: its prebuilt wheel pins torch 2.13 + CUDA 13.2"
 requires-python = ">=3.12,<3.13"
-dependencies = ["torch==2.13.*", "exllamav3", "huggingface_hub"]
+dependencies = ["torch==2.13.*", "exllamav3", "huggingface_hub", "datasets", "math-verify"]
 
 [tool.uv]
 package = false
