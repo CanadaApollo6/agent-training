@@ -246,3 +246,37 @@ R2 with a 131K window, on the 4090:
 Memory is flat now: the whole window is paid for at startup. Decode speed didn't change (same bench numbers). The first
 prompt after startup is slow (68 s for 39K) while kernels compile, so warm the server up. A 3090 has the same 24 GB,
 so a 131K context should fit there too; that still needs confirming on the 3090 itself.
+
+### R1 (all experts at 3-bit)
+
+R1 is 15 GB and fits a 131K window with a 2 GiB reserve. Decode is the same as R2 (chat 324 / code 404 sampled, 367 / 446
+greedy). Probe:
+
+| Build | Correct | Lost / gained vs Q8 | p | Median tokens, correct answers |
+|---|---|---|---|---|
+| R1 | 63/80 | 5 / 2 | 0.63 | 1,268 (+16%) |
+| R2 | 62/80 | 5 / 1 | 0.31 | 1,283 (+18%) |
+
+Adding a bit to gate/up bought one problem, which is inside the noise. At 80 samples the probe resolves differences of
+about ±4 problems. So it can't rank R1, R2 and MLX 4-bit (62–68). All of them pass. Telling them apart needs a finer
+measure, such as KL divergence from the full-precision model's next-token distribution on a fixed text.
+
+### Why low-bit experts don't speed up decode
+
+[`tensorfold/bench_experts.py`](tensorfold/bench_experts.py) times one MoE layer (route, gate/up, down) at Ornith's sizes,
+in µs:
+
+| Widths (gate-up / down) | 1 row | 2 rows | 4 rows | 6 rows |
+|---|---|---|---|---|
+| 4 / 4 | 38.0 | 38.7 | 74.8 | 98.7 |
+| 3 / 3 | 35.4 | 42.6 | 56.8 | 80.7 |
+| 2 / 3 | 38.7 | 44.5 | 62.0 | 72.4 |
+| 2 / 2 | 37.6 | 42.9 | 58.7 | 68.6 |
+
+- **At 1–2 rows:** width doesn't matter. The layer's 38 µs goes to routing, launches and latency, not to reading bytes:
+  9 experts × 3 projections of 2048 × 512 at 4 bits is about 15 MB, which is 15 µs at the 4090's bandwidth.
+- **At 4–6 rows,** the size of an MTP verification step, narrow experts save 20–30%.
+- **Over 40 layers,** the 38 µs floor adds up to about 1.5 ms of every decode step.
+
+That floor is the next target, and fused kernels are the way to attack it. Route, gate/up, SwiGLU and down can become
+one launch per layer at batch 1.

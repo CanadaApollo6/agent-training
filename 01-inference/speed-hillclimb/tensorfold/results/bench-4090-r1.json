@@ -1,0 +1,58 @@
+[
+ {
+  "label": "",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 403.6892655605963,
+  "decode_tps_all": [
+   403.69,
+   400.21,
+   419.08
+  ],
+  "ttft_s_median": 0.019780158065259457,
+  "sample": "\n\nHere's a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    result = []\n    a, b = 0, 1\n    while a < n:\n        res"
+ },
+ {
+  "label": "",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 324.2748206058269,
+  "decode_tps_all": [
+   324.27,
+   305.98,
+   328.11
+  ],
+  "ttft_s_median": 0.02336145844310522,
+  "sample": "# How GPU Matrix Multiplication Works\n\n## The Core Idea: Parallel Work\n\nA GPU has *thousands* of tiny processors (called CUDA cores) compared to a CPU's handful"
+ },
+ {
+  "label": "",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 446.3828457936237,
+  "decode_tps_all": [
+   447.83,
+   445.82,
+   446.38
+  ],
+  "ttft_s_median": 0.01997427176684141,
+  "sample": "\n\n```python\ndef fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a\n```\nThis function computes the nth Fibonacci number. I"
+ },
+ {
+  "label": "",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 366.667742084027,
+  "decode_tps_all": [
+   366.7,
+   366.67,
+   366.41
+  ],
+  "ttft_s_median": 0.02312628924846649,
+  "sample": "# How Matrix Multiplication Uses a GPU\n\n## The Big Idea\n\nA GPU (Graphics Processing Unit) is basically a chip packed with **thousands of tiny workers** that can"
+ }
+]
