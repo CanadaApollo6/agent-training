@@ -1,0 +1,243 @@
+{
+ "label": "exl3-3.00bpw",
+ "n": 20,
+ "cap": 16384,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0
+ },
+ "wall_s": 850.3116744550061,
+ "sanity": "9",
+ "correct": 19,
+ "wrong": 0,
+ "runaway": 1,
+ "cut off": 0,
+ "accuracy": 0.95,
+ "median_tokens": 1676,
+ "mean_tokens": 4480.8,
+ "total_tokens": 89616,
+ "per_problem": [
+  {
+   "id": "test/precalculus/902.json",
+   "subject": "Precalculus",
+   "gold": "\\sqrt{66}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\n## Verification\n\nThe six distances are $3, 7, 8, \\sqrt{66}, 9, 11$ with opposite pairs:\n- $3^2 + 11^2 = 130$ \u2713\n- $7^2 + 9^2 = 130$ \u2713  \n- $8^2 + (\\sqrt{66})^2 = 64 + 66 = 130$ \u2713\n\n$$\\boxed{\\sqrt{66}}$$",
+   "finish": "stop",
+   "tokens": 3282,
+   "s": 158.12796942901332
+  },
+  {
+   "id": "test/intermediate_algebra/2015.json",
+   "subject": "Intermediate Algebra",
+   "gold": "\\{1\\pm\\sqrt{5},-2\\}",
+   "outcome": "runaway",
+   "finished_thinking": false,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 748.3845085300272
+  },
+  {
+   "id": "test/intermediate_algebra/1454.json",
+   "subject": "Intermediate Algebra",
+   "gold": "70 \\sqrt{2}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": ". Checking boundary values (e.g., $f(0,0) = 50 + 10\\sqrt{41} \\approx 114.0$, $f(40,50) = 20\\sqrt{5} + 10\\sqrt{34} \\approx 103.0$) confirms $70\\sqrt{2} \\approx 99.0$ is smaller.\n\n$$\\boxed{70\\sqrt{2}}$$",
+   "finish": "stop",
+   "tokens": 15670,
+   "s": 717.3121767510311
+  },
+  {
+   "id": "test/prealgebra/1512.json",
+   "subject": "Prealgebra",
+   "gold": "7\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " 36\u03c0 \u2212 16\u03c0 = 20\u03c0\n- Area of Z = \u03c0(7)\u00b2 \u2212 \u03c0(6)\u00b2 = 49\u03c0 \u2212 36\u03c0 = 13\u03c0\n\n**Identifying greatest and smallest:**\n\n- Greatest area: Y = 20\u03c0\n- Smallest area: Z = 13\u03c0\n\n**Difference:**\n\n20\u03c0 \u2212 13\u03c0 = 7\u03c0\n\n\\boxed{7\\pi}",
+   "finish": "stop",
+   "tokens": 384,
+   "s": 22.942612256039865
+  },
+  {
+   "id": "test/algebra/2779.json",
+   "subject": "Algebra",
+   "gold": "20",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "qrt{3})^3 = 11\\sqrt{2} + 9\\sqrt{3}.\n\\]\n\nThis can be written as\n\n\\[\n11\\sqrt{2} + 9\\sqrt{3} + 0\\sqrt{6},\n\\]\n\nso\n\n\\[\na=11,\\quad b=9,\\quad c=0.\n\\]\n\nTherefore,\n\n\\[\na+b+c = 11+9+0 = 20.\n\\]\n\n\\[\n\\boxed{20}\n\\]",
+   "finish": "stop",
+   "tokens": 844,
+   "s": 43.975121786003
+  },
+  {
+   "id": "test/number_theory/1128.json",
+   "subject": "Number Theory",
+   "gold": "2",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " inverse modulo \\(p\\), and the congruence has exactly one solution.\n\nThus the only prime for which the congruence has no solution is \\(p=2\\).\n\nTherefore, the sum of all such primes is\n\n\\[\n\\boxed{2}\n\\]",
+   "finish": "stop",
+   "tokens": 645,
+   "s": 34.95745642000111
+  },
+  {
+   "id": "test/number_theory/769.json",
+   "subject": "Number Theory",
+   "gold": "9",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " = 81 \\equiv 4 \\pmod{11}$$\n\n**Compute $8^8 \\pmod{11}$:**\n$$8^8 = (8^4)^2 \\equiv 4^2 = 16 \\equiv 5 \\pmod{11}$$\n\n## Step 4: Add the results\n\n$$8^{34} + 8^{38} \\equiv 4 + 5 = 9 \\pmod{11}$$\n\n$$\\boxed{9}$$",
+   "finish": "stop",
+   "tokens": 925,
+   "s": 47.88818962400546
+  },
+  {
+   "id": "test/intermediate_algebra/2152.json",
+   "subject": "Intermediate Algebra",
+   "gold": "0",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "(c-a)}{-(a-b)(b-c)(c-a)} = 1$$\n\nAll higher-degree coefficients vanish, confirming $p(x) = 1$.\n\n## Conclusion\n\nThe polynomial $p(x)$ is the constant polynomial $1$, which has degree $0$.\n\n$$\\boxed{0}$$",
+   "finish": "stop",
+   "tokens": 4784,
+   "s": 228.6062206630013
+  },
+  {
+   "id": "test/counting_and_probability/1003.json",
+   "subject": "Counting & Probability",
+   "gold": "29",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " 8/24 = 1/3 \u2713\n- pq = 5/192 \u2713\n- 2pq + 1/9 = 10/192 + 32/288 = 15/288 + 32/288 = 47/288 \u2713\n\n## Final Answer\n\nSince p = 5/24 with gcd(5, 24) = 1, we have m = 5 and n = 24.\n\n$$m + n = 5 + 24 = \\boxed{29}$$",
+   "finish": "stop",
+   "tokens": 2537,
+   "s": 140.67305535404012
+  },
+  {
+   "id": "test/number_theory/427.json",
+   "subject": "Number Theory",
+   "gold": "25",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "7 \\cdot 156 = 1092\n\\]\n\nNow factor \\(1092\\):\n\n\\[\n1092 = 2^2 \\cdot 3 \\cdot 7 \\cdot 13\n\\]\n\nThe distinct prime divisors of \\(A\\) are\n\n\\[\n2, 3, 7, 13\n\\]\n\nTheir sum is\n\n\\[\n2+3+7+13 = 25\n\\]\n\n\\[\n\\boxed{25}\n\\]",
+   "finish": "stop",
+   "tokens": 570,
+   "s": 60.91032422200078
+  },
+  {
+   "id": "test/algebra/975.json",
+   "subject": "Algebra",
+   "gold": "-4",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\n$$x = -4$$\n\n## Verification\n\nAt $x = -4$:\n- $x^2 + 3x - 4 = 16 - 12 - 4 = 0$ \u2713\n- $x^2 + 9x + 20 = 16 - 36 + 20 = 0$ \u2713\n\nSo the denominator is $|0| + |0| = 0$, making $f(-4)$ undefined.\n\n$$\\boxed{-4}$$",
+   "finish": "stop",
+   "tokens": 692,
+   "s": 75.39353065704927
+  },
+  {
+   "id": "test/prealgebra/1128.json",
+   "subject": "Prealgebra",
+   "gold": "64",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\n\n## Calculating Total Personalities\n\nSince each feature is chosen independently, we multiply the number of choices:\n\n$$2 \\times 1 \\times 2 \\times 2 \\times 2 \\times 4 = 64$$\n\n## Answer\n\n$$\\boxed{64}$$",
+   "finish": "stop",
+   "tokens": 773,
+   "s": 83.87969264801359
+  },
+  {
+   "id": "test/precalculus/986.json",
+   "subject": "Precalculus",
+   "gold": "144",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "matrix} 0 & 0 & 1 \\\\ 3 & 0 & 1 \\\\ 0 & 4 & 1 \\end{vmatrix} = 1 \\cdot \\begin{vmatrix} 3 & 0 \\\\ 0 & 4 \\end{vmatrix} = 12$$\n\nSo the determinant is $12$, and its square is:\n\n$$12^2 = 144$$\n\n$$\\boxed{144}$$",
+   "finish": "stop",
+   "tokens": 1486,
+   "s": 129.7337508519995
+  },
+  {
+   "id": "test/prealgebra/1044.json",
+   "subject": "Prealgebra",
+   "gold": "5.4 \\text{ cents}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "mps\n\n$$12 + 12 + 6 + 13 = 43 \\text{ stamps}$$\n\n## Computing the Average\n\n$$\\text{Average price} = \\frac{233}{43} \\approx 5.4186\\text{ cents}$$\n\nRounded to the nearest tenth of a cent:\n\n$$\\boxed{5.4}$$",
+   "finish": "stop",
+   "tokens": 712,
+   "s": 108.68062064604601
+  },
+  {
+   "id": "test/intermediate_algebra/582.json",
+   "subject": "Intermediate Algebra",
+   "gold": "850",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\\sum_{k=0}^{4}\\cos\\left(\\frac{(2k+1)\\pi}{10}\\right) = \\cos 18\u00b0 + \\cos 54\u00b0 + 0 - \\cos 54\u00b0 - \\cos 18\u00b0 = 0$$\n\n## Final Answer\n\n$$\\sum_{k=0}^{4} \\frac{1}{|x_k|^2} = 5(170) - 26(0) = 850$$\n\n$$\\boxed{850}$$",
+   "finish": "stop",
+   "tokens": 3860,
+   "s": 263.0320998080424
+  },
+  {
+   "id": "test/geometry/686.json",
+   "subject": "Geometry",
+   "gold": "18+2\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ts $r$-neighborhood is:\n$$P_r = P_0 + 2\\pi r$$\n\nHere $P_0 = 9 \\times 2 = 18$ and $r = 1$, giving:\n$$P_1 = 18 + 2\\pi$$\n\nThis matches our component calculation. \u2713\n\n## Final Answer\n\n$$\\boxed{18 + 2\\pi}$$",
+   "finish": "stop",
+   "tokens": 1676,
+   "s": 188.1781235510134
+  },
+  {
+   "id": "test/geometry/880.json",
+   "subject": "Geometry",
+   "gold": "2\\sqrt{113}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ght | \u221a500 = 10\u221a5 \u2248 22.36 |\n| Front \u2192 Ceiling \u2192 Right | \u221a788 = 2\u221a197 \u2248 28.07 |\n\nThe minimum is **\u221a452 = 2\u221a113**.\n\nSince 113 is prime, this is already in simplest radical form.\n\n$$\\boxed{2\\sqrt{113}}$$",
+   "finish": "stop",
+   "tokens": 16317,
+   "s": 837.3433689250378
+  },
+  {
+   "id": "test/prealgebra/954.json",
+   "subject": "Prealgebra",
+   "gold": "10",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "e hallway length\n\nThe robot travels the hallway in 90 seconds at the same speed:\n\n$$\\text{Hallway length} = \\frac{1}{9} \\text{ m/s} \\times 90 \\text{ s} = 10 \\text{ meters}$$\n\n## Answer\n\n$$\\boxed{10}$$",
+   "finish": "stop",
+   "tokens": 364,
+   "s": 158.53964155504946
+  },
+  {
+   "id": "test/intermediate_algebra/558.json",
+   "subject": "Intermediate Algebra",
+   "gold": "(3,4]",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "erefore, for every \\(\\lambda\\in(3,4]\\), there exists \\(x\\in[0,1]\\) such that\n\n\\[\nf(x)\\neq x\n\\qquad\\text{and}\\qquad\nf(f(x))=x.\n\\]\n\n---\n\nHence the required values of \\(\\lambda\\) are\n\n\\[\n\\boxed{(3,4]}\n\\]",
+   "finish": "stop",
+   "tokens": 14492,
+   "s": 801.2187693060259
+  },
+  {
+   "id": "test/intermediate_algebra/1849.json",
+   "subject": "Intermediate Algebra",
+   "gold": "501",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "[-500, -1]$ (negative integers) | Each gives exactly 1 solution | 500 |\n| $k = 8$ | Gives exactly 1 solution | 1 |\n| All other $k$ | 0 or 2 solutions | 0 |\n\n**Total:** $500 + 1 = 501$\n\n$$\\boxed{501}$$",
+   "finish": "stop",
+   "tokens": 3219,
+   "s": 304.8690214760136
+  }
+ ]
+}

@@ -222,3 +222,28 @@ on this sample it doesn't reach 4.0.
 **For the Ornith quantization plan:** rounding alone (post-training quantization) is safe near 4 bits and breaks
 reasoning at 2. To get below ~3 bits and keep reasoning intact, the model has to be *trained* for its low-bit
 weights (QAT or distillation), which is what Bonsai did.
+
+### Where is the cliff? EXL3 3.0 bpw
+
+turboderp's KL vs bf16 is 0.05 at 4.0, 0.11 at 3.0 and 0.35 at 2.0, and 0.35 broke reasoning.
+
+**Riel's prediction (2026-09-28): about 16–18/20 at 3.0, fewer loops than 2.0.** Close to 4.0 but not quite there, a
+marked step up from 2.0, and 3.0 is the cutoff for rounding without training.
+
+| | EXL3 4.0 | **EXL3 3.0** | EXL3 2.0 | Bonsai 2 |
+|---|---|---|---|---|
+| Correct | 18/20 | **19/20** | 12/20 | 16/20 |
+| Wrong answers | 0 | **0** | 4 | 0 |
+| Hit the cap | 2 | 1 | 4 | 4 |
+| Looping traces | 0 | **0** | 2 | 0 |
+| Median tokens on the 10 problems all four solved | 717 | 844 | 1,367 | 939 |
+
+- Paired, 3.0 vs 2.0: 3.0 solved 7 problems that 2.0 missed, and 2.0 solved none that 3.0 missed (exact McNemar
+  p = 0.016). That is the first significant gap in this series.
+- 4.0 vs 3.0: 1 vs 2 in each direction, which is noise.
+
+**Verdict on Riel's prediction: right.** 3.0 is indistinguishable from 4.0 on this probe, with no loops, and it is a
+marked step up from 2.0. **The cliff for rounding without training is between 3 and 2 bits per weight** (KL 0.11
+holds; KL 0.35 breaks). One sample per problem at temperature 1.0 means 18 vs 19 is luck, not 3.0 beating 4.0.
+Its one sign of strain: two answers came in just under the cap (15,670 and 16,317 tokens), where 4.0 took 4,296 and
+ran out.

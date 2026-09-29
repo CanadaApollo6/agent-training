@@ -149,10 +149,12 @@ def main():
     parser.add_argument("--cap", type=int, default=16384, help="max new tokens, thinking included")
     parser.add_argument("--slots", type=int, default=8)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--out", type=Path, default=OUT, help="results directory")
     parser.add_argument("--deadline-min", type=float, default=1e9, help="optional heat guard: stop the run after this long")
     args = parser.parse_args()
     label = args.label or f"exl3-{args.revision}"
-    OUT.mkdir(parents=True, exist_ok=True)
+    out = args.out
+    out.mkdir(parents=True, exist_ok=True)
 
     rows = problems(args.n, args.seed)
     t0 = time.perf_counter()
@@ -167,8 +169,8 @@ def main():
                "median_tokens": lengths[len(lengths) // 2] if lengths else None,
                "mean_tokens": sum(lengths) / len(lengths) if lengths else None,
                "total_tokens": sum(lengths), "per_problem": graded}
-    (OUT / f"{label}.json").write_text(json.dumps(summary, indent=1))
-    with gzip.open(OUT / f"{label}.traces.jsonl.gz", "wt") as f:
+    (out / f"{label}.json").write_text(json.dumps(summary, indent=1))
+    with gzip.open(out / f"{label}.traces.jsonl.gz", "wt") as f:
         for row, (text, info) in zip(rows, outputs):
             f.write(json.dumps({"id": row["unique_id"], "problem": row["problem"], "gold": row["answer"],
                                 "output": text, **info}) + "\n")
