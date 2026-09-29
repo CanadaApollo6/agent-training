@@ -155,3 +155,26 @@ harmless when the experts beneath it are intact.
 2-bit experts cost no accuracy by themselves, only some extra reasoning. But it doesn't separate spare capacity from
 error averaging across the 8 active experts; both predict cheap experts. The interaction is the new finding. The
 model tolerates one damaged half and not both, so the lean builds come from protecting whichever half is smaller.
+
+## Against published builds: mudler's APEX
+
+[APEX](https://huggingface.co/mudler/Ornith-1.5-35B-A3B-APEX-GGUF) (LocalAI) uses the same idea as build A: routed
+experts compressed hard, with the always-on path kept high and a precision gradient across layers. Its card reports
+no evaluations. Same probe and server, 4 attempts per problem:
+
+| Build | File | Correct | Wrong | Hit the cap | Lost | Gained | p | Median tokens, both solved |
+|---|---|---|---|---|---|---|---|---|
+| Q8_0 | 37.8 GB | 66/80 | 4 | 10 | | | | 1,089 |
+| APEX-I-Compact | 16.5 GB | 67/80 | 4 | 9 | 0 | 1 | 1 | 1,203 |
+| IQ3_XXS (bartowski) | 15.3 GB | 65/80 | 5 | 10 | 2 | 1 | 1 | 1,297 |
+| A, experts-2bit (ours) | 13.8 GB | 66/80 | 5 | 9 | 0 | 0 | 1 | 1,534 |
+| APEX-I-Mini | 13.5 GB | 63/80 | 6 | 11 | 3 | 0 | 0.25 | 1,669 |
+| IQ2_M (bartowski) | 12.5 GB | 59/80 | 7 | 14 | 7 | 0 | 0.06 | 1,452 |
+
+- **Around 13.5 GB, build A edges APEX-I-Mini** (66 vs 63, all 3 differences in A's favour). It's not significant
+  on 20 problems, and A is 0.3 GB larger.
+- **APEX-I-Compact is the best build under 17 GB.** It's free on accuracy, and its reasoning is nearly Q8_0's length
+  (1,203 vs 1,089 tokens). The 2-bit-expert builds pay 40–50% more reasoning tokens for the same answers.
+- **For speed, that length matters as much as tokens per second.** An agent waits for the answer, not the token
+  rate. A build that decodes 20% faster but reasons 40% longer is slower to answer. The speed hill-climb scores time
+  to answer at gated quality, not decode rate alone.
