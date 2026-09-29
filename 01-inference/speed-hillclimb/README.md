@@ -169,9 +169,80 @@ Recipes:
   against 19 GB for MLX 4-bit.
 - **R1:** everything at 3-bit, the safer option.
 
+**Riel's prediction (2026-09-29, before the probe result):** "R2 passes the probe but it takes 3-4x longer."
+
 **Claude's predictions, written before measuring:**
 - **Decode:** routed experts are about a third of the bytes read per token, and R2 cuts them by about 37%. Rebuilding
   words from the planes adds a little arithmetic. MTP drafts may be accepted slightly less often. Net: about 5% faster.
 - **Context:** about 6.5 GiB freed, at about 70 MB per 1K tokens, gives roughly 100K+ tokens on 24 GB.
 - **Probe:** R2 is riskier than build A, because 2-bit affine is coarser than IQ2_S's codebook. The score should hold
   within noise, but reasoning will run 30–50% longer, as it did for build A. R1 should pass cleanly.
+
+### R2 results (rented 4090)
+
+**Speed:** unchanged.
+
+| Build | Chat, sampled | Code, sampled | Chat, greedy | Code, greedy |
+|---|---|---|---|---|
+| MLX 4-bit | 312 | 391 | 376 | 494 |
+| R2 | 319 | 406 | 360 | 468 |
+
+Different weights write different text, which changes how many MTP drafts get accepted. That moves the numbers either
+way by a few percent. The bytes saved on experts don't show up, because the always-on path sets the speed. Claude's
++5% was within noise of right, but for the wrong reason.
+
+**Probe:** it passes the gate, but it's the weakest build that has passed so far.
+
+| Build | Correct | Hit the cap | Lost / gained vs Q8 | p | Median tokens, correct answers |
+|---|---|---|---|---|---|
+| Q8 | 66/80 | 10 | – | – | 1,089 |
+| MLX 4-bit (TensorFold) | 68/80 | 6 | 1 / 3 | 0.75 | 1,290 (+18%) |
+| **R2 (TensorFold)** | 62/80 | 12 | 5 / 1 | 0.31 | 1,283 (+18%) |
+| Build A (llama.cpp) | 66/80 | 9 | 0 / 0 | 1.00 | 1,534 (+41%) |
+
+- **Riel** (passes, reasoning 3–4× longer): right that it passes. Wrong on length: correct answers ran 18% longer, the
+  same as MLX 4-bit.
+- **Claude** (score holds, 30–50% longer): wrong on length too.
+- The 4 lost problems are not significant at 80 samples, but they lean the wrong way. R2 reasons as briefly as MLX 4-bit
+  and more briefly than build A, but gets fewer right. Build A's 2-bit codebook quants (IQ2_S) keep more accuracy than
+  2-bit affine at the same size.
+
+**Context:** better, but TensorFold's working memory turned out to be the real limit. With 6.5 GiB freed, a 59K-token
+prompt fit (peak 20.3 GiB), but 78K ran out of memory. Memory grew about 100 MB per 1K tokens, where the KV cache
+itself needs only 20 MB (10 attention layers × 2 KV heads × 256 × 2 bytes × K and V). An audit of the engine found the
+same context held several times over:
+- The prompt pass's KV cache grows by doubling, and each growth copies it.
+- The decode graphs keep a second KV cache of their own, and the prompt is copied into it.
+- The prompt cache keeps the states of earlier prompts, each with its own KV buffers.
+- On top of that, the MTP head absorbed prompts in 4,096-row pieces with about 450 MB of scratch. That's where the
+  out-of-memory error hit.
+
+### Holding the context once
+
+A second patch (in the same file): the engine allocates the whole window's attention rows once, at startup.
+- Prompts are written straight into them. Decoding reads them in place.
+- Kept prompt states point into the same rows. So the cache keeps only prefixes of the latest prompt, which is exactly
+  what a growing agent conversation reuses. Switching between unrelated conversations re-reads the prompt, at about
+  10K tok/s.
+- The MTP head takes prompts in pieces of at most 1,024 rows.
+- The startup estimate counts one copy of the KV cache instead of four. It no longer needs the negative-reserve
+  override.
+
+Gates:
+- **Unit tests:** 4 new tests, plus the existing 12. Each request in a mixed sequence (resume, unrelated prompt, resume
+  again, shorter prompt) matches serial decoding. Every kept state's KV rows match a fresh prompt pass bit for bit.
+  Dropping the prefix-only rule makes that test fail; token equality alone didn't catch it.
+- **Real model:** 4 prompts × 1,024 greedy tokens with drafts matched the serial path token for token.
+
+R2 with a 131K window, on the 4090:
+
+| Prompt | Prefill | Recall | Peak memory |
+|---|---|---|---|
+| 39K tokens | 11.5K tok/s (after warmup) | correct | 20.20 GiB |
+| 79K | 8.1K tok/s | correct | 20.26 GiB |
+| 106K | 6.8K tok/s | correct | 20.27 GiB |
+| 126K | 6.0K tok/s | correct | 20.27 GiB |
+
+Memory is flat now: the whole window is paid for at startup. Decode speed didn't change (same bench numbers). The first
+prompt after startup is slow (68 s for 39K) while kernels compile, so warm the server up. A 3090 has the same 24 GB,
+so a 131K context should fit there too; that still needs confirming on the 3090 itself.

@@ -1,0 +1,58 @@
+[
+ {
+  "label": "",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 405.7437298132136,
+  "decode_tps_all": [
+   357.93,
+   432.46,
+   405.74
+  ],
+  "ttft_s_median": 0.019562849774956703,
+  "sample": "\n\n<think>\nThe user wants a short Python function that computes the Fibonacci sequence and an explanation. Let me write a clean, well-documented function and exp"
+ },
+ {
+  "label": "",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 317.59155369272963,
+  "decode_tps_all": [
+   317.59,
+   325.96,
+   310.07
+  ],
+  "ttft_s_median": 0.023041818290948868,
+  "sample": "## How GPU Matrix Multiplication Works\n\n**The core idea: GPUs do \"embarrassingly parallel\" work.**\n\nA GPU has thousands of tiny processors (called *cores*) comp"
+ },
+ {
+  "label": "",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 467.0049082526699,
+  "decode_tps_all": [
+   467.06,
+   467.0,
+   466.63
+  ],
+  "ttft_s_median": 0.01946919411420822,
+  "sample": "\n\n```python\ndef fibonacci(n):\n    if n <= 0:\n        return \"Input should be a positive integer.\"\n    fib_sequence = [0, 1]\n    for _ in range(2, n):\n        ne"
+ },
+ {
+  "label": "",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 358.69466676738085,
+  "decode_tps_all": [
+   358.66,
+   358.75,
+   358.69
+  ],
+  "ttft_s_median": 0.02324976772069931,
+  "sample": "# How Matrix Multiplication Uses a GPU\n\n## The Core Idea: Massively Parallel Work\n\nA CPU is like a single fast worker who does tasks one at a time. A GPU is lik"
+ }
+]

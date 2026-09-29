@@ -97,7 +97,7 @@ def run_exl3(args, rows):
                 info[i] = {"finish": "cap" if r["eos_reason"] == "max_new_tokens" else "stop",
                            "tokens": r["new_tokens"], "s": time.perf_counter() - t0}
                 print(f"   problem {i:>2} done: {r['new_tokens']:>5} tokens, {info[i]['finish']},"
-                      f" {len(info)}/{len(rows)} after {time.perf_counter() - t0:.0f} s")
+                      f" {len(info)}/{len(rows)} after {time.perf_counter() - t0:.0f} s", flush=True)
         if time.perf_counter() - last > 60:
             last = time.perf_counter()
             print(f"   ... {time.perf_counter() - t0:.0f} s, {len(info)}/{len(rows)} finished")
@@ -125,7 +125,7 @@ def run_server(args, rows):
         reasoning = getattr(c.message, "reasoning_content", None) or ""
         finish = "cap" if c.finish_reason == "length" else "stop"
         print(f"   problem {i:>2} done: {r.usage.completion_tokens:>5} tokens, {finish}, after"
-              f" {time.perf_counter() - t0:.0f} s")
+              f" {time.perf_counter() - t0:.0f} s", flush=True)
         return reasoning, c.message.content or "", {"finish": finish, "tokens": r.usage.completion_tokens,
                                                     "s": time.perf_counter() - t0}
 

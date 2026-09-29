@@ -1,0 +1,17 @@
+== 30000
+{"prompt_tokens": 39077, "prefill_s": 68.03, "prefill_tps": 574, "answer": "6261", "expected": 6261}
+peak 20204 MiB
+== 60000
+{"prompt_tokens": 78995, "prefill_s": 9.74, "prefill_tps": 8113, "answer": "1653", "expected": 1653}
+peak 20264 MiB
+== 80000
+{"prompt_tokens": 105625, "prefill_s": 15.53, "prefill_tps": 6799, "answer": "6891", "expected": 6891}
+peak 20272 MiB
+== 95000
+{"prompt_tokens": 125561, "prefill_s": 20.88, "prefill_tps": 6014, "answer": "1149", "expected": 1149}
+peak 20272 MiB
+{"label": "", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 405.7437298132136, "decode_tps_all": [357.93, 432.46, 405.74], "ttft_s_median": 0.019562849774956703}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 317.59155369272963, "decode_tps_all": [317.59, 325.96, 310.07], "ttft_s_median": 0.023041818290948868}
+{"label": "", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 467.0049082526699, "decode_tps_all": [467.06, 467.0, 466.63], "ttft_s_median": 0.01946919411420822}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 358.69466676738085, "decode_tps_all": [358.66, 358.75, 358.69], "ttft_s_median": 0.02324976772069931}
+EVAL_DONE

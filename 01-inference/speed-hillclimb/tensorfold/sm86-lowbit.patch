@@ -749,6 +749,30 @@ index 7745335..3e087e2 100644
 -  TORCH_CHECK(false, "experts: no prefill kernel for group ", gs, " and epilogue ", epi);
 +  TORCH_CHECK(false, "experts: no prefill kernel for group ", gs, ", epilogue ", epi, " and ", bits, " bits");
  }
+diff --git i/src/tensorfold/cuda/geometry.py w/src/tensorfold/cuda/geometry.py
+index ee444c2..1bee3d0 100644
+--- i/src/tensorfold/cuda/geometry.py
++++ w/src/tensorfold/cuda/geometry.py
+@@ -133,7 +133,8 @@ def layer_counts(t: dict) -> tuple[int, int]:
+ 
+ 
+ def gdn_geometry(t: dict, world: int, reserve: int, *, indexed: bool = False, mtp: bool = False,
+-                 kv_bits: int = 16) -> Geometry:
++                 kv_bits: int = 16, held_once: bool = False) -> Geometry:
++    """``held_once``: the engine allocates the window's attention rows (and the MTP layer's) once, up front."""
+     linear, attention = layer_counts(t)
+     d, h = int(t["hidden_size"]), int(t["num_attention_heads"]) // world
+     hk = int(t["num_key_value_heads"]) // world
+@@ -171,6 +172,9 @@ def gdn_geometry(t: dict, world: int, reserve: int, *, indexed: bool = False, mt
+             blocks = (capacity + ratio - 1) // ratio
+             scratch = (2 if mtp else 1) * rows * (h * (hd + 2) * chunks + blocks) * 4
+             scratch += PREFILL_ATT_ROWS * (h * (hd + 2) * chunks + blocks) * 4
++        elif held_once:
++            cache = count * capacity * hk * hd * 4
++            scratch = rows * h * (hd + 2) * ((capacity + 511) // 512) * 4
+         else:
+             # Bound two retained prefixes, current KV state and a growth copy; speculative rows use separate workspace.
+             rounded = 1 << (max(1024, capacity - reserve) - 1).bit_length()
 diff --git i/src/tensorfold/cuda/kernels/qmm.cu w/src/tensorfold/cuda/kernels/qmm.cu
 index a763387..3a92d90 100644
 --- i/src/tensorfold/cuda/kernels/qmm.cu
@@ -905,6 +929,149 @@ index 6e82b36..992413c 100644
  CUDA_QUANTIZATION = (4, 64)
  
  
+diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/decode.py w/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
+index bbdec31..1c546c8 100644
+--- i/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
++++ w/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
+@@ -18,6 +18,8 @@ from tensorfold.families.qwen3_5.cuda.prefill import chunks, prefill_chunk
+ 
+ from .mtp import Cache, Head
+ 
++HEAD_ROWS = 1024     # prompt rows the MTP head absorbs at once: its per-row scratch stays small on long prompts
++
+ 
+ @dataclass
+ class Carry:
+@@ -77,8 +79,12 @@ def prefill(w, head: Head | None, prompt: Sequence[int], sampling: Sampling | No
+                 continue
+             rows = normed if held is None else torch.cat([held, normed])
+             start = a - (0 if held is None else 1)
+-            if rows.shape[0] > 1:
+-                head.forward(mc, rows[:-1], prompt[start + 1:b], start)
++            n = rows.shape[0] - 1
++            pieces = -(-n // HEAD_ROWS)                  # even pieces, each past tree attention's MAX_NODES
++            for i in range(pieces):
++                r0, r1 = n * i // pieces, n * (i + 1) // pieces
++                head.forward(mc, rows[r0:r1], prompt[start + 1 + r0:start + 1 + r1], start + r0)
++            if n > 0:
+                 mc.pos = b - 1
+             held = rows[-1:]
+         if end < len(prompt):
+diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/engine.py w/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
+index 2faf65f..2e16b59 100644
+--- i/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
++++ w/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
+@@ -9,7 +9,7 @@ from typing import Any, Callable
+ 
+ from . import CONFIDENCE, DEPTH
+ 
+-KEEP = 4             # prompt states kept to resume from (they share the live request's buffers)
++KEEP = 4             # prompt states kept to resume from: prefixes of the last prompt, in its attention buffers
+ 
+ 
+ def mtp_weights(name: str, info: dict) -> tuple[int, int]:
+@@ -39,7 +39,8 @@ class Qwen36Engine:
+         self.depth, self.confidence = int(depth), float(confidence)
+         extra = (Path(model_dir) / MTP_FILE,) if self.depth and (Path(model_dir) / MTP_FILE).is_file() else ()
+         self.capacity_plan = admit(model_dir, context, context_explicit, torch,
+-                                   lambda text: gdn_geometry(text, 1, self.depth + 1, mtp=self.depth > 0),
++                                   lambda text: gdn_geometry(text, 1, self.depth + 1, mtp=self.depth > 0,
++                                                             held_once=self.depth > 0),
+                                    lambda name, info: (mtp_weights(name, info) if ".mtp." in name
+                                                        else linear_weights(name, info)),
+                                    extra_files=extra)
+@@ -57,6 +58,9 @@ class Qwen36Engine:
+             from .graphs import Graphs
+ 
+             self.graphs = Graphs(self.w, self.head, self.context_window + self.depth + 1)
++            # the whole window's attention rows once, up front: prompts prefill into them and decoding reads them in
++            # place, so the context is held once and never moves (no growth copies)
++            self.graphs.grow(self.graphs.capacity, exact=True)
+         torch.cuda.empty_cache()
+         self.eos = tuple(self.w.config.eos)
+         self.points = resume_points(model_dir)
+@@ -96,12 +100,19 @@ class Qwen36Engine:
+             stats.update(decode_s=round(res.seconds, 4), rounds=res.rounds, min_rows=min(res.widths, default=0))
+             return stats
+         hit = self._resume(prompt)
++        # one set of attention buffers: the prompt writes past its kept prefix, so only prefixes it extends stay
++        n = len(hit[0]) if hit else 0
++        self.cache.entries = [e for e in self.cache.entries if len(e[0]) <= n and list(prompt[:len(e[0])]) == e[0]]
++        self.cache.hit &= {tuple(e[0]) for e in self.cache.entries}
++        if hit:
++            state, cache, held = hit[1], hit[2][0], hit[2][1]
++        else:
++            (state, cache), held = self.graphs.fresh(), None
+         stops = [p for p in (self.points(prompt) if self.points is not None else [])
+                  if p >= (len(hit[0]) if hit else 0) + MIN_GAP]
+         keep = lambda p, st, mc, held: self.cache.add(list(prompt[:p]), st, (mc, held))       # noqa: E731
+-        st, mc, first, carry = prefill(self.w, self.head, prompt, sampling,
+-                                       state=hit[1] if hit else None, cache=hit[2][0] if hit else None,
+-                                       held=hit[2][1] if hit else None, stops=stops, keep=keep)
++        st, mc, first, carry = prefill(self.w, self.head, prompt, sampling, state=state, cache=cache, held=held,
++                                       stops=stops, keep=keep)
+         if not (stops and len(prompt) - stops[-1] < MIN_GAP):
+             self.cache.add(list(prompt), st, (mc.view(), carry.states))
+         stats = {"prefill_s": round(time.perf_counter() - t0, 4), "cached": len(hit[0]) if hit else 0,
+diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py w/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
+index d7d8e8a..3f6797b 100644
+--- i/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
++++ w/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
+@@ -27,11 +27,11 @@ class Graphs:
+     def _bucket(self, end: int) -> int:
+         return min(self.rows, max(BUCKET, 1 << (end - 1).bit_length()))
+ 
+-    def load(self, st: State, mc: Cache, need: int) -> tuple[State, Cache]:
+-        """A request's committed state and head cache in the fixed buffers, grown (graphs dropped) past ``need`` rows."""
++    def grow(self, need: int, exact: bool = False) -> bool:
++        """Buffers of at least ``need`` rows (graphs dropped when they move); ``exact``: ``need`` rows, not a power of two."""
+ 
+         if need > self.rows:
+-            self.rows = min(self.capacity, max(BUCKET, 1 << (need - 1).bit_length()))
++            self.rows = min(self.capacity, need if exact else max(BUCKET, 1 << (need - 1).bit_length()))
+             self.target.clear()
+             self.mtp.clear()
+             self.st = self.mc = None
+@@ -42,17 +42,36 @@ class Graphs:
+             self.st = State(self.w)
+             reserve(self.st, self.rows)
+             self.mc = Cache(self.w, self.rows)
++            return True
++        return False
++
++    def fresh(self) -> tuple[State, Cache]:
++        """An empty prompt state and head cache whose attention rows are these buffers: a prefill into them writes the
++        rows decoding then reads in place, so the context is held once. Their GDN states are their own."""
++
++        st = State(self.w)
++        st.kv = list(self.st.kv)
++        st.limit = self.rows
++        mc = object.__new__(Cache)
++        mc.k, mc.v, mc.pos = self.mc.k, self.mc.v, 0
++        return st, mc
++
++    def load(self, st: State, mc: Cache, need: int) -> tuple[State, Cache]:
++        """A request's committed state and head cache in the fixed buffers, grown (graphs dropped) past ``need`` rows."""
++
++        self.grow(need)
+         dst = self.st
+         for a, b in zip(dst.rec + dst.conv, st.rec + st.conv):
+             if a is not None:
+                 a.copy_(b)
+         for kv, src in zip(dst.kv, st.kv):
+-            if kv is not None:
++            if kv is not None and kv[0].data_ptr() != src[0].data_ptr():      # a prefill into ``fresh`` is in place
+                 kv[0][:st.pos].copy_(src[0][:st.pos])
+                 kv[1][:st.pos].copy_(src[1][:st.pos])
+         dst.pos = st.pos
+-        self.mc.k[:mc.pos].copy_(mc.k[:mc.pos])
+-        self.mc.v[:mc.pos].copy_(mc.v[:mc.pos])
++        if self.mc.k.data_ptr() != mc.k.data_ptr():
++            self.mc.k[:mc.pos].copy_(mc.k[:mc.pos])
++            self.mc.v[:mc.pos].copy_(mc.v[:mc.pos])
+         self.mc.pos = mc.pos
+         return dst, self.mc
+ 
 diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/weights.py w/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
 index 745bfaa..9c4239a 100644
 --- i/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
@@ -1054,3 +1221,86 @@ index 0000000..d647e15
 +    narrow, full = pair(2, 3)
 +    # a block: 2 * bits words a lane (4-bit: 8), then 32 words of scales and biases
 +    assert (narrow.up.shape[-1], narrow.down.shape[-1], full.up.shape[-1]) == (160, 224, 288)
+diff --git i/tests/cuda/test_qwen36_moe_arena.py w/tests/cuda/test_qwen36_moe_arena.py
+new file mode 100644
+index 0000000..3d6f95d
+--- /dev/null
++++ w/tests/cuda/test_qwen36_moe_arena.py
+@@ -0,0 +1,77 @@
++"""The MoE engine holds the context once: prompts prefill into the decode graphs' buffers, kept prompt states live
++there too, and every request still equals serial decoding whatever came before it."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda.streams import PrefixCache  # noqa: E402
++from tensorfold.families.qwen3_5_moe.cuda import decode, engine as engine_mod  # noqa: E402
++from tensorfold.families.qwen3_5_moe.cuda.graphs import Graphs  # noqa: E402
++
++from test_qwen36_moe import SAMPLINGS, _model, _serial  # noqa: E402
++
++WINDOW = 512
++
++
++def _engine(w, head, depth=3):
++    e = object.__new__(engine_mod.Qwen36Engine)
++    e.w, e.head, e.depth, e.confidence = w, head, depth, engine_mod.CONFIDENCE
++    e.context_window = WINDOW
++    e.graphs = Graphs(w, head, WINDOW + depth + 1)
++    e.graphs.grow(e.graphs.capacity, exact=True)
++    e.eos, e.points, e.cache = (), None, PrefixCache(engine_mod.KEEP)
++    return e
++
++
++def _run(e, prompt, sampling, count):
++    out = []
++    e.generate(prompt, count, sampling, lambda toks: out.extend(toks) and False, stop_eos=False)
++    return out[:count]
++
++
++@pytest.mark.parametrize("sampling", SAMPLINGS[:2])
++def test_requests_equal_serial_whatever_came_before(sampling):
++    w, head = _model()
++    e = _engine(w, head)
++    a = list(range(20, 60))
++    b = [7, 9, 11] * 9
++    turns = [a, a + [3, 4, 5, 6] * 5, b, a + [3, 4, 5, 6] * 5, a[:25], a + [8] * 30]
++    rows = e.graphs.st.kv[1][0].data_ptr()
++    for prompt in turns:
++        got = _run(e, prompt, sampling, 24)
++        assert got == _serial(w, prompt, sampling, 24)[:24], prompt[:8]
++        # the kept states are prefixes of the last prompt, in the one set of buffers
++        assert all(prompt[:len(ids)] == ids for ids, _, _ in e.cache.entries)
++        assert all(st.kv[1][0].data_ptr() == rows for _, st, _ in e.cache.entries)
++        for ids, st, (mc, _) in e.cache.entries:           # and hold exactly what a fresh prefill of them writes
++            fresh, fmc, _, _ = decode.prefill(w, head, ids, None)
++            n = len(ids)
++            assert torch.equal(st.kv[1][0][:n], fresh.kv[1][0][:n]) and torch.equal(st.kv[1][1][:n], fresh.kv[1][1][:n])
++            assert torch.equal(mc.k[:n - 1], fmc.k[:n - 1]) and torch.equal(mc.v[:n - 1], fmc.v[:n - 1])
++    assert e.graphs.st.kv[1][0].data_ptr() == rows            # never regrown
++
++
++def test_a_resumed_request_reuses_the_prefix():
++    w, head = _model()
++    e = _engine(w, head)
++    a = list(range(20, 60))
++    stats = []
++    for prompt in (a, a + [1, 2, 3] * 4):
++        out = []
++        stats.append(e.generate(prompt, 8, None, lambda toks: out.extend(toks) and False, stop_eos=False))
++    assert stats[1]["cached"] == len(a)
++
++
++def test_the_head_absorbs_a_long_prompt_in_pieces(monkeypatch):
++    w, head = _model()
++    prompt = [(i * 37) % 250 + 3 for i in range(420)]
++    want = _serial(w, prompt, None, 16)[:16]
++    whole = decode.prefill(w, head, prompt, None)
++    monkeypatch.setattr(decode, "HEAD_ROWS", 150)          # 3 pieces of 139-140 rows, each past MAX_NODES
++    e = _engine(w, head)
++    assert _run(e, prompt, None, 16) == want
++    pieces = decode.prefill(w, head, prompt, None)
++    assert pieces[1].pos == whole[1].pos == len(prompt) - 1 and pieces[2] == whole[2]
