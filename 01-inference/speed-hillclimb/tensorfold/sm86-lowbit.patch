@@ -1,0 +1,1056 @@
+diff --git i/src/tensorfold/cuda/build.py w/src/tensorfold/cuda/build.py
+index 5eb6d2b..26c18af 100644
+--- i/src/tensorfold/cuda/build.py
++++ w/src/tensorfold/cuda/build.py
+@@ -6,7 +6,7 @@ import os
+ import threading
+ from typing import Any
+ 
+-MIN_CAPABILITY = (9, 0)         # the kernels use thread-block clusters and FP8 MMA
++MIN_CAPABILITY = (8, 0)         # bf16 MMA and cp.async; clusters (9.0) and FP8 MMA (8.9) have fallbacks below them
+ # stop first: when the lock goes, a waiting start imports whatever module is there without building, even an old one
+ HINT = "if no other build is running, a killed build left it: stop this start, delete the lock and start again"
+ LOCK_WAIT_SECONDS = 60.0        # a start still waiting on the same lock this long says so again
+@@ -20,11 +20,19 @@ def arch_flags() -> list[str]:
+     major, minor = torch.cuda.get_device_capability()
+     if (major, minor) < MIN_CAPABILITY:
+         raise RuntimeError(f"TensorFold's CUDA kernels need compute capability {MIN_CAPABILITY[0]}.{MIN_CAPABILITY[1]} "
+-                           f"or newer (thread-block clusters and FP8 MMA); this GPU ({torch.cuda.get_device_name()}) "
++                           f"or newer (bf16 MMA and cp.async); this GPU ({torch.cuda.get_device_name()}) "
+                            f"is {major}.{minor}")
+     return [f"-gencode=arch=compute_{major}{minor},code=sm_{major}{minor}"]
+ 
+ 
++def fp8_mma() -> bool:
++    """Whether this GPU has FP8 MMA (8.9 and newer); below it prompts take the bf16 kernels."""
++
++    import torch
++
++    return torch.cuda.get_device_capability() >= (8, 9)
++
++
+ def load(name: str, sources: str | list[str], **kwargs: Any) -> Any:
+     """torch's JIT ``load`` for this GPU only (NVIDIA's containers list every architecture back to sm_80), with a line when it compiles or waits on a lock."""
+ 
+@@ -98,4 +106,4 @@ def _say(text: str) -> None:
+     print(f"[tensorfold] {text}", flush=True)
+ 
+ 
+-__all__ = ["MIN_CAPABILITY", "arch_flags", "load"]
++__all__ = ["MIN_CAPABILITY", "arch_flags", "fp8_mma", "load"]
+diff --git i/src/tensorfold/cuda/capacity.py w/src/tensorfold/cuda/capacity.py
+index 0136925..37d28a1 100644
+--- i/src/tensorfold/cuda/capacity.py
++++ w/src/tensorfold/cuda/capacity.py
+@@ -5,6 +5,7 @@ from __future__ import annotations
+ from dataclasses import dataclass
+ import json
+ import math
++import os
+ from pathlib import Path
+ import re
+ import struct
+@@ -156,7 +157,10 @@ def unified(torch) -> bool:
+ 
+ def available_bytes(torch) -> int:
+     free, total = map(int, torch.cuda.mem_get_info())
+-    available = max(0, free - max(4 * GIB, math.ceil(total / 10)))
++    # TENSORFOLD_CUDA_RESERVE_GIB: a smaller reserve for a 24 GB card, whose weights leave little room
++    reserve = os.environ.get("TENSORFOLD_CUDA_RESERVE_GIB")
++    held = int(float(reserve) * GIB) if reserve else max(4 * GIB, math.ceil(total / 10))
++    available = max(0, free - held)
+     memory = _meminfo()
+     if memory is None:
+         return available
+diff --git i/src/tensorfold/cuda/experts.cpp w/src/tensorfold/cuda/experts.cpp
+index b993962..57a9edd 100644
+--- i/src/tensorfold/cuda/experts.cpp
++++ w/src/tensorfold/cuda/experts.cpp
+@@ -2,13 +2,14 @@
+ 
+ void experts_plan_cuda(const at::Tensor& picks, int64_t pairs, int64_t experts, int64_t tile, at::Tensor& members,
+                        at::Tensor& items, at::Tensor& counts, at::Tensor& rank, at::Tensor& hist);
+-void experts_run_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
++void experts_run_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride, int64_t slots,
+                       const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items, const at::Tensor& counts,
+-                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units);
+-void experts_prefill_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
+-                          const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
++                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units,
++                      const at::Tensor& w4, int64_t e4);
++void experts_prefill_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride,
++                          int64_t slots, const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
+                           const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int64_t n,
+-                          double limit, int64_t max_items);
++                          double limit, int64_t max_items, const at::Tensor& w4, int64_t e4);
+ 
+ static void check(const at::Tensor& t, const char* name, at::ScalarType dtype) {
+   TORCH_CHECK(t.is_cuda() && t.scalar_type() == dtype, name, ": expected a CUDA tensor of the right dtype");
+@@ -37,22 +38,33 @@ void plan(const at::Tensor& picks, int64_t pairs, int64_t experts, int64_t tile,
+   experts_plan_cuda(picks, pairs, experts, tile, members, items, counts, rank, hist);
+ }
+ 
+-void run(int64_t gs, int64_t epi, const at::Tensor& x, int64_t slots, const at::Tensor& w, int64_t kg, int64_t nb,
+-         const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor out, int64_t n,
+-         double limit, int64_t max_units) {
+-  check_call(x, kg * gs, w, out, n, nb, epi);
+-  experts_run_cuda(gs, epi, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit, max_units);
++// bits: the experts' width (2, 3 or 4); w4 holds expert e4 (the shared expert) at 4 bits when bits < 4 (e4 -1: none)
++static void check_bits(int64_t gs, int64_t bits, const at::Tensor& w4, int64_t e4) {
++  TORCH_CHECK(bits == 4 || (gs == 64 && (bits == 2 || bits == 3)), "experts: 4-bit, or 2- and 3-bit in groups of 64");
++  check(w4, "w4", at::kInt);
++  TORCH_CHECK(w4.is_contiguous() && (e4 < 0 || bits < 4), "w4: contiguous, used only below 4 bits");
+ }
+ 
+-void prefill(int64_t gs, int64_t epi, const at::Tensor& x, int64_t slots, const at::Tensor& w, int64_t kg,
+-             int64_t nb, const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor out,
+-             int64_t n, double limit, int64_t max_items) {
++void run(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t slots, const at::Tensor& w, int64_t kg,
++         int64_t nb, const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor out,
++         int64_t n, double limit, int64_t max_units, const at::Tensor& w4, int64_t e4) {
+   check_call(x, kg * gs, w, out, n, nb, epi);
+-  experts_prefill_cuda(gs, epi, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit, max_items);
++  check_bits(gs, bits, w4, e4);
++  experts_run_cuda(gs, epi, bits, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit, max_units,
++                   w4, e4);
++}
++
++void prefill(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t slots, const at::Tensor& w,
++             int64_t kg, int64_t nb, const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members,
++             at::Tensor out, int64_t n, double limit, int64_t max_items, const at::Tensor& w4, int64_t e4) {
++  check_call(x, kg * gs, w, out, n, nb, epi);
++  check_bits(gs, bits, w4, e4);
++  experts_prefill_cuda(gs, epi, bits, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit,
++                       max_items, w4, e4);
+ }
+ 
+ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+   m.def("plan", &plan, "group a layer's (row, slot) pairs by expert into items of at most tile pairs");
+-  m.def("run", &run, "grouped 4-bit expert matmul, decode form (epilogue 0: fp32, 1: relu^2, 2: SwiGLU)");
+-  m.def("prefill", &prefill, "grouped 4-bit expert matmul, prefill form (3: bf16 out)");
++  m.def("run", &run, "grouped 2/3/4-bit expert matmul, decode form (epilogue 0: fp32, 1: relu^2, 2: SwiGLU)");
++  m.def("prefill", &prefill, "grouped 2/3/4-bit expert matmul, prefill form (3: bf16 out)");
+ }
+diff --git i/src/tensorfold/cuda/experts.cu w/src/tensorfold/cuda/experts.cu
+index 6cb5ba9..4c68d50 100644
+--- i/src/tensorfold/cuda/experts.cu
++++ w/src/tensorfold/cuda/experts.cu
+@@ -18,6 +18,12 @@ __device__ __forceinline__ uint4 ld_w(const uint4* p) {
+   return r;
+ }
+ 
++__device__ __forceinline__ uint2 ld_w2(const uint2* p) {
++  uint2 r;
++  asm volatile("ld.global.nc.L1::no_allocate.v2.u32 {%0, %1}, [%2];\n" : "=r"(r.x), "=r"(r.y) : "l"(p));
++  return r;
++}
++
+ __device__ __forceinline__ uint4 ld_x(const __nv_bfloat16* p) { return __ldg(reinterpret_cast<const uint4*>(p)); }
+ 
+ // a row's group sum: the lane's inputs in order, then the quad (every lane of the quad gets the same bits)
+@@ -37,25 +43,25 @@ __device__ __forceinline__ float group_sum(const uint4 (&v)[XV]) {
+   return s;
+ }
+ 
+-template <int GS, int M>
++template <int GS, int M, int BITS>
+ struct Stage {
+-  uint4 w[M][Geo<GS>::WV];
+-  uint4 sb[M][Geo<GS>::SBV];
++  uint32_t w[M][Geo<GS, BITS>::WORDS];
++  uint4 sb[M][Geo<GS, BITS>::SBV];
+   uint4 xa[Geo<GS>::XV];       // row gq of the tile: the lane's inputs of the group
+   uint4 xb[Geo<GS>::XV];       // row gq + 8
+ };
+ 
+-template <int GS, int M>
+-__device__ __forceinline__ void load_stage(Stage<GS, M>& st, const uint4* blk, int g, int lane, int t,
++template <int GS, int M, int BITS>
++__device__ __forceinline__ void load_stage(Stage<GS, M, BITS>& st, const uint4* blk, int g, int lane, int t,
+                                            const __nv_bfloat16* x0, const __nv_bfloat16* x1, bool v0, bool v1) {
+-  using G = Geo<GS>;
++  using G = Geo<GS, BITS>;
+   const uint4* b = blk + (size_t)g * (M * G::BLOCK);
+ #pragma unroll
+   for (int m = 0; m < M; ++m) {
++    lane_words<GS, BITS>(st.w[m], b + m * G::BLOCK, lane, [](const uint4* q) { return ld_w(q); },
++                         [](const uint2* q) { return ld_w2(q); });
+ #pragma unroll
+-    for (int c = 0; c < G::WV; ++c) st.w[m][c] = ld_w(b + m * G::BLOCK + c * 32 + lane);
+-#pragma unroll
+-    for (int c = 0; c < G::SBV; ++c) st.sb[m][c] = ld_w(b + m * G::BLOCK + 32 * G::WV + t * G::SBV + c);
++    for (int c = 0; c < G::SBV; ++c) st.sb[m][c] = ld_w(b + m * G::BLOCK + G::WU + t * G::SBV + c);
+   }
+   const uint4 zero = make_uint4(0u, 0u, 0u, 0u);
+   const int k0 = g * GS;
+@@ -66,9 +72,9 @@ __device__ __forceinline__ void load_stage(Stage<GS, M>& st, const uint4* blk, i
+   }
+ }
+ 
+-template <int GS, int M>
+-__device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const Stage<GS, M>& st, bool hi) {
+-  using G = Geo<GS>;
++template <int GS, int M, int BITS>
++__device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const Stage<GS, M, BITS>& st, bool hi) {
++  using G = Geo<GS, BITS>;
+   const float xsa = group_sum<G::XV>(st.xa);
+   const float xsb = group_sum<G::XV>(st.xb);
+ #pragma unroll
+@@ -87,7 +93,7 @@ __device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const
+ #pragma unroll
+       for (int j = 0; j < NTW; ++j) {
+         const int wi = j * (GS / 32) + (ks >> 1);
+-        const uint32_t word = comp(st.w[m][wi >> 2], wi & 3);
++        const uint32_t word = nibword<BITS>(st.w[m], wi);
+         mma(p[j], a0, a1, a2, a3, nib2(word, sh), nib2(word, sh + 4));
+       }
+     }
+@@ -107,31 +113,33 @@ __device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const
+   }
+ }
+ 
+-template <int GS, int M, int D>
++template <int GS, int M, int D, int BITS>
+ __device__ __forceinline__ void k_loop(float (&acc)[M][1][NTW][4], const uint4* blk, int KG, int lane, int t,
+                                        const __nv_bfloat16* x0, const __nv_bfloat16* x1, bool v0, bool v1) {
+-  Stage<GS, M> st[D];
++  Stage<GS, M, BITS> st[D];
+ #pragma unroll
+   for (int d = 0; d < D; ++d)
+-    if (d < KG) load_stage<GS, M>(st[d], blk, d, lane, t, x0, x1, v0, v1);
++    if (d < KG) load_stage<GS, M, BITS>(st[d], blk, d, lane, t, x0, x1, v0, v1);
+   for (int g0 = 0; g0 < KG; g0 += D) {
+ #pragma unroll
+     for (int d = 0; d < D; ++d) {
+       const int g = g0 + d;
+       if (g < KG) {
+-        compute_stage<GS, M>(acc, st[d], v1);
+-        if (g + D < KG) load_stage<GS, M>(st[d], blk, g + D, lane, t, x0, x1, v0, v1);
++        compute_stage<GS, M, BITS>(acc, st[d], v1);
++        if (g + D < KG) load_stage<GS, M, BITS>(st[d], blk, g + D, lane, t, x0, x1, v0, v1);
+       }
+     }
+   }
+ }
+ 
+ // Pair p reads X row p / slots when slots > 0 (X holds tokens), else X row p (X holds a row a pair).
+-template <int GS, int M, int EPI, int D, int WARPS>
++// Experts are BITS wide, except expert e4 (the shared expert, -1: none), which is 4-bit in W4.
++template <int GS, int M, int EPI, int D, int WARPS, int BITS>
+ __global__ void __launch_bounds__(WARPS * 32)
+     expert_kernel(const __nv_bfloat16* __restrict__ X, int x_stride, int slots, const uint4* __restrict__ W, int KG,
+                   int NB, const int* __restrict__ items, const int* __restrict__ counts,
+-                  const int* __restrict__ members, void* __restrict__ out, int N, float limit) {
++                  const int* __restrict__ members, void* __restrict__ out, int N, float limit,
++                  const uint4* __restrict__ W4, int e4) {
+   const int lane = threadIdx.x & 31, gq = lane >> 2, t = lane & 3;
+   const int units = __ldg(counts) * NB;
+   for (int unit = blockIdx.x * WARPS + (threadIdx.x >> 5); unit < units; unit += gridDim.x * WARPS) {
+@@ -143,13 +151,18 @@ __global__ void __launch_bounds__(WARPS * 32)
+     const int r0 = slots ? pr0 / slots : pr0, r1 = slots ? pr1 / slots : pr1;
+     const __nv_bfloat16* x0 = X + (size_t)r0 * x_stride + t * (GS / 4);
+     const __nv_bfloat16* x1 = X + (size_t)r1 * x_stride + t * (GS / 4);
+-    const uint4* blk = W + ((size_t)e * NB + cb) * (size_t)KG * (M * Geo<GS>::BLOCK);
+     float acc[M][1][NTW][4];
+ #pragma unroll
+     for (int m = 0; m < M; ++m)
+ #pragma unroll
+       for (int j = 0; j < NTW; ++j) acc[m][0][j][0] = acc[m][0][j][1] = acc[m][0][j][2] = acc[m][0][j][3] = 0.f;
+-    k_loop<GS, M, D>(acc, blk, KG, lane, t, x0, x1, v0, v1);
++    if (BITS != 4 && e == e4) {                    // warp-uniform: a unit is one expert's tile
++      const uint4* blk = W4 + (size_t)cb * KG * (M * Geo<GS, 4>::BLOCK);
++      k_loop<GS, M, D, 4>(acc, blk, KG, lane, t, x0, x1, v0, v1);
++    } else {
++      const uint4* blk = W + ((size_t)e * NB + cb) * (size_t)KG * (M * Geo<GS, BITS>::BLOCK);
++      k_loop<GS, M, D, BITS>(acc, blk, KG, lane, t, x0, x1, v0, v1);
++    }
+     epilogue<EPI, M, 1>(acc, 0, out, N, cb * COLS + 2 * t, pr0, pr1, v0, v1, limit);
+   }
+ }
+@@ -284,25 +297,25 @@ __global__ void plan_scatter(const int* __restrict__ picks, int P, int E, const
+   if (p < P) members[hist[(size_t)(p / PLAN_THREADS) * E + picks[p]] + rank[p]] = p;
+ }
+ 
+-template <int GS, int M, int EPI>
++template <int GS, int M, int EPI, int BITS>
+ void launch(const at::Tensor& x, int x_stride, int slots, const at::Tensor& w, int kg, int nb, const at::Tensor& items,
+             const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int n, float limit,
+-            int64_t max_units) {
++            int64_t max_units, const at::Tensor& w4, int e4) {
+   constexpr int D = 2, WARPS = 4;
+   static int per_sm = 0;
+   static int sms = 0;
+   if (per_sm == 0) {
+-    cudaOccupancyMaxActiveBlocksPerMultiprocessor(&per_sm, expert_kernel<GS, M, EPI, D, WARPS>, WARPS * 32, 0);
++    cudaOccupancyMaxActiveBlocksPerMultiprocessor(&per_sm, expert_kernel<GS, M, EPI, D, WARPS, BITS>, WARPS * 32, 0);
+     sms = at::cuda::getCurrentDeviceProperties()->multiProcessorCount;
+     per_sm = per_sm < 1 ? 1 : per_sm;
+   }
+   const int64_t need = (max_units + WARPS - 1) / WARPS;
+   const int grid = static_cast<int>(need < (int64_t)per_sm * sms ? need : (int64_t)per_sm * sms);
+   if (grid < 1) return;
+-  expert_kernel<GS, M, EPI, D, WARPS><<<grid, WARPS * 32, 0, at::cuda::getCurrentCUDAStream()>>>(
++  expert_kernel<GS, M, EPI, D, WARPS, BITS><<<grid, WARPS * 32, 0, at::cuda::getCurrentCUDAStream()>>>(
+       reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), x_stride, slots,
+       reinterpret_cast<const uint4*>(w.data_ptr()), kg, nb, items.data_ptr<int>(), counts.data_ptr<int>(),
+-      members.data_ptr<int>(), out.data_ptr(), n, limit);
++      members.data_ptr<int>(), out.data_ptr(), n, limit, reinterpret_cast<const uint4*>(w4.data_ptr()), e4);
+   C10_CUDA_KERNEL_LAUNCH_CHECK();
+ }
+ 
+@@ -333,19 +346,22 @@ void experts_plan_cuda(const at::Tensor& picks, int64_t pairs, int64_t experts,
+   C10_CUDA_KERNEL_LAUNCH_CHECK();
+ }
+ 
+-void experts_run_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
++void experts_run_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride, int64_t slots,
+                       const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items, const at::Tensor& counts,
+-                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units) {
++                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units,
++                      const at::Tensor& w4, int64_t e4) {
+   const c10::cuda::CUDAGuard guard(x.device());
+   const int xs = static_cast<int>(x_stride), sl = static_cast<int>(slots), k = static_cast<int>(kg);
+   const int b = static_cast<int>(nb), nn = static_cast<int>(n);
+   const float lim = static_cast<float>(limit);
+-#define TF_RUN(GS_, M_, EPI_)                                                                        \
+-  if (gs == GS_ && epi == EPI_) {                                                                    \
+-    launch<GS_, M_, EPI_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_units);     \
+-    return;                                                                                          \
++  const int ee = static_cast<int>(e4);
++#define TF_RUN(GS_, M_, EPI_, B_)                                                                          \
++  if (gs == GS_ && epi == EPI_ && bits == B_) {                                                            \
++    launch<GS_, M_, EPI_, B_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_units, w4, ee); \
++    return;                                                                                                \
+   }
+-  TF_RUN(32, 1, 0) TF_RUN(32, 2, 2) TF_RUN(64, 1, 0) TF_RUN(64, 1, 1) TF_RUN(64, 2, 2)
++  TF_RUN(32, 1, 0, 4) TF_RUN(32, 2, 2, 4) TF_RUN(64, 1, 0, 4) TF_RUN(64, 1, 1, 4) TF_RUN(64, 2, 2, 4)
++  TF_RUN(64, 1, 0, 3) TF_RUN(64, 2, 2, 3) TF_RUN(64, 1, 0, 2) TF_RUN(64, 2, 2, 2)
+ #undef TF_RUN
+-  TORCH_CHECK(false, "experts: no kernel for group ", gs, " and epilogue ", epi);
++  TORCH_CHECK(false, "experts: no kernel for group ", gs, ", epilogue ", epi, " and ", bits, " bits");
+ }
+diff --git i/src/tensorfold/cuda/experts.cuh w/src/tensorfold/cuda/experts.cuh
+index 27aa01a..37f5333 100644
+--- i/src/tensorfold/cuda/experts.cuh
++++ w/src/tensorfold/cuda/experts.cuh
+@@ -11,15 +11,52 @@ constexpr int COLS = 8 * NTW;
+ constexpr uint32_t LOW = 0x000F000Fu;
+ constexpr uint32_t K128 = 0x43004300u;       // the bf16 pair (128, 128)
+ 
+-template <int GS>
++// A block is one group of one 32-column tile: each lane's weight words, then scales and biases.
++// 4-bit: WORDS nibble words a lane, word wi at uint4 wi / 4 (lane-major). 2- and 3-bit (groups of 64): bit planes
++// that rebuild the same nibble words (see ``nibword``): 2-bit is one uint4 a lane of 2-bit fields; 3-bit adds a
++// 1-bit plane, one uint2 a lane after the 32 uint4.
++template <int GS, int BITS = 4>
+ struct Geo {
++  static_assert(BITS == 4 || (GS == 64 && (BITS == 2 || BITS == 3)), "2- and 3-bit experts take groups of 64");
+   static constexpr int KS = GS / 16;             // mma k-steps a group
+-  static constexpr int WV = NTW * GS / 128;      // weight uint4 a lane a group
++  static constexpr int WORDS = NTW * GS / 32 * BITS / 4;   // weight uint32 a lane a group (8 for 4-bit, groups of 64)
++  static constexpr int WU = 8 * WORDS;           // weight uint4 a block
+   static constexpr int XV = GS / 32;             // input uint4 a row a lane a group
+   static constexpr int SBV = NTW / 2;            // scale and bias uint4 a quad a group
+-  static constexpr int BLOCK = 32 * WV + 4 * SBV;
++  static constexpr int BLOCK = WU + 4 * SBV;
+ };
+ 
++// A lane's raw words of one block (b: the block's first uint4); L loads a uint4, L2 a uint2.
++template <int GS, int BITS, class L, class L2>
++__device__ __forceinline__ void lane_words(uint32_t (&r)[Geo<GS, BITS>::WORDS], const uint4* b, int lane, L ld4,
++                                           L2 ld2) {
++  if constexpr (BITS == 3) {
++    const uint4 v = ld4(b + lane);
++    const uint2 u = ld2(reinterpret_cast<const uint2*>(b + 32) + lane);
++    r[0] = v.x; r[1] = v.y; r[2] = v.z; r[3] = v.w; r[4] = u.x; r[5] = u.y;
++  } else {
++#pragma unroll
++    for (int c = 0; c < Geo<GS, BITS>::WORDS / 4; ++c) {
++      const uint4 v = ld4(b + c * 32 + lane);
++      r[4 * c] = v.x; r[4 * c + 1] = v.y; r[4 * c + 2] = v.z; r[4 * c + 3] = v.w;
++    }
++  }
++}
++
++// Nibble word wi of a lane (the 4-bit layout's word): 2-bit fields sit in the low half of each nibble, two words a
++// uint32 (word 2i at bits 4s, word 2i + 1 at bits 4s + 2); 3-bit adds each nibble's bit 2 from a plane of four words
++// a uint32 (word 4i + c at bits 4s + c).
++template <int BITS, int N>
++__device__ __forceinline__ uint32_t nibword(const uint32_t (&r)[N], int wi) {
++  if constexpr (BITS == 4) {
++    return r[wi];
++  } else {
++    const uint32_t lo = (r[wi >> 1] >> (2 * (wi & 1))) & 0x33333333u;
++    if constexpr (BITS == 2) return lo;
++    else return lo | (((r[4 + (wi >> 2)] >> (wi & 3)) & 0x11111111u) << 2);
++  }
++}
++
+ __device__ __forceinline__ void cp16(void* dst, const void* src) {
+   const uint32_t d = static_cast<uint32_t>(__cvta_generic_to_shared(dst));
+   asm volatile("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(d), "l"(src));
+diff --git i/src/tensorfold/cuda/experts.py w/src/tensorfold/cuda/experts.py
+index 05d91e3..87b5229 100644
+--- i/src/tensorfold/cuda/experts.py
++++ w/src/tensorfold/cuda/experts.py
+@@ -1,4 +1,4 @@
+-"""Grouped MoE experts on MLX 4-bit weights; a (row, slot) pair's bits never depend on the other rows of the call."""
++"""Grouped MoE experts on MLX 4-bit weights (2- and 3-bit too); a (row, slot) pair's bits never depend on the other rows of the call."""
+ 
+ from __future__ import annotations
+ 
+@@ -20,7 +20,7 @@ def _ext():
+     from tensorfold.cuda.build import load
+ 
+     here = Path(__file__).parent
+-    return load(name="tensorfold_experts_v6", sources=[str(here / "experts.cpp"), str(here / "experts.cu"),
++    return load(name="tensorfold_experts_v7", sources=[str(here / "experts.cpp"), str(here / "experts.cu"),
+                                                         str(here / "experts_prefill.cu")],
+                 extra_cuda_cflags=["-O3"], verbose=False)
+ 
+@@ -35,11 +35,65 @@ def _nibbles(w: torch.Tensor) -> torch.Tensor:
+     return torch.where(out >= 2 ** 31, out - 2 ** 32, out).to(torch.int32)
+ 
+ 
++def bits_of(words: torch.Tensor, scales: torch.Tensor, gs: int) -> int:
++    """An MLX tensor's width from its shapes: words [..., K * bits / 32], scales [..., K / gs]."""
++
++    return words.shape[-1] * 32 // (scales.shape[-1] * gs)
++
++
++def levels(words: torch.Tensor, bits: int) -> torch.Tensor:
++    """MLX words (an LSB-first bitstream, ``bits`` bytes per 8 values) [..., K * bits / 32] -> levels [..., K] uint8."""
++
++    b = words.contiguous().view(torch.uint8).to(torch.int64)
++    b = b.view(*b.shape[:-1], -1, bits)
++    v = (b << (8 * torch.arange(bits, device=b.device))).sum(-1)
++    q = (v[..., None] >> (bits * torch.arange(8, device=b.device))) & ((1 << bits) - 1)
++    return q.reshape(*words.shape[:-1], -1).to(torch.uint8)
++
++
++def _nibble_words(q: torch.Tensor) -> torch.Tensor:
++    """Levels [..., K] (below 16) -> MLX 4-bit words [..., K/8] int32."""
++
++    v = (q.to(torch.int64).view(*q.shape[:-1], -1, 8) << (4 * torch.arange(8, device=q.device))).sum(-1)
++    return torch.where(v >= 2 ** 31, v - 2 ** 32, v).to(torch.int32)
++
++
++def _planes(w: torch.Tensor, bits: int) -> torch.Tensor:
++    """4-bit block words [..., 2 uint4, 32 lanes, 4] (groups of 64) -> the 2- or 3-bit planes (see ``nibword``)."""
++
++    w = w.to(torch.int64) & 0xFFFFFFFF
++    w = w.movedim(-3, -2).reshape(*w.shape[:-3], 32, 8)          # [..., lane, word wi]
++    lo = w & 0x33333333
++    p2 = lo[..., 0::2] | (lo[..., 1::2] << 2)                      # [..., lane, 4]
++    parts = [p2.reshape(*w.shape[:-2], 128)]
++    if bits == 3:
++        hi = (w >> 2) & 0x11111111
++        p1 = sum(hi[..., c::4] << c for c in range(4))           # [..., lane, 2]
++        parts.append(p1.reshape(*w.shape[:-2], 64))
++    v = torch.cat(parts, dim=-1)
++    return torch.where(v >= 2 ** 31, v - 2 ** 32, v).to(torch.int32)
++
++
+ def pack(words: torch.Tensor, scales: torch.Tensor, biases: torch.Tensor, gs: int, chunk: int = 32) -> torch.Tensor:
+-    """MLX words [E, N, K/8], scales and biases -> [E, N/32, K/gs, block]: B-fragments, then scales and biases."""
++    """MLX words [E, N, K * bits / 32], scales and biases -> [E, N/32, K/gs, block]: B-fragments, then scales and
++    biases. 4-bit words go as they are; 2- and 3-bit ones (groups of 64) as the bit planes ``nibword`` reads."""
+ 
+     if gs not in (32, 64):
+         raise ValueError(f"groups of 32 or 64 inputs, not {gs}")
++    bits = bits_of(words, scales, gs)
++    if bits != 4:
++        if bits not in (2, 3) or gs != 64:
++            raise ValueError(f"experts take 4 bits, or 2 and 3 in groups of 64; not {bits} in groups of {gs}")
++        e, n, kg = scales.shape
++        # a lane's 2 * bits words, 32 lanes, then the 8 * NTW words of scales and biases
++        out = torch.empty((e, n // COLS, kg, 64 * bits + 8 * NTW), dtype=torch.int32, device=words.device)
++        for e0 in range(0, e, chunk):
++            s4 = slice(e0, e0 + chunk)
++            four = pack(_nibble_words(levels(words[s4], bits)), scales[s4], biases[s4], gs, chunk)
++            c, nb = four.shape[0], four.shape[1]
++            out[s4, ..., :64 * bits] = _planes(four[..., :256].reshape(c, nb, kg, 2, 32, 4), bits)
++            out[s4, ..., 64 * bits:] = four[..., 256:]
++        return out
+     e, n, k8 = words.shape
+     k = k8 * 8
+     if n % COLS or k % gs or scales.shape != (e, n, k // gs) or biases.shape != scales.shape:
+@@ -88,10 +142,24 @@ class Experts:
+     width: int                # NI: the expert's (or this rank's) intermediate width
+     dims: int                 # D
+     limit: float = 0.0        # SwiGLU clip (0: none)
++    bits_up: int = 4          # gate and up's width (2, 3 or 4)
++    bits_down: int = 4
++    up4: torch.Tensor | None = None     # gate/up below 4 bits: the shared expert's at 4 bits, [1, ...] (expert E)
++    down4: torch.Tensor | None = None   # down below 4 bits: likewise
+ 
+     @property
+     def count(self) -> int:
+-        return self.up.shape[0]
++        return self.up.shape[0] + (self.up4 is not None)
++
++    @property
++    def shared_up(self) -> int:
++        """The id of the expert whose gate/up ``up4`` holds, or -1."""
++
++        return self.up.shape[0] if self.up4 is not None else -1
++
++    @property
++    def shared_down(self) -> int:
++        return self.down.shape[0] if self.down4 is not None else -1
+ 
+     @property
+     def swiglu(self) -> bool:
+@@ -101,15 +169,46 @@ class Experts:
+         return (self.up[0].numel() + self.down[0].numel()) * 4
+ 
+ 
+-def make(up: list[tuple], down: tuple, gs: int, *, limit: float = 0.0) -> Experts:
+-    """One layer's MLX arrays: ``up`` [gate, up] (SwiGLU) or [up] (relu^2), ``down``, each (words, scales, biases)."""
++def make(up: list[tuple], down: tuple, gs: int, *, limit: float = 0.0, shared: tuple | None = None) -> Experts:
++    """One layer's MLX arrays: ``up`` [gate, up] (SwiGLU) or [up] (relu^2), ``down``, each (words, scales, biases).
++
++    ``shared`` (up list, down) is a shared expert kept at 4 bits beside narrower experts: it becomes expert E."""
+ 
+     if len(up) not in (1, 2):
+         raise ValueError("experts take a gate and an up projection, or an up projection alone")
+-    width, dims = up[0][0].shape[1], up[0][0].shape[2] * 8
++    width, dims = up[0][0].shape[1], up[0][2].shape[2] * gs
++    bits_up = {bits_of(w, s, gs) for w, s, _ in up}
++    if len(bits_up) != 1:
++        raise ValueError("gate and up take the same width")
+     u = torch.stack([pack(*m, gs) for m in up], dim=3)
+     d = pack(*down, gs).unsqueeze(3)
+-    return Experts(u, d, gs, width, dims, float(limit))
++    ex = Experts(u, d, gs, width, dims, float(limit), bits_up.pop(), bits_of(down[0], down[1], gs))
++    if shared is not None:
++        s = make(*shared, gs, limit=limit)
++        if (s.bits_up, s.bits_down) != (4, 4):
++            raise ValueError("the shared expert beside narrower experts stays at 4 bits")
++        # a projection at 4 bits takes the shared expert as its expert E; a narrower one keeps it apart at 4 bits
++        if ex.bits_up == 4:
++            ex.up = torch.cat([u, s.up])
++        else:
++            ex.up4 = s.up
++        if ex.bits_down == 4:
++            ex.down = torch.cat([d, s.down])
++        else:
++            ex.down4 = s.down
++    return ex
++
++
++_NONE: dict = {}
++
++
++def _w4(t: torch.Tensor | None, like: torch.Tensor) -> torch.Tensor:
++    if t is not None:
++        return t
++    key = like.device
++    if key not in _NONE:
++        _NONE[key] = torch.zeros((4,), dtype=torch.int32, device=like.device)
++    return _NONE[key]
+ 
+ 
+ def max_items(pairs: int, experts: int, tile: int = TILE) -> int:
+@@ -150,11 +249,12 @@ def gate_up(x: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: i
+     items = max_items(rows * plan.slots, plan.experts, plan.tile)
+     epi = 2 if ex.swiglu else 1
+     if plan.prefill:
+-        _ext().prefill(ex.gs, epi, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items, plan.counts,
+-                       plan.members, out, ex.width, ex.limit, items)
++        _ext().prefill(ex.gs, epi, ex.bits_up, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items,
++                       plan.counts, plan.members, out, ex.width, ex.limit, items, _w4(ex.up4, x), ex.shared_up)
+     else:
+-        _ext().run(ex.gs, epi, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items, plan.counts,
+-                   plan.members, out, ex.width, ex.limit, items * (ex.width // COLS))
++        _ext().run(ex.gs, epi, ex.bits_up, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items,
++                   plan.counts, plan.members, out, ex.width, ex.limit, items * (ex.width // COLS), _w4(ex.up4, x),
++                   ex.shared_up)
+ 
+ 
+ def down(act: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: int) -> None:
+@@ -162,8 +262,10 @@ def down(act: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: in
+ 
+     items = max_items(rows * plan.slots, plan.experts, plan.tile)
+     if plan.prefill:
+-        _ext().prefill(ex.gs, 3 if out.dtype == torch.bfloat16 else 0, act, 0, ex.down, ex.width // ex.gs,
+-                       ex.dims // COLS, plan.items, plan.counts, plan.members, out, ex.dims, 0.0, items)
++        _ext().prefill(ex.gs, 3 if out.dtype == torch.bfloat16 else 0, ex.bits_down, act, 0, ex.down,
++                       ex.width // ex.gs, ex.dims // COLS, plan.items, plan.counts, plan.members, out, ex.dims, 0.0,
++                       items, _w4(ex.down4, act), ex.shared_down)
+     else:
+-        _ext().run(ex.gs, 0, act, 0, ex.down, ex.width // ex.gs, ex.dims // COLS, plan.items, plan.counts,
+-                   plan.members, out, ex.dims, 0.0, items * (ex.dims // COLS))
++        _ext().run(ex.gs, 0, ex.bits_down, act, 0, ex.down, ex.width // ex.gs, ex.dims // COLS, plan.items,
++                   plan.counts, plan.members, out, ex.dims, 0.0, items * (ex.dims // COLS), _w4(ex.down4, act),
++                   ex.shared_down)
+diff --git i/src/tensorfold/cuda/experts_prefill.cu w/src/tensorfold/cuda/experts_prefill.cu
+index 7745335..3e087e2 100644
+--- i/src/tensorfold/cuda/experts_prefill.cu
++++ w/src/tensorfold/cuda/experts_prefill.cu
+@@ -10,9 +10,9 @@
+ 
+ namespace {
+ 
+-template <int GS, int M, int RT, int WM, int WN>
++template <int GS, int M, int RT, int WM, int WN, int BITS = 4>
+ struct Pre {
+-  static constexpr int THREADS = WM * WN * 32, BM = 16 * RT * WM, SG = 64 / GS, XC = 8, WB = M * Geo<GS>::BLOCK;
++  static constexpr int THREADS = WM * WN * 32, BM = 16 * RT * WM, SG = 64 / GS, XC = 8, WB = M * Geo<GS, BITS>::BLOCK;
+   static constexpr int XU = BM * XC, WU = WN * SG * WB, SU = XU + WU;   // uint4 a stage: X rows, weight blocks
+   static constexpr int XPT = (XU + THREADS - 1) / THREADS;
+   static constexpr int STAGE_BYTES = SU * 16;
+@@ -28,18 +28,17 @@ __device__ __forceinline__ uint32_t hfma2(uint32_t q, uint32_t s, uint32_t b) {
+   return *reinterpret_cast<uint32_t*>(&r);
+ }
+ 
+-template <int GS, int M, int EPI, int RT, int WM, int WN>
+-__global__ void __launch_bounds__(WM * WN * 32)
+-    prefill_kernel(const __nv_bfloat16* __restrict__ X, int x_stride, int slots, const uint4* __restrict__ W,
+-                   int KG, int NB, const int* __restrict__ items, const int* __restrict__ counts,
+-                   const int* __restrict__ members, void* __restrict__ out, int N, float limit) {
+-  using G = Geo<GS>;
+-  using P = Pre<GS, M, RT, WM, WN>;
++// One item's tile at BITS; W holds expert ``slot`` (the shared expert's own 4-bit tensor holds it as slot 0).
++template <int GS, int M, int EPI, int RT, int WM, int WN, int BITS>
++__device__ __forceinline__ void prefill_body(const __nv_bfloat16* __restrict__ X, int x_stride, int slots,
++                                             const uint4* __restrict__ W, int slot, int KG, int NB, int it, int cbt,
++                                             const int* __restrict__ items, const int* __restrict__ members,
++                                             void* __restrict__ out, int N, float limit) {
++  using G = Geo<GS, BITS>;
++  using P = Pre<GS, M, RT, WM, WN, BITS>;
+   constexpr int STAGES = P::STAGES;
+   extern __shared__ uint4 sm[];
+-  const int nbt = (NB + WN - 1) / WN, it = blockIdx.x / nbt, cbt = blockIdx.x - it * nbt;
+-  if (it >= __ldg(counts)) return;
+-  const int e = __ldg(items + 3 * it), first = __ldg(items + 3 * it + 1), cnt = __ldg(items + 3 * it + 2);
++  const int first = __ldg(items + 3 * it + 1), cnt = __ldg(items + 3 * it + 2);
+   const int tid = threadIdx.x, lane = tid & 31, warp = tid >> 5, wm = warp / WN, wn = warp - wm * WN;
+   const int t = lane & 3, gq = lane >> 2, cb = cbt * WN + wn, cbs = min(WN, NB - cbt * WN);
+   const __nv_bfloat16* xsrc[P::XPT];
+@@ -54,7 +53,7 @@ __global__ void __launch_bounds__(WM * WN * 32)
+       xsrc[i] = X + (size_t)(slots ? p / slots : p) * x_stride + 8 * c;
+     }
+   }
+-  const uint4* wsrc = W + ((size_t)e * NB + cbt * WN) * (size_t)KG * P::WB;
++  const uint4* wsrc = W + ((size_t)slot * NB + cbt * WN) * (size_t)KG * P::WB;
+   auto stage = [&](int s, int g0) {                  // groups g0 .. g0 + ng - 1 (ng < SG only at an odd end)
+     const int ng = min(P::SG, KG - g0);
+     uint4* xs = sm + s * P::SU;
+@@ -95,14 +94,14 @@ __global__ void __launch_bounds__(WM * WN * 32)
+     for (int gi = 0; gi < P::SG; ++gi) {
+       if (k * P::SG + gi >= KG) break;
+       const uint4* ws = xs + P::XU + (wn * P::SG + gi) * P::WB;
+-      uint4 wv[M][G::WV];
++      uint32_t wv[M][G::WORDS];
+       uint32_t s2[M][NTW], b2[M][NTW];
+ #pragma unroll
+       for (int m = 0; m < M; ++m) {
+-#pragma unroll
+-        for (int c = 0; c < G::WV; ++c) wv[m][c] = ws[m * G::BLOCK + c * 32 + lane];
+-        const uint4 sp = ws[m * G::BLOCK + 32 * G::WV + (gq >> 1) * G::SBV];
+-        const uint4 bp = ws[m * G::BLOCK + 32 * G::WV + (gq >> 1) * G::SBV + 1];
++        lane_words<GS, BITS>(wv[m], ws + m * G::BLOCK, lane, [](const uint4* q) { return *q; },
++                             [](const uint2* q) { return *q; });
++        const uint4 sp = ws[m * G::BLOCK + G::WU + (gq >> 1) * G::SBV];
++        const uint4 bp = ws[m * G::BLOCK + G::WU + (gq >> 1) * G::SBV + 1];
+ #pragma unroll
+         for (int j = 0; j < NTW; ++j) {
+           s2[m][j] = __byte_perm(comp(sp, j), 0u, pick);
+@@ -124,7 +123,7 @@ __global__ void __launch_bounds__(WM * WN * 32)
+ #pragma unroll
+           for (int j = 0; j < NTW; ++j) {
+             const int wi = j * (GS / 32) + kk;
+-            const uint32_t word = comp(wv[m][wi >> 2], wi & 3);
++            const uint32_t word = nibword<BITS>(wv[m], wi);
+ #pragma unroll
+             for (int h = 0; h < 2; ++h) {
+               const uint32_t b0 = hfma2(nib2(word, 8 * h), s2[m][j], b2[m][j]);
+@@ -151,13 +150,33 @@ __global__ void __launch_bounds__(WM * WN * 32)
+   }
+ }
+ 
+-template <int GS, int M, int EPI, int RT, int WM, int WN>
++// Experts are BITS wide, except expert e4 (the shared expert, -1: none), which is 4-bit in W4.
++template <int GS, int M, int EPI, int RT, int WM, int WN, int BITS>
++__global__ void __launch_bounds__(WM * WN * 32)
++    prefill_kernel(const __nv_bfloat16* __restrict__ X, int x_stride, int slots, const uint4* __restrict__ W,
++                   int KG, int NB, const int* __restrict__ items, const int* __restrict__ counts,
++                   const int* __restrict__ members, void* __restrict__ out, int N, float limit,
++                   const uint4* __restrict__ W4, int e4) {
++  const int nbt = (NB + WN - 1) / WN, it = blockIdx.x / nbt, cbt = blockIdx.x - it * nbt;
++  if (it >= __ldg(counts)) return;
++  const int e = __ldg(items + 3 * it);
++  if (BITS != 4 && e == e4)                         // block-uniform: a block is one item, one expert
++    prefill_body<GS, M, EPI, RT, WM, WN, 4>(X, x_stride, slots, W4, 0, KG, NB, it, cbt, items, members, out, N,
++                                            limit);
++  else
++    prefill_body<GS, M, EPI, RT, WM, WN, BITS>(X, x_stride, slots, W, e, KG, NB, it, cbt, items, members, out, N,
++                                               limit);
++}
++
++template <int GS, int M, int EPI, int RT, int WM, int WN, int BITS>
+ void launch_prefill(const at::Tensor& x, int x_stride, int slots, const at::Tensor& w, int kg, int nb,
+                     const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor& out,
+-                    int n, float limit, int64_t max_items) {
+-  using P = Pre<GS, M, RT, WM, WN>;
+-  constexpr int SMEM = P::STAGES * P::STAGE_BYTES;
+-  auto* kern = prefill_kernel<GS, M, EPI, RT, WM, WN>;
++                    int n, float limit, int64_t max_items, const at::Tensor& w4, int e4) {
++  using P = Pre<GS, M, RT, WM, WN, BITS>;
++  using P4 = Pre<GS, M, RT, WM, WN, 4>;
++  constexpr int SMEM = P::STAGES * P::STAGE_BYTES > P4::STAGES * P4::STAGE_BYTES ? P::STAGES * P::STAGE_BYTES
++                                                                                   : P4::STAGES * P4::STAGE_BYTES;
++  auto* kern = prefill_kernel<GS, M, EPI, RT, WM, WN, BITS>;
+   static bool ready = false;
+   if (!ready) {
+     C10_CUDA_CHECK(cudaFuncSetAttribute(kern, cudaFuncAttributeMaxDynamicSharedMemorySize, SMEM));
+@@ -168,28 +187,32 @@ void launch_prefill(const at::Tensor& x, int x_stride, int slots, const at::Tens
+   kern<<<static_cast<unsigned>(grid), P::THREADS, SMEM, at::cuda::getCurrentCUDAStream()>>>(
+       reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), x_stride, slots,
+       reinterpret_cast<const uint4*>(w.data_ptr()), kg, nb, items.data_ptr<int>(), counts.data_ptr<int>(),
+-      members.data_ptr<int>(), out.data_ptr(), n, limit);
++      members.data_ptr<int>(), out.data_ptr(), n, limit, reinterpret_cast<const uint4*>(w4.data_ptr()), e4);
+   C10_CUDA_KERNEL_LAUNCH_CHECK();
+ }
+ 
+ }  // namespace
+ 
+-void experts_prefill_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
+-                          const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
++void experts_prefill_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride,
++                          int64_t slots, const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
+                           const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int64_t n,
+-                          double limit, int64_t max_items) {
++                          double limit, int64_t max_items, const at::Tensor& w4, int64_t e4) {
+   const c10::cuda::CUDAGuard guard(x.device());
+   const int xs = static_cast<int>(x_stride), sl = static_cast<int>(slots), k = static_cast<int>(kg);
+   const int b = static_cast<int>(nb), nn = static_cast<int>(n);
+   const float lim = static_cast<float>(limit);
+   // 8 warps a CTA, 64 pairs x 128 columns: two row tiles a warp, two warps down, four across
+-#define TF_PRE(GS_, M_, EPI_)                                                                                  \
+-  if (gs == GS_ && epi == EPI_) {                                                                              \
+-    launch_prefill<GS_, M_, EPI_, 2, 2, 4>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_items); \
+-    return;                                                                                                    \
++  const int ee = static_cast<int>(e4);
++#define TF_PRE(GS_, M_, EPI_, B_)                                                                             \
++  if (gs == GS_ && epi == EPI_ && bits == B_) {                                                               \
++    launch_prefill<GS_, M_, EPI_, 2, 2, 4, B_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim,       \
++                                               max_items, w4, ee);                                           \
++    return;                                                                                                   \
+   }
+-  TF_PRE(32, 1, 0) TF_PRE(32, 1, 3) TF_PRE(32, 2, 2) TF_PRE(64, 1, 0) TF_PRE(64, 1, 3) TF_PRE(64, 1, 1)
+-  TF_PRE(64, 2, 2)
++  TF_PRE(32, 1, 0, 4) TF_PRE(32, 1, 3, 4) TF_PRE(32, 2, 2, 4) TF_PRE(64, 1, 0, 4) TF_PRE(64, 1, 3, 4)
++  TF_PRE(64, 1, 1, 4) TF_PRE(64, 2, 2, 4)
++  TF_PRE(64, 1, 0, 3) TF_PRE(64, 1, 3, 3) TF_PRE(64, 2, 2, 3) TF_PRE(64, 1, 0, 2) TF_PRE(64, 1, 3, 2)
++  TF_PRE(64, 2, 2, 2)
+ #undef TF_PRE
+-  TORCH_CHECK(false, "experts: no prefill kernel for group ", gs, " and epilogue ", epi);
++  TORCH_CHECK(false, "experts: no prefill kernel for group ", gs, ", epilogue ", epi, " and ", bits, " bits");
+ }
+diff --git i/src/tensorfold/cuda/kernels/qmm.cu w/src/tensorfold/cuda/kernels/qmm.cu
+index a763387..3a92d90 100644
+--- i/src/tensorfold/cuda/kernels/qmm.cu
++++ w/src/tensorfold/cuda/kernels/qmm.cu
+@@ -171,6 +171,7 @@ __global__ void __launch_bounds__(WM * WN * 32) qmm_kernel(
+         wait<0>();
+         __syncthreads();
+         if constexpr (CLUSTER) {
++#if __CUDA_ARCH__ >= 900
+             // K slices of a tile form a cluster: slice 0 adds peers' partials in slice order, as reduce_kernel does
+             constexpr int E = T::MT * T::NT * 4;
+             auto cluster = cooperative_groups::this_cluster();
+@@ -198,6 +199,9 @@ __global__ void __launch_bounds__(WM * WN * 32) qmm_kernel(
+             }
+             cluster.sync();                               // peers keep their memory until slice 0 has read it
+             if (slice != 0) return;
++#else
++            __trap();                                     // clusters are 9.0+; qmm_cuda sends slices to reduce_kernel
++#endif
+         }
+ #pragma unroll
+         for (int i = 0; i < T::MT; ++i)
+@@ -288,6 +292,17 @@ void dispatch(int bm, const at::Tensor& x, const at::Tensor& xs, const at::Tenso
+     }
+ }
+ 
++// Whether this GPU launches thread-block clusters (9.0 and newer).
++bool clusters() {
++    static const bool yes = [] {
++        int device = 0, value = 0;
++        C10_CUDA_CHECK(cudaGetDevice(&device));
++        C10_CUDA_CHECK(cudaDeviceGetAttribute(&value, cudaDevAttrClusterLaunch, device));
++        return value != 0;
++    }();
++    return yes;
++}
++
+ } // namespace
+ 
+ void qmm_cuda(const at::Tensor& x, const at::Tensor& xs, const at::Tensor& w, const at::Tensor& scales,
+@@ -295,8 +310,11 @@ void qmm_cuda(const at::Tensor& x, const at::Tensor& xs, const at::Tensor& w, co
+               bool f32, bool reduce) {
+     const int M = x.size(0);
+     // clusters hold up to 8 K slices (the portable size); more, or unreduced slices, go through the slice buffer
+-    const bool cluster = SK > 1 && SK <= 8 && reduce;
+-#define GO(G, F, C) dispatch<G, F, C>(bm, x, xs, w, scales, biases, out, part, N, SK)
++    const bool cluster = SK > 1 && SK <= 8 && reduce && clusters();
++    // without clusters, reduced slices park in a buffer of their own, added below in the same slice order
++    const at::Tensor slices = SK > 1 && !cluster && !part.defined()
++        ? at::empty({SK, M, N}, x.options().dtype(at::kFloat)) : part;
++#define GO(G, F, C) dispatch<G, F, C>(bm, x, xs, w, scales, biases, out, slices, N, SK)
+     if (gs == 64) {
+         if (f32) { if (cluster) GO(64, true, true); else GO(64, true, false); }
+         else { if (cluster) GO(64, false, true); else GO(64, false, false); }
+@@ -310,8 +328,8 @@ void qmm_cuda(const at::Tensor& x, const at::Tensor& xs, const at::Tensor& w, co
+         const int threads = 256;
+         const int blocks = static_cast<int>((total + threads - 1) / threads);
+         auto stream = at::cuda::getCurrentCUDAStream();
+-        if (f32) reduce_kernel<true><<<blocks, threads, 0, stream>>>(part.data_ptr<float>(), out.data_ptr(), total, SK);
+-        else reduce_kernel<false><<<blocks, threads, 0, stream>>>(part.data_ptr<float>(), out.data_ptr(), total, SK);
++        if (f32) reduce_kernel<true><<<blocks, threads, 0, stream>>>(slices.data_ptr<float>(), out.data_ptr(), total, SK);
++        else reduce_kernel<false><<<blocks, threads, 0, stream>>>(slices.data_ptr<float>(), out.data_ptr(), total, SK);
+         C10_CUDA_KERNEL_LAUNCH_CHECK();
+     }
+ }
+diff --git i/src/tensorfold/cuda/kernels/qmm_frag.cuh w/src/tensorfold/cuda/kernels/qmm_frag.cuh
+index e432e3b..b3dcd35 100644
+--- i/src/tensorfold/cuda/kernels/qmm_frag.cuh
++++ w/src/tensorfold/cuda/kernels/qmm_frag.cuh
+@@ -60,7 +60,12 @@ __device__ __forceinline__ void mma0(float (&d)[4], const uint32_t (&a)[4], uint
+ __device__ __forceinline__ uint32_t pair(uint32_t w, int s) {
+     const uint32_t t = ((w >> s) & 0x000F000Fu) | 0x43004300u;
+     uint32_t r;
++#if __CUDA_ARCH__ >= 900
+     asm("sub.rn.bf16x2 %0, %1, %2;\n" : "=r"(r) : "r"(t), "r"(0x43004300u));
++#else
++    // sub.bf16x2 is 9.0+: t * 1 - 128 in one fma rounds once, the same bits (and 128 + q - 128 is exact anyway)
++    asm("fma.rn.bf16x2 %0, %1, %2, %3;\n" : "=r"(r) : "r"(t), "r"(0x3F803F80u), "r"(0xC300C300u));
++#endif
+     return r;
+ }
+ 
+diff --git i/src/tensorfold/cuda/kernels/qmm_prefill8.cu w/src/tensorfold/cuda/kernels/qmm_prefill8.cu
+index 5a5a275..798507d 100644
+--- i/src/tensorfold/cuda/kernels/qmm_prefill8.cu
++++ w/src/tensorfold/cuda/kernels/qmm_prefill8.cu
+@@ -15,18 +15,26 @@ namespace {
+ using namespace qmm_frag;
+ 
+ __device__ __forceinline__ void mma8(float (&d)[4], const uint32_t (&a)[4], uint32_t b0, uint32_t b1) {
++#if __CUDA_ARCH__ >= 890
+     asm("mma.sync.aligned.m16n8k32.row.col.f32.e4m3.e4m3.f32 {%0, %1, %2, %3}, {%4, %5, %6, %7}, {%8, %9}, "
+         "{%0, %1, %2, %3};\n"
+         : "+f"(d[0]), "+f"(d[1]), "+f"(d[2]), "+f"(d[3])
+         : "r"(a[0]), "r"(a[1]), "r"(a[2]), "r"(a[3]), "r"(b0), "r"(b1));
++#else
++    __trap();                                     // FP8 MMA is 8.9+; prompts there take the bf16 kernels
++#endif
+ }
+ 
+ __device__ __forceinline__ void mma8z(float (&d)[4], const uint32_t (&a)[4], uint32_t b0, uint32_t b1) {
++#if __CUDA_ARCH__ >= 890
+     const float z = 0.0f;
+     asm("mma.sync.aligned.m16n8k32.row.col.f32.e4m3.e4m3.f32 {%0, %1, %2, %3}, {%4, %5, %6, %7}, {%8, %9}, "
+         "{%10, %10, %10, %10};\n"
+         : "=f"(d[0]), "=f"(d[1]), "=f"(d[2]), "=f"(d[3])
+         : "r"(a[0]), "r"(a[1]), "r"(a[2]), "r"(a[3]), "r"(b0), "r"(b1), "f"(z));
++#else
++    __trap();                                     // FP8 MMA is 8.9+; prompts there take the bf16 kernels
++#endif
+ }
+ 
+ // e4m3 of the nibbles at bits [s, s + 4) (low byte) and [16 + s, 20 + s) (high byte): f16 1024 + q, minus 1024, cvt.
+@@ -34,8 +42,12 @@ __device__ __forceinline__ uint32_t e4m3_pair(uint32_t w, int s) {
+     const uint32_t t = ((w >> s) & 0x000F000Fu) | 0x64006400u;
+     uint32_t h;
+     asm("sub.rn.f16x2 %0, %1, %2;\n" : "=r"(h) : "r"(t), "r"(0x64006400u));
+-    uint16_t r;
++    uint16_t r = 0;
++#if __CUDA_ARCH__ >= 890
+     asm("cvt.rn.satfinite.e4m3x2.f16x2 %0, %1;\n" : "=h"(r) : "r"(h));
++#else
++    __trap();
++#endif
+     return r;
+ }
+ 
+diff --git i/src/tensorfold/families/qwen3_5/cuda/weights.py w/src/tensorfold/families/qwen3_5/cuda/weights.py
+index 4fb4bd7..2bb531e 100644
+--- i/src/tensorfold/families/qwen3_5/cuda/weights.py
++++ w/src/tensorfold/families/qwen3_5/cuda/weights.py
+@@ -212,6 +212,10 @@ class Weights:
+ 
+     @cached_property
+     def fast_prefill(self) -> bool:
++        from tensorfold.cuda.build import fp8_mma
++
++        if not fp8_mma():                            # no FP8 MMA below 8.9: prompts take the bf16 kernels
++            return False
+         if self.quant == "exl3":                     # an EXL3 pack's prompt glue stays in bf16
+             return False
+         if self.quant == "nvfp4":                    # NVFP4, FP8 and the gates' copies all take FP8 prompt rows
+diff --git i/src/tensorfold/families/qwen3_5_moe/__init__.py w/src/tensorfold/families/qwen3_5_moe/__init__.py
+index 6e82b36..992413c 100644
+--- i/src/tensorfold/families/qwen3_5_moe/__init__.py
++++ w/src/tensorfold/families/qwen3_5_moe/__init__.py
+@@ -11,7 +11,8 @@ LANES = True
+ # MLX 4-bit, groups of 64, routers 8-bit, MTP layer in mtp-4bit.safetensors (mlx-community's files take it too)
+ MODELS = ("Vontra/Qwen3.6-35B-A3B-MLX-4bit-MTP",)
+ REQUIRED_FILES = {MODELS[0]: ("mtp-4bit.safetensors",)}
+-# the CUDA engine's kernels read MLX affine weights of this (bits, group size)
++# the CUDA engine's kernels read MLX affine weights of this (bits, group size); routed experts may declare 2 or 3
++# bits per module (switch_mlp.*), the shared expert staying at 4
+ CUDA_QUANTIZATION = (4, 64)
+ 
+ 
+diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/weights.py w/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
+index 745bfaa..9c4239a 100644
+--- i/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
++++ w/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
+@@ -20,12 +20,7 @@ GS = 64
+ def dequantize(words: torch.Tensor, scales: torch.Tensor, biases: torch.Tensor, gs: int = GS) -> torch.Tensor:
+     """MLX affine words [..., K * bits / 32] with scales and biases [..., K / gs] -> fp32 [..., K] (s * q + b)."""
+ 
+-    k = scales.shape[-1] * gs
+-    bits = 32 * words.shape[-1] // k
+-    per = 32 // bits
+-    w = words.view(torch.int32).to(torch.int64) & 0xFFFFFFFF
+-    shifts = torch.arange(per, device=words.device, dtype=torch.int64) * bits
+-    q = ((w[..., None] >> shifts) & ((1 << bits) - 1)).reshape(*words.shape[:-1], k).to(torch.float32)
++    q = grouped.levels(words.view(torch.int32), grouped.bits_of(words, scales, gs)).to(torch.float32)
+     return q * scales.float().repeat_interleave(gs, -1) + biases.float().repeat_interleave(gs, -1)
+ 
+ 
+@@ -38,11 +33,14 @@ def routed(prefix: str, get: Callable, top_k: int) -> Routed:
+ 
+     router = torch.cat([dequantize(*triple(prefix + "gate")), dequantize(*triple(prefix + "shared_expert_gate"))])
+ 
+-    def table(proj: str) -> tuple[torch.Tensor, ...]:
+-        mine, shared = triple(prefix + f"switch_mlp.{proj}"), triple(prefix + f"shared_expert.{proj}")
+-        return tuple(torch.cat([a, b[None]]).contiguous() for a, b in zip(mine, shared))
+-
+-    experts = grouped.make([table("gate_proj"), table("up_proj")], table("down_proj"), GS)
++    projs = ("gate_proj", "up_proj", "down_proj")
++    mine = [triple(prefix + f"switch_mlp.{proj}") for proj in projs]
++    shared = [tuple(t[None] for t in triple(prefix + f"shared_expert.{proj}")) for proj in projs]
++    if all(grouped.bits_of(w, s, GS) == 4 for w, s, _ in mine):     # one width: the shared expert is simply expert E
++        table = [tuple(torch.cat([a, b]).contiguous() for a, b in zip(m, sh)) for m, sh in zip(mine, shared)]
++        experts = grouped.make(table[:2], table[2], GS)
++    else:                                                            # narrower routed experts, the shared one at 4 bits
++        experts = grouped.make(mine[:2], mine[2], GS, shared=(shared[:2], shared[2]))
+     return Routed(router.to(torch.bfloat16).contiguous(), experts, int(top_k))
+ 
+ 
+diff --git i/tests/cuda/test_experts_lowbit.py w/tests/cuda/test_experts_lowbit.py
+new file mode 100644
+index 0000000..d647e15
+--- /dev/null
++++ w/tests/cuda/test_experts_lowbit.py
+@@ -0,0 +1,105 @@
++"""2- and 3-bit experts (bit planes): the same levels give the 4-bit kernels' exact bits, decode and prefill, with the
++shared expert kept at 4 bits beside them."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda import experts  # noqa: E402
++
++DEV = "cuda"
++GS = 64
++
++
++def mlx_words(q: torch.Tensor, bits: int) -> torch.Tensor:
++    """Levels [..., K] -> MLX words [..., K * bits / 32]: an LSB-first bitstream (as mx.quantize packs)."""
++
++    bitsarr = ((q.to(torch.int64)[..., None] >> torch.arange(bits, device=q.device)) & 1).reshape(*q.shape[:-1], -1, 32)
++    v = (bitsarr << torch.arange(32, device=q.device)).sum(-1)
++    return torch.where(v >= 2 ** 31, v - 2 ** 32, v).to(torch.int32)
++
++
++def tensor(e: int, n: int, k: int, bits: int, seed: int):
++    g = torch.Generator(device=DEV).manual_seed(seed)
++    q = torch.randint(0, 2 ** bits, (e, n, k), generator=g, device=DEV)
++    scales = (torch.rand((e, n, k // GS), generator=g, device=DEV) * 0.02 + 0.001).to(torch.bfloat16)
++    biases = (torch.randn((e, n, k // GS), generator=g, device=DEV) * 0.02).to(torch.bfloat16)
++    return q, scales, biases
++
++
++def as_bits(t, bits: int):
++    q, s, b = t
++    return mlx_words(q, bits), s, b
++
++
++def test_levels_round_trip():
++    for bits in (2, 3, 4):
++        q, _, _ = tensor(3, 32, 256, bits, bits)
++        assert torch.equal(experts.levels(mlx_words(q, bits), bits).long(), q)
++
++
++def run(ex, x, picks, *, prefill=False, y_dtype=torch.float32):
++    rows, slots = picks.shape
++    plan = experts.Plan(rows, slots, ex.count, DEV, prefill=prefill)
++    experts.route(picks.contiguous(), plan)
++    act = torch.empty((rows * slots, ex.width), dtype=torch.bfloat16, device=DEV)
++    y = torch.empty((rows * slots, ex.dims), dtype=y_dtype, device=DEV)
++    experts.gate_up(x, ex, plan, act, rows)
++    experts.down(act, ex, plan, y, rows)
++    return act, y
++
++
++def pair(bits_up, bits_down, e=18, d=512, ni=128):
++    """The same levels twice: narrow experts with a 4-bit shared expert beside them, and all at 4 bits."""
++
++    up = [tensor(e, ni, d, bits_up, 10 + i) for i in range(2)]
++    down = tensor(e, d, ni, bits_down, 20)
++    s_up = [tensor(1, ni, d, 4, 30 + i) for i in range(2)]
++    s_down = tensor(1, d, ni, 4, 40)
++    narrow = experts.make([as_bits(t, bits_up) for t in up], as_bits(down, bits_down), GS, limit=10.0,
++                          shared=([as_bits(t, 4) for t in s_up], as_bits(s_down, 4)))
++    cat = lambda t, st: tuple(torch.cat([a, b]) for a, b in zip(t, st))  # noqa: E731
++    full = experts.make([as_bits(cat(t, st), 4) for t, st in zip(up, s_up)], as_bits(cat(down, s_down), 4), GS,
++                        limit=10.0)
++    return narrow, full
++
++
++def picks_for(rows, e, k=6, seed=5):
++    g = torch.Generator().manual_seed(seed)
++    return torch.stack([torch.cat([torch.randperm(e, generator=g)[:k], torch.tensor([e])])
++                        for _ in range(rows)]).to(torch.int32).to(DEV)
++
++
++WIDTHS = [(2, 3), (3, 3), (2, 2), (3, 4), (4, 2)]
++
++
++@pytest.mark.parametrize("prefill,y_dtype", [(False, torch.float32), (True, torch.float32), (True, torch.bfloat16)])
++@pytest.mark.parametrize("bits_up,bits_down", WIDTHS)
++def test_narrow_experts_match_the_4bit_kernels(bits_up, bits_down, prefill, y_dtype):
++    narrow, full = pair(bits_up, bits_down)
++    assert (narrow.bits_up, narrow.bits_down) == (bits_up, bits_down) and narrow.count == full.count == 19
++    rows = 150 if prefill else 37
++    x = (torch.randn((rows, 512), device=DEV) * 0.5).to(torch.bfloat16)
++    picks = picks_for(rows, 18)
++    a_n, y_n = run(narrow, x, picks, prefill=prefill, y_dtype=y_dtype)
++    a_f, y_f = run(full, x, picks, prefill=prefill, y_dtype=y_dtype)
++    assert torch.equal(a_n, a_f) and torch.equal(y_n, y_f)
++
++
++@pytest.mark.parametrize("bits_up,bits_down", [(2, 3), (3, 3)])
++def test_narrow_pairs_do_not_depend_on_the_window(bits_up, bits_down):
++    narrow, _ = pair(bits_up, bits_down)
++    rows = 24
++    x = (torch.randn((rows, 512), device=DEV) * 0.5).to(torch.bfloat16)
++    picks = picks_for(rows, 18, seed=9)
++    act, y = run(narrow, x, picks)
++    alone = [run(narrow, x[r:r + 1], picks[r:r + 1]) for r in range(rows)]
++    assert torch.equal(act, torch.cat([a[0] for a in alone])) and torch.equal(y, torch.cat([a[1] for a in alone]))
++
++
++def test_narrow_is_smaller():
++    narrow, full = pair(2, 3)
++    # a block: 2 * bits words a lane (4-bit: 8), then 32 words of scales and biases
++    assert (narrow.up.shape[-1], narrow.down.shape[-1], full.up.shape[-1]) == (160, 224, 288)

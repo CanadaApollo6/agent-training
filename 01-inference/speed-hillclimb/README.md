@@ -119,3 +119,59 @@ Two ways out:
 - Give TensorFold low-bit experts. Build A's trick applied to TensorFold would save about 8 GiB, but its grouped
   expert kernels read 4-bit only.
 - Trim its working memory for 24 GB cards.
+
+## Low-bit experts in TensorFold (2026-09-29)
+
+Riel's call: give TensorFold low-bit experts, trim its buffers later, and end up with a custom Ornith 35B recipe.
+
+### Kernels
+
+The grouped expert kernels now also read 2- and 3-bit experts (groups of 64), for decode and prompts alike. Patch:
+[`tensorfold/sm86-lowbit.patch`](tensorfold/sm86-lowbit.patch), which includes the sm_86 port.
+- **Bit planes.** A 2-bit expert is stored as one plane of 2-bit fields. A 3-bit expert adds a second plane holding
+  each level's third bit.
+- **Same arithmetic.** The kernel rebuilds the exact 4-bit word the old kernel read from the planes. Everything after
+  that (unpacking to bf16, the matmul, the epilogue) is unchanged. So a 2-bit expert gives the same bits as the same
+  levels stored at 4 bits.
+- **Shared expert.** It stays at 4 bits in its own tensor. Each tile picks its width by expert id.
+- **Loader.** It reads each projection's width from the tensor shapes, so a checkpoint can mix widths.
+
+Tests on a rented 4090:
+- 19 new tests pass. They check that narrow experts give exactly the same bits as the 4-bit kernels (decode, prompts,
+  fp32 and bf16 outputs, five width mixes), and that a row's output doesn't depend on the other rows in the batch.
+- The existing 36 expert and MoE tests still pass.
+
+### Recipe quantizer
+
+[`tensorfold/quantize_experts.py`](tensorfold/quantize_experts.py) re-quantizes only the routed experts, from the bf16
+weights. It keeps MLX's format (w = s·q + b, per group of 64). Everything else is copied from the MLX 4-bit checkpoint:
+the always-on path, the routers, the shared expert and the MTP head.
+
+The scale and offset per group come from a search rather than plain min/max rounding:
+- Each input column gets an error weight from bartowski's importance matrix (the one build A used). A column that sees
+  big activations costs more when it's wrong.
+- For each group, the search tries a sweep of ranges. For each range it rounds, refits s and b by weighted least
+  squares, then rounds them to bf16. The lowest weighted error wins.
+
+Mean weighted relative error per projection, across the 40 layers:
+
+| Projection | Width | Plain rounding | Search |
+|---|---|---|---|
+| gate | 2-bit | 0.171 | 0.103 |
+| up | 2-bit | 0.176 | 0.107 |
+| down | 3-bit | 0.037 | 0.027 |
+
+At 4 bits the plain path reproduces MLX's own rounding: 97% of words are bit-identical, and the rest differ only in
+rounding order.
+
+Recipes:
+- **R2:** gate/up at 2-bit, down at 3-bit. That's close to build A's layout (IQ2_S / IQ3_S). The checkpoint is 13 GB,
+  against 19 GB for MLX 4-bit.
+- **R1:** everything at 3-bit, the safer option.
+
+**Claude's predictions, written before measuring:**
+- **Decode:** routed experts are about a third of the bytes read per token, and R2 cuts them by about 37%. Rebuilding
+  words from the planes adds a little arithmetic. MTP drafts may be accepted slightly less often. Net: about 5% faster.
+- **Context:** about 6.5 GiB freed, at about 70 MB per 1K tokens, gives roughly 100K+ tokens on 24 GB.
+- **Probe:** R2 is riskier than build A, because 2-bit affine is coarser than IQ2_S's codebook. The score should hold
+  within noise, but reasoning will run 30–50% longer, as it did for build A. R1 should pass cleanly.

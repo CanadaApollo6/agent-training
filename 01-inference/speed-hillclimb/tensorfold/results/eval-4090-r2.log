@@ -1,0 +1,20 @@
+{"label": "", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 406.32510815013734, "decode_tps_all": [358.15, 431.97, 406.33], "ttft_s_median": 0.019953109323978424}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 318.719297784858, "decode_tps_all": [318.72, 326.46, 311.04], "ttft_s_median": 0.023346183821558952}
+{"label": "", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 468.1758368236212, "decode_tps_all": [468.83, 468.18, 467.57], "ttft_s_median": 0.019666683860123158}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 359.79691709928653, "decode_tps_all": [359.42, 359.8, 359.89], "ttft_s_median": 0.02282758429646492}
+== 30000
+{"prompt_tokens": 39077, "prefill_s": 3.4, "prefill_tps": 11484, "answer": "6261", "expected": 6261}
+peak 18342 MiB
+== 45000
+{"prompt_tokens": 59054, "prefill_s": 6.18, "prefill_tps": 9558, "answer": "5976", "expected": 5976}
+peak 20324 MiB
+== 60000
+TypeError: 'NoneType' object is not subscriptable
+peak 23628 MiB
+== 90000
+TypeError: unsupported operand type(s) for -: 'NoneType' and 'float'
+peak 23982 MiB
+== 120000
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+peak 23982 MiB
+EVAL_DONE
