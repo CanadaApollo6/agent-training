@@ -33,7 +33,15 @@ only passes through ~3B active parameters, which cuts the other way.
 
 **Riel (2026-09-28):** the 35B-A3B MoE "holds up better for sure" than the 9B. The test: at the same build
 (IQ3_XXS, IQ2_M), the 35B loses a smaller share of its own Q8_0 score than the 9B does. The Q8_0 baseline (37.8 GB)
-doesn't fit on the 3090, so it runs on a rented pod; the low-bit builds (10–15 GB) run locally.
+doesn't fit on the 3090, so it runs on a rented pod; the low-bit builds (10–15 GB) run locally. Riel's mechanism:
+the extra stored weights act as spare capacity.
+
+Caveat on that mechanism: within one token, idle experts can't cover for a damaged active one, since the router
+doesn't reroute around rounding error. What can help is averaging. Each token mixes 8 experts, so their independent
+rounding errors partly cancel (roughly by √8). The always-on path (attention, router, shared expert) gets no such
+averaging. The discriminating experiment is our own mixed build: experts at 2 bits and everything else at 8. If
+it holds up, the experts really are the cheap part (canada-quant's bet). If it still breaks, the damage is in the
+per-token path.
 
 Evidence so far leans Riel's way. IQ3_XXS already loses 3 problems at an average of 3.7 bits, while EXL3 3.0 on the
 27B scored 19/20. It's confounded twice, though: EXL3's rotation plus trellis is a stronger quantizer than llama.cpp's
