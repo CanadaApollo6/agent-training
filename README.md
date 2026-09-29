@@ -77,6 +77,19 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     the Ornith quantization work. Qwen3.8-27B exists as both EXL3 2.0 bpw and ternary Bonsai 2 (1.72 bpw, trained),
     so it's a clean rounding-vs-training comparison on one base model.
   - The figures are the kit author's measurements. The engine wheels come from turboderp's own releases.
+- [SOL-ExecBench](https://research.nvidia.com/benchmarks/sol-execbench) (NVIDIA;
+  [paper](https://arxiv.org/abs/2603.19173), [code](https://github.com/nvidia/sol-execbench),
+  [data](https://huggingface.co/datasets/nvidia/SOL-ExecBench)): 235 CUDA kernel problems taken from 124 real models,
+  each scored against an analytic **speed-of-light** bound for a B200, not against a software baseline. It's our
+  roofline method (measure against the hardware ceiling) turned into a benchmark.
+  - Databricks reports #1 on all 4 tracks with Kernel Design Agents: frontier models (Claude writing, Codex reviewing)
+    in a self-hillclimbing loop, about $70K in tokens. They say frontier models are still far ahead of open models
+    at kernels. That's from their announcement, not verified here.
+  - Why it works: the verifier is hard and cheap. The kernel must be correct and is timed against a fixed ceiling, so
+    an agent can iterate unattended. It's the same `hillclimb` loop as in the eval-design entry.
+  - Songbird angle: SQL has the same kind of verifier. A query's result can be checked against ground truth and its
+    runtime measured, so text-to-SQL and query tuning can hillclimb the same way. Blackwell-only, so the problems
+    themselves are out of reach on the 3090.
 - [sudoingx Bonsai 2 PTQ1_0 + MTP](https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF) (and
   [bonsai2-small-gpu](https://github.com/sudoingX/bonsai2-small-gpu)): the 5.95 GB ternary Bonsai 2 with Qwen3.8-27B's
   MTP head grafted back on, for 8–16 GB cards (measured on an RTX 3060 12 GB and a 5060 Ti 16 GB).
