@@ -1,0 +1,243 @@
+{
+ "label": "bonsai2-pq2",
+ "n": 20,
+ "cap": 16384,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0
+ },
+ "wall_s": 1226.090690988989,
+ "sanity": "9",
+ "correct": 16,
+ "wrong": 0,
+ "runaway": 4,
+ "cut off": 0,
+ "accuracy": 0.8,
+ "median_tokens": 1216,
+ "mean_tokens": 5664.7,
+ "total_tokens": 113294,
+ "per_problem": [
+  {
+   "id": "test/precalculus/902.json",
+   "subject": "Precalculus",
+   "gold": "\\sqrt{66}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ixth vertex is opposite the vertex at distance \\(8\\). If the missing distance is \\(x\\), then\n\n\\[\nx^2+8^2=130.\n\\]\n\nHence\n\n\\[\nx^2+64=130 \\implies x^2=66 \\implies x=\\sqrt{66}.\n\\]\n\n\\[\n\\boxed{\\sqrt{66}}\n\\]",
+   "finish": "stop",
+   "tokens": 13353,
+   "s": 858.3674362059683
+  },
+  {
+   "id": "test/intermediate_algebra/2015.json",
+   "subject": "Intermediate Algebra",
+   "gold": "\\{1\\pm\\sqrt{5},-2\\}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 1093.430162011995
+  },
+  {
+   "id": "test/intermediate_algebra/1454.json",
+   "subject": "Intermediate Algebra",
+   "gold": "70 \\sqrt{2}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ac{140}{\\sqrt2}=70\\sqrt2.\n\\end{aligned}\n\\]\n\nEquality holds when\n\\[\nx=20,\\qquad y=30,\\qquad 40-x=50-y,\n\\]\nwhich is satisfied at \\((x,y)=(20,30)\\). Therefore the minimum value is\n\n\\[\n\\boxed{70\\sqrt2}\n\\]",
+   "finish": "stop",
+   "tokens": 14362,
+   "s": 933.7687340339762
+  },
+  {
+   "id": "test/prealgebra/1512.json",
+   "subject": "Prealgebra",
+   "gold": "7\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "dii \\(6\\) and \\(7\\)  \n  \\[\n  [Z]=\\pi(7^2-6^2)=\\pi(49-36)=13\\pi\n  \\]\n\nThe greatest area is \\(20\\pi\\), and the smallest area is \\(13\\pi\\). Their difference is\n\n\\[\n20\\pi-13\\pi=7\\pi\n\\]\n\n\\[\n\\boxed{7\\pi}\n\\]",
+   "finish": "stop",
+   "tokens": 433,
+   "s": 27.923433604999445
+  },
+  {
+   "id": "test/algebra/2779.json",
+   "subject": "Algebra",
+   "gold": "20",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\\sqrt{3}+6\\sqrt{2}\n=11\\sqrt{2}+9\\sqrt{3}.\n\\]\n\nThus it is in the form\n\n\\[\na\\sqrt{2}+b\\sqrt{3}+c\\sqrt{6}\n\\]\n\nwith\n\n\\[\na=11,\\qquad b=9,\\qquad c=0.\n\\]\n\nTherefore,\n\n\\[\na+b+c=11+9+0=20.\n\\]\n\n\\[\n\\boxed{20}\n\\]",
+   "finish": "stop",
+   "tokens": 866,
+   "s": 55.5935011790134
+  },
+  {
+   "id": "test/number_theory/1128.json",
+   "subject": "Number Theory",
+   "gold": "2",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "le modulo \\(p\\), and a solution exists.\n- If \\(p=2\\), then \\(8x\\equiv 0\\pmod 2\\), but \\(1\\equiv 1\\pmod 2\\), so there is no solution.\n\nThus the only such prime is \\(2\\), and the sum is\n\n\\[\n\\boxed{2}\n\\]",
+   "finish": "stop",
+   "tokens": 1216,
+   "s": 78.46126473898767
+  },
+  {
+   "id": "test/number_theory/769.json",
+   "subject": "Number Theory",
+   "gold": "9",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "^4 \\equiv 4 \\pmod{11}\n\\]\n\n\\[\n8^{38} \\equiv 8^8 \\equiv (8^4)^2 \\equiv 4^2 = 16 \\equiv 5 \\pmod{11}\n\\]\n\nTherefore,\n\n\\[\n8^{34}+8^{38} \\equiv 4+5 \\equiv 9 \\pmod{11}\n\\]\n\nSo the remainder is\n\n\\[\n\\boxed{9}\n\\]",
+   "finish": "stop",
+   "tokens": 939,
+   "s": 60.60188019101042
+  },
+  {
+   "id": "test/intermediate_algebra/2152.json",
+   "subject": "Intermediate Algebra",
+   "gold": "0",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "degree at most \\(2\\) has value \\(1\\) at three distinct points, it must equal the constant polynomial \\(1\\).\n\nThus\n\n\\[\np(x)\\equiv 1.\n\\]\n\nA nonzero constant polynomial has degree \\(0\\).\n\n\\[\n\\boxed{0}\n\\]",
+   "finish": "stop",
+   "tokens": 728,
+   "s": 46.581584954983555
+  },
+  {
+   "id": "test/counting_and_probability/1003.json",
+   "subject": "Counting & Probability",
+   "gold": "29",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 1123.310524029017
+  },
+  {
+   "id": "test/number_theory/427.json",
+   "subject": "Number Theory",
+   "gold": "25",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\\(1092\\):\n\n\\[\n1092 = 7 \\cdot 156 = 7 \\cdot 12 \\cdot 13 = 2^2 \\cdot 3 \\cdot 7 \\cdot 13\n\\]\n\nThe distinct prime divisors of \\(A\\) are\n\n\\[\n2, 3, 7, 13\n\\]\n\nTheir sum is\n\n\\[\n2+3+7+13=25\n\\]\n\n\\[\n\\boxed{25}\n\\]",
+   "finish": "stop",
+   "tokens": 812,
+   "s": 101.37740455800667
+  },
+  {
+   "id": "test/algebra/975.json",
+   "subject": "Algebra",
+   "gold": "-4",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": ",\\quad x=1.\n\\]\n\nAlso,\n\n\\[\nx^2+9x+20=(x+4)(x+5)\n\\]\n\nso its roots are\n\n\\[\nx=-4,\\quad x=-5.\n\\]\n\nThe only common root is\n\n\\[\nx=-4.\n\\]\n\nTherefore, the only real value not in the domain is\n\n\\[\n\\boxed{-4}\n\\]",
+   "finish": "stop",
+   "tokens": 501,
+   "s": 89.90500838396838
+  },
+  {
+   "id": "test/prealgebra/1128.json",
+   "subject": "Prealgebra",
+   "gold": "64",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " clown)  \n- Hair: \\(3\\) hairstyle choices \\(+1\\) bald choice \\(=4\\) choices  \n\nSince the choices are independent, multiply:\n\n\\[\n2 \\times 1 \\times 2 \\times 2 \\times 2 \\times 4 = 64\n\\]\n\n\\[\n\\boxed{64}\n\\]",
+   "finish": "stop",
+   "tokens": 416,
+   "s": 87.95885829802137
+  },
+  {
+   "id": "test/precalculus/986.json",
+   "subject": "Precalculus",
+   "gold": "144",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "y_2 & 1 \\\\\nx_3 & y_3 & 1\n\\end{vmatrix}\n\\]\n\nequals twice the signed area of triangle \\(P_1P_2P_3\\). Hence its absolute value is\n\n\\[\n2\\cdot 6=12.\n\\]\n\nSo its square is\n\n\\[\n12^2=144.\n\\]\n\n\\[\n\\boxed{144}\n\\]",
+   "finish": "stop",
+   "tokens": 1139,
+   "s": 154.25923312199302
+  },
+  {
+   "id": "test/prealgebra/1044.json",
+   "subject": "Prealgebra",
+   "gold": "5.4 \\text{ cents}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\n\n\\[\n12(6)+12(6)+6(4)+13(5)=72+72+24+65=233\n\\]\n\nTotal number of 1970s stamps:\n\n\\[\n12+12+6+13=43\n\\]\n\nAverage price:\n\n\\[\n\\frac{233}{43}\\approx 5.4186\n\\]\n\nRounded to the nearest tenth:\n\n\\[\n\\boxed{5.4}\n\\]",
+   "finish": "stop",
+   "tokens": 898,
+   "s": 147.25803939200705
+  },
+  {
+   "id": "test/intermediate_algebra/582.json",
+   "subject": "Intermediate Algebra",
+   "gold": "850",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\nTherefore,\n\n\\[\n\\sum_{\\zeta^{10}=-1}\\left(170-13(\\zeta+\\overline{\\zeta})\\right)\n=10\\cdot 170\n=1700.\n\\]\n\nHence\n\n\\[\n\\sum_{i=1}^5 \\frac{1}{r_i\\overline{r_i}}\n=\\frac12\\cdot 1700=850.\n\\]\n\n\\[\n\\boxed{850}\n\\]",
+   "finish": "stop",
+   "tokens": 4915,
+   "s": 412.9616291730199
+  },
+  {
+   "id": "test/geometry/686.json",
+   "subject": "Geometry",
+   "gold": "18+2\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "perimeter is\n\n\\[\n9 \\cdot 2 = 18.\n\\]\n\nThe expansion radius is \\(r=1\\), so the added circular arc length is\n\n\\[\n2\\pi r = 2\\pi.\n\\]\n\nThus the perimeter of \\(S\\) is\n\n\\[\n18 + 2\\pi.\n\\]\n\n\\[\n\\boxed{18+2\\pi}\n\\]",
+   "finish": "stop",
+   "tokens": 2420,
+   "s": 259.06919598497916
+  },
+  {
+   "id": "test/geometry/880.json",
+   "subject": "Geometry",
+   "gold": "2\\sqrt{113}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 1208.4770126289804
+  },
+  {
+   "id": "test/prealgebra/954.json",
+   "subject": "Prealgebra",
+   "gold": "10",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": ".\n\nIn \\(90\\) seconds, which is \\(\\frac{90}{9000} = \\frac{1}{100}\\) of that time, it travels \\(\\frac{1}{100}\\) of \\(1000\\) meters:\n\n\\[\n1000 \\times \\frac{1}{100} = 10 \\text{ meters}\n\\]\n\n\\[\n\\boxed{10}\n\\]",
+   "finish": "stop",
+   "tokens": 445,
+   "s": 183.7088244180195
+  },
+  {
+   "id": "test/intermediate_algebra/558.json",
+   "subject": "Intermediate Algebra",
+   "gold": "(3,4]",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 1219.9834646939998
+  },
+  {
+   "id": "test/intermediate_algebra/1849.json",
+   "subject": "Intermediate Algebra",
+   "gold": "501",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "th roots are positive. Thus there are two valid solutions, not one.\n\nTherefore, among positive integers, only \\(k=8\\) works.\n\nTotal number of valid integer values:\n\n\\[\n500+1=501.\n\\]\n\n\\[\n\\boxed{501}\n\\]",
+   "finish": "stop",
+   "tokens": 4315,
+   "s": 543.8669522400014
+  }
+ ]
+}

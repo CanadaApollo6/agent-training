@@ -117,7 +117,7 @@ def run_server(args, rows):
             r = client.chat.completions.create(
                 model="local", messages=[{"role": "user", "content": rows[i]["problem"] + SUFFIX}],
                 max_tokens=args.cap, temperature=SAMPLING["temperature"], top_p=SAMPLING["top_p"], seed=args.seed + i,
-                extra_body={"top_k": SAMPLING["top_k"], "min_p": SAMPLING["min_p"]}, timeout=max(remaining, 1))
+                extra_body={"top_k": SAMPLING["top_k"], "min_p": SAMPLING["min_p"]}, timeout=min(max(remaining, 1), 86400))
         except Exception as e:  # the timer ran out
             return "", "", {"finish": "deadline", "tokens": None, "s": time.perf_counter() - t0, "error": str(e)[:200]}
         c = r.choices[0]
