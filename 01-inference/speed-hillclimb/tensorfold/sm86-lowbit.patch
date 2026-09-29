@@ -63,7 +63,7 @@ index 0136925..37d28a1 100644
      if memory is None:
          return available
 diff --git i/src/tensorfold/cuda/experts.cpp w/src/tensorfold/cuda/experts.cpp
-index b993962..57a9edd 100644
+index b993962..1dc7d52 100644
 --- i/src/tensorfold/cuda/experts.cpp
 +++ w/src/tensorfold/cuda/experts.cpp
 @@ -2,13 +2,14 @@
@@ -77,7 +77,7 @@ index b993962..57a9edd 100644
 -void experts_prefill_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
 -                          const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
 +                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units,
-+                      const at::Tensor& w4, int64_t e4);
++                      const at::Tensor& w4, int64_t e4, int64_t split);
 +void experts_prefill_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride,
 +                          int64_t slots, const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
                            const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int64_t n,
@@ -86,7 +86,7 @@ index b993962..57a9edd 100644
  
  static void check(const at::Tensor& t, const char* name, at::ScalarType dtype) {
    TORCH_CHECK(t.is_cuda() && t.scalar_type() == dtype, name, ": expected a CUDA tensor of the right dtype");
-@@ -37,22 +38,33 @@ void plan(const at::Tensor& picks, int64_t pairs, int64_t experts, int64_t tile,
+@@ -37,22 +38,34 @@ void plan(const at::Tensor& picks, int64_t pairs, int64_t experts, int64_t tile,
    experts_plan_cuda(picks, pairs, experts, tile, members, items, counts, rank, hist);
  }
  
@@ -107,12 +107,13 @@ index b993962..57a9edd 100644
 -             int64_t n, double limit, int64_t max_items) {
 +void run(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t slots, const at::Tensor& w, int64_t kg,
 +         int64_t nb, const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor out,
-+         int64_t n, double limit, int64_t max_units, const at::Tensor& w4, int64_t e4) {
++         int64_t n, double limit, int64_t max_units, const at::Tensor& w4, int64_t e4, int64_t split) {
    check_call(x, kg * gs, w, out, n, nb, epi);
 -  experts_prefill_cuda(gs, epi, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit, max_items);
 +  check_bits(gs, bits, w4, e4);
++  TORCH_CHECK(split >= -1, "split: -1 the one-warp kernel, 0 picks, else warps a unit (rounded to a power of two)");
 +  experts_run_cuda(gs, epi, bits, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit, max_units,
-+                   w4, e4);
++                   w4, e4, split);
 +}
 +
 +void prefill(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t slots, const at::Tensor& w,
@@ -128,11 +129,11 @@ index b993962..57a9edd 100644
    m.def("plan", &plan, "group a layer's (row, slot) pairs by expert into items of at most tile pairs");
 -  m.def("run", &run, "grouped 4-bit expert matmul, decode form (epilogue 0: fp32, 1: relu^2, 2: SwiGLU)");
 -  m.def("prefill", &prefill, "grouped 4-bit expert matmul, prefill form (3: bf16 out)");
-+  m.def("run", &run, "grouped 2/3/4-bit expert matmul, decode form (epilogue 0: fp32, 1: relu^2, 2: SwiGLU)");
++  m.def("run", &run, "grouped 2/3/4-bit expert matmul, decode form (epilogue 0: fp32, 1: relu^2, 2: SwiGLU); split: warps a unit");
 +  m.def("prefill", &prefill, "grouped 2/3/4-bit expert matmul, prefill form (3: bf16 out)");
  }
 diff --git i/src/tensorfold/cuda/experts.cu w/src/tensorfold/cuda/experts.cu
-index 6cb5ba9..4c68d50 100644
+index 6cb5ba9..18313a1 100644
 --- i/src/tensorfold/cuda/experts.cu
 +++ w/src/tensorfold/cuda/experts.cu
 @@ -18,6 +18,12 @@ __device__ __forceinline__ uint4 ld_w(const uint4* p) {
@@ -183,29 +184,90 @@ index 6cb5ba9..4c68d50 100644
    }
    const uint4 zero = make_uint4(0u, 0u, 0u, 0u);
    const int k0 = g * GS;
-@@ -66,9 +72,9 @@ __device__ __forceinline__ void load_stage(Stage<GS, M>& st, const uint4* blk, i
+@@ -66,72 +72,84 @@ __device__ __forceinline__ void load_stage(Stage<GS, M>& st, const uint4* blk, i
    }
  }
  
 -template <int GS, int M>
 -__device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const Stage<GS, M>& st, bool hi) {
 -  using G = Geo<GS>;
++// one matrix's products of a group: p[j] = the levels times the inputs, from zero
++template <int GS, int BITS>
++__device__ __forceinline__ void products(float (&p)[NTW][4], const uint32_t (&w)[Geo<GS, BITS>::WORDS],
++                                         const uint4 (&xa)[Geo<GS>::XV], const uint4 (&xb)[Geo<GS>::XV]) {
++#pragma unroll
++  for (int j = 0; j < NTW; ++j) p[j][0] = p[j][1] = p[j][2] = p[j][3] = 0.f;
++#pragma unroll
++  for (int ks = 0; ks < Geo<GS>::KS; ++ks) {
++    // k-step ks: the lane's inputs 4 ks .. 4 ks + 3 (pairs at the mma's k positions 2t and 2t + 8)
++    const uint32_t a0 = comp(xa[ks >> 1], 2 * (ks & 1));
++    const uint32_t a2 = comp(xa[ks >> 1], 2 * (ks & 1) + 1);
++    const uint32_t a1 = comp(xb[ks >> 1], 2 * (ks & 1));
++    const uint32_t a3 = comp(xb[ks >> 1], 2 * (ks & 1) + 1);
++    const int sh = (ks & 1) ? 8 : 0;
++#pragma unroll
++    for (int j = 0; j < NTW; ++j) {
++      const int wi = j * (GS / 32) + (ks >> 1);
++      const uint32_t word = nibword<BITS>(w, wi);
++      mma(p[j], a0, a1, a2, a3, nib2(word, sh), nib2(word, sh + 4));
++    }
++  }
++}
++
++// tile j's step of the decode form: sb holds the quad's scales (uint4 0 .. NTW/4 - 1) then biases
++__device__ __forceinline__ void accumulate(float (&a)[4], const float (&p)[4], const uint4* sb, int j, float xsa,
++                                           float xsb, bool hi) {
++  const uint32_t sp = comp(sb[j >> 2], j & 3);
++  const uint32_t bp = comp(sb[(NTW + j) >> 2], (NTW + j) & 3);
++  const float s0 = lo_f(sp), s1 = hi_f(sp), b0 = lo_f(bp), b1 = hi_f(bp);
++  a[0] = fmaf(xsa, b0, fmaf(p[0], s0, a[0]));
++  a[1] = fmaf(xsa, b1, fmaf(p[1], s1, a[1]));
++  if (hi) {
++    a[2] = fmaf(xsb, b0, fmaf(p[2], s0, a[2]));
++    a[3] = fmaf(xsb, b1, fmaf(p[3], s1, a[3]));
++  }
++}
++
 +template <int GS, int M, int BITS>
 +__device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const Stage<GS, M, BITS>& st, bool hi) {
 +  using G = Geo<GS, BITS>;
    const float xsa = group_sum<G::XV>(st.xa);
    const float xsb = group_sum<G::XV>(st.xb);
  #pragma unroll
-@@ -87,7 +93,7 @@ __device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const
+   for (int m = 0; m < M; ++m) {
+     float p[NTW][4];
++    products<GS, BITS>(p, st.w[m], st.xa, st.xb);
  #pragma unroll
-       for (int j = 0; j < NTW; ++j) {
-         const int wi = j * (GS / 32) + (ks >> 1);
+-    for (int j = 0; j < NTW; ++j) p[j][0] = p[j][1] = p[j][2] = p[j][3] = 0.f;
+-#pragma unroll
+-    for (int ks = 0; ks < G::KS; ++ks) {
+-      // k-step ks: the lane's inputs 4 ks .. 4 ks + 3 (pairs at the mma's k positions 2t and 2t + 8)
+-      const uint32_t a0 = comp(st.xa[ks >> 1], 2 * (ks & 1));
+-      const uint32_t a2 = comp(st.xa[ks >> 1], 2 * (ks & 1) + 1);
+-      const uint32_t a1 = comp(st.xb[ks >> 1], 2 * (ks & 1));
+-      const uint32_t a3 = comp(st.xb[ks >> 1], 2 * (ks & 1) + 1);
+-      const int sh = (ks & 1) ? 8 : 0;
+-#pragma unroll
+-      for (int j = 0; j < NTW; ++j) {
+-        const int wi = j * (GS / 32) + (ks >> 1);
 -        const uint32_t word = comp(st.w[m][wi >> 2], wi & 3);
-+        const uint32_t word = nibword<BITS>(st.w[m], wi);
-         mma(p[j], a0, a1, a2, a3, nib2(word, sh), nib2(word, sh + 4));
-       }
-     }
-@@ -107,31 +113,33 @@ __device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const
+-        mma(p[j], a0, a1, a2, a3, nib2(word, sh), nib2(word, sh + 4));
+-      }
+-    }
+-#pragma unroll
+-    for (int j = 0; j < NTW; ++j) {
+-      const uint32_t sp = comp(st.sb[m][j >> 2], j & 3);
+-      const uint32_t bp = comp(st.sb[m][(NTW + j) >> 2], (NTW + j) & 3);
+-      const float s0 = lo_f(sp), s1 = hi_f(sp), b0 = lo_f(bp), b1 = hi_f(bp);
+-      float(&a)[4] = acc[m][0][j];
+-      a[0] = fmaf(xsa, b0, fmaf(p[j][0], s0, a[0]));
+-      a[1] = fmaf(xsa, b1, fmaf(p[j][1], s1, a[1]));
+-      if (hi) {
+-        a[2] = fmaf(xsb, b0, fmaf(p[j][2], s0, a[2]));
+-        a[3] = fmaf(xsb, b1, fmaf(p[j][3], s1, a[3]));
+-      }
+-    }
++    for (int j = 0; j < NTW; ++j) accumulate(acc[m][0][j], p[j], st.sb[m], j, xsa, xsb, hi);
    }
  }
  
@@ -246,7 +308,7 @@ index 6cb5ba9..4c68d50 100644
    const int lane = threadIdx.x & 31, gq = lane >> 2, t = lane & 3;
    const int units = __ldg(counts) * NB;
    for (int unit = blockIdx.x * WARPS + (threadIdx.x >> 5); unit < units; unit += gridDim.x * WARPS) {
-@@ -143,13 +151,18 @@ __global__ void __launch_bounds__(WARPS * 32)
+@@ -143,17 +161,206 @@ __global__ void __launch_bounds__(WARPS * 32)
      const int r0 = slots ? pr0 / slots : pr0, r1 = slots ? pr1 / slots : pr1;
      const __nv_bfloat16* x0 = X + (size_t)r0 * x_stride + t * (GS / 4);
      const __nv_bfloat16* x1 = X + (size_t)r1 * x_stride + t * (GS / 4);
@@ -267,7 +329,195 @@ index 6cb5ba9..4c68d50 100644
      epilogue<EPI, M, 1>(acc, 0, out, N, cb * COLS + 2 * t, pr0, pr1, v0, v1, limit);
    }
  }
-@@ -284,25 +297,25 @@ __global__ void plan_scatter(const int* __restrict__ picks, int P, int E, const
+ 
++// Swapped form, the decode kernel: the weights are the mma's A (16 rows: column gq of tiles j and j + 1) and a token's
++// inputs its B (8 columns: tokens h8 + gq), so a unit of at most 8 pairs takes half the mmas; an item of more takes
++// two passes. A lane ends with column gq of each tile for tokens h8 + 2t and h8 + 2t + 1. The tensor core's dot
++// product doesn't depend on which operand is which, and the steps above run on the same values in the same order,
++// so every output has the decode form's bits (test_experts_split.py).
++// S warps can share a unit: warp w takes groups w, w + S, ..., writes its products, group sums and scales to shared
++// memory, and warp j folds tile j over each round's groups in order.
++
++template <int GS, int BITS>
++__device__ __forceinline__ void swapped_products(float (&q)[NTW][2], const uint32_t (&w)[Geo<GS, BITS>::WORDS],
++                                                 const uint4 (&xa)[Geo<GS>::XV]) {
++  float c[NTW / 2][4];
++#pragma unroll
++  for (int P = 0; P < NTW / 2; ++P) c[P][0] = c[P][1] = c[P][2] = c[P][3] = 0.f;
++#pragma unroll
++  for (int ks = 0; ks < Geo<GS>::KS; ++ks) {
++    const uint32_t b0 = comp(xa[ks >> 1], 2 * (ks & 1));
++    const uint32_t b1 = comp(xa[ks >> 1], 2 * (ks & 1) + 1);
++    const int sh = (ks & 1) ? 8 : 0;
++#pragma unroll
++    for (int P = 0; P < NTW / 2; ++P) {
++      const uint32_t w0 = nibword<BITS>(w, 2 * P * (GS / 32) + (ks >> 1));
++      const uint32_t w1 = nibword<BITS>(w, (2 * P + 1) * (GS / 32) + (ks >> 1));
++      mma(c[P], nib2(w0, sh), nib2(w1, sh), nib2(w0, sh + 4), nib2(w1, sh + 4), b0, b1);
++    }
++  }
++#pragma unroll
++  for (int P = 0; P < NTW / 2; ++P) {
++    q[2 * P][0] = c[P][0];
++    q[2 * P][1] = c[P][1];
++    q[2 * P + 1][0] = c[P][2];
++    q[2 * P + 1][1] = c[P][3];
++  }
++}
++
++// tile j's step for column gq (odd: gq & 1) and two tokens; sb holds scales of columns 2 (gq >> 1) and 2 (gq >> 1) + 1
++__device__ __forceinline__ void accumulate_t(float (&a)[2], const float (&p)[2], const uint4* sb, int j, bool odd,
++                                             const float (&xt)[2]) {
++  const uint32_t sp = comp(sb[j >> 2], j & 3);
++  const uint32_t bp = comp(sb[(NTW + j) >> 2], (NTW + j) & 3);
++  const float sc = odd ? hi_f(sp) : lo_f(sp), bi = odd ? hi_f(bp) : lo_f(bp);
++  a[0] = fmaf(xt[0], bi, fmaf(p[0], sc, a[0]));
++  a[1] = fmaf(xt[1], bi, fmaf(p[1], sc, a[1]));
++}
++
++template <int GS, int M>
++struct Part {
++  float p[M][NTW][2][32];          // [.., lane]
++  float xs[32];                    // token gq's group sum, at lane 4 gq
++  uint4 sb[M][4][NTW / 2];         // [.., gq >> 1, ..]
++};
++
++template <int GS, int M, int D, int S, int BITS>
++__device__ __forceinline__ void swap_loop(float (&acc)[M][NTW][2], Part<GS, M>* part, const uint4* blk, int KG,
++                                          int warp, int lane, const __nv_bfloat16* x0, bool v0) {
++  using G = Geo<GS, BITS>;
++  const int gq = lane >> 2, t = lane & 3, sq = gq >> 1;
++  const bool odd = gq & 1;
++  Stage<GS, M, BITS> st[D];
++#pragma unroll
++  for (int d = 0; d < D; ++d)
++    if (warp + d * S < KG) load_stage<GS, M, BITS>(st[d], blk, warp + d * S, lane, sq, x0, x0, v0, false);
++  const int rounds = (KG + S - 1) / S;
++  for (int r0 = 0; r0 < rounds; r0 += D) {
++#pragma unroll
++    for (int d = 0; d < D; ++d) {
++      const int r = r0 + d;
++      if (r >= rounds) break;                                   // block-uniform
++      const int g = r * S + warp;
++      if constexpr (S == 1) {
++        const float xs = group_sum<G::XV>(st[d].xa);
++        const float xt[2] = {__shfl_sync(0xffffffffu, xs, 8 * t), __shfl_sync(0xffffffffu, xs, 8 * t + 4)};
++#pragma unroll
++        for (int m = 0; m < M; ++m) {
++          float q[NTW][2];
++          swapped_products<GS, BITS>(q, st[d].w[m], st[d].xa);
++#pragma unroll
++          for (int j = 0; j < NTW; ++j) accumulate_t(acc[m][j], q[j], st[d].sb[m], j, odd, xt);
++        }
++        if (g + D < KG) load_stage<GS, M, BITS>(st[d], blk, g + D, lane, sq, x0, x0, v0, false);
++      } else {
++        Part<GS, M>* buf = part + (r & 1) * S;
++        if (g < KG) {
++          Part<GS, M>& me = buf[warp];
++          me.xs[lane] = group_sum<G::XV>(st[d].xa);
++#pragma unroll
++          for (int m = 0; m < M; ++m) {
++            float q[NTW][2];
++            swapped_products<GS, BITS>(q, st[d].w[m], st[d].xa);
++#pragma unroll
++            for (int j = 0; j < NTW; ++j) {
++              me.p[m][j][0][lane] = q[j][0];
++              me.p[m][j][1][lane] = q[j][1];
++            }
++            if (t == 0 && !odd)
++#pragma unroll
++              for (int c = 0; c < G::SBV; ++c) me.sb[m][sq][c] = st[d].sb[m][c];
++          }
++          if (g + D * S < KG) load_stage<GS, M, BITS>(st[d], blk, g + D * S, lane, sq, x0, x0, v0, false);
++        }
++        __syncthreads();
++        const int n = min(S, KG - r * S);
++        for (int s = 0; s < n; ++s) {
++          const Part<GS, M>& b = buf[s];
++          const float xt[2] = {b.xs[8 * t], b.xs[8 * t + 4]};
++#pragma unroll
++          for (int m = 0; m < M; ++m)
++#pragma unroll
++            for (int j = 0; j < NTW; ++j) {
++              if (j % S != warp) continue;
++              const float q[2] = {b.p[m][j][0][lane], b.p[m][j][1][lane]};
++              accumulate_t(acc[m][j], q, b.sb[m][sq], j, odd, xt);
++            }
++        }
++      }
++    }
++  }
++}
++
++// tokens tok0 and tok0 + 1 (those below cnt) of column col of each tile j in js
++template <int EPI, int M>
++__device__ __forceinline__ void epilogue_t(const float (&acc)[M][NTW][2], void* out, int N, int col,
++                                           const int* __restrict__ members, int first, int cnt, int tok0, float limit,
++                                           unsigned js) {
++#pragma unroll
++  for (int h = 0; h < 2; ++h) {
++    if (tok0 + h >= cnt) continue;
++    const size_t row = (size_t)__ldg(members + first + tok0 + h) * N;
++#pragma unroll
++    for (int j = 0; j < NTW; ++j) {
++      if (!((js >> j) & 1u)) continue;
++      const float a = acc[0][j][h];
++      if constexpr (EPI == 0) {
++        reinterpret_cast<float*>(out)[row + col + 8 * j] = a;
++      } else {
++        const float o = EPI == 1 ? relu2(a) : swiglu(a, acc[M - 1][j][h], limit);
++        reinterpret_cast<__nv_bfloat16*>(out)[row + col + 8 * j] = __float2bfloat16_rn(o);
++      }
++    }
++  }
++}
++
++// S == 1: four warps a block, a unit each; else S warps a unit
++template <int GS, int M, int EPI, int D, int S, int BITS>
++__global__ void __launch_bounds__((S == 1 ? 4 : S) * 32)
++    swap_kernel(const __nv_bfloat16* __restrict__ X, int x_stride, int slots, const uint4* __restrict__ W, int KG,
++                int NB, const int* __restrict__ items, const int* __restrict__ counts,
++                const int* __restrict__ members, void* __restrict__ out, int N, float limit,
++                const uint4* __restrict__ W4, int e4) {
++  constexpr int U = S == 1 ? 4 : 1;                // units a block
++  extern __shared__ uint4 smem[];
++  Part<GS, M>* part = reinterpret_cast<Part<GS, M>*>(smem);    // [2 rounds][S]
++  const int lane = threadIdx.x & 31, gq = lane >> 2, t = lane & 3;
++  const int warp = S == 1 ? 0 : threadIdx.x >> 5;
++  unsigned js = 0;
++#pragma unroll
++  for (int j = 0; j < NTW; ++j) js |= (j % S == warp) << j;
++  const int units = __ldg(counts) * NB;
++  for (int unit = blockIdx.x * U + (S == 1 ? threadIdx.x >> 5 : 0); unit < units; unit += gridDim.x * U) {
++    const int it = unit / NB, cb = unit - it * NB;
++    const int e = __ldg(items + 3 * it), first = __ldg(items + 3 * it + 1), cnt = __ldg(items + 3 * it + 2);
++    for (int h8 = 0; h8 < cnt; h8 += 8) {
++      const bool v = h8 + gq < cnt;
++      const int pr = v ? __ldg(members + first + h8 + gq) : 0;
++      const int r = slots ? pr / slots : pr;
++      const __nv_bfloat16* x0 = X + (size_t)r * x_stride + t * (GS / 4);
++      float acc[M][NTW][2];
++#pragma unroll
++      for (int m = 0; m < M; ++m)
++#pragma unroll
++        for (int j = 0; j < NTW; ++j) acc[m][j][0] = acc[m][j][1] = 0.f;
++      if (BITS != 4 && e == e4) {                  // uniform: a unit is one expert's tile
++        const uint4* blk = W4 + (size_t)cb * KG * (M * Geo<GS, 4>::BLOCK);
++        swap_loop<GS, M, D, S, 4>(acc, part, blk, KG, warp, lane, x0, v);
++      } else {
++        const uint4* blk = W + ((size_t)e * NB + cb) * (size_t)KG * (M * Geo<GS, BITS>::BLOCK);
++        swap_loop<GS, M, D, S, BITS>(acc, part, blk, KG, warp, lane, x0, v);
++      }
++      if (js) epilogue_t<EPI, M>(acc, out, N, cb * COLS + gq, members, first, cnt, h8 + 2 * t, limit, js);
++      if constexpr (S > 1) __syncthreads();        // the next pass's first rounds reuse the parts
++    }
++  }
++}
++
+ constexpr int PLAN_THREADS = 1024;
+ constexpr int EMAX = 1024;
+ constexpr int PSMALL = 1024;       // pairs the one-block plan takes; wider calls rank in blocks of PLAN_THREADS
+@@ -284,28 +491,64 @@ __global__ void plan_scatter(const int* __restrict__ picks, int P, int E, const
    if (p < P) members[hist[(size_t)(p / PLAN_THREADS) * E + picks[p]] + rank[p]] = p;
  }
  
@@ -298,7 +548,46 @@ index 6cb5ba9..4c68d50 100644
    C10_CUDA_KERNEL_LAUNCH_CHECK();
  }
  
-@@ -333,19 +346,22 @@ void experts_plan_cuda(const at::Tensor& picks, int64_t pairs, int64_t experts,
++template <int GS, int M, int EPI, int S, int BITS>
++void launch_swap(const at::Tensor& x, int x_stride, int slots, const at::Tensor& w, int kg, int nb,
++                 const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int n,
++                 float limit, int64_t max_units, const at::Tensor& w4, int e4) {
++  constexpr int D = 2, U = S == 1 ? 4 : 1, THREADS = (S == 1 ? 4 : S) * 32;
++  constexpr int SMEM = S == 1 ? 0 : 2 * S * sizeof(Part<GS, M>);
++  const auto kernel = swap_kernel<GS, M, EPI, D, S, BITS>;
++  static int per_sm = 0;
++  static int sms = 0;
++  if (per_sm == 0) {
++    if (SMEM > 48 * 1024)
++      C10_CUDA_CHECK(cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, SMEM));
++    cudaOccupancyMaxActiveBlocksPerMultiprocessor(&per_sm, kernel, THREADS, SMEM);
++    sms = at::cuda::getCurrentDeviceProperties()->multiProcessorCount;
++    per_sm = per_sm < 1 ? 1 : per_sm;
++  }
++  const int64_t need = (max_units + U - 1) / U;
++  const int grid = static_cast<int>(need < (int64_t)per_sm * sms ? need : (int64_t)per_sm * sms);
++  if (grid < 1) return;
++  kernel<<<grid, THREADS, SMEM, at::cuda::getCurrentCUDAStream()>>>(
++      reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), x_stride, slots,
++      reinterpret_cast<const uint4*>(w.data_ptr()), kg, nb, items.data_ptr<int>(), counts.data_ptr<int>(),
++      members.data_ptr<int>(), out.data_ptr(), n, limit, reinterpret_cast<const uint4*>(w4.data_ptr()), e4);
++  C10_CUDA_KERNEL_LAUNCH_CHECK();
++}
++
++// warps a unit: up to about 8 warps an SM in all when units are few (3090, one row: gate/up 4, down 1), never more
++// than a unit has groups
++int pick_split(int64_t split, int64_t max_units, int kg) {
++  const int64_t cap = split > 0 ? split : 8;
++  const int64_t want = 8 * (int64_t)at::cuda::getCurrentDeviceProperties()->multiProcessorCount;
++  int s = 1;
++  while (2 * s <= cap && 2 * s <= kg && (split > 0 || max_units * 2 * s <= want)) s *= 2;
++  return s;
++}
++
+ }  // namespace
+ 
+ void experts_plan_cuda(const at::Tensor& picks, int64_t pairs, int64_t experts, int64_t tile, at::Tensor& members,
+@@ -333,19 +576,38 @@ void experts_plan_cuda(const at::Tensor& picks, int64_t pairs, int64_t experts,
    C10_CUDA_KERNEL_LAUNCH_CHECK();
  }
  
@@ -307,7 +596,7 @@ index 6cb5ba9..4c68d50 100644
                        const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items, const at::Tensor& counts,
 -                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units) {
 +                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units,
-+                      const at::Tensor& w4, int64_t e4) {
++                      const at::Tensor& w4, int64_t e4, int64_t split) {
    const c10::cuda::CUDAGuard guard(x.device());
    const int xs = static_cast<int>(x_stride), sl = static_cast<int>(slots), k = static_cast<int>(kg);
    const int b = static_cast<int>(nb), nn = static_cast<int>(n);
@@ -317,12 +606,28 @@ index 6cb5ba9..4c68d50 100644
 -    launch<GS_, M_, EPI_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_units);     \
 -    return;                                                                                          \
 +  const int ee = static_cast<int>(e4);
++  // split -1: the one-warp kernel (the decode form's reference); groups of 32 have only that
++  if (split >= 0 && gs == 64) {
++    const int sp = pick_split(split, max_units, k);
++#define TF_SWAP(M_, EPI_, B_, S_)                                                                              \
++  if (epi == EPI_ && bits == B_ && sp == S_) {                                                               \
++    launch_swap<64, M_, EPI_, S_, B_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_units, w4, \
++                                      ee);                                                                   \
++    return;                                                                                                  \
+   }
+-  TF_RUN(32, 1, 0) TF_RUN(32, 2, 2) TF_RUN(64, 1, 0) TF_RUN(64, 1, 1) TF_RUN(64, 2, 2)
++#define TF_SWAPS(M_, EPI_, B_) \
++  TF_SWAP(M_, EPI_, B_, 1) TF_SWAP(M_, EPI_, B_, 2) TF_SWAP(M_, EPI_, B_, 4) TF_SWAP(M_, EPI_, B_, 8)
++    TF_SWAPS(1, 0, 4) TF_SWAPS(1, 1, 4) TF_SWAPS(2, 2, 4) TF_SWAPS(1, 0, 3) TF_SWAPS(2, 2, 3)
++    TF_SWAPS(1, 0, 2) TF_SWAPS(2, 2, 2)
++#undef TF_SWAPS
++#undef TF_SWAP
++  }
 +#define TF_RUN(GS_, M_, EPI_, B_)                                                                          \
 +  if (gs == GS_ && epi == EPI_ && bits == B_) {                                                            \
 +    launch<GS_, M_, EPI_, B_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_units, w4, ee); \
 +    return;                                                                                                \
-   }
--  TF_RUN(32, 1, 0) TF_RUN(32, 2, 2) TF_RUN(64, 1, 0) TF_RUN(64, 1, 1) TF_RUN(64, 2, 2)
++  }
 +  TF_RUN(32, 1, 0, 4) TF_RUN(32, 2, 2, 4) TF_RUN(64, 1, 0, 4) TF_RUN(64, 1, 1, 4) TF_RUN(64, 2, 2, 4)
 +  TF_RUN(64, 1, 0, 3) TF_RUN(64, 2, 2, 3) TF_RUN(64, 1, 0, 2) TF_RUN(64, 2, 2, 2)
  #undef TF_RUN
@@ -330,7 +635,7 @@ index 6cb5ba9..4c68d50 100644
 +  TORCH_CHECK(false, "experts: no kernel for group ", gs, ", epilogue ", epi, " and ", bits, " bits");
  }
 diff --git i/src/tensorfold/cuda/experts.cuh w/src/tensorfold/cuda/experts.cuh
-index 27aa01a..37f5333 100644
+index 27aa01a..69752dd 100644
 --- i/src/tensorfold/cuda/experts.cuh
 +++ w/src/tensorfold/cuda/experts.cuh
 @@ -11,15 +11,52 @@ constexpr int COLS = 8 * NTW;
@@ -389,8 +694,27 @@ index 27aa01a..37f5333 100644
  __device__ __forceinline__ void cp16(void* dst, const void* src) {
    const uint32_t d = static_cast<uint32_t>(__cvta_generic_to_shared(dst));
    asm volatile("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(d), "l"(src));
+@@ -70,15 +107,17 @@ __device__ __forceinline__ float relu2(float a) {
+ }
+ 
+ // EPI 0: fp32 out (down); 1: bf16 relu(bf16(acc))^2; 2: bf16 SwiGLU(matrix 0, matrix 1); 3: bf16 out (prefill down)
++// Writes the n8 tiles j with bit j of js set.
+ template <int EPI, int M, int RT>
+ __device__ __forceinline__ void epilogue(const float (&acc)[M][RT][NTW][4], int r, void* out, int N, int col0, int pr0,
+-                                         int pr1, bool v0, bool v1, float limit) {
++                                         int pr1, bool v0, bool v1, float limit, unsigned js = (1u << NTW) - 1u) {
+ #pragma unroll
+   for (int h = 0; h < 2; ++h) {
+     if (!(h ? v1 : v0)) continue;
+     const size_t row = (size_t)(h ? pr1 : pr0) * N;
+ #pragma unroll
+     for (int j = 0; j < NTW; ++j) {
++      if (!((js >> j) & 1u)) continue;
+       const int col = col0 + 8 * j;
+       const float a0 = acc[0][r][j][2 * h], a1 = acc[0][r][j][2 * h + 1];
+       if constexpr (EPI == 0) {
 diff --git i/src/tensorfold/cuda/experts.py w/src/tensorfold/cuda/experts.py
-index 05d91e3..87b5229 100644
+index 05d91e3..7bb55ea 100644
 --- i/src/tensorfold/cuda/experts.py
 +++ w/src/tensorfold/cuda/experts.py
 @@ -1,4 +1,4 @@
@@ -399,16 +723,24 @@ index 05d91e3..87b5229 100644
  
  from __future__ import annotations
  
-@@ -20,7 +20,7 @@ def _ext():
+@@ -13,6 +13,7 @@ COLS = 8 * NTW           # output columns a warp
+ TILE = 16                # pairs an item holds (decode form)
+ PREFILL_TILE = 64        # pairs an item holds (prefill form)
+ SMALL = 1024             # pairs the one-block plan takes; wider plans rank in blocks of 1024 pairs
++SPLIT = 0                # decode form, warps a unit (the same bits whatever it is): 0 picks, -1 the one-warp kernel
+ 
+ 
+ @lru_cache(maxsize=1)
+@@ -20,7 +21,7 @@ def _ext():
      from tensorfold.cuda.build import load
  
      here = Path(__file__).parent
 -    return load(name="tensorfold_experts_v6", sources=[str(here / "experts.cpp"), str(here / "experts.cu"),
-+    return load(name="tensorfold_experts_v7", sources=[str(here / "experts.cpp"), str(here / "experts.cu"),
++    return load(name="tensorfold_experts_v9", sources=[str(here / "experts.cpp"), str(here / "experts.cu"),
                                                          str(here / "experts_prefill.cu")],
                  extra_cuda_cflags=["-O3"], verbose=False)
  
-@@ -35,11 +35,65 @@ def _nibbles(w: torch.Tensor) -> torch.Tensor:
+@@ -35,11 +36,65 @@ def _nibbles(w: torch.Tensor) -> torch.Tensor:
      return torch.where(out >= 2 ** 31, out - 2 ** 32, out).to(torch.int32)
  
  
@@ -475,7 +807,7 @@ index 05d91e3..87b5229 100644
      e, n, k8 = words.shape
      k = k8 * 8
      if n % COLS or k % gs or scales.shape != (e, n, k // gs) or biases.shape != scales.shape:
-@@ -88,10 +142,24 @@ class Experts:
+@@ -88,10 +143,24 @@ class Experts:
      width: int                # NI: the expert's (or this rank's) intermediate width
      dims: int                 # D
      limit: float = 0.0        # SwiGLU clip (0: none)
@@ -501,7 +833,7 @@ index 05d91e3..87b5229 100644
  
      @property
      def swiglu(self) -> bool:
-@@ -101,15 +169,46 @@ class Experts:
+@@ -101,15 +170,46 @@ class Experts:
          return (self.up[0].numel() + self.down[0].numel()) * 4
  
  
@@ -552,7 +884,7 @@ index 05d91e3..87b5229 100644
  
  
  def max_items(pairs: int, experts: int, tile: int = TILE) -> int:
-@@ -150,11 +249,12 @@ def gate_up(x: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: i
+@@ -150,11 +250,12 @@ def gate_up(x: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: i
      items = max_items(rows * plan.slots, plan.experts, plan.tile)
      epi = 2 if ex.swiglu else 1
      if plan.prefill:
@@ -565,11 +897,11 @@ index 05d91e3..87b5229 100644
 -                   plan.members, out, ex.width, ex.limit, items * (ex.width // COLS))
 +        _ext().run(ex.gs, epi, ex.bits_up, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items,
 +                   plan.counts, plan.members, out, ex.width, ex.limit, items * (ex.width // COLS), _w4(ex.up4, x),
-+                   ex.shared_up)
++                   ex.shared_up, SPLIT)
  
  
  def down(act: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: int) -> None:
-@@ -162,8 +262,10 @@ def down(act: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: in
+@@ -162,8 +263,10 @@ def down(act: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: in
  
      items = max_items(rows * plan.slots, plan.experts, plan.tile)
      if plan.prefill:
@@ -583,7 +915,7 @@ index 05d91e3..87b5229 100644
 -                   plan.members, out, ex.dims, 0.0, items * (ex.dims // COLS))
 +        _ext().run(ex.gs, 0, ex.bits_down, act, 0, ex.down, ex.width // ex.gs, ex.dims // COLS, plan.items,
 +                   plan.counts, plan.members, out, ex.dims, 0.0, items * (ex.dims // COLS), _w4(ex.down4, act),
-+                   ex.shared_down)
++                   ex.shared_down, SPLIT)
 diff --git i/src/tensorfold/cuda/experts_prefill.cu w/src/tensorfold/cuda/experts_prefill.cu
 index 7745335..3e087e2 100644
 --- i/src/tensorfold/cuda/experts_prefill.cu
@@ -1221,6 +1553,64 @@ index 0000000..d647e15
 +    narrow, full = pair(2, 3)
 +    # a block: 2 * bits words a lane (4-bit: 8), then 32 words of scales and biases
 +    assert (narrow.up.shape[-1], narrow.down.shape[-1], full.up.shape[-1]) == (160, 224, 288)
+diff --git i/tests/cuda/test_experts_split.py w/tests/cuda/test_experts_split.py
+new file mode 100644
+index 0000000..c28ce0d
+--- /dev/null
++++ w/tests/cuda/test_experts_split.py
+@@ -0,0 +1,52 @@
++"""The decode kernel (weights as the mma's A, S warps sharing a unit's groups, then folding them in order) gives the
++one-warp reference kernel's exact bits: every width, 1 to 16 rows (items past 8 pairs take two passes), groups that
++don't divide by S, the 4-bit shared expert beside narrow ones."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda import experts  # noqa: E402
++
++from test_experts_lowbit import GS, as_bits, picks_for, run, tensor  # noqa: E402
++
++WIDTHS = [(4, 4), (3, 3), (2, 3), (2, 2), (4, 2)]
++
++
++def layer(bits_up, bits_down, e=18, d=320, ni=192):
++    """d = 5 groups (gate/up), ni = 3 groups (down): rounds of 2, 4 and 8 warps end part full."""
++
++    up = [as_bits(tensor(e, ni, d, bits_up, 50 + i), bits_up) for i in range(2)]
++    down = as_bits(tensor(e, d, ni, bits_down, 60), bits_down)
++    shared = ([as_bits(tensor(1, ni, d, 4, 70 + i), 4) for i in range(2)], as_bits(tensor(1, d, ni, 4, 80), 4))
++    return experts.make(up, down, GS, limit=10.0, shared=shared)
++
++
++@pytest.mark.parametrize("bits_up,bits_down", WIDTHS)
++def test_split_equals_one_warp(bits_up, bits_down, monkeypatch):
++    ex = layer(bits_up, bits_down)
++    g = torch.Generator().manual_seed(bits_up * 10 + bits_down)
++    for rows in (1, 2, 3, 6, 16):
++        x = (torch.randn((rows, ex.dims), generator=g) * 0.5).to(torch.bfloat16).to("cuda")
++        picks = picks_for(rows, 18, seed=rows)
++        monkeypatch.setattr(experts, "SPLIT", -1)
++        want = run(ex, x, picks)
++        for split in (0, 1, 2, 4, 8):
++            monkeypatch.setattr(experts, "SPLIT", split)
++            got = run(ex, x, picks)
++            assert torch.equal(got[0], want[0]) and torch.equal(got[1], want[1]), (rows, split)
++
++
++def test_relu2_split_equals_one_warp(monkeypatch):
++    up = [as_bits(tensor(12, 128, 256, 4, 90), 4)]
++    ex = experts.make(up, as_bits(tensor(12, 256, 128, 4, 91), 4), GS)
++    x = (torch.randn((4, 256), generator=torch.Generator().manual_seed(3)) * 0.5).to(torch.bfloat16).to("cuda")
++    picks = picks_for(4, 12, k=5)[:, :5].contiguous()
++    monkeypatch.setattr(experts, "SPLIT", -1)
++    want = run(ex, x, picks)
++    for split in (0, 1, 2, 4):
++        monkeypatch.setattr(experts, "SPLIT", split)
++        got = run(ex, x, picks)
++        assert torch.equal(got[0], want[0]) and torch.equal(got[1], want[1]), split
 diff --git i/tests/cuda/test_qwen36_moe_arena.py w/tests/cuda/test_qwen36_moe_arena.py
 new file mode 100644
 index 0000000..3d6f95d

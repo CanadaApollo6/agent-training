@@ -280,3 +280,57 @@ in µs:
 
 That floor is the next target, and fused kernels are the way to attack it. Route, gate/up, SwiGLU and down can become
 one launch per layer at batch 1.
+
+### A faster expert kernel (local 3090)
+
+On the 3090 the same layer costs 60 µs at 1 row (4/4 widths). Reading its 15.9 MB at 936 GB/s would take 17 µs.
+
+**Prediction (Claude; Riel gave none):** the layer at 1 row drops from 60 µs to about 28 µs, and at 6 rows from 147 µs
+to about 100 µs. The plan was to spread each unit's K groups over several warps.
+
+**Step 1: split K across warps.**
+- **Diagnosis (nsys):** gate/up took 40 µs and down 11 µs. The kernel gives each (expert, 32-column tile) to one warp,
+  and that warp walks all 32 groups of K in order. At 1 row that's 144 warps for 82 SMs.
+- **Change:** S warps share a tile.
+  - Warp w computes the MMA products of groups w, w + S, … and puts them in shared memory.
+  - The warp that owns each 8-column slice replays the original per-group accumulation in group order.
+  - The arithmetic and its order are unchanged, so the output is bit-identical.
+- **Result:** gate/up dropped 40 → 21.5 µs with 4 warps. Down didn't move (11.3 → 12.0). At 4–6 rows the split made
+  things worse.
+
+**Step 2: the real limit was the tensor cores.**
+- **Why down didn't move:** an MMA multiplies 16 token rows by 8 weight columns, and at 1 row 15 of the 16 rows are
+  padding. With fp32 accumulate the 3090's tensor cores do about 71 TFLOPS, so the padded work alone costs about
+  17 µs for gate/up and 8.5 µs for down. That matches what was left.
+- **Fix:** swap the operands. Weights take the 16-row side (two 8-column tiles' worth) and tokens the 8-column side,
+  which halves the MMAs for any item of ≤8 pairs. Items of 9–16 pairs take two passes.
+  - The weight registers already had the right layout; only the scale, bias and output indexing changed.
+- **Does it keep the bits?** It does only if the tensor core gives the same result for C = AB as for (BᵀAᵀ)ᵀ.
+  [`tensorfold/mma_operand_symmetry.py`](tensorfold/mma_operand_symmetry.py) checks this. On the 3090 there were 0
+  mismatches in 30.7M outputs, and nearly every output involved rounding.
+- **Gates:**
+  - `test_experts_split.py` checks the new kernel against the old one bit for bit: every width, 1–16 rows, 1/2/4/8
+    warps, and groups that don't divide evenly.
+  - A mutant (a wrong scale half) fails all 6 tests.
+  - The 65 expert and MoE-engine tests pass, including drafts equal to serial decoding and the arena.
+
+**Result:** µs per MoE layer, median of 3 runs
+([`results/bench-3090-swap.txt`](tensorfold/results/bench-3090-swap.txt)):
+
+| Widths | 1 row | 2 rows | 4 rows | 6 rows |
+|---|---|---|---|---|
+| 4 / 4 | 60.5 → **33.0** | 68.7 → 51.8 | 99.9 → 88.5 | 159 → 126 |
+| 3 / 3 | 61.3 → **31.9** | 71.1 → 49.8 | 102 → 77.8 | 156 → 120 |
+| 2 / 3 (R2) | 60.2 → **30.3** | 70.3 → 46.3 | 100 → 68.1 | 146 → 105 |
+| 2 / 2 | 59.6 → **29.2** | 69.0 → 44.3 | 97.3 → 63.8 | 145 → 96.2 |
+
+- **The prediction** was 28 µs at 1 row and 100 µs at 6 rows. The measurements are 33 µs and 126 µs at 4/4, and 30 µs
+  and 105 µs at R2's widths. So the 1-row number came in near the prediction, but for a different reason than
+  expected: operand waste, not latency.
+- **Narrow experts now pay off at 4–6 rows.** At 6 rows R2 costs 105 µs vs 126 µs at 4/4, a 17% gap (it was 8%
+  before), because the kernel is closer to reading bytes.
+- **Estimated effect on a decode step:** 40 layers × 27–30 µs is about 1.1–1.2 ms saved per step at 1 row, and 0.5–1.3
+  ms at 4 rows (MTP verification). That estimate still needs an end-to-end run.
+- **Where the rest goes at 1 row** (µs): route 3, gate/up 17.5 at a 11.3 read floor, down 8.9 at 5.7, plus about
+  1.3 of gap per launch. The next step is fusion into one launch: route inside it, and down fetching its weights while
+  gate/up finishes.

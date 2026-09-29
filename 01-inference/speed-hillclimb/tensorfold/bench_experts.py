@@ -1,8 +1,11 @@
 """Time one MoE layer's grouped experts (gate/up then down) at Ornith 35B's sizes, per expert width.
 
 Random weights and routes; rows = tokens verified together (1 for plain decode, depth + 1 with MTP drafts).
-Usage: python bench_experts.py
+Usage: python bench_experts.py [--split 0 1 2 4 8] [--widths 4/4 3/3 2/3 2/2]
+(split: warps sharing a tile in the decode kernel; 1 is the one-warp kernel, 0 lets TensorFold pick)
 """
+
+import argparse
 
 import torch
 
@@ -57,10 +60,17 @@ def time(ex, rows, iters=300):
 
 
 def main():
-    print(f"{'widths':>8} " + " ".join(f"{f'rows {r}':>9}" for r in (1, 2, 4, 6)) + "   (us per MoE layer)")
-    for bu, bd in ((4, 4), (3, 3), (2, 3), (2, 2)):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--split", type=int, nargs="+", default=[0])
+    ap.add_argument("--widths", nargs="+", default=["4/4", "3/3", "2/3", "2/2"])
+    a = ap.parse_args()
+    print(f"{'widths':>8} {'split':>5} " + " ".join(f"{f'rows {r}':>9}" for r in (1, 2, 4, 6)) + "   (us per MoE layer)")
+    for wd in a.widths:
+        bu, bd = map(int, wd.split("/"))
         ex = layer(bu, bd)
-        print(f"{f'{bu}/{bd}':>8} " + " ".join(f"{time(ex, r):9.1f}" for r in (1, 2, 4, 6)), flush=True)
+        for split in a.split:
+            experts.SPLIT = split
+            print(f"{wd:>8} {split:>5} " + " ".join(f"{time(ex, r):9.1f}" for r in (1, 2, 4, 6)), flush=True)
         del ex
         torch.cuda.empty_cache()
 
