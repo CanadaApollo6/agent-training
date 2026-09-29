@@ -15,8 +15,9 @@ How fast can the chosen local builds answer? This climbs the builds picked in
   - Changes to the numbers (quantization recipes) must pass the paired reasoning probe, 4 attempts per problem.
 - **Ceiling:** batch-1 decoding reads the weights it uses once per token, so the limit is bytes read per token over
   829 GB/s. Speculative decoding can beat it by checking several tokens per read.
-- **Where:** candidates grind on rented A10 24 GB cards (same GA102 chip, sm_86, ~600 GB/s). Winners get confirmed
-  on the 3090 in short runs.
+- **Where:** candidates grind on rented cards, with winners confirmed on the 3090 in short runs.
+  - A rented 3090 or 4090 is best, when Prime has one in stock.
+  - Otherwise an A10 24 GB (same GA102 chip, sm_86, ~600 GB/s).
 
 ## Starting point
 
