@@ -1,0 +1,246 @@
+{
+ "label": "bonsai2-pq2-medium",
+ "n": 20,
+ "cap": 16384,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0
+ },
+ "template_kwargs": {
+  "reasoning_effort": "medium"
+ },
+ "wall_s": 1171.9380242280313,
+ "sanity": "9",
+ "correct": 14,
+ "wrong": 3,
+ "runaway": 3,
+ "cut off": 0,
+ "accuracy": 0.7,
+ "median_tokens": 1368,
+ "mean_tokens": 4622.25,
+ "total_tokens": 92445,
+ "per_problem": [
+  {
+   "id": "test/precalculus/902.json",
+   "subject": "Precalculus",
+   "gold": "\\sqrt{66}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "uting the Answer\n\nThe unique valid pairing gives:\n$$S = 130$$\n\n$$d^2 = 130 - 64 = 66$$\n\n$$d = \\sqrt{66}$$\n\n**Verification:** $9 + 121 + 49 + 81 + 64 + 66 = 390 = 3 \\times 130$ \u2713\n\n$$\\boxed{\\sqrt{66}}$$",
+   "finish": "stop",
+   "tokens": 5724,
+   "s": 398.88792119396385
+  },
+  {
+   "id": "test/intermediate_algebra/2015.json",
+   "subject": "Intermediate Algebra",
+   "gold": "\\{1\\pm\\sqrt{5},-2\\}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 1107.28013241
+  },
+  {
+   "id": "test/intermediate_algebra/1454.json",
+   "subject": "Intermediate Algebra",
+   "gold": "70 \\sqrt{2}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 1107.3151524649584
+  },
+  {
+   "id": "test/prealgebra/1512.json",
+   "subject": "Prealgebra",
+   "gold": "7\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "6)^2 = 49\\\\pi - 36\\\\pi = 13\\\\pi$\n\n**Finding the difference between greatest and smallest:**\n\n- Greatest: $Y = 20\\\\pi$\n- Smallest: $Z = 13\\\\pi$\n- Difference: $20\\\\pi - 13\\\\pi = 7\\\\pi$\n\n$$\\boxed{7\\pi}$$",
+   "finish": "stop",
+   "tokens": 682,
+   "s": 43.0717477669823
+  },
+  {
+   "id": "test/algebra/2779.json",
+   "subject": "Algebra",
+   "gold": "20",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "on:** $\\sqrt{2} + \\sqrt{3} \\approx 3.1463$, so $(3.1463)^3 \\approx 31.14$. Also, $11\\sqrt{2} + 9\\sqrt{3} \\approx 15.556 + 15.588 = 31.144$. \u2713\n\nTherefore, $a + b + c = 11 + 9 + 0 = 20$.\n\n$$\\boxed{20}$$",
+   "finish": "stop",
+   "tokens": 1192,
+   "s": 74.9630258899997
+  },
+  {
+   "id": "test/number_theory/1128.json",
+   "subject": "Number Theory",
+   "gold": "2",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "gruence becomes \\(0 \\equiv 1 \\pmod 2\\), which is impossible.\n\nThus the only prime \\(p\\) for which the congruence has no solution is \\(p=2\\).\n\nTherefore, the sum of all such primes is\n\n\\[\n\\boxed{2}.\n\\]",
+   "finish": "stop",
+   "tokens": 914,
+   "s": 57.802138241007924
+  },
+  {
+   "id": "test/number_theory/769.json",
+   "subject": "Number Theory",
+   "gold": "9",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "8^{38} = 8^{3 \\times 10 + 8} = (8^{10})^3 \\cdot 8^8 \\equiv 1^3 \\cdot 5 \\equiv 5 \\pmod{11}$$\n\n**Step 4: Add the results.**\n\n$$8^{34} + 8^{38} \\equiv 4 + 5 = 9 \\pmod{11}$$\n\nThe remainder is $\\boxed{9}$.",
+   "finish": "stop",
+   "tokens": 1269,
+   "s": 80.15652202896308
+  },
+  {
+   "id": "test/intermediate_algebra/2152.json",
+   "subject": "Intermediate Algebra",
+   "gold": "0",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "of degree at most \\(2\\) cannot have three distinct roots, so\n\n\\[\np(x)-1\\equiv 0,\n\\]\n\nwhich means\n\n\\[\np(x)=1.\n\\]\n\nTherefore, \\(p(x)\\) is a nonzero constant polynomial, whose degree is\n\n\\[\n\\boxed{0}.\n\\]",
+   "finish": "stop",
+   "tokens": 1301,
+   "s": 82.56374411197612
+  },
+  {
+   "id": "test/counting_and_probability/1003.json",
+   "subject": "Counting & Probability",
+   "gold": "29",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "}{8}$. This checks out: $\\frac{5}{24} > \\frac{4}{24} = \\frac{1}{6}$ and $\\frac{1}{8} < \\frac{1}{6}$. \u2713\n\n## Final Answer\n\n$m = 5$ and $n = 24$ are relatively prime, so:\n\n$$m + n = 5 + 24 = \\boxed{29}$$",
+   "finish": "stop",
+   "tokens": 2013,
+   "s": 176.34712153696455
+  },
+  {
+   "id": "test/number_theory/427.json",
+   "subject": "Number Theory",
+   "gold": "25",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "div 3 = 91\n\\]\n\n\\[\n91 = 7 \\cdot 13\n\\]\n\nSo\n\n\\[\n1092 = 2^2 \\cdot 3 \\cdot 7 \\cdot 13\n\\]\n\nThe distinct prime divisors of \\(A\\) are\n\n\\[\n2,\\;3,\\;7,\\;13\n\\]\n\nTheir sum is\n\n\\[\n2+3+7+13 = 25\n\\]\n\n\\[\n\\boxed{25}\n\\]",
+   "finish": "stop",
+   "tokens": 648,
+   "s": 100.22036615898833
+  },
+  {
+   "id": "test/algebra/975.json",
+   "subject": "Algebra",
+   "gold": "-4",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ominator} = |0|+|0| = 0 \\quad \\checkmark$$\n\nAt all other $x$ values, at least one term in the sum is positive, so the denominator is strictly positive and the function is well-defined.\n\n$$\\boxed{-4}$$",
+   "finish": "stop",
+   "tokens": 733,
+   "s": 126.88076095399447
+  },
+  {
+   "id": "test/prealgebra/1128.json",
+   "subject": "Prealgebra",
+   "gold": "64",
+   "outcome": "wrong",
+   "finished_thinking": true,
+   "answer_tail": "choices**\n(\"Mr. Potato Head can be bald\" means the no-hair option is a valid, distinct choice.)\n\n**Total number of personalities:**\n\n$$2 \\times 1 \\times 2 \\times 2 \\times 2 \\times 4 = 32$$\n\n\\boxed{32}",
+   "finish": "stop",
+   "tokens": 808,
+   "s": 136.85315690899733
+  },
+  {
+   "id": "test/precalculus/986.json",
+   "subject": "Precalculus",
+   "gold": "144",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "$D = x_1(y_2-y_3) - y_1(x_2-x_3) + (x_2y_3-x_3y_2) = 2 \\cdot \\text{Area}_{\\text{signed}}$$\n\nTherefore:\n$$|D| = 2 \\times 6 = 12$$\n\n**Step 4: Compute the square.**\n\n$$D^2 = 12^2 = 144$$\n\n$$\\boxed{144}$$",
+   "finish": "stop",
+   "tokens": 1129,
+   "s": 159.16058714897372
+  },
+  {
+   "id": "test/prealgebra/1044.json",
+   "subject": "Prealgebra",
+   "gold": "5.4 \\text{ cents}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ts\n\n**Total cost** = 72 + 72 + 24 + 65 = **233 cents**\n\n## Computing the Average\n\n$$\\text{Average} = \\frac{233}{43} \\approx 5.4186\\ldots \\text{ cents}$$\n\nRounded to the nearest tenth:\n\n$$\\boxed{5.4}$$",
+   "finish": "stop",
+   "tokens": 1368,
+   "s": 191.48835271800635
+  },
+  {
+   "id": "test/intermediate_algebra/582.json",
+   "subject": "Intermediate Algebra",
+   "gold": "850",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "air \\((r_i,\\overline{r_i})\\), the two terms are equal, so the requested sum over one root from each pair is exactly half the sum over all 10 roots:\n\n\\[\n\\frac{1}{2}\\cdot 1700=850.\n\\]\n\n\\[\n\\boxed{850}\n\\]",
+   "finish": "stop",
+   "tokens": 8351,
+   "s": 724.6568305969704
+  },
+  {
+   "id": "test/geometry/686.json",
+   "subject": "Geometry",
+   "gold": "18+2\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "Each arc has length:\n$$1 \\times \\frac{2\\pi}{9} = \\frac{2\\pi}{9}$$\n\nWith 9 vertices:\n$$\\text{Total arc length} = 9 \\times \\frac{2\\pi}{9} = 2\\pi$$\n\n## Total Perimeter\n\n$$P = 18 + 2\\pi$$\n\n\\boxed{18+2\\pi}",
+   "finish": "stop",
+   "tokens": 1465,
+   "s": 231.30236884800252
+  },
+  {
+   "id": "test/geometry/880.json",
+   "subject": "Geometry",
+   "gold": "2\\sqrt{113}",
+   "outcome": "wrong",
+   "finished_thinking": true,
+   "answer_tail": ".\n\n## Verification of Simplest Form\n\n$106 = 2 \\times 53$, where both factors are prime, so $\\sqrt{106}$ cannot be simplified further.\n\n$$2\\sqrt{106} \\approx 20.59 \\text{ ft}$$\n\n$$\\boxed{2\\sqrt{106}}$$",
+   "finish": "stop",
+   "tokens": 11628,
+   "s": 974.6451591979712
+  },
+  {
+   "id": "test/prealgebra/954.json",
+   "subject": "Prealgebra",
+   "gold": "10",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "} \\text{ m/s}$$\n\n**Step 2: Find the length of the hallway.**\n\nAt the same speed, the robot covers the hallway in 90 seconds:\n\n$$d = v \\times t = \\frac{1}{9} \\times 90 = 10 \\text{ meters}$$\n\n\\boxed{10}",
+   "finish": "stop",
+   "tokens": 369,
+   "s": 200.66378765396075
+  },
+  {
+   "id": "test/intermediate_algebra/558.json",
+   "subject": "Intermediate Algebra",
+   "gold": "(3,4]",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 1168.258295253967
+  },
+  {
+   "id": "test/intermediate_algebra/1849.json",
+   "subject": "Intermediate Algebra",
+   "gold": "501",
+   "outcome": "wrong",
+   "finished_thinking": true,
+   "answer_tail": "\u2192 **2 solutions**\n\n**Counting valid integers in $[-500, 500]$:**\n\nAll valid $k$ are the integers with $k < 0$, i.e., $-500, -499, \\ldots, -1$.\n\nThe count is $|-1| - |-500| + 1 = 500$.\n\n$$\\boxed{500}$$",
+   "finish": "stop",
+   "tokens": 3699,
+   "s": 478.2085459079826
+  }
+ ]
+}

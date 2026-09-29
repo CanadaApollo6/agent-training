@@ -222,8 +222,22 @@ on this sample it doesn't reach 4.0.
 **Confound, found 2026-09-28.** The Bonsai GGUF's chat template defaults to reasoning effort `xhigh`, which adds a
 system line: "Please think carefully through the task, validate key assumptions, consider plausible alternatives…".
 The EXL3 prompts had no system line, which is the template's `medium`. So Bonsai was told to think longer than the
-EXL3 builds, and its four cap-limited failures may partly come from that line. It's being rerun with
+EXL3 builds, and its four cap-limited failures may partly come from that line. So it was rerun with
 `--template-kwargs '{"reasoning_effort": "medium"}'` (label `bonsai2-pq2-medium`) for a matched comparison.
+
+| Bonsai 2 PQ2_0 | Correct | Wrong | Hit the cap | Loopy | Median tokens, 13 problems both runs solved |
+|---|---|---|---|---|---|
+| xhigh (template default) | 16/20 | 0 | 4 | 0 | 898 |
+| medium (matches EXL3's prompt) | 14/20 | 3 | 3 | 0 | 1,192 |
+
+- **The confound wasn't the cause.** Without the "think carefully" line, Bonsai didn't reason shorter (if anything
+  longer) and still hit the cap 3 times. The xhigh line didn't manufacture the runaways.
+- **The bigger lesson is noise.** 5 of 20 problems changed outcome between two runs of the same model (3 one way, 1
+  the other, p = 0.63). Sampling at temperature 1.0 with one sample per problem moves a score by ±2–3 problems between
+  runs, the same size as several gaps we've been reading. The 9B ladder's losses all go one way (3–0, 4–0), which
+  is worth more than a two-way swap, but a firm call needs more samples per problem.
+- Matched comparison against EXL3 4.0: Bonsai lost 5 and gained 1 (p = 0.22). "Trained ternary holds up, but short
+  of 4-bit" stands. The 2.0-bpw comparison (12/20 with 4 wrong and 2 loops) stands too.
 
 **For the Ornith quantization plan:** rounding alone (post-training quantization) is safe near 4 bits and breaks
 reasoning at 2. To get below ~3 bits and keep reasoning intact, the model has to be *trained* for its low-bit
