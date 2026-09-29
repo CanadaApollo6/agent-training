@@ -77,8 +77,8 @@ prime_agent's deficit is plumbing, not the model:
 - **pypi-server:** the model finished and wrote its summary, but the session didn't return until the time limit
   (21 minutes of tool time). It still passed.
 
-Setting aside the three that failed on plumbing, pi still has three solves prime_agent doesn't (build-pov-ray, mteb-retrieve,
-portfolio-optimization), against one the other way. pi also got there on 34% fewer tokens.
+Setting aside the three that failed on plumbing, pi still has three solves prime_agent doesn't (build-pov-ray, mteb-
+retrieve, portfolio-optimization), against one the other way. pi also got there on 34% fewer tokens.
 
 **The MoE didn't decode faster under load.** It runs at 104 tokens/s for a single stream, but with 8 streams sharing
 the card, each got about 15 tokens/s, no better than the 9B. Each stream routes its tokens to different experts, so
