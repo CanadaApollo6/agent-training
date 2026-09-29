@@ -1,0 +1,58 @@
+[
+ {
+  "label": "r2-qmmswap",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 371.0765065720341,
+  "decode_tps_all": [
+   338.23,
+   416.84,
+   371.08
+  ],
+  "ttft_s_median": 0.021657406992744654,
+  "sample": "\n\n<think>\nThe user wants a short Python function that computes the Fibonacci sequence, plus an explanation. Let me think about what would be most useful.\n\nThe F"
+ },
+ {
+  "label": "r2-qmmswap",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 316.5322622124291,
+  "decode_tps_all": [
+   316.53,
+   323.05,
+   313.52
+  ],
+  "ttft_s_median": 0.025711327965836972,
+  "sample": "## How Matrix Multiplication Uses a GPU\n\n### The core idea: many tiny workers at once\n\nA GPU is fundamentally different from a CPU. A CPU has a few powerful \"br"
+ },
+ {
+  "label": "r2-qmmswap",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 483.04163935813773,
+  "decode_tps_all": [
+   464.72,
+   489.55,
+   483.04
+  ],
+  "ttft_s_median": 0.023464377038180828,
+  "sample": "\n\n```python\ndef fibonacci(n):\n    fib = [0, 1]\n    for i in range(2, n):\n        fib.append(fib[-1] + fib[-2])\n    return fib\n```\n\nThis function generates the F"
+ },
+ {
+  "label": "r2-qmmswap",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 376.99275264427934,
+  "decode_tps_all": [
+   376.99,
+   364.69,
+   389.78
+  ],
+  "ttft_s_median": 0.028824582986999303,
+  "sample": "## How Matrix Multiplication Uses a GPU\n\n### The core idea\n\nA GPU (Graphics Processing Unit) is designed to do **many calculations at once**, rather than one at"
+ }
+]

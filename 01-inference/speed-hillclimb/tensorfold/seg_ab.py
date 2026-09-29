@@ -1,4 +1,4 @@
-"""Segmented qmm launches vs one launch a weight, in-process and interleaved (each with its own captured graphs):
+"""Dense 4-bit decode matmuls: one launch a weight vs segmented launches (tokens or weights as the mma's A), in-process and interleaved (each with its own captured graphs):
 greedy.py's prompts, 1,024 tokens. Outputs must match; reports decode seconds, rounds and verify widths.
 
 Usage: python seg_ab.py MODEL_DIR [--tokens 1024] [--reps 2]"""
@@ -44,13 +44,13 @@ def main():
                                             enable_thinking=False)) if k == "chat"
                else raw.encode(t, add_special_tokens=False).ids for k, t in PROMPTS]
     e = Qwen36Engine(a.model, context=a.context, context_explicit=True)
-    variants = {"separate": 0, "segmented": 16}
+    variants = {"separate": (0, False), "segmented": (16, False), "swapped": (16, True)}
     stash = {v: ({}, {}) for v in variants}
     agg = collections.defaultdict(lambda: [0.0, 0, 0])
     outs = collections.defaultdict(dict)
 
     def run(v, p):
-        qmm.SEG_ROWS = variants[v]
+        qmm.SEG_ROWS, qmm.SWAP = variants[v]
         e.graphs.target, e.graphs.mtp = stash[v]
         e.cache.entries.clear()
         out = []
@@ -74,7 +74,7 @@ def main():
         line = f"prompt {p}:"
         for v in variants:
             sec, r, wall = agg[(v, p)]
-            line += f"  {v} {a.reps * a.tokens / sec:6.1f} tok/s ({1000 * sec / r:5.2f} ms/round, wall {wall / a.reps:.2f} s)"
+            line += f"  {v} {a.reps * a.tokens / sec:6.1f} tok/s ({1000 * sec / r:5.2f} ms/round)"
         print(line, flush=True)
 
 
