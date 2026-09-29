@@ -1,0 +1,58 @@
+[
+ {
+  "label": "",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 231.41697505006073,
+  "decode_tps_all": [
+   219.8,
+   234.87,
+   231.42
+  ],
+  "ttft_s_median": 0.037332694000042466,
+  "sample": "\n\n<think>\nThe user wants me to write a short Python function that computes the Fibonacci sequence and explain it. Let me create a clear, well-documented functio"
+ },
+ {
+  "label": "",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 188.6871870380453,
+  "decode_tps_all": [
+   188.27,
+   188.69,
+   192.41
+  ],
+  "ttft_s_median": 0.0376167599999917,
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nMatrix multiplication combines two matrices into a third. A GPU (Graphics Processing Unit) excels at this be"
+ },
+ {
+  "label": "",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 276.04259417767065,
+  "decode_tps_all": [
+   276.25,
+   276.04,
+   275.78
+  ],
+  "ttft_s_median": 0.03637077500002306,
+  "sample": "\n\nHere is a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a "
+ },
+ {
+  "label": "",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 190.9352491607453,
+  "decode_tps_all": [
+   191.61,
+   190.94,
+   190.91
+  ],
+  "ttft_s_median": 0.03693118599994705,
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Basic Idea\n\nMatrix multiplication combines two grids of numbers into a third grid. The key insight for GPUs is that **e"
+ }
+]
