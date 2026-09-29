@@ -150,6 +150,9 @@ def main():
     parser.add_argument("--cap", type=int, default=16384, help="max new tokens, thinking included")
     parser.add_argument("--slots", type=int, default=8)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--samples", type=int, default=1,
+                        help="attempts per problem, each with its own sampling seed; one sample swings a 20-problem "
+                             "score by 2-3 problems between runs")
     parser.add_argument("--out", type=Path, default=OUT, help="results directory")
     parser.add_argument("--template-kwargs", type=json.loads, default={},
                         help='server backend: chat template variables, e.g. \'{"reasoning_effort": "medium"}\'')
@@ -159,15 +162,17 @@ def main():
     out = args.out
     out.mkdir(parents=True, exist_ok=True)
 
-    rows = problems(args.n, args.seed)
+    rows = [row for row in problems(args.n, args.seed) for _ in range(args.samples)]  # attempt i uses seed + i
     t0 = time.perf_counter()
     outputs, extra = (run_exl3 if args.backend == "exl3" else run_server)(args, rows)
     wall = time.perf_counter() - t0
 
-    graded = [grade(row, text, info["finish"]) | info for row, (text, info) in zip(rows, outputs)]
+    graded = [grade(row, text, info["finish"]) | info | {"sample": i % args.samples}
+              for i, (row, (text, info)) in enumerate(zip(rows, outputs))]
     counts = {k: sum(g["outcome"] == k for g in graded) for k in ("correct", "wrong", "runaway", "cut off")}
     lengths = sorted(g["tokens"] for g in graded if g["tokens"])
-    summary = {"label": label, "n": len(rows), "cap": args.cap, "sampling": SAMPLING,
+    summary = {"label": label, "n": len(rows), "problems": args.n, "samples": args.samples, "cap": args.cap,
+               "sampling": SAMPLING,
                "template_kwargs": args.template_kwargs, "wall_s": wall, **extra,
                **counts, "accuracy": counts["correct"] / len(rows),
                "median_tokens": lengths[len(lengths) // 2] if lengths else None,
@@ -177,7 +182,7 @@ def main():
     with gzip.open(out / f"{label}.traces.jsonl.gz", "wt") as f:
         for row, (text, info) in zip(rows, outputs):
             f.write(json.dumps({"id": row["unique_id"], "problem": row["problem"], "gold": row["answer"],
-                                "output": text, **info}) + "\n")
+                                "output": text, **info}) + "\n")  # attempts in order: problem-major, sample-minor
     print(f"== {label}: {counts} of {len(rows)}; accuracy {summary['accuracy']:.0%};"
           f" median {summary['median_tokens']} tokens; {summary['total_tokens']} tokens in {wall / 60:.1f} min")
     for g in graded:
