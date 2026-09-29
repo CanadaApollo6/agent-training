@@ -56,5 +56,5 @@ for label in [base_label, *labels]:
         return st.median(a["tokens"] for pid in both for a in p[pid] if a["outcome"] == "correct")
 
     print(f"{label:28} {s['correct']:4}/{s['n']:<4} {s['wrong']:5} {s['runaway']:4} {loopy:5} {s['median_tokens']:7} "
-          f"{-sum(d for d in diffs if d < 0):4} {sum(d for d in diffs if d > 0):6} {sign_flip_p(diffs):5.2f}  "
+          f"{-sum(d for d in diffs if d < 0):4} {sum(d for d in diffs if d > 0):6} {sign_flip_p(diffs):5.3f}  "
           f"{med(base_per):,.0f} -> {med(per):,.0f} ({len(both)} problems)")

@@ -34,6 +34,24 @@ Paired on the same problems against Q8_0 (exact McNemar):
 - 20 problems can't separate IQ3_XXS from IQ2_M. Each is 3–4 problems down on Q8, and neither is significant alone.
   The trend (0 → 3 → 4 lost, lengths doubling, loops appearing) is the evidence.
 
+### Rerun with 4 attempts per problem
+
+The same four builds on a rented A6000 (`../pod/probe_ladder.sh`, 16 at a time), 80 attempts each, paired per
+problem against Q8_0 with the sign-flip test from `compare.py`:
+
+| Build | Correct | Wrong | Hit the cap | Loopy | Lost | Gained | p | Median tokens, both solved |
+|---|---|---|---|---|---|---|---|---|
+| Q8_0 | 66/80 | 3 | 11 | 0 | | | | 1,582 |
+| Q4_K_M | 63/80 | 5 | 12 | 0 | 5 | 2 | 0.53 | 1,270 → 1,594 |
+| IQ3_XXS | 51/80 | 4 | 25 | 0 | 15 | 0 | 0.008 | 1,135 → 1,909 |
+| IQ2_M | 43/80 | 1 | 36 | 13 | 23 | 0 | 0.001 | 1,058 → 2,230 |
+
+The single-attempt picture holds, now with significance.
+- **Q4 is free**, within noise.
+- **IQ3_XXS and IQ2_M lose significantly, and almost entirely by failing to finish.** Runaways go 11 → 25 → 36,
+  while wrong answers stay flat.
+- **IQ2_M loops in 13 of 80 traces.**
+
 ## Ornith 1.5 35B-A3B
 
 The same probe with 4 attempts per problem (80 per build), served on a rented A6000 by the same llama.cpp build
@@ -47,12 +65,19 @@ Paired against Q8_0 per problem (each problem scores 0–4), with an exact sign-
 | IQ3_XXS | 15.3 GB | 3.4 | 65/80 | 5 | 10 | 0 | 2 | 1 | 1 | 1,297 |
 | IQ2_M | 12.5 GB | 2.8 | 59/80 | 7 | 14 | 0 | 7 | 0 | 0.06 | 1,452 |
 
-- **Q4 and IQ3_XXS are both free.** Where the 9B at IQ3_XXS was already 3 problems down, the 35B at fewer bits per
-  weight is within one attempt of Q8.
+- **Q4 and IQ3_XXS are both free.** The 9B at IQ3_XXS lost 15 attempts. The 35B, at fewer bits per weight, is within
+  one attempt of Q8.
 - **IQ2_M costs something, not everything.** 7 attempts lost, none gained, on the edge of significance (p = 0.06).
   Losses split between runaways (+4) and wrong answers (+3), reasoning is a third longer, and there are no loops.
-  The 9B at IQ2_M lost a quarter of its score, doubled its reasoning and looped.
-- Scaled to each model's own Q8_0: at IQ3_XXS the 35B keeps 98% of its score and the 9B 81%; at IQ2_M, 89% vs 75%.
+  The 9B at IQ2_M lost 23 attempts, tripled its runaways and looped in 13 traces.
+
+Both models score exactly 66/80 at Q8_0, so their ladders compare directly:
+
+| Build | 9B | 35B-A3B |
+|---|---|---|
+| Q4_K_M | 63/80 (95%) | 68/80 (103%) |
+| IQ3_XXS | 51/80 (77%) | 65/80 (98%) |
+| IQ2_M | 43/80 (65%) | 59/80 (89%) |
 
 ## Predictions
 
@@ -75,19 +100,15 @@ averaging. The discriminating experiment is our own mixed build: experts at 2 bi
 it holds up, the experts really are the cheap part (canada-quant's bet). If it still breaks, the damage is in the
 per-token path.
 
-**Verdict on "the 35B holds up better": right.** At every low-bit build the 35B keeps a larger share of its
-Q8_0 score (98% vs 81% at IQ3_XXS, 89% vs 75% at IQ2_M), at fewer bits per weight, without the 9B's loops or doubled
-reasoning. The caveat is sample size on the 9B side: one attempt per problem, so its ladder is noisier by ±2–3
-problems. A 4-attempt rerun of the 9B would firm this up, but the gap at IQ3_XXS (0 vs 3 problems lost) is well
-outside that noise. Why it holds up (spare capacity or error averaging) is what the ablation below tests.
+**Verdict on "the 35B holds up better": right.** Both start at 66/80. At every low-bit build the 35B keeps more,
+at fewer bits per weight: 98% vs 77% at IQ3_XXS and 89% vs 65% at IQ2_M. It also avoids the 9B's loops and runaway
+growth. Why it holds up (spare capacity or error averaging) is what the ablation below tests.
 
-**Verdict on "the 9B breaks earlier" (after IQ2_M): leaning right, not proven.** At about 3 bits the 27B was
-intact (EXL3 3.0: 19/20, reasoning barely longer). The 9B at IQ3_XXS already runs out of budget 3 more times, with
-reasoning doubled. At 2 bits both look alike (12/20, loops).
-
-Evidence so far leans Riel's way. IQ3_XXS already loses 3 problems at an average of 3.7 bits, while EXL3 3.0 on the
-27B scored 19/20. It's confounded twice, though: EXL3's rotation plus trellis is a stronger quantizer than llama.cpp's
-IQ formats at the same bits, and the two models start from different baselines (16/20 vs 18/20).
+**Verdict on "the 9B breaks earlier": right, with one confound left.** At about 3 bits the 27B was intact (EXL3
+3.0: 19/20, reasoning barely longer). The 9B at IQ3_XXS (3.7 bits) loses 15 of 80 attempts (p = 0.008), mostly to
+runaways. The remaining confound is the quantizer: EXL3's rotation plus trellis beats llama.cpp's IQ formats at the
+same bits, so part of the gap could be method, not model size. The 35B comparison has no such confound (same
+quantizer, same baseline), and there the smaller model is clearly the fragile one.
 
 ## Ablation: which part of the 35B breaks at 2 bits?
 
