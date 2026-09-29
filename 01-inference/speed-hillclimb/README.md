@@ -562,3 +562,57 @@ wrong: TensorFold's MTP head already scores a 79,591-token subset (`draft_vocab.
 - A smaller head saves the expected 0.26-0.36 ms a round, but the tokens kept per round fall by the same share. The
   net is within ±1-2%, which is noise. Greedy outputs are identical for every head, as they must be.
 - **Kept the default.** The head is ~4% of a round, so no cut can win much while it costs acceptance.
+
+### Lever 2: the dense 4-bit linears
+
+**Where the time went.** Each shape was timed alone at 1 and 4 rows against its read floor (870 GB/s). One verify
+pass's dense linears took 2.4 ms against a 1.17 ms floor (48%).
+- The output head was fine: 336 µs against 329.
+- The GDN `b` and `a` gates (32 columns each) and attention `k`/`v` (512 each) cost ~7 µs apiece for almost no bytes.
+  That's 0.43 ms a pass for `b` and `a` alone.
+- The mid-size projections ran at 47-64% of their floor. They paid for 16-row MMA padding and a separate
+  `reduce_kernel` launch for their K slices.
+- An empty kernel costs ~1 µs in a graph. Most of the waste is the ramp-up and tail of small grids.
+
+**Segmented launch** (`qmm_seg_kernel`). A layer's projections of the same input run in one launch: GDN
+`qkv`/`z`/`b`/`a`, attention `q`/`k`/`v`, and the MTP head's `q`/`k`/`v`.
+- Each weight keeps its own K slices (the slices it gets alone), so each column goes through the same steps.
+- The last block to finish a tile adds the slices in slice order and rounds once, like `reduce_kernel`. The first
+  version loaded the slices one at a time and lost to the reduce launch. Issuing all the loads first fixed that.
+- GDN projections: 45 → 24 µs a layer. Attention `q`/`k`/`v`: 31 → 17.5 µs.
+
+**Weights as the MMA's A** (≤8 rows), the expert kernel's trick again.
+- The existing `ldmatrix` of the inputs already holds the swapped form's B fragments (registers 0/2 are tokens 0-7,
+  1/3 are tokens 8-15). The staging is unchanged, and it takes half the MMAs.
+- Results: `o`/`out` 11.0 → 8.7 µs, the draft head 120 → 108 µs per draft step, and the output head at its floor
+  (329).
+- At 16 rows the swapped heads lose, so single calls take it only up to 8 rows.
+
+**Exact.** `test_qmm_seg.py` has 26 tests covering both forms, fp32 and bf16 outputs, ragged widths, strided scales,
+more than 4 weights, and graph replay. Each checks the output bit for bit against the old kernel. 163 engine and
+kernel tests pass. R2's 4 × 1,024 greedy texts are unchanged end to end.
+
+**End to end.** The first in-process interleaved A/B (`seg_ab.py`, before the swapped form) ran with only T3 Code on
+the GPU. Segmented beat separate launches on all 4 greedy prompts: 412 → 415, 356 → 371, 782 → 809, 581 → 655 tok/s.
+Later runs had Slack, Claude Desktop and ChatGPT back on the GPU and swung ±25% run to run. The server bench with
+those apps open (median of 3, 256 tokens, R2 131K):
+
+| Prompt | Temperature | Before lever 2 | Segmented | + weights as A |
+|---|---|---|---|---|
+| code | 0 | 443.5 | 476.3 | 483.0 |
+| chat | 0 | 351.6 | 373.9 | 377.0 |
+
+- **Prediction (Claude; made before building, but written down only here):** ~+10% greedy. So far +9% code, +7% chat,
+  measured with the apps open. A clean A/B of all three forms is pending.
+- `greedy.py`'s one-shot 1,024-token timings misled once. A cold server captures graphs for new verify widths on its
+  first long request (261 tok/s on the primes prompt, then 373 and 405 on repeats). Judge kernels with the
+  in-process A/B, not one-shot runs.
+
+### Lever 3: R2's shared expert (in progress)
+
+- **Capping the low-bit kernels' registers** (launch bounds, 168 or 128) to undo the bloat from the inlined 4-bit
+  shared path: much worse. The spills land in the hot loop. gate/up at 4 rows went 32.7 → 46.8 µs (168) and 67.0
+  (128). Rejected.
+- Left to try: the shared expert as its own launch on a second stream inside the graph, overlapping the routed
+  launch. Expected ~2.5 µs a layer at 4 rows (~1.3% of a round) and much more at 6+ rows. That's too small to see
+  while desktop apps share the GPU.
