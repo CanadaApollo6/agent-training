@@ -431,3 +431,46 @@ Greedy, 1,024 tokens each, end to end including prefill:
 - The texts differ from the A10 run's after 56-864 characters. That run used TensorFold 0.3.7 with the first sm_86
   patch, not this 0.3.6.3 build, so the two aren't expected to agree bit for bit.
 - The GPU peaked at 69 °C over three short runs.
+
+### A faster router, and R2 on the 3090
+
+**Router.** The router is a bf16 GEMV, 257 × 2048. At decode, Triton ran it as 9 programs of 32 experts, so 9 of the 82
+SMs read its 1 MB.
+- A sweep of tile shapes tried 84 settings. All 84 gave the same bits, because each logit's chain of K steps runs in
+  the same order whatever the tile.
+- The best settings: 16 experts per program, 2 warps and K steps of 512 at 1 row, 4 warps and 256 above it. The
+  router went from 5.6 to 4.6 µs at 1 row and from 5.6 to 5.1 at 4.
+- **Prediction (Claude; Riel gave none):** 2-3 µs per layer. It came to 0.5-0.7 µs in the block, A/B under the same
+  conditions. A router that keeps its bits can't go much lower: each logit is 128 dependent tensor-core steps.
+- The first try broke the engine tests. The kernel doesn't mask K, and the test model's rows (256) are shorter than
+  a 512 step. The tile is now clamped to divide the row, and `test_moe_router.py` covers it (a mutant fails).
+- **Side finding:** the whole block measured 3-4 µs faster at 1 row (and 11 at 4 rows) once Slack, Claude Desktop and
+  ChatGPT were closed. The desktop's other GPU apps share the GPU. Compare runs only under the same conditions.
+
+**R2 (gate/up 2-bit, down 3-bit, 13 GB) built on the 3090.** It took `quantize_experts.py` about 10 minutes from the
+local bf16 checkpoint, peaking at 77 °C. Its per-tensor errors match the pod build within 5e-6.
+- It serves the full 131K window in 21.2 GB, estimated 18.15 GiB of a 21.8 GiB budget. No need to close anything but
+  the heaviest GPU apps.
+
+Decode tok/s, 256 tokens, median of 3, with MTP drafts:
+
+| Build | Prompt | Temperature | Old kernels | New kernels | Change |
+|---|---|---|---|---|---|
+| R2, 131K window | code | 0 | 366.4 | 425.5 | +16% |
+| R2, 131K window | chat | 0 | 289.0 | 337.1 | +17% |
+| R2, 131K window | code | 1.0 | 301.5 | 345.0 | +14% |
+| R2, 131K window | chat | 1.0 | 254.3 | 293.8 | +16% |
+| MLX 4-bit, 16K window | code | 0 | 352.6 | 391.8 | +11% |
+| MLX 4-bit, 16K window | chat | 0 | 260.6 | 291.8 | +12% |
+
+- R2 gains more than the 4-bit build: the low-bit expert kernels were further from their read floor under the old
+  kernel.
+- Old and new kernels give the same 4 × 1,024 greedy tokens on R2 as well. The texts differ from the 4090's R2 run
+  within a few words, as expected: the 4090 prefills with its FP8 path, and the two quantizations differ by rounding
+  noise.
+- R2 on the 3090 now decodes faster than the 4-bit build did on the rented 4090 (345 vs 391 code at temperature 1,
+  294 vs 312 chat, with 7% less bandwidth). It also holds 8× the context.
+
+**The next lever is the verify step's expert kernels.** With drafts, each step verifies 4 rows. At 4 rows the 4/4
+block reads about 33 experts' weights (55 MB) and takes 83 µs against a read floor of about 59. That's 24 µs per
+layer, about 1 ms of each ~7.5 ms step.

@@ -1497,10 +1497,34 @@ index 5a5a275..798507d 100644
  }
  
 diff --git i/src/tensorfold/cuda/moe.py w/src/tensorfold/cuda/moe.py
-index a8cc130..f55a8a1 100644
+index a8cc130..25fe294 100644
 --- i/src/tensorfold/cuda/moe.py
 +++ w/src/tensorfold/cuda/moe.py
-@@ -98,6 +98,8 @@ class MoEBuffers:
+@@ -46,12 +46,19 @@ def router(x: torch.Tensor, rows: torch.Tensor, out: torch.Tensor | None = None)
+     if out is None:
+         out = torch.empty((m, ne), dtype=torch.float32, device=x.device)
+     bm = _tile(m)
+-    if bm == 16:
+-        be, bk, stages = 32, 256, 4
++    # decode: 16 experts a program spreads the rows' read over twice the SMs (3090: 5.6 -> 4.6 us at 1 row, 5.1 at 4);
++    # a row's bits don't depend on the tile (K runs in order either way)
++    if m == 1:
++        be, bk, stages, warps = 16, 512, 4, 2
++    elif bm == 16:
++        be, bk, stages, warps = 16, 256, 4, 4
+     else:
+-        be, bk, stages = 64, 64, 3               # Smaller K tiles keep prefill within shared-memory limits.
++        be, bk, stages, warps = 64, 64, 3, 4     # Smaller K tiles keep prefill within shared-memory limits.
++    while d % bk:                                # K isn't masked: a tile never runs past a row
++        bk //= 2
+     grid = (triton.cdiv(m, bm), triton.cdiv(ne, be))
+-    _router[grid](x, rows, out, m, x.stride(0), D=d, NE=ne, BM=bm, BLOCK_E=be, BK=bk, num_warps=4, num_stages=stages)
++    _router[grid](x, rows, out, m, x.stride(0), D=d, NE=ne, BM=bm, BLOCK_E=be, BK=bk, num_warps=warps,
++                  num_stages=stages)
+     return out
+ 
+ 
+@@ -98,6 +105,8 @@ class MoEBuffers:
          self.act = torch.empty((rows, slots, cfg.moe_intermediate_size), dtype=torch.bfloat16, device=device)
          self.y = torch.empty((rows, slots, cfg.hidden_size), dtype=torch.bfloat16 if prefill else torch.float32,
                               device=device)
@@ -1509,7 +1533,7 @@ index a8cc130..f55a8a1 100644
  
  
  def select_rows(logits: torch.Tensor, buf: MoEBuffers, top_k: int, experts: int) -> None:
-@@ -111,8 +113,12 @@ def select_rows(logits: torch.Tensor, buf: MoEBuffers, top_k: int, experts: int)
+@@ -111,8 +120,12 @@ def select_rows(logits: torch.Tensor, buf: MoEBuffers, top_k: int, experts: int)
  def select(logits: torch.Tensor, buf: MoEBuffers, top_k: int, experts: int) -> None:
      """Each row's experts and weights (rows in parallel), then the (row, slot) pairs grouped by expert."""
  
@@ -1523,7 +1547,7 @@ index a8cc130..f55a8a1 100644
  
  
  def moe(x: torch.Tensor, router_rows: torch.Tensor, ex: grouped.Experts, buf: MoEBuffers, top_k: int,
-@@ -181,5 +187,14 @@ def run(x: torch.Tensor, m: Routed, *, prefill: bool = False) -> torch.Tensor:
+@@ -181,5 +194,14 @@ def run(x: torch.Tensor, m: Routed, *, prefill: bool = False) -> torch.Tensor:
      buf = _scratch.get(key)
      if buf is None:
          buf = _scratch[key] = MoEBuffers(size, _Shape(m), x.device, prefill=prefill)
@@ -2005,6 +2029,42 @@ index 0000000..0476ecd
 +        xs.copy_(x * s)
 +        graph.replay()
 +        assert torch.equal(out, w), s
+diff --git i/tests/cuda/test_moe_router.py w/tests/cuda/test_moe_router.py
+new file mode 100644
+index 0000000..d62abd4
+--- /dev/null
++++ w/tests/cuda/test_moe_router.py
+@@ -0,0 +1,30 @@
++"""The decode router's tiles (16 experts a program) give the old tiles' logits (32 a program) bit for bit: a row's
++chain of K steps is the same whatever the tile."""
++
++import pytest
++import torch
++import triton
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda import moe  # noqa: E402
++
++
++def _old(x, w):
++    m, d = x.shape
++    ne = w.shape[0]
++    out = torch.empty((m, ne), dtype=torch.float32, device=x.device)
++    moe._router[(1, triton.cdiv(ne, 32))](x, w, out, m, x.stride(0), D=d, NE=ne, BM=16, BLOCK_E=32, BK=256,
++                                           num_warps=4, num_stages=4)
++    return out
++
++
++@pytest.mark.parametrize("ne,d", [(257, 2048), (25, 512), (17, 256)])
++def test_decode_router_equals_the_old_tiles(ne, d):
++    g = torch.Generator(device="cuda").manual_seed(ne)
++    w = (torch.randn((ne, d), device="cuda", generator=g) * 0.02).to(torch.bfloat16)
++    for rows in (1, 2, 3, 4, 7, 16, 1):
++        for _ in range(4):
++            x = torch.randn((rows, d), device="cuda", generator=g).to(torch.bfloat16)
++            assert torch.equal(moe.router(x, w).view(torch.int32), _old(x, w).view(torch.int32)), (ne, rows)
 diff --git i/tests/cuda/test_moe_select.py w/tests/cuda/test_moe_select.py
 new file mode 100644
 index 0000000..3c3dfc8
