@@ -1,0 +1,5 @@
+outputs identical: True
+prompt 0:  separate  347.7 tok/s ( 9.85 ms/round)  segmented  370.9 tok/s ( 9.23 ms/round)  swapped  388.4 tok/s ( 8.82 ms/round)
+prompt 1:  separate  316.2 tok/s ( 9.58 ms/round)  segmented  337.4 tok/s ( 8.98 ms/round)  swapped  338.6 tok/s ( 8.95 ms/round)
+prompt 2:  separate  698.8 tok/s (10.62 ms/round)  segmented  754.9 tok/s ( 9.83 ms/round)  swapped  758.8 tok/s ( 9.78 ms/round)
+prompt 3:  separate  526.3 tok/s ( 9.63 ms/round)  segmented  566.0 tok/s ( 8.96 ms/round)  swapped  587.5 tok/s ( 8.63 ms/round)

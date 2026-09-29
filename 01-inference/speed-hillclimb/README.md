@@ -602,8 +602,22 @@ those apps open (median of 3, 256 tokens, R2 131K):
 | code | 0 | 443.5 | 476.3 | 483.0 |
 | chat | 0 | 351.6 | 373.9 | 377.0 |
 
-- **Prediction (Claude; made before building, but written down only here):** ~+10% greedy. So far +9% code, +7% chat,
-  measured with the apps open. A clean A/B of all three forms is pending.
+- **Clean A/B** (only T3 Code on the GPU; `seg_ab.py`, R2, 1,024 greedy tokens, 3 interleaved reps, outputs
+  identical; `results/seg-ab-3090-r2.txt`):
+
+| Prompt | Separate | Segmented | + weights as A | Change |
+|---|---|---|---|---|
+| primes | 347.7 | 370.9 | 388.4 | +11.7% |
+| ISO 8601 code | 316.2 | 337.4 | 338.6 | +7.1% |
+| transistor (completion) | 698.8 | 754.9 | 758.8 | +8.6% |
+| train problem | 526.3 | 566.0 | 587.5 | +11.6% |
+
+- **Prediction (Claude; made before building, but written down only here):** ~+10% greedy. Measured +7-12%.
+- The absolute rates here are ~15% below the first A/B. Other work was loading the CPU during this run (load average
+  51 on 20 cores: browsers and node test runners). Decode waits on the host every draft step, so host load cuts
+  throughput even with the GPU idle. A server bench in the same state swung 152-292 tok/s within one prompt. That's a
+  lever of its own: the draft loop's host syncs. The comparison above holds because every variant ran interleaved
+  under the same load.
 - `greedy.py`'s one-shot 1,024-token timings misled once. A cold server captures graphs for new verify widths on its
   first long request (261 tok/s on the primes prompt, then 373 and 405 on repeats). Judge kernels with the
   in-process A/B, not one-shot runs.
