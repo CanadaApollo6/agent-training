@@ -29,6 +29,16 @@ Build A reads about 2.5 GB per token, a ceiling of about 330 tok/s.
 
 For this MoE, the experts set the size but the always-on path sets the speed.
 
+Baseline, PrismML's llama.cpp build (b10743), flash attention on, `llama-bench` with 3 repeats, on the 3090:
+
+| Build | Prefill 512 | Decode 128 | Decode after 8K of context | Share of ceiling |
+|---|---|---|---|---|
+| A, experts-2bit | 3,504 tok/s | 148.2 tok/s | 143.8 tok/s | 45% |
+
+At 45% of the ceiling, more than half the time per token goes somewhere other than reading weights. On an MoE at
+batch 1, that's usually per-layer overhead (40 layers of small kernels, expert routing and gathering, and launches)
+rather than bandwidth. That makes CUDA graphs and kernel fusion likely early wins.
+
 ## TensorFold on the 3090
 
 TensorFold refuses GPUs below compute capability 9.0 (Hopper), and the 3090 is 8.6. The port:
