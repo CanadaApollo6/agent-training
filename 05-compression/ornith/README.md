@@ -104,3 +104,33 @@ Readout against Q8_0 and IQ2_M on the reasoning probe (20 problems × 4 samples)
 - If B does, the always-on path does (canada-quant's bet).
 
 **Riel's prediction (2026-09-29): B collapses.**
+
+### Result
+
+| Build | File | Avg bits/weight | Correct | Wrong | Hit the cap | Lost | Gained | p | Median tokens, both solved |
+|---|---|---|---|---|---|---|---|---|---|
+| Q8_0 | 37.8 GB | 8.5 | 66/80 | 4 | 10 | | | | 1,089 |
+| A, experts-2bit | 13.8 GB | 3.1 | 66/80 | 5 | 9 | 0 | 0 | 1 | 1,534 |
+| B, rest-2bit | 36.6 GB | 8.2 | 65/80 | 4 | 11 | 2 | 1 | 1 | 1,098 |
+| IQ2_M (both) | 12.5 GB | 2.8 | 59/80 | 7 | 14 | 7 | 0 | 0.06 | 1,452 |
+
+Per problem, A's scores are identical to Q8_0's on all 20 (each 0–4 of 4).
+
+- **Neither half alone breaks the model; only both together do.** A and B are each within noise of Q8_0. IQ2_M's
+  7 lost attempts fall on problems both A and B still solve 4 of 4 times. The damage compounds: 2-bit experts
+  feeding a 2-bit always-on path that also has to absorb their errors.
+- **The two halves hurt differently.** 2-bit experts leave accuracy alone but lengthen reasoning by 40% on the
+  problems both solve (1,089 → 1,534 tokens). The 2-bit always-on path leaves length alone (1,098). Rounding the
+  experts adds noise the model spends tokens working around. The always-on path at 2 bits did no measurable harm on
+  its own.
+- **The practical build is A.** At 13.8 GB, 1.2 GB more than IQ2_M, it matches Q8_0 problem for problem. Keeping
+  the 12% always-on path at 8 bits buys back everything IQ2_M lost. That is canada-quant's recipe (quantize the
+  experts hard, protect the rest), and it fits a 3090 with room for long context.
+
+**Verdict on "B collapses": wrong.** B scored 65/80 against Q8_0's 66. The always-on path at IQ2_M's precision is
+harmless when the experts beneath it are intact.
+
+**What this says about "spare capacity":** it supports the claim that the experts are the cheap part to squeeze. The
+2-bit experts cost no accuracy by themselves, only some extra reasoning. But it doesn't separate spare capacity from
+error averaging across the 8 active experts; both predict cheap experts. The interaction is the new finding. The
+model tolerates one damaged half and not both, so the lean builds come from protecting whichever half is smaller.
