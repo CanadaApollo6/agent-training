@@ -77,6 +77,23 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     the Ornith quantization work. Qwen3.8-27B exists as both EXL3 2.0 bpw and ternary Bonsai 2 (1.72 bpw, trained),
     so it's a clean rounding-vs-training comparison on one base model.
   - The figures are the kit author's measurements. The engine wheels come from turboderp's own releases.
+- [AutoGym: Blueprint-First Generation of Verifiable Agent Gyms](https://arxiv.org/abs/2609.22592) (Noronha,
+  Ravikumar, Lin; Amazon AGI; NeurIPS 2026 workshop): generating RL training tasks for tool-using agents,
+  solvable by construction.
+  - Write the blueprint first: the persona, the correct answer's entities and conditions, what the environment must
+    contain, and how to verify. Only then build the environment (a per-task database behind tools) and the question.
+    Every task is solvable because the answer existed before the data.
+  - Explicit difficulty knobs: task topology (direct lookup → multi-hop → cross-source), capability axes (aggregation,
+    temporal reasoning, negative checks…), how much the question withholds (0–1), and distractors.
+  - Curriculum: per capability, below 30% success gets easier and above 80% gets harder. That keeps tasks in the band
+    where GRPO gets a signal, since all-pass or all-fail groups have zero advantage.
+  - Verifier: programmatic checks where the answer is exact, plus process, outcome and meta LLM judges.
+  - Claimed $2–5 per generated task (Claude Sonnet 4.6 as generator) vs $500–1,000 hand-written.
+  - Weak spots: one 8B RL run ("consistent improvement over 500 steps", no held-out transfer numbers), quality scored
+    by its own rubric, partly LLM-judged rewards, no code release.
+  - The pattern is the useful part: our own training pool, separate from Terminal-Bench, for harness-in-the-loop RL.
+    It's also how to build a Smart Data client gym from a client's schema. It pairs with MiMo's mock-business MCP
+    environments and Ornith's task proposer.
 - [canada-quant](https://huggingface.co/canada-quant) (CQL.ca): a lab that quantizes giant open MoEs (GLM-5.3-Flash,
   DeepSeek V4, Hunyuan 3) and trains its own DFlash2 speculative drafters. Their
   [GLM-5.3-Flash W4A16](https://huggingface.co/canada-quant/GLM-5.3-Flash-W4A16-MTP) card is a worked example of MoE

@@ -31,6 +31,10 @@ The 27B is also dense, so dense vs MoE can't be what separates them. Size can: a
 weights to absorb each rounding error. The dense-vs-MoE question belongs to the 35B-A3B ladder. There, each token
 only passes through ~3B active parameters, which cuts the other way.
 
+**Riel (2026-09-28):** the 35B-A3B MoE "holds up better for sure" than the 9B. The test: at the same build
+(IQ3_XXS, IQ2_M), the 35B loses a smaller share of its own Q8_0 score than the 9B does. The Q8_0 baseline (37.8 GB)
+doesn't fit on the 3090, so it runs on a rented pod; the low-bit builds (10–15 GB) run locally.
+
 Evidence so far leans Riel's way. IQ3_XXS already loses 3 problems at an average of 3.7 bits, while EXL3 3.0 on the
 27B scored 19/20. It's confounded twice, though: EXL3's rotation plus trellis is a stronger quantizer than llama.cpp's
 IQ formats at the same bits, and the two models start from different baselines (16/20 vs 18/20).
