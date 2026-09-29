@@ -171,3 +171,26 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   but not the self-play loop (generator, interpreter, reward). A toy reproduction fits Module 3 (and the 3090),
   with their checkpoints as the yardstick. The reward design fits Module 4, next to Ornith's task proposer.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
+- [WorkflowEvals](https://evals.typesafe.ai/) (TypeSafe, the company behind Jev;
+  [code](https://github.com/typesafe-ai/WorkflowEvals), Apache 2.0;
+  [data](https://huggingface.co/collections/typesafe/workflowevals)): 705 synthetic cases in four business workflows:
+  invoice approval (150), customer-service routing (204), agent-trace review (111) and security-alert triage (240).
+  - Fixed Python code runs each workflow. At each gated step the model only answers Jev-style questions (yes/no,
+    choice, or a 0–n score, given as probabilities), and thresholds in the code pick the actions. The score is an exact
+    match of the action set against GPT-6 Astra and Claude Fable 5.1's averaged answers. There's no judge at run time,
+    so scoring is free and deterministic. It measures agreement with two frontier models, not correctness.
+  - It isn't agentic: no tool calls, turns or planning. It tests the decision points of a workflow the code already
+    owns, which is the Smart Data pattern of an LLM as a classifier inside code.
+  - [EvalSafe O*NET](https://huggingface.co/datasets/typesafe/evalsafe-onet) is the same idea for reading documents:
+    150 synthetic documents tagged with O*NET occupations (not O*NET data) and 7,500 questions, scored against the
+    same consensus. Apache 2.0.
+  - Leaderboard (site, 2026-09-28): Sol 74.1%, Opus 5 73.1%, Terra 67.9%, Jev 67.8% at $0.0004 and 0.4 s a case,
+    DeepSeek V4 Pro and Flash 65.5% and 64.4%. There's no Qwen or small open model.
+  - Weak evidence: it's a vendor benchmark in its own model's question format. The labels are model-made on synthetic
+    cases, the snapshot is a day old, three of the four datasets have no license, and the site's "prompt" column
+    can't be run from the repo.
+  - Use: a gate for the quantized Ornith builds that's closer to Smart Data work than the reasoning probe. A local
+    server needs a small patch. `--base-url` works for TypeSafe only, `OPENAI_BASE_URL` sends Responses API calls,
+    and answers must be strict JSON (llama.cpp can enforce that, TensorFold's server can't). The full set is ~6–7M
+    input tokens and 0.6M (thinking off) to 3M (thinking on) output tokens, so it's a pod job. The 240 security cases
+    are the local version. It's also a ready harness for the Jev vs Kev vs Julia plan.
