@@ -29,6 +29,15 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
 
 ## Reading spine
 
+- [micrograd](https://github.com/karpathy/micrograd) (Karpathy): a scalar autograd engine and a tiny neural-net
+  library in about 150 lines, with the video "The spelled-out intro to neural networks and backpropagation". The
+  opening exercise for Module 3: write backprop by hand, then check the gradients against PyTorch. It works on
+  single numbers, not tensors, so it teaches the chain rule but nothing about speed.
+- [tinygrad](https://github.com/tinygrad/tinygrad) (tiny corp): the next rung, a full tensor framework small enough
+  to read. Operations are lazy. It builds a graph, fuses it into as few kernels as it can, and generates code for
+  CUDA, AMD, Metal or CPU. It connects Modules 2 and 3: `DEBUG=4` prints the kernels it writes for your model code,
+  and `BEAM=2` searches kernel variants for speed (a small version of the SOL-ExecBench hill-climbing below). It
+  runs LLaMA-class models and the driving model in comma.ai's openpilot.
 - [wafer-ai/gpu-perf-engineering-resources](https://github.com/wafer-ai/gpu-perf-engineering-resources): the kernel and inference track. Skip Hopper/Blackwell-only material (TMA, DeepGEMM, tcgen05, FlashAttention 3/4).
 - [Kev](https://github.com/jaredpalmer/kev) and [Jev's Architecture Unmasked](https://archerhume.com/posts/jevs-architecture-unmasked): System One decision models.
   [Julia 1](https://huggingface.co/SupersonicLabs/Julia-1) makes the opposite bet to Kev: a 144M-parameter
