@@ -47,7 +47,16 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
 - [interference-search](https://github.com/Badtheorylabs/interference-search): beam search with merged states and a learned judge; a Countdown baseline for Module 4.
 - [TensorFold](https://github.com/ashhart/TensorFold): exact speculative decoding with hand-written per-family
   kernels. Its [CUDA recipe book](https://github.com/ashhart/TensorFold/blob/main/docs/recipes/cuda.md) is a
-  worked example of Module 1 and 2 ideas. Its CUDA engine is only tested on DGX Spark; the 3090 is untried.
+  worked example of Module 1 and 2 ideas. Its CUDA engine is tested only on DGX Spark (GB10).
+  - Since 0.3.6.1 it refuses GPUs below compute capability 9.0, including the 3090 (8.6).
+  - The blockers are narrow. The 4-bit matmul (`qmm.cu`) sums split-K partials across a thread-block cluster, but
+    it already has a non-cluster path, used for more than 8 slices, that sums in the same order.
+  - FP8 MMA appears only in the FP8/NVFP4 prefill kernels; 4-bit weights also have a bf16 prefill path.
+  - No wgmma, TMA or bulk copies.
+  - Its `qwen3_5_moe` family is Ornith 1.5 35B-A3B's architecture, and the `qwen3_5` dense family covers the 9B and
+    Qwen3.8 27B. On one GB10 it decodes Qwen3.6-35B-A3B at 141–179 tok/s against vLLM's 101–122 (their numbers).
+    That family runs one request at a time.
+  - It reads only MLX 4-bit, group-64 weights on CUDA: a 35B-A3B is ~21 GB, tight on 24 GB.
 - [MiMo-V2.6-RL-oss](https://huggingface.co/datasets/XiaomiMiMo/MiMo-V2.6-RL-oss): Xiaomi's released agentic RL
   environments. 7.8K tasks: SWE with executable tests, cyber, enterprise knowledge work, webdev and music. Each
   knowledge-work task is a Docker environment with mock business systems served as MCP tools over SQLite, plus a
