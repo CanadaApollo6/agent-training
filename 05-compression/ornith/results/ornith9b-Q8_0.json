@@ -1,0 +1,243 @@
+{
+ "label": "ornith9b-Q8_0",
+ "n": 20,
+ "cap": 16384,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0
+ },
+ "wall_s": 784.0026978810201,
+ "sanity": "9",
+ "correct": 16,
+ "wrong": 1,
+ "runaway": 3,
+ "cut off": 0,
+ "accuracy": 0.8,
+ "median_tokens": 4157,
+ "mean_tokens": 5865.8,
+ "total_tokens": 117316,
+ "per_problem": [
+  {
+   "id": "test/precalculus/902.json",
+   "subject": "Precalculus",
+   "gold": "\\sqrt{66}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " $a^2 + r^2 = 65$, solving $u^2 - 65u + 788.25 = 0$ gives valid roots $a^2 \\approx 48.87$, $r^2 \\approx 16.13$ (with $|x|/r \\approx 0.997 < 1$). So a genuine point $P$ exists. \u2713\n\n$$\\boxed{\\sqrt{66}}$$",
+   "finish": "stop",
+   "tokens": 10007,
+   "s": 330.7160855100374
+  },
+  {
+   "id": "test/intermediate_algebra/2015.json",
+   "subject": "Intermediate Algebra",
+   "gold": "\\{1\\pm\\sqrt{5},-2\\}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": " the standard resolvent formula $y^3 - cy^2 + (bd-4e)y - (b^2e - 4ce + d^2)$ with $b=2,c=0,d=0,e=2$.)*\n\n## Solving the Cubic\n\nTesting $t = -2$: $(-8) - 8(-2) - 8 = 0$ \u2713, so factor:\n$$t^3 - 8t - 8 = (t",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 710.0279204259859
+  },
+  {
+   "id": "test/intermediate_algebra/1454.json",
+   "subject": "Intermediate Algebra",
+   "gold": "70 \\sqrt{2}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 710.029105758993
+  },
+  {
+   "id": "test/prealgebra/1512.json",
+   "subject": "Prealgebra",
+   "gold": "7\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "Comparing the areas:\n$$Z = 13\\pi, \\qquad X = 16\\pi, \\qquad Y = 20\\pi$$\n\n- **Greatest area:** $Y = 20\\pi$\n- **Smallest area:** $Z = 13\\pi$\n\nThe difference is:\n$$20\\pi - 13\\pi = 7\\pi$$\n\n$$\\boxed{7\\pi}$$",
+   "finish": "stop",
+   "tokens": 609,
+   "s": 19.250652345013805
+  },
+  {
+   "id": "test/algebra/2779.json",
+   "subject": "Algebra",
+   "gold": "20",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "sqrt{2} + 6\\sqrt{3} + 9\\sqrt{2} + 3\\sqrt{3} = 11\\sqrt{2} + 9\\sqrt{3} \\checkmark$$\n\n## Finding the Coefficients\n\n$$a = 11, \\quad b = 9, \\quad c = 0$$\n\nTherefore:\n$$a + b + c = 11 + 9 + 0 = \\boxed{20}$$",
+   "finish": "stop",
+   "tokens": 1367,
+   "s": 42.60503749200143
+  },
+  {
+   "id": "test/number_theory/1128.json",
+   "subject": "Number Theory",
+   "gold": "2",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "\\cdot 1 = 8 \\equiv 3$; $8 \\cdot 2 = 16 \\equiv 1$ \u2713\n\nSo every odd prime gives a solution.\n\n## Conclusion\n\nThe only prime for which the congruence has no solution is $p = 2$.\n\n$$\\text{Sum} = \\boxed{2}$$",
+   "finish": "stop",
+   "tokens": 710,
+   "s": 22.38601091899909
+  },
+  {
+   "id": "test/number_theory/769.json",
+   "subject": "Number Theory",
+   "gold": "9",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "{11}$$\n\n**Check:** $8^{10} = 8^8 \\cdot 8^2 \\equiv 5 \\cdot 9 = 45 \\equiv 1 \\pmod{11}$ \u2713 (confirms Fermat)\n\n## Combining Results\n\n$$8^{34} + 8^{38} \\equiv 4 + 5 = 9 \\pmod{11}$$\n\n## Answer\n\n$$\\boxed{9}$$",
+   "finish": "stop",
+   "tokens": 1107,
+   "s": 34.64657071401598
+  },
+  {
+   "id": "test/intermediate_algebra/2152.json",
+   "subject": "Intermediate Algebra",
+   "gold": "0",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " a polynomial of degree at most 2 that equals $1$ at three distinct points, it must be the constant polynomial:\n$$p(x) = 1$$\n\nThe degree of a nonzero constant polynomial is $\\boxed{0}$.\n\n$$\\boxed{0}$$",
+   "finish": "stop",
+   "tokens": 4363,
+   "s": 136.91224237001734
+  },
+  {
+   "id": "test/counting_and_probability/1003.json",
+   "subject": "Counting & Probability",
+   "gold": "29",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "}{576} + \\frac{32}{576}\\right] = 2\\cdot\\frac{47}{576} = \\frac{47}{288} \\checkmark$$\n\n# Final Answer\n\nSince $p = \\frac{5}{24}$ with $\\gcd(5, 24) = 1$, we have $m = 5$, $n = 24$:\n\n$$m + n = \\boxed{29}$$",
+   "finish": "stop",
+   "tokens": 2986,
+   "s": 112.55078348098323
+  },
+  {
+   "id": "test/number_theory/427.json",
+   "subject": "Number Theory",
+   "gold": "25",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "mes 3 \\times 7 \\times 13 = 4 \\times 3 \\times 91 = 12 \\times 91 = 1092$ \u2713\n\n## Step 4: Sum of Distinct Prime Divisors\n\nThe distinct prime divisors are $2, 3, 7, 13$.\n\n$$2 + 3 + 7 + 13 = 25$$\n\n\\boxed{25}",
+   "finish": "stop",
+   "tokens": 908,
+   "s": 50.30025074101286
+  },
+  {
+   "id": "test/algebra/975.json",
+   "subject": "Algebra",
+   "gold": "-4",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "enominator} = 6 \\neq 0$$\n\nBoth other roots fail the \"both must be zero\" requirement, so the function is defined there.\n\n## Conclusion\n\nThe only value not in the domain is $x = -4$.\n\n$$\\boxed{x = -4}$$",
+   "finish": "stop",
+   "tokens": 1122,
+   "s": 69.48468463803874
+  },
+  {
+   "id": "test/prealgebra/1128.json",
+   "subject": "Prealgebra",
+   "gold": "64",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ultiply:\n\n$$4 \\times 2 \\times 1 \\times 2 \\times 2 \\times 2 = 64$$\n\n**Step by step:**\n$$4 \\times 2 = 8$$\n$$8 \\times 1 = 8$$\n$$8 \\times 2 = 16$$\n$$16 \\times 2 = 32$$\n$$32 \\times 2 = 64$$\n\n$$\\boxed{64}$$",
+   "finish": "stop",
+   "tokens": 1146,
+   "s": 78.5403781409841
+  },
+  {
+   "id": "test/precalculus/986.json",
+   "subject": "Precalculus",
+   "gold": "144",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "$\\frac{1}{2}|x_1(y_2-y_3) + x_2(y_3-y_1) + x_3(y_1-y_2)|$.\n\n# Final Computation\n\n$$\\begin{vmatrix} x_1 & y_1 & 1 \\\\ x_2 & y_2 & 1 \\\\ x_3 & y_3 & 1 \\end{vmatrix}^2 = (\\pm 12)^2 = 144$$\n\n$$\\boxed{144}$$",
+   "finish": "stop",
+   "tokens": 1155,
+   "s": 86.79837995499838
+  },
+  {
+   "id": "test/prealgebra/1044.json",
+   "subject": "Prealgebra",
+   "gold": "5.4 \\text{ cents}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "mputing the Average Price\n\n$$\\text{Average price} = \\frac{\\text{Total cost}}{\\text{Total number}} = \\frac{233}{43} \\approx 5.4186\\ldots$$\n\nRounding to the nearest tenth:\n\n$$\\boxed{5.4 \\text{ cents}}$$",
+   "finish": "stop",
+   "tokens": 4157,
+   "s": 202.00109292101115
+  },
+  {
+   "id": "test/intermediate_algebra/582.json",
+   "subject": "Intermediate Algebra",
+   "gold": "850",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "eck:** $\\cos18^\\circ+\\cos54^\\circ+0+\\cos126^\\circ+\\cos162^\\circ \\approx 0.9511+0.5878+0-0.5878-0.9511 = 0$ \u2713\n\n## Final Answer\n\n$$\\sum_{k=1}^{5}\\frac{1}{r_k\\overline{r}_k} = 850 - 26(0) = \\boxed{850}$$",
+   "finish": "stop",
+   "tokens": 6893,
+   "s": 302.319283312012
+  },
+  {
+   "id": "test/geometry/686.json",
+   "subject": "Geometry",
+   "gold": "18+2\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "(Equivalently, the arcs always combine into a full circle of circumference $2\\pi r = 2\\pi$.)*\n\n# Final Answer\n\n$$\\text{Perimeter of } S = 18 + 2\\pi \\approx 24.28 \\text{ units}$$\n\n$$\\boxed{18 + 2\\pi}$$",
+   "finish": "stop",
+   "tokens": 10889,
+   "s": 553.8361989519908
+  },
+  {
+   "id": "test/geometry/880.json",
+   "subject": "Geometry",
+   "gold": "2\\sqrt{113}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 781.8438839369919
+  },
+  {
+   "id": "test/prealgebra/954.json",
+   "subject": "Prealgebra",
+   "gold": "10",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " takes 90 seconds to travel.\n\n$$\\text{Length} = \\text{Speed} \\times \\text{Time} = \\frac{1}{9} \\text{ m/s} \\times 90 \\text{ s} = 10 \\text{ meters}$$\n\n## Answer\n\nThe hallway is $\\boxed{10}$ meters long.",
+   "finish": "stop",
+   "tokens": 706,
+   "s": 159.65493742603576
+  },
+  {
+   "id": "test/intermediate_algebra/558.json",
+   "subject": "Intermediate Algebra",
+   "gold": "(3,4]",
+   "outcome": "wrong",
+   "finished_thinking": true,
+   "answer_tail": " Conclusion\n\nGenuine period-2 points exist precisely when the roots are real (requiring $\\lambda \\geq 3$) and distinct from the fixed point (requiring $\\lambda \\neq 3$):\n\n$$\\boxed{3 < \\lambda \\le 4}$$",
+   "finish": "stop",
+   "tokens": 11902,
+   "s": 731.3338291799882
+  },
+  {
+   "id": "test/intermediate_algebra/1849.json",
+   "subject": "Intermediate Algebra",
+   "gold": "501",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "g exactly one solution:\n\n| Range | Valid $k$ | Count |\n|-------|-----------|-------|\n| $k < 0$ | $-500, -499, \\ldots, -1$ | $500$ |\n| $k > 0$ | $8$ | $1$ |\n\n**Total:** $500 + 1 = 501$\n\n$$\\boxed{501}$$",
+   "finish": "stop",
+   "tokens": 8137,
+   "s": 604.0660970879835
+  }
+ ]
+}

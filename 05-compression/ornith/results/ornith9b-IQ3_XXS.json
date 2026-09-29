@@ -1,0 +1,243 @@
+{
+ "label": "ornith9b-IQ3_XXS",
+ "n": 20,
+ "cap": 16384,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0
+ },
+ "wall_s": 834.3303820159636,
+ "sanity": "9",
+ "correct": 13,
+ "wrong": 1,
+ "runaway": 6,
+ "cut off": 0,
+ "accuracy": 0.65,
+ "median_tokens": 6046,
+ "mean_tokens": 7759.05,
+ "total_tokens": 155181,
+ "per_problem": [
+  {
+   "id": "test/precalculus/902.json",
+   "subject": "Precalculus",
+   "gold": "\\sqrt{66}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 581.6123719049501
+  },
+  {
+   "id": "test/intermediate_algebra/2015.json",
+   "subject": "Intermediate Algebra",
+   "gold": "\\{1\\pm\\sqrt{5},-2\\}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 581.5718702019658
+  },
+  {
+   "id": "test/intermediate_algebra/1454.json",
+   "subject": "Intermediate Algebra",
+   "gold": "70 \\sqrt{2}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 581.6130550779635
+  },
+  {
+   "id": "test/prealgebra/1512.json",
+   "subject": "Prealgebra",
+   "gold": "7\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "----|------|\n| X | $16\\pi$ |\n| Y | $20\\pi$ |\n| Z | $13\\pi$ |\n\n- **Greatest area:** Y = $20\\pi$\n- **Smallest area:** Z = $13\\pi$\n\n## Computing the Difference\n\n$$20\\pi - 13\\pi = 7\\pi$$\n\n$$\\boxed{7\\pi}$$",
+   "finish": "stop",
+   "tokens": 547,
+   "s": 17.31470437499229
+  },
+  {
+   "id": "test/algebra/2779.json",
+   "subject": "Algebra",
+   "gold": "20",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "qrt{2}+\\sqrt{3})^2(\\sqrt{2}+\\sqrt{3}) = (5+2\\sqrt{6})(\\sqrt{2}+\\sqrt{3}) = 5\\sqrt{2}+5\\sqrt{3}+2\\sqrt{12}+2\\sqrt{18} = 5\\sqrt{2}+5\\sqrt{3}+4\\sqrt{3}+6\\sqrt{2} = 11\\sqrt{2}+9\\sqrt{3}$ \u2713\n\n$$\\boxed{20}$$",
+   "finish": "stop",
+   "tokens": 1324,
+   "s": 41.16734419798013
+  },
+  {
+   "id": "test/number_theory/1128.json",
+   "subject": "Number Theory",
+   "gold": "2",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ks ($8 \\cdot 2 = 16 \\equiv 1 \\pmod 5$). \u2713\n\nIn general, for every odd prime, a solution exists.\n\n## Conclusion\n\nThe only prime for which $8x \\equiv 1 \\pmod p$ has no solution is $p = 2$.\n\n$$\\boxed{2}$$",
+   "finish": "stop",
+   "tokens": 1156,
+   "s": 35.876657163957134
+  },
+  {
+   "id": "test/number_theory/769.json",
+   "subject": "Number Theory",
+   "gold": "9",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "erification using $8 \\equiv -3$:**\n$$8^{34} \\equiv (-3)^{34} = 3^{34} \\equiv 3^4 = 81 \\equiv 4$$\n$$8^{38} \\equiv (-3)^{38} = 3^{38} \\equiv 3^8 = 6561 \\equiv 5$$\n$$4 + 5 = 9 \\checkmark$$\n\n$$\\boxed{9}$$",
+   "finish": "stop",
+   "tokens": 2158,
+   "s": 67.6109009119682
+  },
+  {
+   "id": "test/intermediate_algebra/2152.json",
+   "subject": "Intermediate Algebra",
+   "gold": "0",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "a) = -uvw$, giving\n$$C = \\frac{-uvw}{-uvw} = 1.$$\n\nAll checks confirm:\n$$p(x) = 0\\cdot x^2 + 0\\cdot x + 1 = 1.$$\n\n## Conclusion\n\nSince $p(x) = 1$, a nonzero constant, its degree is $0$.\n\n$$\\boxed{0}$$",
+   "finish": "stop",
+   "tokens": 6174,
+   "s": 199.09642879699823
+  },
+  {
+   "id": "test/counting_and_probability/1003.json",
+   "subject": "Counting & Probability",
+   "gold": "29",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": ": we have $\\frac{1}{8} < \\frac{1}{6}$ \u2713\n\nThus $p = \\dfrac{5}{24}$ and $q = \\dfrac{1}{8}$.\n\n# Final Answer\n\nSince $p = \\frac{m}{n} = \\frac{5}{24}$ with $\\gcd(5,24) = 1$:\n$$m + n = 5 + 24 = \\boxed{29}$$",
+   "finish": "stop",
+   "tokens": 6046,
+   "s": 213.9936584699899
+  },
+  {
+   "id": "test/number_theory/427.json",
+   "subject": "Number Theory",
+   "gold": "25",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " \\times 3 = 12$, and $12 \\times 7 = 84$, and $84 \\times 13 = 1092$ \u2713\n\n## Step 4: Sum of Distinct Prime Divisors\n\nThe distinct prime divisors are $2, 3, 7, 13$:\n\n$$2 + 3 + 7 + 13 = 25$$\n\n$$\\boxed{25}$$",
+   "finish": "stop",
+   "tokens": 889,
+   "s": 63.947125218983274
+  },
+  {
+   "id": "test/algebra/975.json",
+   "subject": "Algebra",
+   "gold": "-4",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ap \\{-4, -5\\} = \\{-4\\}$$\n\n## Verification\n\nAt $x = -4$:\n- $x^2+3x-4 = 16 - 12 - 4 = 0$ \u2713\n- $x^2+9x+20 = 16 - 36 + 20 = 0$ \u2713\n\nThe only value making the denominator zero is $x = -4$.\n\n$$\\boxed{x = -4}$$",
+   "finish": "stop",
+   "tokens": 1909,
+   "s": 101.62357018695911
+  },
+  {
+   "id": "test/prealgebra/1128.json",
+   "subject": "Prealgebra",
+   "gold": "64",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "tiply the options:\n\n$$4 \\times 2 \\times 1 \\times 2 \\times 2 \\times 2$$\n\n$$= 4 \\times 2 = 8$$\n$$8 \\times 1 = 8$$\n$$8 \\times 2 = 16$$\n$$16 \\times 2 = 32$$\n$$32 \\times 2 = 64$$\n\n## Answer\n\n$$\\boxed{64}$$",
+   "finish": "stop",
+   "tokens": 4240,
+   "s": 203.16698740900028
+  },
+  {
+   "id": "test/precalculus/986.json",
+   "subject": "Precalculus",
+   "gold": "144",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ion with the known points:** Take $(0,0)$, $(3,0)$, $(0,4)$. Then\n$$\\begin{vmatrix} 0 & 0 & 1 \\\\ 3 & 0 & 1 \\\\ 0 & 4 & 1 \\end{vmatrix} = 1\\cdot(3\\cdot 4 - 0) = 12,$$\nso $12^2 = 144$. \u2713\n\n$$\\boxed{144}$$",
+   "finish": "stop",
+   "tokens": 5155,
+   "s": 238.86911881697597
+  },
+  {
+   "id": "test/prealgebra/1044.json",
+   "subject": "Prealgebra",
+   "gold": "5.4 \\text{ cents}",
+   "outcome": "wrong",
+   "finished_thinking": true,
+   "answer_tail": "s\n\n$$6 + 4 + 12 + 10 = 32 \\text{ stamps}$$\n\n## Finding the Average Price\n\n$$\\text{Average price} = \\frac{158}{32} = 4.9375 \\text{ cents}$$\n\n## Rounding\n\nRounding to the nearest tenth:\n\n$$\\boxed{4.9}$$",
+   "finish": "stop",
+   "tokens": 976,
+   "s": 134.04750216496177
+  },
+  {
+   "id": "test/intermediate_algebra/582.json",
+   "subject": "Intermediate Algebra",
+   "gold": "850",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "54^\\circ$: $170 - 15.3 = 154.7$  \n- $90^\\circ$: $170$\n- $126^\\circ$: $170 + 15.3 = 185.3$\n- $162^\\circ$: $170 + 24.7 = 194.7$\n\n$$145.3 + 154.7 + 170 + 185.3 + 194.7 = 850 \\checkmark$$\n\n$$\\boxed{850}$$",
+   "finish": "stop",
+   "tokens": 10315,
+   "s": 500.75475184596144
+  },
+  {
+   "id": "test/geometry/686.json",
+   "subject": "Geometry",
+   "gold": "18+2\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "$.)*\n\n## Computing the Perimeter\n\n$$\\text{Perimeter of } S = \\underbrace{9 \\cdot 2}_{\\text{edges}} + \\underbrace{2\\pi}_{\\text{corners}} = 18 + 2\\pi$$\n\n$$\\boxed{18 + 2\\pi} \\approx 24.28 \\text{ units}$$",
+   "finish": "stop",
+   "tokens": 15565,
+   "s": 792.1710117449984
+  },
+  {
+   "id": "test/geometry/880.json",
+   "subject": "Geometry",
+   "gold": "2\\sqrt{113}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 818.0242021869635
+  },
+  {
+   "id": "test/prealgebra/954.json",
+   "subject": "Prealgebra",
+   "gold": "10",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "Length\n\nUsing this speed, I calculate the distance traveled in 90 seconds:\n\n$$\\text{Distance} = \\text{Speed} \\times \\text{Time} = \\frac{1}{9} \\times 90 = 10 \\text{ meters}$$\n\n## Answer\n\n$$\\boxed{10}$$",
+   "finish": "stop",
+   "tokens": 423,
+   "s": 228.75797460996546
+  },
+  {
+   "id": "test/intermediate_algebra/558.json",
+   "subject": "Intermediate Algebra",
+   "gold": "(3,4]",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 828.9668821700034
+  },
+  {
+   "id": "test/intermediate_algebra/1849.json",
+   "subject": "Intermediate Algebra",
+   "gold": "501",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 832.3405757729779
+  }
+ ]
+}
