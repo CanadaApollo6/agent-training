@@ -34,6 +34,26 @@ Paired on the same problems against Q8_0 (exact McNemar):
 - 20 problems can't separate IQ3_XXS from IQ2_M. Each is 3–4 problems down on Q8, and neither is significant alone.
   The trend (0 → 3 → 4 lost, lengths doubling, loops appearing) is the evidence.
 
+## Ornith 1.5 35B-A3B
+
+The same probe with 4 attempts per problem (80 per build), served on a rented A6000 by the same llama.cpp build
+(`../pod/probe_ladder.sh`), 16 at a time. Q8_0 is Ornith's official build; the rest are bartowski's imatrix builds.
+Paired against Q8_0 per problem (each problem scores 0–4), with an exact sign-flip test (`compare.py`):
+
+| Build | File | Avg bits/weight | Correct | Wrong | Hit the cap | Loopy | Lost | Gained | p | Median tokens, both solved |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Q8_0 | 37.8 GB | 8.5 | 66/80 | 4 | 10 | 0 | | | | 1,089 |
+| Q4_K_M | 21.7 GB | 4.9 | 68/80 | 3 | 9 | 0 | 1 | 3 | 0.75 | 1,374 |
+| IQ3_XXS | 15.3 GB | 3.4 | 65/80 | 5 | 10 | 0 | 2 | 1 | 1 | 1,297 |
+| IQ2_M | 12.5 GB | 2.8 | 59/80 | 7 | 14 | 0 | 7 | 0 | 0.06 | 1,452 |
+
+- **Q4 and IQ3_XXS are both free.** Where the 9B at IQ3_XXS was already 3 problems down, the 35B at fewer bits per
+  weight is within one attempt of Q8.
+- **IQ2_M costs something, not everything.** 7 attempts lost, none gained, on the edge of significance (p = 0.06).
+  Losses split between runaways (+4) and wrong answers (+3), reasoning is a third longer, and there are no loops.
+  The 9B at IQ2_M lost a quarter of its score, doubled its reasoning and looped.
+- Scaled to each model's own Q8_0: at IQ3_XXS the 35B keeps 98% of its score and the 9B 81%; at IQ2_M, 89% vs 75%.
+
 ## Predictions
 
 **Riel (2026-09-28):** the 9B breaks earlier than the 27B, "a dense model, so by default there is less to compress
@@ -54,6 +74,12 @@ rounding errors partly cancel (roughly by √8). The always-on path (attention, 
 averaging. The discriminating experiment is our own mixed build: experts at 2 bits and everything else at 8. If
 it holds up, the experts really are the cheap part (canada-quant's bet). If it still breaks, the damage is in the
 per-token path.
+
+**Verdict on "the 35B holds up better": right.** At every low-bit build the 35B keeps a larger share of its
+Q8_0 score (98% vs 81% at IQ3_XXS, 89% vs 75% at IQ2_M), at fewer bits per weight, without the 9B's loops or doubled
+reasoning. The caveat is sample size on the 9B side: one attempt per problem, so its ladder is noisier by ±2–3
+problems. A 4-attempt rerun of the 9B would firm this up, but the gap at IQ3_XXS (0 vs 3 problems lost) is well
+outside that noise. Why it holds up (spare capacity or error averaging) is what the ablation below tests.
 
 **Verdict on "the 9B breaks earlier" (after IQ2_M): leaning right, not proven.** At about 3 bits the 27B was
 intact (EXL3 3.0: 19/20, reasoning barely longer). The 9B at IQ3_XXS already runs out of budget 3 more times, with
