@@ -334,3 +334,55 @@ to about 100 µs. The plan was to spread each unit's K groups over several warps
 - **Where the rest goes at 1 row** (µs): route 3, gate/up 17.5 at a 11.3 read floor, down 8.9 at 5.7, plus about
   1.3 of gap per launch. The next step is fusion into one launch: route inside it, and down fetching its weights while
   gate/up finishes.
+
+### Fusing the MoE block (local 3090)
+
+The decode path runs a MoE block as six launches: router GEMV, top-k, plan, gate/up, down, and combine (the weighted sum
+of the 9 slots). [`tensorfold/bench_moe.py`](tensorfold/bench_moe.py) times the whole block in a CUDA graph.
+
+**Plan:** one kernel does plan, gate/up, down and combine.
+- Each block works out the grouping of pairs by expert itself. That's at most 72 pairs, too few to deserve a launch.
+- Gate/up units run first. A down unit waits on a counter for its expert's gate/up tiles.
+- The last down unit to finish a (row, 32-column) tile sums that row's slots in slot order.
+- The arithmetic is unchanged, so the output keeps the same bits.
+- Router and top-k stay as they are for now.
+
+**Prediction (Claude; Riel gave none):** the block at 1 row drops from 42 to about 30 µs, 4/4 widths.
+
+**Result: the one-kernel block lost, and two smaller fusions won.** The block at 1 row went from 43 to 40.5 µs (4/4),
+not 30.
+- **One kernel for everything was slower.** Holding the gate/up, down and combine code paths at once took all 255
+  registers per thread and spilled 200-270 bytes, so fewer warps fit per SM. It beat the separate launches only at
+  4/4 widths and 1 row. Dropped.
+- **Top-k and plan in one launch (`select`).** One warp per row finds the top 8 with the GPU's warp-wide max and min
+  instructions (two per pick where a shuffle tree takes ten). One scan over the experts then lays out the items. It
+  copies Triton's softmax arithmetic, so picks and weights keep their bits. The first version was slower than the two
+  launches it replaced (11.5 vs 6.9 µs at 1 row). The per-row pick loop and a per-pair plan loop cost 7k and 12k
+  cycles. The rewrite takes 4.3 µs at 1 row and 4.9 at 6 rows.
+- **Combine inside down's launch.** The last unit to finish a (row, 32-column) tile sums its slots. It saves about
+  0.5 µs at 1 row but costs 1.5-6 µs at 2-6 rows, where the last unit's serial sum gets long. So it runs only for
+  1-row steps.
+
+Whole block (µs):
+
+| Widths | Step | 1 row | 2 rows | 4 rows | 6 rows |
+|---|---|---|---|---|---|
+| 4 / 4 | old expert kernel | 72.3 | 79.5 | 108.8 | 169.4 |
+| 4 / 4 | swapped | 43.3 | 62.9 | 97.2 | 136.2 |
+| 4 / 4 | + select | 40.5 | 59.7 | 94.4 | 136.1 |
+| 4 / 4 | + combine (all rows) | 41.6 | 59.9 | 98.0 | 141.8 |
+| 2 / 3 | old expert kernel | 71.5 | 80.8 | 110.9 | 159.1 |
+| 2 / 3 | swapped | 42.0 | 57.2 | 78.7 | 112.9 |
+| 2 / 3 | + select | 38.8 | 54.5 | 76.4 | 111.6 |
+| 2 / 3 | + combine (all rows) | 38.2 | 57.0 | 80.9 | 118.2 |
+
+Repeated three times at 1 row, combine's gain ranged from 0 to 1.7 µs (4/4) and 0.2 to 0.9 µs (2/3). Every step gives
+the old path's output bit for bit (tests: `test_moe_select.py`, `test_moe_decode_path.py`, plus the 75 expert and MoE
+engine tests, where drafted decoding equals serial).
+
+**Why 30 µs was wrong:** the prediction assumed the launch gaps (about 1.3 µs each) plus the separate route were most
+of the 12 µs to cut. They were only about half. The rest is work the fusion doesn't remove: the router GEMV (5.6 µs;
+Triton gives a 1 MB read only 9 programs) and gate/up and down themselves (about 25 µs together against a 17 µs
+weight-read floor).
+
+**What's next:** a wider router kernel (about 3 µs to gain at 1 row), then end-to-end tokens per second on the 3090.
