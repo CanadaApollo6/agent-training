@@ -1,0 +1,243 @@
+{
+ "label": "ornith9b-IQ2_M",
+ "n": 20,
+ "cap": 16384,
+ "sampling": {
+  "temperature": 1.0,
+  "top_p": 0.95,
+  "top_k": 20,
+  "min_p": 0.0
+ },
+ "wall_s": 830.1079613679904,
+ "sanity": "9",
+ "correct": 12,
+ "wrong": 0,
+ "runaway": 8,
+ "cut off": 0,
+ "accuracy": 0.6,
+ "median_tokens": 4593,
+ "mean_tokens": 8433.8,
+ "total_tokens": 168676,
+ "per_problem": [
+  {
+   "id": "test/precalculus/902.json",
+   "subject": "Precalculus",
+   "gold": "\\sqrt{66}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 521.6948945770273
+  },
+  {
+   "id": "test/intermediate_algebra/2015.json",
+   "subject": "Intermediate Algebra",
+   "gold": "\\{1\\pm\\sqrt{5},-2\\}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 521.6941207770142
+  },
+  {
+   "id": "test/intermediate_algebra/1454.json",
+   "subject": "Intermediate Algebra",
+   "gold": "70 \\sqrt{2}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 521.6955325449817
+  },
+  {
+   "id": "test/prealgebra/1512.json",
+   "subject": "Prealgebra",
+   "gold": "7\\pi",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " 13\\pi$$\n\n## Identifying the Greatest and Smallest Areas\n\n- **Greatest area:** $A_Y = 20\\pi$\n- **Smallest area:** $A_Z = 13\\pi$\n\n## Computing the Difference\n\n$$20\\pi - 13\\pi = 7\\pi$$\n\n$$\\boxed{7\\pi}$$",
+   "finish": "stop",
+   "tokens": 1871,
+   "s": 57.062854021030944
+  },
+  {
+   "id": "test/algebra/2779.json",
+   "subject": "Algebra",
+   "gold": "20",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "which doesn't occur in a cube expansion).\n\n$$\\left(\\sqrt{2}+\\sqrt{3}\\right)^3 = 11\\sqrt{2} + 9\\sqrt{3} + 0\\cdot\\sqrt{6}$$\n\nThus $a = 11$, $b = 9$, $c = 0$.\n\n$$a + b + c = 11 + 9 + 0 = 20$$\n\n\\boxed{20}",
+   "finish": "stop",
+   "tokens": 1593,
+   "s": 48.45428871398326
+  },
+  {
+   "id": "test/number_theory/1128.json",
+   "subject": "Number Theory",
+   "gold": "2",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "on.}$$\n\n## Conclusion\n\nThe set of primes for which the congruence has **no** solution is exactly:\n$$\\{2\\}$$\n\nThis is indeed a finite set (containing a single prime).\n\n$$\\text{Sum} = 2$$\n\n$$\\boxed{2}$$",
+   "finish": "stop",
+   "tokens": 4278,
+   "s": 131.8394381949911
+  },
+  {
+   "id": "test/number_theory/769.json",
+   "subject": "Number Theory",
+   "gold": "9",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "quiv 4 \\pmod{11}$$\n\n$$38 \\equiv 3 \\pmod{5} \\implies 3^{38} \\equiv 3^3 \\equiv 27 \\equiv 5 \\pmod{11}$$\n\n**Step 5: Add.**\n\n$$129^{34} + 96^{38} \\equiv 4 + 5 = 9 \\pmod{11}$$\n\nThe remainder is $\\boxed{9}$.",
+   "finish": "stop",
+   "tokens": 3883,
+   "s": 119.34698366798693
+  },
+  {
+   "id": "test/intermediate_algebra/2152.json",
+   "subject": "Intermediate Algebra",
+   "gold": "0",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "ding coefficient is $0$, consistent with $p(x) = 1$. (Full expansion gives $p(x) = 0\\cdot x^2 + 0\\cdot x + 1 = 1$.)\n\n## Conclusion\n\n$p(x)$ reduces to the constant polynomial $p(x) = 1$.\n\n$$\\boxed{0}$$",
+   "finish": "stop",
+   "tokens": 4593,
+   "s": 141.96962082502432
+  },
+  {
+   "id": "test/counting_and_probability/1003.json",
+   "subject": "Counting & Probability",
+   "gold": "29",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "4}\\cdot\\tfrac{1}{8} + \\tfrac{1}{9} = \\tfrac{10}{192} + \\tfrac{1}{9} = \\tfrac{15}{288} + \\tfrac{32}{288} = \\tfrac{47}{288} \u2713$$\n\nTherefore $m/n = \\tfrac{5}{24}$, giving:\n\n$$m + n = 5 + 24 = \\boxed{29}$$",
+   "finish": "stop",
+   "tokens": 4512,
+   "s": 190.00983881001594
+  },
+  {
+   "id": "test/number_theory/427.json",
+   "subject": "Number Theory",
+   "gold": "25",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "dot 156 = 7 \\cdot 2^2 \\cdot 3 \\cdot 13 = 2^2 \\cdot 3 \\cdot 7 \\cdot 13$$\n\nSo $A = 1092$ has prime divisors: $2, 3, 7, 13$\n\n## Step 4: Sum of Distinct Prime Divisors\n\n$$2 + 3 + 7 + 13 = 25$$\n\n\\boxed{25}",
+   "finish": "stop",
+   "tokens": 1224,
+   "s": 94.41031881602248
+  },
+  {
+   "id": "test/algebra/975.json",
+   "subject": "Algebra",
+   "gold": "-4",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": ")$ \u2014 this is exactly what makes them both zero at the same point.\n\n## Step 4: Conclusion\n\nThe denominator equals zero **only at** $x = -4$, so this value is excluded from the domain.\n\n$$\\boxed{x=-4}$$",
+   "finish": "stop",
+   "tokens": 1031,
+   "s": 127.16915107500972
+  },
+  {
+   "id": "test/prealgebra/1128.json",
+   "subject": "Prealgebra",
+   "gold": "64",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "es 2 \\times 1 \\times 2 \\times 2 \\times 2 = 64$$\n\n**Verification:**\n- Hair: 4\n- Eyebrows: 2\n- Eyes: 1\n- Ears: 2\n- Lips: 2\n- Shoes: 2\n\n$$4 \\times 2 \\times 1 \\times 2 \\times 2 \\times 2 = 64$$\n\n\\boxed{64}",
+   "finish": "stop",
+   "tokens": 8876,
+   "s": 411.13884347799467
+  },
+  {
+   "id": "test/precalculus/986.json",
+   "subject": "Precalculus",
+   "gold": "144",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "4$$\n\n**Verification** with points $(0,0)$, $(3,0)$, $(0,4)$ \u2014 distances $3$, $4$, $5$:\n$$\\begin{vmatrix} 0&0&1\\\\ 3&0&1\\\\ 0&4&1\\end{vmatrix} = 0 - 0 + 1(12) = 12 \\implies D^2 = 144 \u2713$$\n\n$$\\boxed{144}$$",
+   "finish": "stop",
+   "tokens": 3126,
+   "s": 227.96703540399903
+  },
+  {
+   "id": "test/prealgebra/1044.json",
+   "subject": "Prealgebra",
+   "gold": "5.4 \\text{ cents}",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": "umber of 70s stamps:**\n$$12 + 12 + 6 + 13 = 43$$\n\n**Total cost:**\n$$72 + 72 + 24 + 65 = 233 \\text{ cents}$$\n\n**Average price:**\n$$\\frac{233}{43} \\approx 5.4186 \\approx 5.4 \\text{ cents}$$\n\n\\boxed{5.4}",
+   "finish": "stop",
+   "tokens": 2065,
+   "s": 198.049379462027
+  },
+  {
+   "id": "test/intermediate_algebra/582.json",
+   "subject": "Intermediate Algebra",
+   "gold": "850",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": ")(13-\\bar\\zeta)$$\n\nSince $\\zeta\\bar\\zeta=|\\zeta|^2=1$, summing $\\sum_{j=0}^{9}(13-\\zeta_j)(13-\\bar\\zeta_j)$ counts each pair twice (as shown by conjugating the factors), so:\n$$\\sum_{k}\\frac{1}{r_k\\bar",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 704.3550060220296
+  },
+  {
+   "id": "test/geometry/686.json",
+   "subject": "Geometry",
+   "gold": "18+2\\pi",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 751.8438304830343
+  },
+  {
+   "id": "test/geometry/880.json",
+   "subject": "Geometry",
+   "gold": "2\\sqrt{113}",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 757.1044228679966
+  },
+  {
+   "id": "test/prealgebra/954.json",
+   "subject": "Prealgebra",
+   "gold": "10",
+   "outcome": "correct",
+   "finished_thinking": true,
+   "answer_tail": " find distance over 90 seconds:\n\n$$\\text{Distance} = \\text{Speed} \\times \\text{Time} = \\frac{1}{9} \\text{ m/s} \\times 90 \\text{ s} = 10 \\text{ meters}$$\n\n## Final Answer\n\n$$\\boxed{10 \\text{ meters}}$$",
+   "finish": "stop",
+   "tokens": 552,
+   "s": 246.25248752802145
+  },
+  {
+   "id": "test/intermediate_algebra/558.json",
+   "subject": "Intermediate Algebra",
+   "gold": "(3,4]",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 784.9780837040162
+  },
+  {
+   "id": "test/intermediate_algebra/1849.json",
+   "subject": "Intermediate Algebra",
+   "gold": "501",
+   "outcome": "runaway",
+   "finished_thinking": true,
+   "answer_tail": "",
+   "finish": "cap",
+   "tokens": 16384,
+   "s": 827.8512772489921
+  }
+ ]
+}

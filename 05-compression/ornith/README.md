@@ -13,14 +13,26 @@ cooldown before each one. Q8_0 is Ornith's official build; the rest are bartowsk
 | Q8_0 | 9.79 GB | 8.5 | 16/20 | 1 | 3 | 0 | 4,157 |
 | Q4_K_M | 5.91 GB | 5.1 | 16/20 | 1 | 3 | 0 | 4,097 |
 | IQ3_XXS | 4.28 GB | 3.7 | 13/20 | 1 | 6 | 0 | 6,046 |
-| IQ2_M | 3.77 GB | 3.3 | | | | | |
+| IQ2_M | 3.77 GB | 3.3 | 12/20 | 0 | 8 | 4 | 4,593 |
 
 \* File size over Q8_0's parameter count. The embeddings and LM head (a 248K-token vocabulary) are kept at higher
 precision, so the average sits well above the nominal 3 or 2 bits of the layers.
 
-Paired on the same problems: Q8_0 vs Q4_K_M is 0–0 (identical correct sets); Q8_0 vs IQ3_XXS is 3–0 (exact McNemar
-p = 0.25, not yet significant). All three IQ3_XXS losses are cap-limited runaways, not wrong answers: the model
-reasons ~50% longer and runs out of budget. That's the same signature as the 27B at 2 bits, only milder.
+Paired on the same problems against Q8_0 (exact McNemar):
+
+| Build | Lost | Gained | p | Median tokens on problems both solved |
+|---|---|---|---|---|
+| Q4_K_M | 0 | 0 | 1 | identical correct sets |
+| IQ3_XXS | 3 | 0 | 0.25 | 1,146 → 2,158 |
+| IQ2_M | 4 | 0 | 0.125 | 1,134 → 2,596 |
+
+- **Q4 is free.** It solved exactly the same problems as Q8.
+- **Below 4 bits, the model doesn't get answers wrong; it fails to finish.** Every loss at IQ3_XXS and IQ2_M is a
+  cap-limited runaway. Even on the problems it still solves, reasoning roughly doubles.
+- **IQ2_M adds loops.** 4 traces have more than 20% repeated lines, the worst at 78%. That's the full collapse
+  signature, the same as EXL3 2.0 on the 27B (12/20, 2 loopy, reasoning 2× longer).
+- 20 problems can't separate IQ3_XXS from IQ2_M. Each is 3–4 problems down on Q8, and neither is significant alone.
+  The trend (0 → 3 → 4 lost, lengths doubling, loops appearing) is the evidence.
 
 ## Predictions
 
@@ -42,6 +54,10 @@ rounding errors partly cancel (roughly by √8). The always-on path (attention, 
 averaging. The discriminating experiment is our own mixed build: experts at 2 bits and everything else at 8. If
 it holds up, the experts really are the cheap part (canada-quant's bet). If it still breaks, the damage is in the
 per-token path.
+
+**Verdict on "the 9B breaks earlier" (after IQ2_M): leaning right, not proven.** At about 3 bits the 27B was
+intact (EXL3 3.0: 19/20, reasoning barely longer). The 9B at IQ3_XXS already runs out of budget 3 more times, with
+reasoning doubled. At 2 bits both look alike (12/20, loops).
 
 Evidence so far leans Riel's way. IQ3_XXS already loses 3 problems at an average of 3.7 bits, while EXL3 3.0 on the
 27B scored 19/20. It's confounded twice, though: EXL3's rotation plus trellis is a stronger quantizer than llama.cpp's
