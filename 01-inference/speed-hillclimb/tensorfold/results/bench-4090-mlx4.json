@@ -1,0 +1,58 @@
+[
+ {
+  "label": "",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 390.5663055671256,
+  "decode_tps_all": [
+   352.99,
+   390.93,
+   390.57
+  ],
+  "ttft_s_median": 0.019894108176231384,
+  "sample": "\n\n<think>\nThe user wants a short Python function that computes the Fibonacci sequence, along with an explanation. Let me think about what would be most helpful "
+ },
+ {
+  "label": "",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 311.8462090011089,
+  "decode_tps_all": [
+   311.85,
+   310.94,
+   328.01
+  ],
+  "ttft_s_median": 0.02400233969092369,
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nMatrix multiplication combines two grids of numbers into a third grid. On a GPU, this works because GPUs are"
+ },
+ {
+  "label": "",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 493.83278181425425,
+  "decode_tps_all": [
+   493.71,
+   493.83,
+   493.94
+  ],
+  "ttft_s_median": 0.019676119089126587,
+  "sample": "\n\nHere's a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a +"
+ },
+ {
+  "label": "",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 375.5801309555842,
+  "decode_tps_all": [
+   375.58,
+   376.42,
+   374.06
+  ],
+  "ttft_s_median": 0.02294330857694149,
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nMatrix multiplication is one of those tasks that's **perfect for GPUs** because it involves doing the *exact"
+ }
+]

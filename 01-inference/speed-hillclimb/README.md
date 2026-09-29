@@ -94,10 +94,13 @@ Decode tok/s, 256 tokens, median of 3, on the same A10:
 - **Speed:** about 1.9× llama.cpp on chat text and 2.7× on code, all from MTP drafting. The drafts-off path is
   TensorFold's slow reference, not a fair engine-only number.
 - **Predictions:** Riel's +15% was too low, and Claude's 1.2–2× (most likely 1.5×) was also low.
-- **Not yet settled:**
-  - The builds differ. The MLX 4-bit build is plain round-to-nearest, 6 GiB bigger than build A.
-  - Its reasoning probe is running.
-  - Time to answer should favor it further if it keeps near-Q8 reasoning length. Build A reasons 40% longer.
+- **Quality gate passed:** the MLX 4-bit build (plain round-to-nearest, 6 GiB bigger than build A) scored 68/80 on
+  the reasoning probe, served by TensorFold. That's against Q8's 66/80, p = 0.75.
+- **Time to answer:** its correct answers ran 18% longer than Q8's, against build A's 41%. With the A10 decode rates,
+  it answers about 2.2× faster than llama.cpp with build A.
+
+On a rented RTX 4090 (24 GB like the 3090, sm_89), the same tests pass, FP8 prefill included (306 tests). Decode is
+312–376 tok/s on chat and 391–494 on code; prefill is 8–13K tok/s.
 
 ### The catch: context
 
@@ -109,7 +112,8 @@ On the A10's 22 GiB, TensorFold ran out of memory on a 30K-token prompt:
 - The prompt cache defaults to an eighth of system RAM. That's fine on GB10's unified memory but not on a 24 GB card.
   Run with `--prompt-cache-gib 0`.
 
-16K works. The 3090 has about 1.5 GiB more than the A10, which isn't enough for agent-length context.
+On the 4090's 24 GB, a 26K-token prompt worked (recall correct, peak 22.8 GiB); 45K and up ran out of memory. The
+3090 has the same 24 GB, so about 26K is its limit too, short of agent-length context.
 
 Two ways out:
 - Give TensorFold low-bit experts. Build A's trick applied to TensorFold would save about 8 GiB, but its grouped
