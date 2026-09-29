@@ -386,3 +386,48 @@ Triton gives a 1 MB read only 9 programs) and gate/up and down themselves (about
 weight-read floor).
 
 **What's next:** a wider router kernel (about 3 µs to gain at 1 row), then end-to-end tokens per second on the 3090.
+
+### End to end on the 3090
+
+The MLX 4-bit build, served by TensorFold on Riel's 3090 with MTP drafts, 16K context
+([`tensorfold/bench_e2e_3090.sh`](tensorfold/bench_e2e_3090.sh)). The old and new MoE decode paths are the same server
+with the kernels switched ([`tensorfold/serve_kernels.py`](tensorfold/serve_kernels.py)).
+
+**Getting it to fit:**
+- The build needs 18.4 GiB of weights, and TensorFold's estimate adds 2.7 GiB of working memory even at zero context.
+  Most of that is a conservative bound for full-vocabulary logits.
+- With Slack, Claude Desktop and ChatGPT open, the desktop held 2.1 GB of VRAM, and the build didn't fit. With only
+  T3 Code open it held 1.4 GB. At 16K the estimate was 21.56 GiB within a 21.62 GiB budget, and the server used
+  21.5 GB in all.
+- TensorFold also caps a discrete GPU at free host RAM less 4 GiB, which is 13 GiB on this 32 GB desktop.
+  `serve_kernels.py` can size by GPU memory alone. The server runs under a 14 GB memory cap in case loading did need
+  the RAM; it didn't.
+
+**No prediction was logged before this run** (Claude's slip). From the block numbers, a verify step of 4 rows saves
+about 14 µs per layer, 0.56 ms over 40 layers. That suggested roughly +8%.
+
+Decode tok/s, 256 tokens, median of 3:
+
+| Prompt | Temperature | Old kernels | New kernels | Change |
+|---|---|---|---|---|
+| code (completion) | 0 | 352.6 | 391.8 | +11% |
+| chat, no thinking | 0 | 260.6 | 291.8 | +12% |
+| code (completion) | 1.0 | 300.6 | 328.8 | +9% |
+| chat, no thinking | 1.0 | 238.8 | 261.8 | +10% |
+
+Greedy, 1,024 tokens each, end to end including prefill:
+
+| Prompt | Old | New |
+|---|---|---|
+| infinitely many primes | 415.8 | 457.3 |
+| ISO 8601 parser | 306.1 | 332.4 |
+| history of the transistor | 491.3 | 534.9 |
+| train word problem | 410.7 | 465.9 |
+
+- **Exact:** old and new kernels give the same 4 × 1,024 greedy tokens. Drafted decoding equals the serial path
+  (`--no-drafts`, about 100 tok/s, TensorFold's reference) on all 4.
+- **Against the rented 4090's release build:** the 4090 did 391 and 312 tok/s at temperature 1. The 3090 now does 329
+  and 262, 84% of it, on 86% of its memory bandwidth (936 vs 1,008 GB/s).
+- The texts differ from the A10 run's after 56-864 characters. That run used TensorFold 0.3.7 with the first sm_86
+  patch, not this 0.3.6.3 build, so the two aren't expected to agree bit for bit.
+- The GPU peaked at 69 °C over three short runs.

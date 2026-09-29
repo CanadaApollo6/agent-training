@@ -1,0 +1,58 @@
+[
+ {
+  "label": "old",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 300.5587503892904,
+  "decode_tps_all": [
+   268.78,
+   303.98,
+   300.56
+  ],
+  "ttft_s_median": 0.020078020985238254,
+  "sample": "\n\n<think>\nThe user wants me to write a short Python function that computes the Fibonacci sequence and explain it. Let me create a clear, well-documented functio"
+ },
+ {
+  "label": "old",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 238.84863202561283,
+  "decode_tps_all": [
+   238.85,
+   259.51,
+   216.95
+  ],
+  "ttft_s_median": 0.02883023803588003,
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea: Parallel Work\n\nThink of matrix multiplication like filling in a grid of answers, where each answer is calcul"
+ },
+ {
+  "label": "old",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 352.6231016627438,
+  "decode_tps_all": [
+   352.62,
+   354.35,
+   351.35
+  ],
+  "ttft_s_median": 0.021921646024566144,
+  "sample": "\n\nHere is a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a "
+ },
+ {
+  "label": "old",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 260.5557406893853,
+  "decode_tps_all": [
+   259.67,
+   260.56,
+   261.26
+  ],
+  "ttft_s_median": 0.02943313802825287,
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Basic Idea\n\nMatrix multiplication combines two matrices into a third. If you have matrix **A** (say, 3\u00d72) and matrix **"
+ }
+]
