@@ -117,7 +117,8 @@ def run_server(args, rows):
             r = client.chat.completions.create(
                 model="local", messages=[{"role": "user", "content": rows[i]["problem"] + SUFFIX}],
                 max_tokens=args.cap, temperature=SAMPLING["temperature"], top_p=SAMPLING["top_p"], seed=args.seed + i,
-                extra_body={"top_k": SAMPLING["top_k"], "min_p": SAMPLING["min_p"]}, timeout=min(max(remaining, 1), 86400))
+                extra_body={"top_k": SAMPLING["top_k"], "min_p": SAMPLING["min_p"],
+                            "chat_template_kwargs": args.template_kwargs}, timeout=min(max(remaining, 1), 86400))
         except Exception as e:  # the timer ran out
             return "", "", {"finish": "deadline", "tokens": None, "s": time.perf_counter() - t0, "error": str(e)[:200]}
         c = r.choices[0]
@@ -150,6 +151,8 @@ def main():
     parser.add_argument("--slots", type=int, default=8)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--out", type=Path, default=OUT, help="results directory")
+    parser.add_argument("--template-kwargs", type=json.loads, default={},
+                        help='server backend: chat template variables, e.g. \'{"reasoning_effort": "medium"}\'')
     parser.add_argument("--deadline-min", type=float, default=1e9, help="optional heat guard: stop the run after this long")
     args = parser.parse_args()
     label = args.label or f"exl3-{args.revision}"
@@ -164,7 +167,8 @@ def main():
     graded = [grade(row, text, info["finish"]) | info for row, (text, info) in zip(rows, outputs)]
     counts = {k: sum(g["outcome"] == k for g in graded) for k in ("correct", "wrong", "runaway", "cut off")}
     lengths = sorted(g["tokens"] for g in graded if g["tokens"])
-    summary = {"label": label, "n": len(rows), "cap": args.cap, "sampling": SAMPLING, "wall_s": wall, **extra,
+    summary = {"label": label, "n": len(rows), "cap": args.cap, "sampling": SAMPLING,
+               "template_kwargs": args.template_kwargs, "wall_s": wall, **extra,
                **counts, "accuracy": counts["correct"] / len(rows),
                "median_tokens": lengths[len(lengths) // 2] if lengths else None,
                "mean_tokens": sum(lengths) / len(lengths) if lengths else None,

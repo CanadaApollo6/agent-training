@@ -219,6 +219,12 @@ of room: it thinks at length by design, and one trace had the right fraction jus
 would probably recover some of them. Trained ternary at 1.72 bpw beats rounding to 2.0 bpw, as Prism claims, though
 on this sample it doesn't reach 4.0.
 
+**Confound, found 2026-09-28.** The Bonsai GGUF's chat template defaults to reasoning effort `xhigh`, which adds a
+system line: "Please think carefully through the task, validate key assumptions, consider plausible alternatives…".
+The EXL3 prompts had no system line, which is the template's `medium`. So Bonsai was told to think longer than the
+EXL3 builds, and its four cap-limited failures may partly come from that line. It's being rerun with
+`--template-kwargs '{"reasoning_effort": "medium"}'` (label `bonsai2-pq2-medium`) for a matched comparison.
+
 **For the Ornith quantization plan:** rounding alone (post-training quantization) is safe near 4 bits and breaks
 reasoning at 2. To get below ~3 bits and keep reasoning intact, the model has to be *trained* for its low-bit
 weights (QAT or distillation), which is what Bonsai did.

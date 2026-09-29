@@ -77,6 +77,24 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     the Ornith quantization work. Qwen3.8-27B exists as both EXL3 2.0 bpw and ternary Bonsai 2 (1.72 bpw, trained),
     so it's a clean rounding-vs-training comparison on one base model.
   - The figures are the kit author's measurements. The engine wheels come from turboderp's own releases.
+- [sudoingx Bonsai 2 PTQ1_0 + MTP](https://huggingface.co/sudoingx/Ternary-Bonsai-2-27B-PTQ1_0-MTP-GGUF) (and
+  [bonsai2-small-gpu](https://github.com/sudoingX/bonsai2-small-gpu)): the 5.95 GB ternary Bonsai 2 with Qwen3.8-27B's
+  MTP head grafted back on, for 8–16 GB cards (measured on an RTX 3060 12 GB and a 5060 Ti 16 GB).
+  - The graft works because Bonsai's residual stream stays in the original basis (its RMSNorm weights match Qwen's), so
+    a head trained on fp16 activations still reads sensible ones. Draft acceptance is 0.45–0.95, lower than on stock
+    Qwen.
+  - The lesson is the "verification wall". Speculative decoding only pays if checking 3 tokens costs about the same
+    as 1, which is true when decode is limited by memory reads. The ternary kernel was compute-bound on unpacking, so
+    3 tokens cost 2.3–3× and MTP gained +1.6–8%. Their kernel
+    ([PrismML-Eng/llama.cpp#218](https://github.com/PrismML-Eng/llama.cpp/pull/218)) cuts that to 1.55× and single
+    decode goes 26 → 40 tok/s; with MTP, 50 tok/s on a 3060. It's the same compute-bound unpacking that holds EXL3 to
+    53% of its ceiling here, and it's the Module 2 "ternary GEMV" final boss, already solved in the open.
+  - Batch-invariant numerics: batched verification changes floating-point summation order, so greedy text can differ
+    at near-ties. `GGML_CUDA_BATCH_INVARIANT=1` makes head-on and head-off byte-identical.
+  - The Bonsai GGUF's chat template defaults to reasoning effort **xhigh**, which injects "think carefully…". At that
+    setting their build tasks spent the whole budget thinking and answered nothing; `medium` fixed it. Our Bonsai
+    reasoning-probe run got that xhigh line while the EXL3 runs didn't, so it's being rerun at `medium`.
+  - Self-reported figures, with probe scripts and sweeps in the repo. There's a prebuilt sm86 tarball for this 3090.
 - [AutoGym: Blueprint-First Generation of Verifiable Agent Gyms](https://arxiv.org/abs/2609.22592) (Noronha,
   Ravikumar, Lin; Amazon AGI; NeurIPS 2026 workshop): generating RL training tasks for tool-using agents,
   solvable by construction.
