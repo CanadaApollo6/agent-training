@@ -1,0 +1,16 @@
+[project]
+name = "harness-evals"
+version = "0.1.0"
+description = "verifiers v1 harness evals (pi vs prime-agent) against a self-hosted model"
+requires-python = ">=3.12,<3.13"
+# git main: pi 0.86.1 and prime-agent 0.9.5 are only pinned from 0.3.2.dev120 on
+dependencies = [
+    "terminal-bench-2>=0.3.1",
+    "verifiers[harbor] @ git+https://github.com/PrimeIntellect-ai/verifiers@aa924e7d",
+]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+url = "https://hub.primeintellect.ai/primeintellect/terminal-bench-2/install/simple/"
