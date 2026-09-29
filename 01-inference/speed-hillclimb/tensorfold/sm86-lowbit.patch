@@ -1369,6 +1369,20 @@ index ee444c2..1bee3d0 100644
          else:
              # Bound two retained prefixes, current KV state and a growth copy; speculative rows use separate workspace.
              rounded = 1 << (max(1024, capacity - reserve) - 1).bit_length()
+diff --git i/src/tensorfold/cuda/kernels/attention.py w/src/tensorfold/cuda/kernels/attention.py
+index 798958b..4569155 100644
+--- i/src/tensorfold/cuda/kernels/attention.py
++++ w/src/tensorfold/cuda/kernels/attention.py
+@@ -110,7 +110,8 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
+         l = tl.zeros((16,), tl.float32)
+         o = tl.zeros((16, D), tl.float32)
+         key = chunk * CH + tl.arange(0, 64)
+-        for t in range(CH // 64):
++        last = tl.minimum(p + depth - chunk * CH, CH)        # past it every key is masked: tiles there are no-ops
++        for t in range(0, (last + 63) // 64):
+             logical = key + t * 64
+             committed = logical < p
+             path_slot = logical - p
 diff --git i/src/tensorfold/cuda/kernels/qmm.cu w/src/tensorfold/cuda/kernels/qmm.cu
 index a763387..3a92d90 100644
 --- i/src/tensorfold/cuda/kernels/qmm.cu

@@ -473,4 +473,67 @@ Decode tok/s, 256 tokens, median of 3, with MTP drafts:
 
 **The next lever is the verify step's expert kernels.** With drafts, each step verifies 4 rows. At 4 rows the 4/4
 block reads about 33 experts' weights (55 MB) and takes 83 µs against a read floor of about 59. That's 24 µs per
-layer, about 1 ms of each ~7.5 ms step.
+layer, about 1 ms of each ~7.5 ms step. *(Overstated: that floor used the 936 GB/s spec. See the next section.)*
+
+### Where a verify round goes, and the attention tail
+
+**Profile.** `tensorfold/profile_step.py` runs the engine in-process and profiles one greedy 256-token generation with
+the torch profiler, which sees the kernels inside CUDA graphs. R2 with drafts took 84 rounds, about 3 tokens a round
+and ~8 ms of GPU time a round:
+
+| Kind | Share of GPU time |
+|---|---|
+| Dense 4-bit linears (`qmm`, 211 launches a round) + their reduce | 35% + 4.4% |
+| Routed and shared experts | 25.6% |
+| Full-attention tail over the KV cache (`_tail`, 13 a round) | 9% |
+| Draft tree | 4% |
+| Router | 3.2% |
+| Top-k + plan (`select`) | 2.3% |
+| Norms | 3% |
+
+**The floor was wrong.** The 3090 reads about 850-890 GB/s in practice (a plain sum over 1 GB reads at 887), not the
+936 of the spec. Against that, the 4-bit expert kernels at 4 rows are already near their floor: a mutant that only
+loads the weights and does no math takes 46.7 µs against the real kernel's 48.7. The lever named above is mostly gone
+for the 4-bit build.
+
+**R2's low-bit kernels do have room.** At 4 rows, gate/up (2-bit) takes 32.8 µs at 674 GB/s and down (3-bit) 23.5 at
+648. Two things tried:
+- **Deeper prefetch (3 stages instead of 2):** a noisy run showed 87 -> 77 µs. An interleaved in-process A/B showed no
+  gain. The first number was clock drift.
+- **Register bloat.** Low-bit gate/up kernels use 231 (2-bit) and 248 (3-bit) registers, because the shared expert
+  (always 4-bit) runs inside the same launch through its own inlined path. Without that path they need 127 and 158.
+  Moving it to a `__noinline__` function didn't help: the register budget is shared. A mutant with the shared path
+  emptied (so ~3% less work) measured:
+
+| Rows | gate/up, now | gate/up, no shared path | down, now | down, no shared path |
+|---|---|---|---|---|
+| 1 | 15.4 | 20.2 | 7.9 | 8.2 |
+| 4 | 32.8 | 31.9 | 23.5 | 21.9 |
+| 6 | 55.0 | 43.7 | 32.0 | 29.6 |
+
+  So running the shared expert apart is worth ~2.5 µs a layer at the 4-row verify step (~0.1 ms a round), and much
+  more at 6 rows. At 1 row it would lose.
+
+**The attention tail skipped its dead tiles.** `_tail` walks one chunk of keys in 64-key tiles. It ran every tile of
+the chunk even past the last valid key, where every key is masked and the tile adds nothing. It now stops at the last
+valid tile. The masked tiles contributed exact zeros, so the bits don't change.
+- Microbench: 54 -> 38 µs at 4 rows and 300 keys, 59 -> 35-38 µs at 1 row.
+- 99 attention, expert and MoE tests pass.
+- **End to end, R2, 131K window** (median of 3, 256 tokens):
+
+| Prompt | Temperature | Before | After | Change |
+|---|---|---|---|---|
+| code | 0 | 425.5 | 443.5 | +4% |
+| chat | 0 | 337.1 | 351.6 | +4% |
+| code | 1.0 | 345.0 | 344.3 | noise |
+| chat | 1.0 | 293.8 | 288.0 | noise |
+
+- The 4 × 1,024 greedy texts are identical to the run before the change.
+- **Prediction (Claude; Riel gave none):** 16 µs × 13 calls = ~0.2 ms of an 8 ms round, +2.5%. Greedy gained 4%.
+
+**Levers left, by size per ~8 ms round:**
+- The draft passes read the full 286 MB LM head three times a round. A draft that scores only a frequent-token subset
+  of the vocabulary (as in FR-Spec) would save ~0.6-0.7 ms. Output stays exact because verification still uses the
+  full head.
+- The dense 4-bit linears run at ~71% of the practical floor. At 85% they'd save ~0.5 ms.
+- R2's shared expert in its own concurrent launch: ~0.1 ms at 4 rows.
