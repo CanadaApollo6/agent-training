@@ -84,15 +84,82 @@ mteb-retrieve, portfolio-optimization), against one the other way. pi also got t
 the card, each got about 15 tokens/s, no better than the 9B. Each stream routes its tokens to different experts, so
 batching them saves little weight reading. The 30-minute limit was the same ~30K-token budget for both models.
 
+## Ornith 35B-A3B builds under pi: Q8_0, Q4_K_M, R2, R1
+
+The same 20 tasks, three attempts per build, pi, 60 turns, 60 minutes, 4 tasks at a time, sampling at temperature
+1.0 / top_k 20 / top_p 0.95. qemu-startup fails before the agent starts on every build (HarnessError), so the scores
+are out of 19.
+- **Q8_0 and Q4_K_M:** llama.cpp on rented pods.
+- **R2 and R1:** the low-bit builds on the 3090 with patched TensorFold.
+  - R2: gate/up experts 2-bit, down 3-bit, 13 GB.
+  - R1: all experts 3-bit, 15 GB.
+
+`compare_builds.py` makes every table here from the saved runs. Its paired test matches builds task by task: it
+permutes the build labels within each task and asks whether the gap in per-task solve rates beats what swapping
+labels gives.
+
+| Build | Solved per attempt (of 19) | Mean | vs Q8, task by task | Median output tokens a task |
+|---|---|---|---|---|
+| Q8_0 | 9, 10, 12 | 10.3 (54%) | — | 9.2K |
+| Q4_K_M | 12, 10, 11 | 11.0 (58%) | +3.5 points, p = 0.80 | 11.9K |
+| R2 | 7, 7, 9 | 7.7 (40%) | −14 points (worse on 7 tasks, better on 2), p = 0.10 | 17.2K |
+| R1 | 12, 8, 9 | 9.7 (51%) | −3.5 points (worse on 5, better on 4), p = 0.82 | 18.5K |
+
+**Going from 2 to 3 bits on gate/up bought back most of R2's loss.** R1 is within noise of Q8. On nginx-request-logging
+R2 went 0 for 3, writing a log format that runs fields together, and R1 went 3 for 3. Three attempts over 19 tasks can't
+show a gap much smaller than ~15 points, so "within noise" means R1 has no large deficit, not that it's equal.
+
+**R1 still writes much more than Q8.** On tasks both builds solved, compare the median output tokens of the solved
+runs, then take the geometric mean across tasks:
+
+| Build | Solved-run tokens vs Q8 | 95% CI | Longer on | Output tokens per call |
+|---|---|---|---|---|
+| Q4_K_M | 1.18× | 0.93–1.55 | 7 of 13 tasks | 382 |
+| R2 | 1.84× | 1.21–2.78 | 9 of 11 | 495 |
+| R1 | 1.67× | 1.21–2.36 | 10 of 12 | 477 |
+
+Q8 writes 373 tokens per call. The extra bit fixed accuracy but not length. On the 3090 that is ~1.7× the wall-clock
+per solved task. custom-memory-heap-crash is the clearest case:
+- Q8 solved it 3 of 3 in 10–33K tokens.
+- R1 solved it once in 68K. The other two attempts ran into the turn limit at 50K and 109K.
+
+**How the failures end:**
+
+| Build | Gave a wrong answer | Hit 60 turns | Hit 60 min |
+|---|---|---|---|
+| Q8_0 | 14 | 12 | 0 |
+| Q4_K_M | 13 | 11 | 0 |
+| R2 | 19 | 11 | 4 |
+| R1 | 10 | 14 | 4 |
+
+R2 mostly fails by doing the wrong thing. R1 mostly fails by running out of room.
+
+The timeouts are not long thinking. They hit only git-multibranch and rstan-to-pystan, and only on the local builds.
+In each, the model's own calls took at most 13 of the 60 minutes. The rest went outside model calls, to a tool command
+or sandbox step that never returned. That is still worth a look, but it's not about length.
+
+**Open confound: engine and bits move together.** Both long builds run on TensorFold, and both short ones on llama.cpp.
+TensorFold's sampling or chat-template handling could add length whatever the bits. A 4-bit TensorFold build would
+separate the two:
+- If it runs ~1.2× like Q4_K_M, the length comes from the low bits.
+- If it runs ~1.7×, the engine is the cause.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
   cost tokens, and its REPL and daemon add failure modes. Its image tool assumes a vision-capable endpoint. None of
   this says what a model trained on prime_agent would do, which is Prime's actual claim.
 - **Model:** 35B-A3B over the 9B for agentic work (11 vs 6 under pi).
+- **Local build:** R1 (all experts 3-bit) is the local build. It is within noise of Q8 on solves, where R2 is 14
+  points behind. It writes ~1.7× Q8's tokens on the same solved tasks, and whether that comes from the bits or from
+  the engine is still open.
 
 ## Next
 
+- Split R1's extra length between bits and engine: a 4-bit TensorFold build (~19 GB), or the same agent turns
+  replayed through each build offline. Only a bits cause makes a length fix inside the model (latent thinking) the
+  right target.
+- Find what hangs git-multibranch and rstan-to-pystan for the full hour on the local runs.
 - More tasks or several attempts each before calling a harness winner. pi's lead is suggestive, not significant.
 - Fix the budget in tokens rather than wall-clock, or serve with vLLM, which batches MoE decode far better than
   llama.cpp, so the time limit stops being a hidden token cap.
