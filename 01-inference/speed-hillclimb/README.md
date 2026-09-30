@@ -743,3 +743,39 @@ identical in every variant):
   confidence 0.3, greedy and sampled, against serial decoding.
 - The sampled path still drafts step by step. It picks drafts with keyed Gumbel noise on the host (`choose_rows`).
   Moving that onto the device is the next piece if temperature-1 speed under load matters.
+
+### Conversations taking turns: parked in RAM, not prefilled again
+
+The engine holds one set of attention rows for the whole 131K window. A prompt that doesn't extend the kept prefixes
+overwrites them, so two agents taking turns each re-prefill their whole conversation every turn. The first R2 eval at
+4 tasks at once stalled on exactly this: every turn re-prefilled 30–100K tokens. One task at a time avoided it, but
+would have taken ~4 h an attempt.
+
+**The swap** (`families/qwen3_5_moe/cuda/swap.py`, `--swap-gib`): before a prompt overwrites the rows, each kept
+prefix it drops is copied to pinned host memory. That's its attention and head-cache rows, its GDN states and its held
+row, about 22 KB a token plus 63 MB. When that conversation comes back, the copy goes back into the buffers and the
+prompt resumes where it was.
+- Prefill rows have the same bits whatever the chunking, so a copy back equals prefilling again, bit for bit.
+- Rows are kept in 2,048-row chunks. A conversation parked again, longer, shares the chunks it already had, so only its
+  new rows are copied. The shorter snapshot is dropped.
+- Least recently used snapshots go first past the budget. `serve_r2_local.sh` now serves with 8 GiB (`SWAP_GIB`).
+
+**Results** (`tensorfold/swap_bench.py`, R2 on the 3090, two conversations of 52K and 26K tokens taking turns,
+greedy; time to first token):
+
+| Turn | Swap off | Swap on |
+|---|---|---|
+| A1, B1 (first sight) | 13.1 s, 4.9 s | 13.1 s, 5.2 s |
+| A returns (52K) | 12.8–12.9 s | 0.23–0.36 s |
+| B returns (26K) | 4.9 s | 0.11–0.14 s |
+
+- Answers are identical with the swap off and on.
+- B1 is 0.3 s slower with the swap: it parks A (1.2 GB) first, the first time into fresh pinned memory.
+- **Prediction (Claude, before building):** ~50 ms to copy 53K tokens back. The whole returning turn takes 0.23–0.36 s
+  with parking the other conversation, the copy back and the new turn's prefill included. The split wasn't measured.
+- Tests: `tests/cuda/test_qwen36_moe_swap.py` (4) checks that conversations taking turns equal serial decoding and
+  that every kept prefix holds what a fresh prefill writes. The second check is needed because the tiny test model's
+  tokens barely depend on context: a restore that skipped the rows still gave the right tokens. Mutations that skip
+  the row copy, skip the GDN states or zero the held row now fail.
+- The full `tests/cuda` suite has hundreds of failures from other families (FlashNext, GLM, EXL3 and more) that don't
+  run on sm_86. There is also a lock message torch leaves after a clean build. The MoE files pass (72).

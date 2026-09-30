@@ -1,3 +1,26 @@
+diff --git c/src/tensorfold/cli.py w/src/tensorfold/cli.py
+index ecbcc23..a059edc 100644
+--- c/src/tensorfold/cli.py
++++ w/src/tensorfold/cli.py
+@@ -79,6 +79,9 @@ def build_parser() -> argparse.ArgumentParser:
+     speed.add_argument("--spill-gib", type=float, default=0.0,
+                        help="write evicted conversation prefixes to disk, up to this many GiB, and read them back on "
+                             "demand instead of prefilling again (0: off; needs --snapshot-dir)")
++    speed.add_argument("--swap-gib", type=float, default=0.0,
++                       help="CUDA Qwen3.6 MoE: park conversations another prompt evicts in pinned RAM, up to this many "
++                            "GiB, and copy them back when they return instead of prefilling again (0: off)")
+     speed.add_argument("--snapshot-dir", default=str(Path.home() / ".cache" / "tensorfold" / "prefix-snapshots"),
+                        help="where system-block and conversation snapshots are kept ('none': in memory only)")
+     speed.add_argument("--max-snapshots", type=int, default=3, help="system-block snapshots loaded at start")
+@@ -356,6 +359,8 @@ def _serve_cuda(args: argparse.Namespace, family: Any, model_dir: Path, context:
+         options["mtp_confidence"] = float(args.mtp_confidence)
+     options["context"] = context if context is not None else args.context
+     options["context_explicit"] = args.context is not None
++    if getattr(args, "swap_gib", 0.0):
++        options["swap_gib"] = float(args.swap_gib)
+     streams = 1 if str(args.parallel).strip().lower() == "auto" else _parallel(args.parallel)
+     if streams > 1:
+         options["parallel"] = streams
 diff --git c/src/tensorfold/cuda/build.py w/src/tensorfold/cuda/build.py
 index 5eb6d2b..26c18af 100644
 --- c/src/tensorfold/cuda/build.py
@@ -2179,7 +2202,7 @@ index 4fb4bd7..2bb531e 100644
              return False
          if self.quant == "nvfp4":                    # NVFP4, FP8 and the gates' copies all take FP8 prompt rows
 diff --git c/src/tensorfold/families/qwen3_5_moe/__init__.py w/src/tensorfold/families/qwen3_5_moe/__init__.py
-index 6e82b36..992413c 100644
+index 6e82b36..d484f6f 100644
 --- c/src/tensorfold/families/qwen3_5_moe/__init__.py
 +++ w/src/tensorfold/families/qwen3_5_moe/__init__.py
 @@ -11,7 +11,8 @@ LANES = True
@@ -2192,6 +2215,13 @@ index 6e82b36..992413c 100644
  CUDA_QUANTIZATION = (4, 64)
  
  
+@@ -40,4 +41,5 @@ def cuda_engine(model_dir: str | Path, *, drafter: str = "", tp: int = 1, rank:
+     from .cuda.engine import Qwen36Engine
+ 
+     depth = 0 if no_drafts else DEPTH if mtp_drafts is None else int(mtp_drafts)
+-    return Qwen36Engine(Path(model_dir), depth=depth, context=context, context_explicit=options.get("context_explicit"))
++    return Qwen36Engine(Path(model_dir), depth=depth, context=context, context_explicit=options.get("context_explicit"),
++                        swap_gib=float(options.get("swap_gib") or 0.0))
 diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/decode.py w/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
 index bbdec31..bc6a733 100644
 --- c/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
@@ -2285,7 +2315,7 @@ index bbdec31..bc6a733 100644
          carry = Carry(states[path[0]:path[-1] + 1], new)
          out.extend(new)
 diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/engine.py w/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
-index 2faf65f..2e16b59 100644
+index 2faf65f..192c724 100644
 --- c/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
 +++ w/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
 @@ -9,7 +9,7 @@ from typing import Any, Callable
@@ -2297,6 +2327,15 @@ index 2faf65f..2e16b59 100644
  
  
  def mtp_weights(name: str, info: dict) -> tuple[int, int]:
+@@ -24,7 +24,7 @@ class Qwen36Engine:
+     """``eos``, ``generate`` and ``context_window`` for ``tensorfold.cuda.server``."""
+ 
+     def __init__(self, model_dir: Path, *, depth: int = DEPTH, confidence: float = CONFIDENCE,
+-                 context: int | None = None, context_explicit: bool | None = None) -> None:
++                 context: int | None = None, context_explicit: bool | None = None, swap_gib: float = 0.0) -> None:
+         import torch
+ 
+         from tensorfold.cuda.capacity import admit
 @@ -39,7 +39,8 @@ class Qwen36Engine:
          self.depth, self.confidence = int(depth), float(confidence)
          extra = (Path(model_dir) / MTP_FILE,) if self.depth and (Path(model_dir) / MTP_FILE).is_file() else ()
@@ -2307,7 +2346,7 @@ index 2faf65f..2e16b59 100644
                                     lambda name, info: (mtp_weights(name, info) if ".mtp." in name
                                                         else linear_weights(name, info)),
                                     extra_files=extra)
-@@ -57,6 +58,9 @@ class Qwen36Engine:
+@@ -57,10 +58,18 @@ class Qwen36Engine:
              from .graphs import Graphs
  
              self.graphs = Graphs(self.w, self.head, self.context_window + self.depth + 1)
@@ -2317,14 +2356,56 @@ index 2faf65f..2e16b59 100644
          torch.cuda.empty_cache()
          self.eos = tuple(self.w.config.eos)
          self.points = resume_points(model_dir)
-@@ -96,12 +100,19 @@ class Qwen36Engine:
+         self.cache = PrefixCache(KEEP)       # (ids, target state, (head cache, held row)) at message starts and ends
++        self.swap = None                     # kept prefixes a prompt drops, parked in pinned host memory
++        if swap_gib > 0 and self.graphs is not None:
++            from .swap import Swap
++
++            self.swap = Swap(self.graphs, int(swap_gib * 1024**3))
+ 
+     def _resume(self, prompt: list[int]):
+         """The longest kept prefix, after dropping longer entries its resumed writes would overwrite (they share buffers)."""
+@@ -71,6 +80,27 @@ class Qwen36Engine:
+             self.cache.entries = [c for c in self.cache.entries if len(c[0]) <= n or c[0][:n] != best[0]]
+         return best
+ 
++    def _swap(self, prompt: list[int], before: list, hit):
++        """Park the kept prefixes the prompt dropped (the longest of each line), then copy back a parked prefix it
++        extends past the GPU's own: ``(hit, tokens copied back)``."""
++
++        from .swap import GAP
++
++        kept = {id(e) for e in self.cache.entries}
++        gone = [e for e in before if id(e) not in kept and list(prompt[:len(e[0])]) != e[0]]
++        for e in gone:
++            if not any(len(o[0]) > len(e[0]) and o[0][:len(e[0])] == e[0] for o in gone):
++                self.swap.save(e[0], e[1], *e[2])
++        n = len(hit[0]) if hit else 0
++        snap = self.swap.find(prompt)
++        if snap is None or len(snap.ids) < n + GAP:
++            return hit, 0
++        st, mc, held = self.swap.restore(snap, n, hit[2][0].pos if hit else 0)
++        entry = (list(snap.ids), st, (mc, held))
++        self.cache.add(*entry)
++        self.cache.hit.add(tuple(entry[0]))
++        return entry, len(snap.ids) - n
++
+     def generate(self, prompt: list[int], max_tokens: int, sampling, on_tokens: Callable[[list[int]], bool | None],
+                  draft: bool = True, stop_eos: bool = True) -> dict[str, Any]:
+         """``draft=False``: serial decoding from a fresh prefill, no drafts or kept states; ``stop_eos=False``: past end tokens."""
+@@ -95,17 +125,28 @@ class Qwen36Engine:
+                                stop_eos=stop_eos, on_tokens=on_tokens)
              stats.update(decode_s=round(res.seconds, 4), rounds=res.rounds, min_rows=min(res.widths, default=0))
              return stats
++        before = list(self.cache.entries)
          hit = self._resume(prompt)
 +        # one set of attention buffers: the prompt writes past its kept prefix, so only prefixes it extends stay
 +        n = len(hit[0]) if hit else 0
 +        self.cache.entries = [e for e in self.cache.entries if len(e[0]) <= n and list(prompt[:len(e[0])]) == e[0]]
 +        self.cache.hit &= {tuple(e[0]) for e in self.cache.entries}
++        swapped = 0
++        if self.swap is not None:
++            hit, swapped = self._swap(prompt, before, hit)
 +        if hit:
 +            state, cache, held = hit[1], hit[2][0], hit[2][1]
 +        else:
@@ -2340,6 +2421,11 @@ index 2faf65f..2e16b59 100644
          if not (stops and len(prompt) - stops[-1] < MIN_GAP):
              self.cache.add(list(prompt), st, (mc.view(), carry.states))
          stats = {"prefill_s": round(time.perf_counter() - t0, 4), "cached": len(hit[0]) if hit else 0,
+-                 "drafts": True}
++                 "drafts": True, "swapped_in": swapped}
+         if on_tokens([first]) or (stop_eos and first in self.eos) or max_tokens <= 1:
+             return stats
+         res = mtp_decode(self.w, self.head, st, mc, carry, first, max_tokens, sampling, depth=self.depth,
 diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py w/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
 index d7d8e8a..d14e0ff 100644
 --- c/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
@@ -2606,6 +2692,140 @@ index 1a940e5..ec05441 100644
          q, key = glue.attn_prep(qg, key, a.q_norm, a.k_norm, pos, w.inv_freq, c.eps, heads=c.heads,
                                  kv_heads=c.kv_heads, head_dim=c.head_dim)
          key = key.view(n, c.kv_heads, c.head_dim).contiguous()
+diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/swap.py w/src/tensorfold/families/qwen3_5_moe/cuda/swap.py
+new file mode 100644
+index 0000000..4928d58
+--- /dev/null
++++ w/src/tensorfold/families/qwen3_5_moe/cuda/swap.py
+@@ -0,0 +1,128 @@
++"""Evicted conversations parked in pinned host memory and copied back when they return, instead of prefilled again.
++
++The engine holds one set of attention rows, so a prompt that doesn't extend the kept prefixes overwrites them. Before
++it does, each kept prefix it drops is copied out here: its attention and head-cache rows, its GDN states and its held
++row. A later prompt that extends one gets it copied back, the rows it already shares with the GPU's kept prefix left
++in place. Prefill rows have the same bits whatever the chunking, so a copy back equals prefilling again, bit for bit.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass, field
++
++import torch
++
++ROWS = 2048          # rows per host chunk: 2 MiB a source at 1 KiB a row, a size the pinned allocator doesn't round
++GAP = 64             # a parked prefix is copied back only when it is this many tokens past the GPU's kept prefix
++
++
++@dataclass
++class Snapshot:
++    """A kept prefix in host memory: ``chunks[s]`` holds source ``s``'s rows ``ROWS`` at a time (the last may be short)."""
++
++    ids: list[int]
++    pos: int
++    mc_pos: int
++    rec: list[torch.Tensor | None]
++    conv: list[torch.Tensor | None]
++    held: torch.Tensor | None
++    chunks: list[list[torch.Tensor]] = field(default_factory=list)
++
++
++def _common(a: list[int], b: list[int]) -> int:
++    n = min(len(a), len(b))
++    i = 0
++    while i < n and a[i] == b[i]:
++        i += 1
++    return i
++
++
++def _host(t: torch.Tensor) -> torch.Tensor:
++    out = torch.empty(t.shape, dtype=t.dtype, pin_memory=True)
++    out.copy_(t, non_blocking=True)
++    return out
++
++
++class Swap:
++    """Parked prefixes, newest last, within ``budget`` bytes of pinned memory (chunks shared between snapshots count once)."""
++
++    def __init__(self, graphs, budget: int) -> None:
++        self.graphs, self.budget = graphs, int(budget)
++        self.snaps: list[Snapshot] = []
++
++    def _sources(self) -> list[tuple[torch.Tensor, bool]]:
++        """The shared row buffers, each with whether it is the head's (its rows run one behind the target's)."""
++
++        out = []
++        for kv in self.graphs.st.kv:
++            if kv is not None:
++                out += [(kv[0], False), (kv[1], False)]
++        return out + [(self.graphs.mc.k, True), (self.graphs.mc.v, True)]
++
++    def used(self) -> int:
++        seen: dict[int, int] = {}
++        for s in self.snaps:
++            for t in [*s.rec, *s.conv, s.held, *(c for cs in s.chunks for c in cs)]:
++                if t is not None:
++                    seen[t.data_ptr()] = t.untyped_storage().nbytes()
++        return sum(seen.values())
++
++    def save(self, ids: list[int], st, mc, held: torch.Tensor | None) -> Snapshot:
++        """Copy a kept prefix out, reusing the full chunks a parked snapshot already holds for the same leading ids."""
++
++        donor, shared = None, 0
++        for s in self.snaps:
++            c = _common(s.ids, ids)
++            if c > shared:
++                donor, shared = s, c
++        snap = Snapshot(list(ids), st.pos, mc.pos, [None if t is None else _host(t) for t in st.rec],
++                        [None if t is None else _host(t) for t in st.conv], None if held is None else _host(held))
++        for i, (buf, head) in enumerate(self._sources()):
++            rows = snap.mc_pos if head else snap.pos
++            same = shared - 1 if head else shared          # a head row also reads the next token
++            if donor is not None:
++                same = min(same, donor.mc_pos if head else donor.pos)
++            out = []
++            for j in range(-(-rows // ROWS)):
++                a, b = j * ROWS, min(rows, (j + 1) * ROWS)
++                if donor is not None and b - a == ROWS and b <= same:
++                    out.append(donor.chunks[i][j])
++                else:
++                    out.append(_host(buf[a:b]))
++            snap.chunks.append(out)
++        # a snapshot the new one extends is covered by it (agents append), so it goes
++        self.snaps = [s for s in self.snaps if not (len(s.ids) <= len(ids) and ids[:len(s.ids)] == s.ids)] + [snap]
++        while self.snaps and self.used() > self.budget:
++            self.snaps.pop(0)
++        return snap
++
++    def find(self, prompt: list[int]) -> Snapshot | None:
++        """The longest parked prefix the prompt strictly extends, now newest."""
++
++        best = None
++        for s in self.snaps:
++            if len(s.ids) < len(prompt) and (best is None or len(s.ids) > len(best.ids)) and \
++                    list(prompt[:len(s.ids)]) == s.ids:
++                best = s
++        if best is not None:
++            self.snaps = [s for s in self.snaps if s is not best] + [best]
++        return best
++
++    def restore(self, snap: Snapshot, rows: int, head_rows: int):
++        """Copy a snapshot back into the shared buffers past the first ``rows`` target and ``head_rows`` head rows (which
++        the GPU already holds for the same ids), and its states into a fresh prompt state: ``(state, head cache, held)``."""
++
++        for i, (buf, head) in enumerate(self._sources()):
++            end, lo = (snap.mc_pos, head_rows) if head else (snap.pos, rows)
++            for j, chunk in enumerate(snap.chunks[i]):
++                a, b = j * ROWS, min(end, (j + 1) * ROWS)
++                if b > lo:
++                    s = max(a, lo)
++                    buf[s:b].copy_(chunk[s - a:b - a], non_blocking=True)
++        st, mc = self.graphs.fresh()
++        for dst, src in zip(st.rec + st.conv, snap.rec + snap.conv):
++            if dst is not None:
++                dst.copy_(src, non_blocking=True)
++        st.pos, mc.pos = snap.pos, snap.mc_pos
++        held = None if snap.held is None else snap.held.to(self.graphs.mc.k.device, non_blocking=True)
++        return st, mc, held
 diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/weights.py w/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
 index 745bfaa..9c4239a 100644
 --- c/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
@@ -3118,7 +3338,7 @@ index 68d0243..7a13bf6 100644
  def test_graphs_recapture_after_the_buffers_grow(expandable, sampling):
 diff --git c/tests/cuda/test_qwen36_moe_arena.py w/tests/cuda/test_qwen36_moe_arena.py
 new file mode 100644
-index 0000000..3d6f95d
+index 0000000..cc69081
 --- /dev/null
 +++ w/tests/cuda/test_qwen36_moe_arena.py
 @@ -0,0 +1,77 @@
@@ -3146,7 +3366,7 @@ index 0000000..3d6f95d
 +    e.context_window = WINDOW
 +    e.graphs = Graphs(w, head, WINDOW + depth + 1)
 +    e.graphs.grow(e.graphs.capacity, exact=True)
-+    e.eos, e.points, e.cache = (), None, PrefixCache(engine_mod.KEEP)
++    e.eos, e.points, e.cache, e.swap = (), None, PrefixCache(engine_mod.KEEP), None
 +    return e
 +
 +
@@ -3199,3 +3419,111 @@ index 0000000..3d6f95d
 +    assert _run(e, prompt, None, 16) == want
 +    pieces = decode.prefill(w, head, prompt, None)
 +    assert pieces[1].pos == whole[1].pos == len(prompt) - 1 and pieces[2] == whole[2]
+diff --git c/tests/cuda/test_qwen36_moe_swap.py w/tests/cuda/test_qwen36_moe_swap.py
+new file mode 100644
+index 0000000..cc93909
+--- /dev/null
++++ w/tests/cuda/test_qwen36_moe_swap.py
+@@ -0,0 +1,102 @@
++"""Conversations another prompt evicts are parked in host memory and copied back: a returning conversation resumes
++where it was, without prefilling again, and decodes exactly as serial decoding does."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.families.qwen3_5_moe.cuda import decode, swap as swap_mod  # noqa: E402
++from tensorfold.families.qwen3_5_moe.cuda.swap import Swap  # noqa: E402
++
++from test_qwen36_moe import SAMPLINGS, _model, _serial  # noqa: E402
++from test_qwen36_moe_arena import _engine  # noqa: E402
++
++
++@pytest.fixture(autouse=True)
++def small_chunks(monkeypatch):
++    monkeypatch.setattr(swap_mod, "ROWS", 16)            # prompts span several chunks, so snapshots share some
++    monkeypatch.setattr(swap_mod, "GAP", 4)
++
++
++def _swapping(w, head, budget=1 << 30):
++    e = _engine(w, head)
++    e.swap = Swap(e.graphs, budget)
++    return e
++
++
++def _generate(e, prompt, sampling, count):
++    out = []
++    stats = e.generate(prompt, count, sampling, lambda toks: out.extend(toks) and False, stop_eos=False)
++    return out[:count], stats
++
++
++def _hold_a_fresh_prefill(w, head, e):
++    """Every kept prefix, copied back or not, holds the rows and states a fresh prefill of its ids gives (the tiny test
++    model's tokens barely depend on the context, so equal tokens alone would not show it)."""
++
++    for ids, st, (mc, held) in e.cache.entries:
++        fresh, fmc, _, carry = decode.prefill(w, head, ids, None)
++        n = len(ids)
++        for kv, fkv in zip(st.kv, fresh.kv):
++            if kv is not None:
++                assert torch.equal(kv[0][:n], fkv[0][:n]) and torch.equal(kv[1][:n], fkv[1][:n])
++        assert torch.equal(mc.k[:n - 1], fmc.k[:n - 1]) and torch.equal(mc.v[:n - 1], fmc.v[:n - 1])
++        for x, y in zip(st.rec + st.conv, fresh.rec + fresh.conv):
++            assert (x is None) == (y is None) and (x is None or torch.equal(x, y))
++        assert st.pos == n and mc.pos == n - 1 and torch.equal(held, carry.states)
++
++
++@pytest.mark.parametrize("sampling", SAMPLINGS[:2])
++def test_interleaved_conversations_resume_from_host_and_equal_serial(sampling):
++    w, head = _model()
++    e = _swapping(w, head)
++    system = list(range(100, 120))
++    a = system + [(i * 7) % 90 + 3 for i in range(45)]
++    b = system + [(i * 11) % 90 + 3 for i in range(38)]
++    a2, b2 = a + [5, 6, 7] * 6, b + [9, 8] * 10
++    a3 = a2 + [4] * 21
++    # kept prefixes sit at prompt ends here (no message markers), so a returning conversation comes back whole
++    turns = [(a, 0), (b, 0), (a2, len(a)), (b2, len(b)), (a3, len(a2)), (a3 + [1, 2], 0)]
++    first = None
++    for i, (prompt, back) in enumerate(turns):
++        got, stats = _generate(e, prompt, sampling, 20)
++        assert got == _serial(w, prompt, sampling, 20)[:20], i
++        assert stats["swapped_in"] == back, i
++        if back:
++            assert stats["cached"] == back
++        _hold_a_fresh_prefill(w, head, e)
++        if i == 2:
++            first = next(s for s in e.swap.snaps if s.ids == a).chunks[0][0].data_ptr()
++        if i == 3:        # parked again, longer: the full chunks it already had are shared, the shorter snapshot gone
++            longer = next(s for s in e.swap.snaps if s.ids == a2)
++            assert longer.chunks[0][0].data_ptr() == first
++            assert not any(s.ids == a for s in e.swap.snaps)
++    assert sorted(len(s.ids) for s in e.swap.snaps) == sorted([len(a2), len(b2)])
++
++
++def test_a_parked_state_holds_what_a_fresh_prefill_writes():
++    w, head = _model()
++    e = _swapping(w, head)
++    a, b = list(range(30, 90)), list(range(150, 190))
++    _generate(e, a, None, 8)
++    _generate(e, b, None, 8)
++    (snap,) = e.swap.snaps
++    assert snap.ids == a
++    fresh, fmc, _, carry = decode.prefill(w, head, a, None)
++    k = torch.cat(snap.chunks[0]).cuda()
++    hk = torch.cat(snap.chunks[-2]).cuda()
++    assert torch.equal(k, fresh.kv[1][0][:len(a)]) and torch.equal(hk, fmc.k[:len(a) - 1])
++    assert all(torch.equal(x.cuda(), y) for x, y in zip(snap.rec, fresh.rec) if x is not None)
++    assert torch.equal(snap.held.cuda(), carry.states)
++
++
++def test_over_budget_nothing_is_parked_and_requests_still_equal_serial():
++    w, head = _model()
++    e = _swapping(w, head, budget=1)
++    a, b = list(range(30, 70)), list(range(150, 180))
++    for prompt in (a, b, a + [3] * 10):
++        got, stats = _generate(e, prompt, None, 12)
++        assert got == _serial(w, prompt, None, 12)[:12] and stats["swapped_in"] == 0
++    assert e.swap.snaps == []
