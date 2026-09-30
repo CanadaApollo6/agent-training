@@ -102,6 +102,30 @@ def part(mlx: str) -> str:
     return "routers"
 
 
+def layer_of(mlx: str) -> int | None:
+    parts = mlx.split(".")
+    return int(parts[parts.index("layers") + 1]) if "layers" in parts else None
+
+
+def dense_importance(path: str) -> dict[tuple[int, int], torch.Tensor]:
+    """imatrix GGUF -> {(layer, K): importance [K]} for the always-on matrices, normalized like qe.importance. Within a
+    layer, every matrix reading the same input (q, k, v, qkv, z, a, b; shared gate/up; routers) shares one importance;
+    K alone tells them apart from the ones reading the attention output (4096) or the shared expert's hidden (512)."""
+    from gguf import GGUFReader
+
+    t = {x.name: torch.from_numpy(x.data.copy()) for x in GGUFReader(path).tensors}
+    out = {}
+    for name in sorted(t):
+        if not name.endswith(".in_sum2") or "_exps" in name or not name.startswith("blk."):
+            continue
+        base = name[:-len(".in_sum2")]
+        m = t[name].float().reshape(-1) / t[base + ".counts"].float().reshape(-1)[0].clamp_min(1)
+        key = (int(name.split(".")[1]), m.numel())
+        if key not in out:
+            out[key] = m / m.mean().clamp_min(1e-12) + 0.05
+    return out
+
+
 def hf_name(mlx: str) -> str:
     if mlx == "language_model.lm_head":
         return "lm_head.weight"
@@ -118,6 +142,7 @@ class Builds:
         self.model, self.mlx, self.bf16_dir = model, mlx, bf16_dir
         self.params = dict(model.named_parameters())
         self.imp = qe.importance(imatrix)
+        self.dense_imp = dense_importance(imatrix)
         self.always_on = sorted({k[:-len(".scales")] for k in mlx.map if k.endswith(".scales") and ".switch_mlp." not in k})
         self.orig = {}                               # hf name -> bf16 CPU copy, taken before the first overwrite
         self.state = {}                              # hf name -> the source now in place ("bf16" when absent)
@@ -134,16 +159,23 @@ class Builds:
         self.state[name] = source
 
     def always_on_path(self, sources):
-        """Per part (see PARTS), or one for all: 'bf16', 'mlx4' (the checkpoint's own weights) or 'r<bits>'
-        (round-to-nearest of bf16, groups of 64)."""
+        """Per part (see PARTS), or one for all: 'bf16', 'mlx4' (the checkpoint's own weights), 'r<bits>'
+        (round-to-nearest of bf16, groups of 64) or 'q<bits>' (the experts' imatrix-weighted search, RTN where the
+        imatrix has no entry: embed, lm_head)."""
         for m in self.always_on:
             name = hf_name(m)
             source = sources if isinstance(sources, str) else sources.get(part(m), "bf16")
-            if source.startswith("r") and self.state.get(name, "bf16") != source:
+            if source[0] in "rq" and self.state.get(name, "bf16") != source:
                 w = (self.orig[name] if name in self.orig else self.params[name].detach()).cuda()
-                qw, sc, bi = fake_rtn(w, int(source[1:]))
-                self._put(name, dequant(qw, sc, bi, int(source[1:])), source)
-            elif not source.startswith("r"):
+                bits = int(source[1:])
+                imp = self.dense_imp.get((layer_of(m), w.shape[1])) if source[0] == "q" else None
+                if imp is None:                      # RTN; also the fallback where the imatrix has no entry
+                    qw, sc, bi = fake_rtn(w, bits)
+                else:
+                    (qw, sc, bi), _ = qe.quantize(w[None], imp[None], bits)
+                    qw, sc, bi = qw[0].cuda(), sc[0].cuda(), bi[0].cuda()
+                self._put(name, dequant(qw, sc, bi, bits), source)
+            elif source[0] not in "rq":
                 self._put(name, None if source == "bf16" else self.mlx.weight(m).to(self.params[name].dtype), source)
 
     def _expert_q(self, layer, proj, source):
@@ -277,6 +309,15 @@ def plans(name):
                 "r1+experts4": spec(gate_up="q4", down="q4"),
                 "r1+cheap8": spec(mlx4 | {"embed": "r8", "shared_expert": "r8", "attention": "r8"}),
                 "r1+alwayson8": spec(dict.fromkeys(PARTS, "r8") | {"lm_head": "mlx4"})}
+    if name == "attn-search":                                           # the imatrix search on the always-on path
+        mlx4 = dict.fromkeys(PARTS, "mlx4")
+        return {"r1+allattn-q4": spec(mlx4 | {"attention": "q4", "linear_attention": "q4"}),
+                "r1+allattn-q5": spec(mlx4 | {"attention": "q5", "linear_attention": "q5"}),
+                "r1+allattn-r5": spec(mlx4 | {"attention": "r5", "linear_attention": "r5"}),
+                "r1+allattn-q6": spec(mlx4 | {"attention": "q6", "linear_attention": "q6"}),
+                "r1+alwayson-q4": spec(mlx4 | {"attention": "q4", "linear_attention": "q4", "shared_expert": "q4"}),
+                "r1+allattn-q5+shared-q5": spec(mlx4 | {"attention": "q5", "linear_attention": "q5",
+                                                        "shared_expert": "q5"})}
     if name == "numerics":                                              # bf16 weights, other kernels
         bf16 = spec("bf16", "bf16", "bf16")
         return {"experts-eager": bf16 | {"impl": {"experts": "eager"}},

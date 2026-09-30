@@ -178,3 +178,55 @@ no evaluations. Same probe and server, 4 attempts per problem:
 - **For speed, that length matters as much as tokens per second.** An agent waits for the answer, not the token
   rate. A build that decodes 20% faster but reasons 40% longer is slower to answer. The speed hill-climb scores time
   to answer at gated quality, not decode rate alone.
+
+## KL against bf16 on agent turns (`kl/`)
+
+R1 (all routed experts 3-bit, MLX 4-bit always-on path) scores within noise of Q8 on Terminal-Bench but writes ~1.7x
+the tokens, and the engine is ruled out ([harness-evals](../../06-agents/harness-evals/README.md)). That leaves the
+bits. To see where they cost most, `kl/kl_harness.py` loads bf16 Ornith 35B in HF transformers on an H200, writes each
+build's dequantized weights in place, and scores KL(bf16 || build) over the full vocabulary. It scores only the
+positions whose next token the model wrote itself (thinking, answers, tool calls) in Q8's 57 recorded TB2
+conversations (287K positions, `kl/kl_data.py`). R1's in-process 3-bit experts are byte-identical to the checkpoint's.
+
+**The floor is bf16 itself.** Swapping the attention or experts kernels (same weights, another summation order) gives
+KL 0.04, as does any 8-bit copy of any part. Tiny differences flip routing choices and compound over 40 layers. Treat
+0.04 as zero.
+
+**Where R1 loses** (6 conversations; one always-on part at MLX's 4-bit, everything else bf16):
+
+| Part at 4-bit | KL | Bytes in R1 |
+|---|---|---|
+| Linear attention (30 layers) | 0.14 | 570 MB |
+| Full attention (10 layers) | 0.13 | 169 MB |
+| Shared expert | 0.08 | 73 MB |
+| Embeddings | 0.05 | 286 MB |
+| lm_head | 0.003 | 286 MB |
+| All routed experts at 3-bit, the rest bf16 | 0.17 | 14.5 GB |
+| MLX's whole always-on path, experts bf16 | 0.20 | 1.4 GB |
+
+The always-on path costs as much as the experts, from a tenth of the bytes. I predicted about 40% of MLX4's KL; it's
+closer to 90%. Attention is the sensitive part. The lm_head is almost free.
+
+**What R1 gets back** (all 57 conversations; R1 = 0.260):
+
+| Change to R1 | KL | Extra VRAM | Speed cost |
+|---|---|---|---|
+| Attention, linear attention, shared expert: our imatrix search at 4-bit (**R1s**) | 0.229 | 0 | none (same format) |
+| Attention + linear attention, search at 5-bit | 0.206 | ~150 MB | Triton kernel, not the fast 4-bit one |
+| ... at 6-bit / 8-bit | 0.195 / 0.192 | ~300 / 650 MB | same |
+| Down projections at 4-bit | 0.248 | 1.3 GB | ~0 (active experts only) |
+| All routed experts at 4-bit | 0.227 | 3.9 GB | ~0; doesn't fit |
+| Whole always-on path 8-bit | 0.180 | ~1.2 GB | reads +1.1 GB per token |
+
+My predictions (logged before the run) were too optimistic everywhere: 8-bit attention 0.15 (got 0.19), 4-bit down
+0.22 (got 0.248), 4-bit experts 0.20 (got 0.227). The search at 4-bit was on the mark (predicted 0.23, got 0.234 for
+attention alone).
+
+- **Bytes on the experts are the worst buy.** 1.3 GB for 4-bit down projections gets 0.012. The same KL costs nothing
+  on the always-on path, just by rounding it with the imatrix search instead of MLX's round-to-nearest.
+- **R1s is free.** Same size, same kernels, same decode speed (bench on the 3090: 385-535 tok/s like R1), 12% less
+  KL. Built with `kl/export_always_on.py` (on the pod, from bf16) and `kl/make_build.py` (swaps the tensors into R1).
+- **Most of the gap stays.** Even 8-bit everywhere on the always-on path leaves 0.18, and routed experts at 3-bit are
+  most of that. Beyond R1s, KL per byte is the choice between 5-bit attention (cheap bytes, slower kernel) and nothing.
+- **Unknown: does KL predict the eval?** R1s at 0.229 sits at MLX4's level (0.22 on 6 conversations). The TB2 re-run
+  checks whether 12% less KL shortens R1's trajectories, or whether length comes from somewhere KL doesn't see.
