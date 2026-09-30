@@ -622,11 +622,30 @@ those apps open (median of 3, 256 tokens, R2 131K):
   first long request (261 tok/s on the primes prompt, then 373 and 405 on repeats). Judge kernels with the
   in-process A/B, not one-shot runs.
 
-### Lever 3: R2's shared expert (in progress)
+### Lever 3: R2's shared expert (stopped at the prototype)
 
 - **Capping the low-bit kernels' registers** (launch bounds, 168 or 128) to undo the bloat from the inlined 4-bit
   shared path: much worse. The spills land in the hot loop. gate/up at 4 rows went 32.7 → 46.8 µs (168) and 67.0
   (128). Rejected.
-- Left to try: the shared expert as its own launch on a second stream inside the graph, overlapping the routed
-  launch. Expected ~2.5 µs a layer at 4 rows (~1.3% of a round) and much more at 6+ rows. That's too small to see
-  while desktop apps share the GPU.
+- **Verify widths** (`tensorfold/verify_widths.py`, R2, 6 prompts × 1,024 greedy tokens): 4 rows in 75.3% of
+  rounds, 3 in 5.9%, 2 in 3.3%, and 16 in 15.4%. The 16-row rounds are copied continuations from the context. No
+  round is 1 row.
+- **Prototype** (`tensorfold/shared_branch.py`): the routed low-bit launch built without the shared path, and the
+  shared expert as a one-expert 4-bit layer on a second stream in the same graph. µs a layer, gate/up + down, second
+  of two reps:
+
+| Rows | Merged (now) | Shared on a second stream | Shared after, one stream |
+|---|---|---|---|
+| 4 | 60.3 | 60.0 | 71.6 |
+| 8 | 93.5 | 92.9 | |
+| 12 | 141.9 | 134.6 | |
+| 16 | 170.1 | 154.9 | |
+
+- At 4 rows, the width that matters most, the gain is nothing. It shows up only at 12+ rows. Weighted by the width
+  mix, that's ~0.09 ms a round, about +1%.
+- **Not integrated.** It would need a second stream in the engine's graphs, the routing plan split so the shared
+  expert's items leave the low-bit launch, and the combine moved after both. That's a lot of machinery for ~1%.
+- **Prediction (Claude):** ~1.3%. Measured ~1% in the prototype.
+- The 16-row rounds are the expensive ones: 170 µs a layer in experts, against 60 at 4 rows. They're 15% of rounds
+  on these prompts. If they get cheaper, it should be through the copy window's size or the 16-row kernels, not the
+  shared expert.
