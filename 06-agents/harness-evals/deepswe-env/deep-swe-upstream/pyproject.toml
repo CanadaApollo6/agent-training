@@ -1,0 +1,10 @@
+[project]
+name = "deep-swe-upstream"
+version = "0.1.0"
+description = "primeintellect/deep-swe with DeepSWE's own public images (public.ecr.aws) instead of Prime's team mirrors"
+requires-python = ">=3.12"
+dependencies = ["deep-swe"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,0 +1,15 @@
+[project]
+name = "deepswe-evals"
+version = "0.1.0"
+description = "DeepSWE under pi and prime_agent: newer verifiers (Harbor separate verifiers), task images from our own Prime registry"
+requires-python = ">=3.12,<3.13"
+dependencies = ["deep-swe", "deep-swe-upstream", "verifiers[harbor] @ git+https://github.com/PrimeIntellect-ai/verifiers@37e459a0"]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+url = "https://hub.primeintellect.ai/primeintellect/deep-swe/install/simple/"
+
+[tool.uv.sources]
+deep-swe-upstream = { path = "deep-swe-upstream", editable = true }
