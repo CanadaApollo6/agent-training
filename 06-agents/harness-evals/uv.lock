@@ -306,6 +306,17 @@ wheels = [
 ]
 
 [[package]]
+name = "deep-swe"
+version = "0.1.0"
+source = { registry = "https://hub.primeintellect.ai/primeintellect/deep-swe/install/simple/" }
+dependencies = [
+    { name = "verifiers", extra = ["harbor"] },
+]
+wheels = [
+    { url = "https://hub.primeintellect.ai/primeintellect/deep-swe/@f4017d3d/deep_swe-0.1.0-py3-none-any.whl", hash = "sha256:ea8c17aede5d58d45f8f01b8f56ec8863f95f5b6ffa27f53c923bbc6b8e6452b" },
+]
+
+[[package]]
 name = "deprecation"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -493,12 +504,14 @@ name = "harness-evals"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "deep-swe" },
     { name = "terminal-bench-2" },
     { name = "verifiers", extra = ["harbor"] },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "deep-swe", specifier = ">=0.1.0" },
     { name = "terminal-bench-2", specifier = ">=0.3.1" },
     { name = "verifiers", extras = ["harbor"], git = "https://github.com/PrimeIntellect-ai/verifiers?rev=aa924e7d" },
 ]
