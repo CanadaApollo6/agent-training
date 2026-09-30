@@ -3,7 +3,7 @@
 #
 #   ./run_eval.sh <tb2|deepswe|tb4> <pi|prime_agent> <label> [concurrency]
 # Env: PORT (default 8000), TURNS, TIMEOUT seconds per rollout, ROLLOUTS (default 1).
-# tb2: tasks.txt (20), 60 turns, 60 min. deepswe: deepswe_tasks.txt (25, seed 0 of 113), 100 turns, 90 min, run from
+# tb2: tasks.txt (20), 60 turns, 60 min. deepswe: deepswe_tasks.txt (10: seed 0 of the seed-0 25 of 113; Prime allows 10 private images), 100 turns, 90 min, run from
 # deepswe-env/ (newer verifiers, and our own copies of the task images; see deepswe-env/README.md). tb4: tb4_tasks.txt
 # (20, seed 0 of the 52 single-container CPU tasks in Terminal-Bench 4.0.0), 100 turns, 90 min, also from deepswe-env/.
 set -euo pipefail

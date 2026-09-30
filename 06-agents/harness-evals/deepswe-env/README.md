@@ -8,11 +8,12 @@ team registry, and other accounts get HTTP 403. The same images are public at `p
 the Prime runtime only auto-builds VM images from Docker Hub refs. So we copied the images once into our own registry
 and made them private:
 
-    uvx prime images push-bulk --manifest images.jsonl --private     # ~1.2-1.4 GB each, a few minutes for all 25
+    uvx prime images push-bulk --manifest images.jsonl --private     # ~1-2.4 GB each, a few minutes
 
 `deep-swe-upstream/` is the env vf-eval loads (`deep-swe-upstream`). It has the same taskset and verifiers, with
-images rewritten to `$DEEPSWE_IMAGE_NS` (default `prime/riel-stamand`). If you add tasks to `../deepswe_tasks.txt`,
-add their images to `images.jsonl` and push again.
+images rewritten to `$DEEPSWE_IMAGE_NS` (default `prime/riel-stamand`). Prime allows 10 private images per account, so `../deepswe_tasks.txt` is 10 tasks (seed 0 of the
+earlier seed-0 sample of 25). To swap tasks, delete an image (`uvx prime images delete <ref> --yes`), then add the
+new one to `images.jsonl` and push.
 
 ## Terminal-Bench 4
 
