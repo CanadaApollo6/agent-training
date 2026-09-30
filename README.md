@@ -211,6 +211,35 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
       is what a returning or new long agent turn waits on. Also the method, speed as an RL reward, which is our
       hand-driven hill-climb automated. That would need their unreleased pipeline, plus our bit-exact gate as a hard
       constraint.
+- [Context Language Models](https://arxiv.org/abs/2609.37725) (Shao et al., UW / Meta / MIT / Trillium; Sep 2026;
+  [code](https://github.com/facebookresearch/context-language-models), CC BY-NC 4.0).
+  - The agent's context is a file the model can edit with ordinary shell commands. It can delete, rewrite or
+    summarize any part, and when it leaves the file alone, new tokens are appended as usual. Context management becomes
+    the model's own behavior instead of a harness rule like "summarize at 80% full".
+  - Zero-shot with existing models (Qwen3.6-27B, Qwen3.5-9B, frontier APIs), run as a Harbor agent (`clm-minimal`):
+    - BrowseComp-Plus: +11.4% accuracy on 21.5% fewer FLOPs.
+    - Terminal-Bench 2.1: matches the best baseline on 70% of its FLOPs.
+    - TBLite: 73.7% vs 67.0%.
+  - Small models don't do it well untrained. Qwen3.5-9B zero-shot is 6 points *below* the summarizing harness.
+    - Stepwise GRPO fixes that: success first, then cheaper successful runs ranked higher. It takes the 9B from 28.8%
+      to 42.5%, on 1.34 vs 2.19 PFLOPs a question.
+  - Suffix Cache Reuse (an SGLang patch) keeps the cache for text that survives an edit, instead of prefilling
+    everything after the edit point again:
+    - Attention KV spans are moved with RoPE re-rotated, up to 6 spans per edit.
+    - Linear-attention (GDN) layers keep a snapshot from before the edit, so they still carry the deleted text.
+    - The result is 35% less server compute. It is approximate by design: stale state is kept.
+  - **For us:**
+    - It backs Prime's thesis. Context handling that the model learns in training beats harness logic bolted on,
+      and small models need the training. That matches our pilot, where an untrained Ornith lost with
+      prime_agent's extra harness features.
+    - Ornith 35B-A3B is the paper's Qwen3.5/3.6 hybrid family with 3B active. Expect it to behave like their 9B:
+      a likely loss zero-shot, so try it only as a trained behavior.
+    - Serving cost on the 3090: TensorFold's cache is exact and prefix-only. Every mid-context edit re-prefills
+      from the edit point, at ~4,100 tok/s, so an edit at 10K of a 50K context costs ~10 s. Suffix Cache Reuse
+      would change the numbers, so it would have to pass the reasoning probe, not the bit-exact gate.
+    - The RAM swap already snapshots GDN state per conversation, which is half the machinery.
+    - It doesn't touch R1's current problem: its failures run out of turns, not context.
+    - The code is non-commercial. Reimplementing the idea is fine, but copying their code into Smart Data isn't.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
 - [WorkflowEvals](https://evals.typesafe.ai/) (TypeSafe, the company behind Jev;
   [code](https://github.com/typesafe-ai/WorkflowEvals), Apache 2.0;
