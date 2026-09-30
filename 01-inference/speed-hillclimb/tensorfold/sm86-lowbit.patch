@@ -1,6 +1,6 @@
-diff --git i/src/tensorfold/cuda/build.py w/src/tensorfold/cuda/build.py
+diff --git c/src/tensorfold/cuda/build.py w/src/tensorfold/cuda/build.py
 index 5eb6d2b..26c18af 100644
---- i/src/tensorfold/cuda/build.py
+--- c/src/tensorfold/cuda/build.py
 +++ w/src/tensorfold/cuda/build.py
 @@ -6,7 +6,7 @@ import os
  import threading
@@ -38,9 +38,9 @@ index 5eb6d2b..26c18af 100644
  
 -__all__ = ["MIN_CAPABILITY", "arch_flags", "load"]
 +__all__ = ["MIN_CAPABILITY", "arch_flags", "fp8_mma", "load"]
-diff --git i/src/tensorfold/cuda/capacity.py w/src/tensorfold/cuda/capacity.py
+diff --git c/src/tensorfold/cuda/capacity.py w/src/tensorfold/cuda/capacity.py
 index 0136925..37d28a1 100644
---- i/src/tensorfold/cuda/capacity.py
+--- c/src/tensorfold/cuda/capacity.py
 +++ w/src/tensorfold/cuda/capacity.py
 @@ -5,6 +5,7 @@ from __future__ import annotations
  from dataclasses import dataclass
@@ -62,9 +62,9 @@ index 0136925..37d28a1 100644
      memory = _meminfo()
      if memory is None:
          return available
-diff --git i/src/tensorfold/cuda/experts.cpp w/src/tensorfold/cuda/experts.cpp
+diff --git c/src/tensorfold/cuda/experts.cpp w/src/tensorfold/cuda/experts.cpp
 index b993962..f5bad27 100644
---- i/src/tensorfold/cuda/experts.cpp
+--- c/src/tensorfold/cuda/experts.cpp
 +++ w/src/tensorfold/cuda/experts.cpp
 @@ -2,13 +2,19 @@
  
@@ -167,9 +167,9 @@ index b993962..f5bad27 100644
 +  m.def("run", &run, "grouped 2/3/4-bit expert matmul, decode form (epilogue 0: fp32, 1: relu^2, 2: SwiGLU); split: warps a unit; cslots > 0: moe.combine too");
 +  m.def("prefill", &prefill, "grouped 2/3/4-bit expert matmul, prefill form (3: bf16 out)");
  }
-diff --git i/src/tensorfold/cuda/experts.cu w/src/tensorfold/cuda/experts.cu
+diff --git c/src/tensorfold/cuda/experts.cu w/src/tensorfold/cuda/experts.cu
 index 6cb5ba9..9036cfc 100644
---- i/src/tensorfold/cuda/experts.cu
+--- c/src/tensorfold/cuda/experts.cu
 +++ w/src/tensorfold/cuda/experts.cu
 @@ -18,6 +18,12 @@ __device__ __forceinline__ uint4 ld_w(const uint4* p) {
    return r;
@@ -869,9 +869,9 @@ index 6cb5ba9..9036cfc 100644
 +  else if (experts <= 512) run(select_kernel<16>);
 +  else run(select_kernel<32>);
  }
-diff --git i/src/tensorfold/cuda/experts.cuh w/src/tensorfold/cuda/experts.cuh
+diff --git c/src/tensorfold/cuda/experts.cuh w/src/tensorfold/cuda/experts.cuh
 index 27aa01a..69752dd 100644
---- i/src/tensorfold/cuda/experts.cuh
+--- c/src/tensorfold/cuda/experts.cuh
 +++ w/src/tensorfold/cuda/experts.cuh
 @@ -11,15 +11,52 @@ constexpr int COLS = 8 * NTW;
  constexpr uint32_t LOW = 0x000F000Fu;
@@ -948,9 +948,9 @@ index 27aa01a..69752dd 100644
        const int col = col0 + 8 * j;
        const float a0 = acc[0][r][j][2 * h], a1 = acc[0][r][j][2 * h + 1];
        if constexpr (EPI == 0) {
-diff --git i/src/tensorfold/cuda/experts.py w/src/tensorfold/cuda/experts.py
+diff --git c/src/tensorfold/cuda/experts.py w/src/tensorfold/cuda/experts.py
 index 05d91e3..76e1809 100644
---- i/src/tensorfold/cuda/experts.py
+--- c/src/tensorfold/cuda/experts.py
 +++ w/src/tensorfold/cuda/experts.py
 @@ -1,4 +1,4 @@
 -"""Grouped MoE experts on MLX 4-bit weights; a (row, slot) pair's bits never depend on the other rows of the call."""
@@ -1180,9 +1180,9 @@ index 05d91e3..76e1809 100644
 +
 +def selectable(rows: int, slots: int, plan: Plan) -> bool:
 +    return SELECT and not plan.prefill and rows * slots <= 256 and plan.experts <= 1024 and slots <= 32
-diff --git i/src/tensorfold/cuda/experts_prefill.cu w/src/tensorfold/cuda/experts_prefill.cu
+diff --git c/src/tensorfold/cuda/experts_prefill.cu w/src/tensorfold/cuda/experts_prefill.cu
 index 7745335..3e087e2 100644
---- i/src/tensorfold/cuda/experts_prefill.cu
+--- c/src/tensorfold/cuda/experts_prefill.cu
 +++ w/src/tensorfold/cuda/experts_prefill.cu
 @@ -10,9 +10,9 @@
  
@@ -1345,9 +1345,9 @@ index 7745335..3e087e2 100644
 -  TORCH_CHECK(false, "experts: no prefill kernel for group ", gs, " and epilogue ", epi);
 +  TORCH_CHECK(false, "experts: no prefill kernel for group ", gs, ", epilogue ", epi, " and ", bits, " bits");
  }
-diff --git i/src/tensorfold/cuda/geometry.py w/src/tensorfold/cuda/geometry.py
+diff --git c/src/tensorfold/cuda/geometry.py w/src/tensorfold/cuda/geometry.py
 index ee444c2..1bee3d0 100644
---- i/src/tensorfold/cuda/geometry.py
+--- c/src/tensorfold/cuda/geometry.py
 +++ w/src/tensorfold/cuda/geometry.py
 @@ -133,7 +133,8 @@ def layer_counts(t: dict) -> tuple[int, int]:
  
@@ -1369,9 +1369,9 @@ index ee444c2..1bee3d0 100644
          else:
              # Bound two retained prefixes, current KV state and a growth copy; speculative rows use separate workspace.
              rounded = 1 << (max(1024, capacity - reserve) - 1).bit_length()
-diff --git i/src/tensorfold/cuda/kernels/attention.py w/src/tensorfold/cuda/kernels/attention.py
+diff --git c/src/tensorfold/cuda/kernels/attention.py w/src/tensorfold/cuda/kernels/attention.py
 index 798958b..4569155 100644
---- i/src/tensorfold/cuda/kernels/attention.py
+--- c/src/tensorfold/cuda/kernels/attention.py
 +++ w/src/tensorfold/cuda/kernels/attention.py
 @@ -110,7 +110,8 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
          l = tl.zeros((16,), tl.float32)
@@ -1383,9 +1383,9 @@ index 798958b..4569155 100644
              logical = key + t * 64
              committed = logical < p
              path_slot = logical - p
-diff --git i/src/tensorfold/cuda/kernels/qmm.cpp w/src/tensorfold/cuda/kernels/qmm.cpp
+diff --git c/src/tensorfold/cuda/kernels/qmm.cpp w/src/tensorfold/cuda/kernels/qmm.cpp
 index c46571f..c7a0f94 100644
---- i/src/tensorfold/cuda/kernels/qmm.cpp
+--- c/src/tensorfold/cuda/kernels/qmm.cpp
 +++ w/src/tensorfold/cuda/kernels/qmm.cpp
 @@ -10,6 +10,44 @@ void qmm_prefill8w_cuda(const at::Tensor&, const at::Tensor&, const at::Tensor&,
  void qmm_prefill8_cuda(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&,
@@ -1440,9 +1440,9 @@ index c46571f..c7a0f94 100644
      m.def("qmm_prefill", &qmm_prefill);
      m.def("qmm_prefill8", &qmm_prefill8);
      m.def("qmm_prefill8w", &qmm_prefill8w);
-diff --git i/src/tensorfold/cuda/kernels/qmm.cu w/src/tensorfold/cuda/kernels/qmm.cu
+diff --git c/src/tensorfold/cuda/kernels/qmm.cu w/src/tensorfold/cuda/kernels/qmm.cu
 index a763387..a08ffba 100644
---- i/src/tensorfold/cuda/kernels/qmm.cu
+--- c/src/tensorfold/cuda/kernels/qmm.cu
 +++ w/src/tensorfold/cuda/kernels/qmm.cu
 @@ -30,18 +30,17 @@ struct Tile {
      static constexpr int SMEM = STAGES * STAGE > PARTIALS ? STAGES * STAGE : PARTIALS;
@@ -1816,9 +1816,9 @@ index a763387..a08ffba 100644
 +    else { if (tt == 0) SEG(false, 0); else if (tt == 1) SEG(false, 1); else SEG(false, 2); }
 +#undef SEG
 +}
-diff --git i/src/tensorfold/cuda/kernels/qmm.py w/src/tensorfold/cuda/kernels/qmm.py
+diff --git c/src/tensorfold/cuda/kernels/qmm.py w/src/tensorfold/cuda/kernels/qmm.py
 index 8792eb5..8104032 100644
---- i/src/tensorfold/cuda/kernels/qmm.py
+--- c/src/tensorfold/cuda/kernels/qmm.py
 +++ w/src/tensorfold/cuda/kernels/qmm.py
 @@ -16,7 +16,7 @@ def _ext():
      from tensorfold.cuda.build import load
@@ -1907,9 +1907,9 @@ index 8792eb5..8104032 100644
      if out is None:
          out = torch.empty((m, q.n), dtype=torch.float32 if f32 else torch.bfloat16, device=x.device)
      if sk > 1 and not reduce and part is None:
-diff --git i/src/tensorfold/cuda/kernels/qmm_frag.cuh w/src/tensorfold/cuda/kernels/qmm_frag.cuh
+diff --git c/src/tensorfold/cuda/kernels/qmm_frag.cuh w/src/tensorfold/cuda/kernels/qmm_frag.cuh
 index e432e3b..b3dcd35 100644
---- i/src/tensorfold/cuda/kernels/qmm_frag.cuh
+--- c/src/tensorfold/cuda/kernels/qmm_frag.cuh
 +++ w/src/tensorfold/cuda/kernels/qmm_frag.cuh
 @@ -60,7 +60,12 @@ __device__ __forceinline__ void mma0(float (&d)[4], const uint32_t (&a)[4], uint
  __device__ __forceinline__ uint32_t pair(uint32_t w, int s) {
@@ -1924,9 +1924,9 @@ index e432e3b..b3dcd35 100644
      return r;
  }
  
-diff --git i/src/tensorfold/cuda/kernels/qmm_prefill8.cu w/src/tensorfold/cuda/kernels/qmm_prefill8.cu
+diff --git c/src/tensorfold/cuda/kernels/qmm_prefill8.cu w/src/tensorfold/cuda/kernels/qmm_prefill8.cu
 index 5a5a275..798507d 100644
---- i/src/tensorfold/cuda/kernels/qmm_prefill8.cu
+--- c/src/tensorfold/cuda/kernels/qmm_prefill8.cu
 +++ w/src/tensorfold/cuda/kernels/qmm_prefill8.cu
 @@ -15,18 +15,26 @@ namespace {
  using namespace qmm_frag;
@@ -1969,9 +1969,9 @@ index 5a5a275..798507d 100644
      return r;
  }
  
-diff --git i/src/tensorfold/cuda/moe.py w/src/tensorfold/cuda/moe.py
+diff --git c/src/tensorfold/cuda/moe.py w/src/tensorfold/cuda/moe.py
 index a8cc130..25fe294 100644
---- i/src/tensorfold/cuda/moe.py
+--- c/src/tensorfold/cuda/moe.py
 +++ w/src/tensorfold/cuda/moe.py
 @@ -46,12 +46,19 @@ def router(x: torch.Tensor, rows: torch.Tensor, out: torch.Tensor | None = None)
      if out is None:
@@ -2036,9 +2036,9 @@ index a8cc130..25fe294 100644
 +        return out
 +    moe(x, m.router, m.experts, buf, m.top_k, m.count)
      return combine(buf.y[:rows], buf.wts[:rows])
-diff --git i/src/tensorfold/families/qwen3_5/cuda/forward.py w/src/tensorfold/families/qwen3_5/cuda/forward.py
+diff --git c/src/tensorfold/families/qwen3_5/cuda/forward.py w/src/tensorfold/families/qwen3_5/cuda/forward.py
 index 97003b6..c362ffa 100644
---- i/src/tensorfold/families/qwen3_5/cuda/forward.py
+--- c/src/tensorfold/families/qwen3_5/cuda/forward.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/forward.py
 @@ -13,7 +13,7 @@ from tensorfold.cuda.kernels import attention as tree_attention
  from tensorfold.cuda.kernels import gdn as deltanet
@@ -2144,9 +2144,9 @@ index 97003b6..c362ffa 100644
              q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
                                      w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
                                      head_dim=c.head_dim)
-diff --git i/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py w/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
+diff --git c/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py w/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
 index 033f704..69b4e87 100644
---- i/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
+--- c/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
 @@ -58,6 +58,14 @@ def matmul(x: torch.Tensor, q: QLinear, xs: torch.Tensor | None = None) -> torch
      return lane_matmul(x, q.weight, q.scales, q.biases, xs=xs)
@@ -2163,9 +2163,9 @@ index 033f704..69b4e87 100644
  def matmul_partial(x: torch.Tensor, q: QLinear, xs: torch.Tensor | None = None) -> torch.Tensor:
      """fp32 sums for a tiled weight, unrounded: a row-parallel rank's share of a projection."""
  
-diff --git i/src/tensorfold/families/qwen3_5/cuda/weights.py w/src/tensorfold/families/qwen3_5/cuda/weights.py
+diff --git c/src/tensorfold/families/qwen3_5/cuda/weights.py w/src/tensorfold/families/qwen3_5/cuda/weights.py
 index 4fb4bd7..2bb531e 100644
---- i/src/tensorfold/families/qwen3_5/cuda/weights.py
+--- c/src/tensorfold/families/qwen3_5/cuda/weights.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/weights.py
 @@ -212,6 +212,10 @@ class Weights:
  
@@ -2178,9 +2178,9 @@ index 4fb4bd7..2bb531e 100644
          if self.quant == "exl3":                     # an EXL3 pack's prompt glue stays in bf16
              return False
          if self.quant == "nvfp4":                    # NVFP4, FP8 and the gates' copies all take FP8 prompt rows
-diff --git i/src/tensorfold/families/qwen3_5_moe/__init__.py w/src/tensorfold/families/qwen3_5_moe/__init__.py
+diff --git c/src/tensorfold/families/qwen3_5_moe/__init__.py w/src/tensorfold/families/qwen3_5_moe/__init__.py
 index 6e82b36..992413c 100644
---- i/src/tensorfold/families/qwen3_5_moe/__init__.py
+--- c/src/tensorfold/families/qwen3_5_moe/__init__.py
 +++ w/src/tensorfold/families/qwen3_5_moe/__init__.py
 @@ -11,7 +11,8 @@ LANES = True
  # MLX 4-bit, groups of 64, routers 8-bit, MTP layer in mtp-4bit.safetensors (mlx-community's files take it too)
@@ -2192,9 +2192,9 @@ index 6e82b36..992413c 100644
  CUDA_QUANTIZATION = (4, 64)
  
  
-diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/decode.py w/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
-index bbdec31..1c546c8 100644
---- i/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
+diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/decode.py w/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
+index bbdec31..bc6a733 100644
+--- c/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
 +++ w/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
 @@ -18,6 +18,8 @@ from tensorfold.families.qwen3_5.cuda.prefill import chunks, prefill_chunk
  
@@ -2220,9 +2220,73 @@ index bbdec31..1c546c8 100644
                  mc.pos = b - 1
              held = rows[-1:]
          if end < len(prompt):
-diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/engine.py w/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
+@@ -89,6 +95,9 @@ def prefill(w, head: Head | None, prompt: Sequence[int], sampling: Sampling | No
+ 
+ 
+ COPY_ROWS = 16       # a copied continuation's verify window
++COMMIT_GRAPH = True  # the accepted path committed by one replay (``Graphs.commit``)
++FOLLOW = True        # chained drafts verified in full by a replay launched straight after (no confidence cut)
++CHAIN = True         # greedy drafts chained on the device in one graph (``Graphs.chain``), not a host wait a step
+ 
+ 
+ @torch.no_grad()
+@@ -112,26 +121,46 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
+             normed = head.forward(mc, states, tokens, p0)
+             return normed, head.logits(normed[-1:])
+     out, rounds, drafted, kept, widths = [pending], 0, 0, 0, []
++    chained = CHAIN and runner is not None and (sampling is None or sampling.temperature <= 0)
+     context, copies = list(prompt) + [pending], CopyIndex()
+     start = time.perf_counter()
+     while len(out) < count and not (stop_eos and out[-1] in w.config.eos):
+         n = st.pos                                        # the pending token's position
+-        normed, logits = step(carry.states, carry.tokens, mc.pos)
+-        mc.pos += len(carry.tokens)
+         guesses = copies.propose(context, COPY_ROWS - 1)  # an exact repeat of the context first: a long, likely window
+-        while not guesses:
++        followed = not guesses and chained and FOLLOW
++        if followed:            # greedy: drafts, then all of them verified, no wait between
++            picks, host = runner.chain(carry.states, carry.tokens, mc.pos, depth, wait=False)
++            mc.pos += len(carry.tokens)
++            logits, record, states = runner.verify([out[-1]] + [0] * depth, picks)
++            sampled = sample_rows(logits, [n + 1 + i for i in range(depth + 1)], sampling)     # waits: host landed
++            tokens = [out[-1]] + [int(t) for t in host[:depth].tolist()]
++            guesses = tokens[1:]
++        elif not guesses and chained:                     # greedy: the whole draft chain in one replay, one wait
++            picks, probs = runner.chain(carry.states, carry.tokens, mc.pos, depth)
++            mc.pos += len(carry.tokens)
++            guesses = picks[:1]
++            while len(guesses) < depth and probs[len(guesses) - 1] >= confidence:
++                guesses.append(picks[len(guesses)])
++        else:
++            normed, logits = step(carry.states, carry.tokens, mc.pos)
++            mc.pos += len(carry.tokens)
++        while not guesses and not followed:
+             token, prob = draft(logits, n + 1, sampling, head.ids)
+             guesses.append(token)
+             while prob >= confidence and len(guesses) < depth:
+                 normed, logits = step(normed[-1:], [token], mc.pos + len(guesses) - 1)
+                 token, prob = draft(logits, n + 1 + len(guesses), sampling, head.ids)
+                 guesses.append(token)
+-        tokens = [out[-1]] + guesses
++        if not followed:
++            tokens = [out[-1]] + guesses
++            logits, record, states = verify(tokens)
++            sampled = sample_rows(logits, [n + 1 + i for i in range(len(tokens))], sampling)
+         parents = list(range(-1, len(tokens) - 1))
+-        logits, record, states = verify(tokens)
+-        sampled = sample_rows(logits, [n + 1 + i for i in range(len(tokens))], sampling)
+         path, terminal = accept(tokens, parents, sampled, count - len(out), w.config.eos if stop_eos else ())
+-        commit(st, record, path, in_place=runner is not None)
++        if runner is not None and COMMIT_GRAPH:
++            runner.commit(record, path)
++        else:
++            commit(st, record, path, in_place=runner is not None)
+         new = [tokens[r] for r in path[1:]] + [terminal]
+         carry = Carry(states[path[0]:path[-1] + 1], new)
+         out.extend(new)
+diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/engine.py w/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
 index 2faf65f..2e16b59 100644
---- i/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
+--- c/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
 +++ w/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
 @@ -9,7 +9,7 @@ from typing import Any, Callable
  
@@ -2276,11 +2340,28 @@ index 2faf65f..2e16b59 100644
          if not (stops and len(prompt) - stops[-1] < MIN_GAP):
              self.cache.add(list(prompt), st, (mc.view(), carry.states))
          stats = {"prefill_s": round(time.perf_counter() - t0, 4), "cached": len(hit[0]) if hit else 0,
-diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py w/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
-index d7d8e8a..3f6797b 100644
---- i/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
+diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py w/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
+index d7d8e8a..d14e0ff 100644
+--- c/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
 +++ w/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
-@@ -27,11 +27,11 @@ class Graphs:
+@@ -7,7 +7,8 @@ from typing import Callable, Sequence
+ 
+ import torch
+ 
+-from tensorfold.families.qwen3_5.cuda.forward import State, reserve, stage, tree_forward
++from tensorfold.cuda.kernels import gdn as deltanet
++from tensorfold.families.qwen3_5.cuda.forward import GDNRecord, State, commit, reserve, stage, tree_forward
+ 
+ from .mtp import Cache, Head, Staged as HeadStaged
+ 
+@@ -23,17 +24,22 @@ class Graphs:
+         self.pool = None                                # a new pool each time the buffers grow (``load``)
+         self.target: dict[tuple[int, int], tuple] = {}
+         self.mtp: dict[tuple[int, int], tuple] = {}
++        self.chains: dict[tuple[int, int, int], tuple] = {}
++        self.commits: dict[tuple[int, int], tuple] = {}
++        self.last = None                                # the key of the last verify replayed
+ 
      def _bucket(self, end: int) -> int:
          return min(self.rows, max(BUCKET, 1 << (end - 1).bit_length()))
  
@@ -2294,8 +2375,12 @@ index d7d8e8a..3f6797b 100644
 +            self.rows = min(self.capacity, need if exact else max(BUCKET, 1 << (need - 1).bit_length()))
              self.target.clear()
              self.mtp.clear()
++            self.chains.clear()
++            self.commits.clear()
              self.st = self.mc = None
-@@ -42,17 +42,36 @@ class Graphs:
+             gc.collect()
+             # the dropped graphs' pool can stay registered with no graph left (expandable segments leave it so),
+@@ -42,17 +48,36 @@ class Graphs:
              self.st = State(self.w)
              reserve(self.st, self.rows)
              self.mc = Cache(self.w, self.rows)
@@ -2335,9 +2420,152 @@ index d7d8e8a..3f6797b 100644
          self.mc.pos = mc.pos
          return dst, self.mc
  
-diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py w/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
-index 1a940e5..b20ea44 100644
---- i/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
+@@ -70,8 +95,9 @@ class Graphs:
+         return g, out
+ 
+     @torch.no_grad()
+-    def verify(self, tokens: Sequence[int]):
+-        """The chain [pending, drafts...] at the stream's position: (logits, record, final normed rows)."""
++    def verify(self, tokens: Sequence[int], drafted: torch.Tensor | None = None):
++        """The chain [pending, drafts...] at the stream's position: (logits, record, final normed rows).
++        ``drafted``: rows 1.. come from this device tensor (a ``chain``'s picks, not yet on the host)."""
+ 
+         width, st = len(tokens), self.st
+         key = (width, self._bucket(st.pos + width))
+@@ -85,7 +111,10 @@ class Graphs:
+             entry = self.target[key] = (g, staged, out)
+         g, staged, out = entry
+         staged.refresh(tokens, st.pos)
++        if drafted is not None:
++            staged.ids[1:width].copy_(drafted[:width - 1])
+         g.replay()
++        self.last = key
+         return out
+ 
+     @torch.no_grad()
+@@ -111,3 +140,119 @@ class Graphs:
+         staged.refresh(states, tokens, p0)
+         g.replay()
+         return out
++
++    @torch.no_grad()
++    def chain(self, states: torch.Tensor, tokens: Sequence[int], p0: int, depth: int, *, wait: bool = True):
++        """Greedy drafting in one replay: ``Head.forward`` for these rows at ``p0``, then ``depth - 1`` one-row steps,
++        each fed the previous step's argmax on the device. The same calls and picks as ``draft`` then ``decode.draft``
++        step by step, with one wait for the host: (the ``depth`` draft tokens, each one's probability).
++        ``wait=False``: no wait; returns (the picks and probabilities on the device, their pinned host copy in flight),
++        for a verify launched straight after and a host that reads them once it next waits."""
++
++        width = states.shape[0]
++        key = (width, depth, self._bucket(p0 + width + depth - 1))
++        entry = self.chains.get(key)
++        c = self.w.config
++        at = [p0] + [p0 + width + i for i in range(depth - 1)]
++        if entry is None:
++            staged = [HeadStaged(self.mc, width if i == 0 else 1, key[2], c.heads // c.kv_heads, c.hidden)
++                      for i in range(depth)]
++            staged[0].refresh(states, tokens, p0)
++            for s, q in zip(staged[1:], at[1:]):
++                s.refresh(None, [0], q)
++            ids = self.head.ids
++
++            def run():
++                picks, probs = [], []
++                for i, s in enumerate(staged):
++                    normed = self.head.forward(self.mc, s.states, (), at[i], staged=s)
++                    row = self.head.logits(normed[-1:]).float()[0]
++                    pick = row.argmax().view(1)                 # indexed by index_select: [pick] would wait on the host
++                    token = ids.index_select(0, pick) if ids is not None else pick
++                    picks.append(token)
++                    probs.append(torch.softmax(row, -1).index_select(0, pick))
++                    if i + 1 < depth:
++                        staged[i + 1].ids.copy_(token)
++                        staged[i + 1].states.copy_(normed[-1:])
++                return torch.cat([torch.cat(picks).double(), torch.cat(probs).double()])
++
++            run()
++            g, out = self._capture(run)
++            host = torch.empty(out.shape, dtype=out.dtype, pin_memory=True)
++            entry = self.chains[key] = (g, staged, out, host)
++        g, staged, out, host = entry
++        staged[0].refresh(states, tokens, p0)
++        for s, q in zip(staged[1:], at[1:]):
++            s.refresh(None, [0], q)
++        g.replay()
++        host.copy_(out, non_blocking=True)
++        if not wait:
++            return out, host
++        torch.cuda.current_stream().synchronize()
++        v = host.tolist()
++        return [int(t) for t in v[:depth]], v[depth:]
++
++    @torch.no_grad()
++    def commit(self, record, path: Sequence[int]) -> None:
++        """``forward.commit`` in place of the last verify's accepted ``path``, as one replay: the path's rows, its
++        length, the conv rows to keep and the stream's position are staged on the device. The attention layers take
++        all the window's rows at [pos, pos + width): rows past the path land past the committed end, where nothing
++        reads them before a later commit writes them. Falls back to ``commit`` when the window would pass the buffers."""
++
++        st, key = self.st, self.last
++        width = key[0]
++        if record is not self.target[key][2][1] or st.pos + width > st.kv[self._first_attention(record)][0].shape[0]:
++            commit(st, record, path, in_place=True)
++            return
++        entry = self.commits.get(key)
++        linear = [(i, r) for i, r in enumerate(record) if isinstance(r, GDNRecord)]
++        att = [(i, r) for i, r in enumerate(record) if not isinstance(r, GDNRecord)]
++        keep = st.conv[linear[0][0]].shape[0]
++        if entry is None:
++            host = torch.zeros(width + 2 + keep, dtype=torch.int64).pin_memory()
++            dev = host.to(record[0].k.device)
++            rows32 = torch.zeros(width, dtype=torch.int32, device=dev.device)
++            count32 = torch.zeros(1, dtype=torch.int32, device=dev.device)
++            items = [r for _, r in linear]
++            table = deltanet.to_device(deltanet.replay_table([t.k for t in items], [t.v for t in items],
++                                                             [t.g for t in items], [t.beta for t in items],
++                                                             [[st.rec[i] for i, _ in linear]]), torch.int64, dev.device)
++            span = torch.arange(width, dtype=torch.int64, device=dev.device)
++
++            def run():
++                rows, count, pick, pos = dev[:width], dev[width:width + 1], dev[width + 1:width + 1 + keep], dev[-1:]
++                rows32.copy_(rows)
++                count32.copy_(count)
++                deltanet.replay(table, len(items), 1, rows32.view(1, -1), count32, items[0].k, items[0].v,
++                                in_place=True)
++                olds = [st.conv[i] for i, _ in linear]
++                news = torch.cat([torch.stack(olds), torch.stack([t.qkv for t in items])], dim=1) \
++                    .index_select(1, pick).unbind(0)
++                for (i, _), new in zip(linear, news):
++                    st.conv[i].copy_(new)
++                at = pos + span
++                for i, r in att:
++                    st.kv[i][0].index_copy_(0, at, r.k.index_select(0, rows))
++                    st.kv[i][1].index_copy_(0, at, r.v.index_select(0, rows))
++
++            entry = self.commits[key] = (None, host, dev, run)
++        g, host, dev, run = entry
++        n = len(path)
++        h = host.numpy()
++        h[:n] = path
++        h[n:width] = 0
++        h[width] = n
++        h[width + 1:width + 1 + keep] = list(range(n, keep)) + [keep + r for r in path[max(0, n - keep):]]
++        h[-1] = st.pos
++        dev.copy_(host, non_blocking=True)
++        if g is None:                                   # the first call commits eagerly, then is captured (not run)
++            run()
++            g, _ = self._capture(run)
++            self.commits[key] = (g, host, dev, run)
++        else:
++            g.replay()
++        st.pos += n
++
++    @staticmethod
++    def _first_attention(record) -> int:
++        return next(i for i, r in enumerate(record) if not isinstance(r, GDNRecord))
+diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py w/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
+index 1a940e5..ec05441 100644
+--- c/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
 +++ w/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
 @@ -11,7 +11,7 @@ from tensorfold.cuda import moe
  from tensorfold.cuda.kernels import attention as tree_attention
@@ -2348,7 +2576,25 @@ index 1a940e5..b20ea44 100644
  from tensorfold.families.qwen3_5.cuda.weights import QLinear, Weights
  
  from .weights import MTP
-@@ -104,9 +104,8 @@ class Head:
+@@ -57,14 +57,15 @@ class Staged:
+         self.aoffs = offsets(cache)
+         self.states = torch.zeros((width, hidden), dtype=torch.bfloat16, device=cache.k.device)
+ 
+-    def refresh(self, states: torch.Tensor, tokens: Sequence[int], p0: int) -> None:
++    def refresh(self, states: torch.Tensor | None, tokens: Sequence[int], p0: int) -> None:
+         w, h = self.width, self.host.numpy()
+         h[:w] = tokens
+         h[w:2 * w] = np.arange(p0, p0 + w)
+         h[3 * w + 2] = p0
+         h[3 * w + 3] = -(-(p0 + w) // tree_attention.CHUNK)
+         self.dev.copy_(self.host, non_blocking=True)
+-        self.states.copy_(states)
++        if states is not None:                          # None: a chained step's state is written inside its graph
++            self.states.copy_(states)
+ 
+ 
+ class Head:
+@@ -104,9 +105,8 @@ class Head:
          x = (matmul(en, m.fc_e, exs).float() + matmul(hn, m.fc_h, hxs).float()).to(torch.bfloat16)
          x, h, xs = glue.add_rmsnorm(x, None, m.input_norm, c.eps)
          a = m.attn
@@ -2360,9 +2606,9 @@ index 1a940e5..b20ea44 100644
          q, key = glue.attn_prep(qg, key, a.q_norm, a.k_norm, pos, w.inv_freq, c.eps, heads=c.heads,
                                  kv_heads=c.kv_heads, head_dim=c.head_dim)
          key = key.view(n, c.kv_heads, c.head_dim).contiguous()
-diff --git i/src/tensorfold/families/qwen3_5_moe/cuda/weights.py w/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
+diff --git c/src/tensorfold/families/qwen3_5_moe/cuda/weights.py w/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
 index 745bfaa..9c4239a 100644
---- i/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
+--- c/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
 +++ w/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
 @@ -20,12 +20,7 @@ GS = 64
  def dequantize(words: torch.Tensor, scales: torch.Tensor, biases: torch.Tensor, gs: int = GS) -> torch.Tensor:
@@ -2398,7 +2644,7 @@ index 745bfaa..9c4239a 100644
      return Routed(router.to(torch.bfloat16).contiguous(), experts, int(top_k))
  
  
-diff --git i/tests/cuda/test_experts_lowbit.py w/tests/cuda/test_experts_lowbit.py
+diff --git c/tests/cuda/test_experts_lowbit.py w/tests/cuda/test_experts_lowbit.py
 new file mode 100644
 index 0000000..d647e15
 --- /dev/null
@@ -2509,7 +2755,7 @@ index 0000000..d647e15
 +    narrow, full = pair(2, 3)
 +    # a block: 2 * bits words a lane (4-bit: 8), then 32 words of scales and biases
 +    assert (narrow.up.shape[-1], narrow.down.shape[-1], full.up.shape[-1]) == (160, 224, 288)
-diff --git i/tests/cuda/test_experts_split.py w/tests/cuda/test_experts_split.py
+diff --git c/tests/cuda/test_experts_split.py w/tests/cuda/test_experts_split.py
 new file mode 100644
 index 0000000..c28ce0d
 --- /dev/null
@@ -2567,7 +2813,7 @@ index 0000000..c28ce0d
 +        monkeypatch.setattr(experts, "SPLIT", split)
 +        got = run(ex, x, picks)
 +        assert torch.equal(got[0], want[0]) and torch.equal(got[1], want[1]), split
-diff --git i/tests/cuda/test_moe_decode_path.py w/tests/cuda/test_moe_decode_path.py
+diff --git c/tests/cuda/test_moe_decode_path.py w/tests/cuda/test_moe_decode_path.py
 new file mode 100644
 index 0000000..0476ecd
 --- /dev/null
@@ -2654,7 +2900,7 @@ index 0000000..0476ecd
 +        xs.copy_(x * s)
 +        graph.replay()
 +        assert torch.equal(out, w), s
-diff --git i/tests/cuda/test_moe_router.py w/tests/cuda/test_moe_router.py
+diff --git c/tests/cuda/test_moe_router.py w/tests/cuda/test_moe_router.py
 new file mode 100644
 index 0000000..d62abd4
 --- /dev/null
@@ -2690,7 +2936,7 @@ index 0000000..d62abd4
 +        for _ in range(4):
 +            x = torch.randn((rows, d), device="cuda", generator=g).to(torch.bfloat16)
 +            assert torch.equal(moe.router(x, w).view(torch.int32), _old(x, w).view(torch.int32)), (ne, rows)
-diff --git i/tests/cuda/test_moe_select.py w/tests/cuda/test_moe_select.py
+diff --git c/tests/cuda/test_moe_select.py w/tests/cuda/test_moe_select.py
 new file mode 100644
 index 0000000..3c3dfc8
 --- /dev/null
@@ -2736,7 +2982,7 @@ index 0000000..3c3dfc8
 +        assert torch.equal(a.plan.counts, b.plan.counts), rows
 +        n = int(a.plan.counts[0])
 +        assert torch.equal(a.plan.items[:n], b.plan.items[:n]), rows
-diff --git i/tests/cuda/test_qmm_seg.py w/tests/cuda/test_qmm_seg.py
+diff --git c/tests/cuda/test_qmm_seg.py w/tests/cuda/test_qmm_seg.py
 new file mode 100644
 index 0000000..f9327d5
 --- /dev/null
@@ -2837,7 +3083,40 @@ index 0000000..f9327d5
 +        xs = qmm.group_sums(x)
 +        for f32 in (False, True):
 +            assert _same(qmm.matmul(x, q, xs, f32=f32), _old(x, q, xs, f32)), (m, f32)
-diff --git i/tests/cuda/test_qwen36_moe_arena.py w/tests/cuda/test_qwen36_moe_arena.py
+diff --git c/tests/cuda/test_qwen36_moe.py w/tests/cuda/test_qwen36_moe.py
+index 68d0243..7a13bf6 100644
+--- c/tests/cuda/test_qwen36_moe.py
++++ w/tests/cuda/test_qwen36_moe.py
+@@ -154,6 +154,28 @@ def test_graph_replays_equal_eager_rounds(sampling):
+     assert runner.target and runner.mtp                  # captured once, replayed by the later requests
+ 
+ 
++@pytest.mark.parametrize("chain,commit_graph,follow", [(False, False, False), (True, False, False),
++                                                       (True, True, False), (True, True, True)])
++@pytest.mark.parametrize("sampling", [None, Sampling(1234, 1.0, 20, 0.95)])
++def test_host_free_rounds_equal_serial(monkeypatch, chain, commit_graph, follow, sampling):
++    """Greedy drafts chained on the device, the path committed by a replay, and the verify launched behind the chain
++    (all drafts, no confidence cut) keep serial decoding's tokens, request after request."""
++
++    from tensorfold.families.qwen3_5_moe.cuda.graphs import Graphs
++
++    monkeypatch.setattr(decode, "CHAIN", chain)
++    monkeypatch.setattr(decode, "COMMIT_GRAPH", commit_graph)
++    monkeypatch.setattr(decode, "FOLLOW", follow)
++    w, head = _model()
++    runner = Graphs(w, head, 128)
++    for prompt in (PROMPTS[1], PROMPTS[0], PROMPTS[1]):
++        st, mc, first, carry = decode.prefill(w, head, prompt, sampling)
++        res = decode.mtp_decode(w, head, st, mc, carry, first, 40, sampling, depth=3, confidence=0.3, runner=runner)
++        assert res.tokens == _serial(w, prompt, sampling, 40)
++    assert bool(runner.commits) == commit_graph
++    assert bool(runner.chains) == (chain and sampling is None)
++
++
+ @pytest.mark.parametrize("expandable", [False, True])
+ @pytest.mark.parametrize("sampling", [None, Sampling(1234, 1.0, 20, 0.95)])
+ def test_graphs_recapture_after_the_buffers_grow(expandable, sampling):
+diff --git c/tests/cuda/test_qwen36_moe_arena.py w/tests/cuda/test_qwen36_moe_arena.py
 new file mode 100644
 index 0000000..3d6f95d
 --- /dev/null

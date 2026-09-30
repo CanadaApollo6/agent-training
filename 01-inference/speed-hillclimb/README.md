@@ -691,3 +691,55 @@ matched with no window limit.
   rounds are already efficient, so that helps rather than hurts.
 
 Results: `tensorfold/results/copy-rounds-3090-r2.txt`, `copy-windows-3090-r2.txt`, `copy-windows-stop-eos-3090-r2.txt`.
+
+### Decode without waiting on the host
+
+Riel runs models next to other work, so decode shouldn't stall when the CPU is busy. Each round, the host drove the
+draft loop step by step, with three waits per draft (`.item()` on the pick, the id and the probability), and then
+committed the accepted path through ~60 small eager launches. The GPU sat idle whenever the host was slow.
+
+**Where the GPU waited.** `gaps` (a throwaway script, not kept) lined up the profiler's kernel timeline with host
+phases (512 greedy tokens, 172 rounds). GPU busy time was 1,055 ms either way. Idle time was 211 ms quiet and
+460 ms with 18 busy processes on the 20 cores. By phase, quiet → loaded, ms a round:
+
+| GPU idle while the host was in | Before | After all three changes |
+|---|---|---|
+| `commit` (eager launches) | 0.62 → 1.43 | gone |
+| verify (the round trip after the drafts) | 0.35 → 0.55 | gone for draft rounds |
+| draft chain | 0.19 → 0.43 | 0.04 → 0.05 |
+| total idle | 211 → 460 ms | 99 → 120 ms |
+
+(The "after" totals were measured before the third change, so they're an upper bound.)
+
+**Three changes, all in TensorFold's graph runner (`Graphs`):**
+1. **Chained drafts** (`Graphs.chain`, `decode.CHAIN`): the greedy draft steps in one graph. Each step's argmax is
+   written into the next step's token buffer on the device. One wait a chain instead of three a step.
+2. **Commit graph** (`Graphs.commit`, `decode.COMMIT_GRAPH`): the accepted path's commit is one replay per verify shape.
+   The path's rows, its length, the conv rows to keep and the stream position are staged on the device. Attention
+   layers copy all of the window's rows at the position. Rows past the path land past the committed end, where
+   nothing reads them before the next commit overwrites them. It falls back to eager when the window would pass the
+   buffers.
+3. **Verify follows the chain** (`decode.FOLLOW`): the verify replay is launched right behind the chain, with the
+   drafts copied on the device. The host reads them only when it waits for the verify's samples. The cost: greedy
+   now always verifies all 3 drafts (no confidence cut). That's 9% of greedy rounds, and they're cheap rows.
+
+**Results** (`tensorfold/chain_ab.py`, R2, in-process and interleaved, 6 prompts × 1,024 tokens × 2 reps; outputs
+identical in every variant):
+
+| Host | Step by step | Chained + commit graph | + verify follows |
+|---|---|---|---|
+| Quiet (greedy) | 548.6 tok/s | 585.7 (+6.8%) | 584.5 (+6.5%) |
+| 18 busy processes (greedy) | 427.4 | 481.2 (+12.6%) | 552.2 (+29.2%) |
+| Quiet, temperature 1 (commit graph only applies) | 398.7 | 427.0 (+7.1%) | 428.4 (+7.5%) |
+
+- Host load used to cost 22% of greedy decode (549 → 427). Now it costs 5% (585 → 552).
+- Chaining alone measured +1% quiet and +5.6% loaded in its first run, then 0 in the next. Its value is in letting
+  the verify follow without a wait.
+- **Predictions (Claude, before building):** +10% loaded and 3-5% quiet for the draft chain. The chain alone was
+  about 0. The commit graph wasn't in the plan: the profile found it. Letting the verify follow the chain, predicted
+  at +3-4%, gave 0 quiet and +15 points loaded. Riel gave no prediction and said predictions aren't the point for
+  now; getting Ornith 35B working well locally is.
+- Tests: 169 CUDA tests pass. A new one, `test_host_free_rounds_equal_serial`, checks every switch combination at
+  confidence 0.3, greedy and sampled, against serial decoding.
+- The sampled path still drafts step by step. It picks drafts with keyed Gumbel noise on the host (`choose_rows`).
+  Moving that onto the device is the next piece if temperature-1 speed under load matters.
