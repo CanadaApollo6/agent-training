@@ -138,11 +138,48 @@ The timeouts are not long thinking. They hit only git-multibranch and rstan-to-p
 In each, the model's own calls took at most 13 of the 60 minutes. The rest went outside model calls, to a tool command
 or sandbox step that never returned. That is still worth a look, but it's not about length.
 
-**Open confound: engine and bits move together.** Both long builds run on TensorFold, and both short ones on llama.cpp.
-TensorFold's sampling or chat-template handling could add length whatever the bits. A 4-bit TensorFold build would
-separate the two:
-- If it runs ~1.2× like Q4_K_M, the length comes from the low bits.
-- If it runs ~1.7×, the engine is the cause.
+**Engine vs bits: what's ruled out.** Both long builds run on TensorFold, and both short ones on llama.cpp. Three checks:
+- **Sampling is the same.** Both servers default to temperature 1.0, top_k 20, top_p 0.95 with no min_p, and pi sends
+  only `max_tokens`.
+- **Prompts are the same** (`length_replay.py prompts`, no GPU). Both engines render earlier turns' thinking into the
+  history:
+  - TensorFold's recorded prompt sizes match renders that keep the thinking.
+  - llama-server reports only uncached prompt tokens. Its cache hits match the thinking kept in 38 of 40 turns, and
+    miss by ~10K tokens every time if it were dropped.
+- **Single-turn reasoning doesn't get longer on TensorFold.** On the reasoning probe, matched on problems both builds
+  solved:
+
+  | Build | Engine | Length vs Q8 | 95% CI |
+  |---|---|---|---|
+  | MLX 4-bit | TensorFold | 1.07× | 0.97–1.19 |
+  | R1 | TensorFold | 1.09× | 0.89–1.30 |
+  | Q4_K_M | llama.cpp | 1.17× | 1.05–1.30 |
+  | experts 2-bit | llama.cpp | 1.32× | 1.20–1.47 |
+
+  So the 1.7× only shows up in agent runs.
+
+**Replay at fixed context** (`length_replay.py replay`, 13 minutes on the 3090):
+- 38 recorded turns from Q8's runs and 38 from R1's, 2 per task, prompts up to 32K tokens.
+- Each was sent again to R1 twice, and only the next turn was generated.
+
+| Prefixes from | R1's replayed turn vs the recorded turn | 95% CI |
+|---|---|---|
+| Q8's runs | 1.02× | — |
+| R1's own runs (control) | 0.85× | 0.66–1.11 |
+| Q8 relative to the control | 1.20× | 0.91–1.67 |
+
+- **At Q8's contexts, R1 writes about what Q8 wrote.** It's 1.02× raw, and 1.20× measured against the control, which
+  is within noise.
+- **At R1's own contexts, R1 now writes less than it did in the live eval,** at 0.85×. The median turn is 266 tokens
+  replayed vs 362 recorded. The prompts match token for token (median difference 0).
+
+In the replay, every prompt is prefilled from scratch. In the live eval, most turns continued from state in the cache:
+rows the model had generated itself, restored prefixes and RAM swap-ins. The engine is meant to make those exactly equal
+to a fresh prefill; the unit tests check that on a tiny model, not on R1. The control's interval still includes 1,
+so this is a lead, not a finding.
+
+The decisive check is greedy and bit-exact. Run a multi-turn conversation through the live cache path, then send the
+same last prompt cold. Any divergence in tokens is a bug in the serving path.
 
 ## So far
 
@@ -156,9 +193,8 @@ separate the two:
 
 ## Next
 
-- Split R1's extra length between bits and engine: a 4-bit TensorFold build (~19 GB), or the same agent turns
-  replayed through each build offline. Only a bits cause makes a length fix inside the model (latent thinking) the
-  right target.
+- Greedy multi-turn check on R1: live cache/swap path vs a cold prefill, token for token. If they match, R1's extra
+  length comes from compounding over whole runs, not from wordier turns or the engine.
 - Find what hangs git-multibranch and rstan-to-pystan for the full hour on the local runs.
 - More tasks or several attempts each before calling a harness winner. pi's lead is suggestive, not significant.
 - Fix the budget in tokens rather than wall-clock, or serve with vLLM, which batches MoE decode far better than
