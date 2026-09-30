@@ -170,6 +170,32 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   logs and [learner checkpoints](https://huggingface.co/nourya-cohen/solomonoff-paper) (100K–24M, Llama-style),
   but not the self-play loop (generator, interpreter, reward). A toy reproduction fits Module 3 (and the 3090),
   with their checkpoints as the yardstick. The reward design fits Module 4, next to Ornith's task proposer.
+- [Recursive Multi-Agent Systems](https://arxiv.org/abs/2604.25917) (Zou, Pan, Qiu, Lu, Diao, Jiang, Tong, Zhang,
+  Buehler, He, J. Zou; April 2026, revised July 2026; [site](https://recursivemas.github.io/),
+  [code](https://github.com/RecursiveMAS/RecursiveMAS) (MIT), [checkpoints and data](https://huggingface.co/RecursiveMAS)).
+  - Frozen off-the-shelf models (1–9B: Qwen2.5-Math, Qwen3/3.5, Llama 3.2, Gemma 3) pass last-layer hidden states to
+    each other instead of text, through a small trained two-layer residual "RecursiveLink" (~13M parameters).
+    - The inner link feeds a model's own hidden state back in as its next input embedding, a latent "thought" in the
+      style of Coconut.
+    - The outer link maps one model's hidden size to the next one's. The last model loops back to the first, and only
+      the final round decodes text.
+  - Training runs in two loops. The inner loop regresses latent thoughts toward the embedding distribution. The outer
+    loop unrolls all rounds and backpropagates the final answer's cross-entropy through the frozen models.
+  - Claimed results, over 9 benchmarks (math, science, medicine, search, code) with gold answers:
+    - +8.3% average accuracy over text-based multi-agent baselines
+    - 35–76% fewer tokens
+    - 1.2–2.4× faster
+    - about $4 of training per system
+  - **For us:** the baselines are small-model text teams, not one strong model, and the tasks are single-answer QA,
+    not multi-turn tool use.
+    - It isn't a quantization or a build. Latent rounds need an engine that passes hidden states, and there's no
+      OpenAI-style text or tool-call API in the middle.
+    - The inner link is the relevant piece. R2 reasons 40–50% longer than Q8, and a latent thought could shorten that
+      thinking.
+    - Trying it on Ornith would mean training the link against the bf16 model on a pod (a hybrid GDN/MoE, which the
+      paper never uses). Serving would need TensorFold to prefill embeddings instead of token ids.
+    - Worth trying only after the R1/R2 agent evals show whether reasoning length, not quality, is what holds a
+      low-bit build back.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
 - [WorkflowEvals](https://evals.typesafe.ai/) (TypeSafe, the company behind Jev;
   [code](https://github.com/typesafe-ai/WorkflowEvals), Apache 2.0;
