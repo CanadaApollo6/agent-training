@@ -8,7 +8,7 @@ SWAP=${SWAP_GIB:-8}
 cd "$(dirname "$0")/../../01-inference/envs/tensorfold"
 H=../../speed-hillclimb/tensorfold
 TMPDIR=$HOME/.cache/tf-tmp TENSORFOLD_NO_UPDATE_CHECK=1 CUDA_HOME=/opt/cuda PATH=/opt/cuda/bin:$PATH \
-  TENSORFOLD_CUDA_RESERVE_GIB=0.3 TF_GPU_ONLY_BUDGET=1 TF_RANDOM_SEED=1 \
+  TENSORFOLD_CUDA_RESERVE_GIB=0.3 TF_GPU_ONLY_BUDGET=1 TF_RANDOM_SEED=1 TF_PASS_UNKNOWN_TOOLS=1 \
   nohup systemd-run --user --scope -q -p MemoryMax=$((14 + ${SWAP%.*}))G -p MemorySwapMax=0 uv run python $H/serve_kernels.py new serve \
   "${MODEL:-$HOME/models/ornith/r2}" --name "${NAME:-ornith35b-r2}" --context 131072 --port 8000 --prompt-cache-gib 0 --swap-gib "$SWAP" \
   > /tmp/serve-r2-evals.log 2>&1 &

@@ -1,0 +1,24 @@
+diff --git i/src/tensorfold/cuda/reply_text.py w/src/tensorfold/cuda/reply_text.py
+index 6fa1026..516707a 100644
+--- i/src/tensorfold/cuda/reply_text.py
++++ w/src/tensorfold/cuda/reply_text.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import json
++import os
+ import re
+ import uuid
+ from typing import Any
+@@ -137,6 +138,11 @@ def parse_tool_calls(text: str, tools: list[dict[str, Any]], *, max_calls: int |
+                 glm = parse_glm_tool_call_block(block, tools, complete=max_calls is not None)
+                 if glm is not None:
+                     name, args = glm
++        # TF_PASS_UNKNOWN_TOOLS=1: a tool the request didn't declare still comes back as a call (as vLLM does), so the
++        # agent answers "unknown tool" and the model can retry; left in the text, it reads as a final answer and ends
++        # the episode (llama.cpp can't produce one at all: its grammar allows only the declared names)
++        if name and os.environ.get("TF_PASS_UNKNOWN_TOOLS") == "1":
++            known.setdefault(str(name).lower(), str(name).strip())
+         if not name or str(name).lower() not in known:
+             if max_calls is None:
+                 residue.append(match.group(0))
