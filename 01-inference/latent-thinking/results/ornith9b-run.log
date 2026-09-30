@@ -1,0 +1,52 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/760 [00:00<?, ?it/s]Loading weights:   0%|          | 1/760 [00:00<01:46,  7.14it/s]Loading weights:   0%|          | 2/760 [00:00<02:37,  4.83it/s]Loading weights:   4%|▍         | 29/760 [00:00<00:09, 80.27it/s]Loading weights:   6%|▋         | 49/760 [00:00<00:06, 114.89it/s]Loading weights:  10%|█         | 79/760 [00:00<00:04, 165.42it/s]Loading weights:  13%|█▎        | 99/760 [00:00<00:03, 174.55it/s]Loading weights:  17%|█▋        | 129/760 [00:00<00:02, 210.79it/s]Loading weights:  20%|██        | 153/760 [00:01<00:02, 203.75it/s]Loading weights:  24%|██▍       | 186/760 [00:01<00:02, 231.28it/s]Loading weights:  28%|██▊       | 211/760 [00:01<00:02, 219.25it/s]Loading weights:  32%|███▏      | 240/760 [00:01<00:02, 234.71it/s]Loading weights:  35%|███▍      | 265/760 [00:01<00:02, 232.19it/s]Loading weights:  38%|███▊      | 291/760 [00:01<00:02, 228.26it/s]Loading weights:  41%|████▏     | 315/760 [00:01<00:01, 223.43it/s]Loading weights:  46%|████▌     | 346/760 [00:01<00:01, 240.68it/s]Loading weights:  49%|████▉     | 371/760 [00:01<00:01, 241.61it/s]Loading weights:  52%|█████▎    | 399/760 [00:02<00:01, 246.81it/s]Loading weights:  56%|█████▌    | 424/760 [00:02<00:01, 230.63it/s]Loading weights:  85%|████████▌ | 647/760 [00:02<00:00, 773.89it/s]Loading weights: 100%|██████████| 760/760 [00:02<00:00, 326.64it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `causal_conv1d_update` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+   discrete: step 0, 40 thinking, 0 done, 2 s
+   discrete: step 1000, 24 thinking, 7 done, 50 s
+   discrete: step 2000, 18 thinking, 20 done, 112 s
+   discrete: step 3000, 16 thinking, 22 done, 187 s
+   discrete: step 4000, 13 thinking, 26 done, 276 s
+   discrete: step 5000, 13 thinking, 27 done, 378 s
+   discrete: step 6000, 11 thinking, 27 done, 493 s
+   discrete: step 7000, 11 thinking, 29 done, 622 s
+   discrete: step 8000, 10 thinking, 30 done, 764 s
+   discrete: step 9000, 10 thinking, 30 done, 920 s
+   discrete: step 10000, 9 thinking, 31 done, 1090 s
+   discrete: step 11000, 8 thinking, 31 done, 1273 s
+   discrete: step 12000, 8 thinking, 32 done, 1470 s
+   discrete: step 13000, 6 thinking, 32 done, 1682 s
+   discrete: step 14000, 5 thinking, 34 done, 1908 s
+   discrete: step 15000, 0 thinking, 36 done, 2149 s
+{"label": "ornith9b", "mode": "discrete", "n": 40, "correct": 35, "median_think_steps": 1377, "mean_think_steps": 4503.15, "ended": {"model": 35, "cold": 0, "cap": 5, "never": 0}, "seconds": 2273}
+   soft: step 0, 40 thinking, 0 done, 2 s
+   soft: step 1000, 24 thinking, 8 done, 51 s
+   soft: step 2000, 18 thinking, 18 done, 113 s
+   soft: step 3000, 14 thinking, 22 done, 189 s
+   soft: step 4000, 12 thinking, 26 done, 279 s
+   soft: step 5000, 12 thinking, 28 done, 382 s
+   soft: step 6000, 12 thinking, 28 done, 498 s
+   soft: step 7000, 8 thinking, 28 done, 627 s
+   soft: step 8000, 4 thinking, 32 done, 770 s
+   soft: step 9000, 4 thinking, 36 done, 927 s
+   soft: step 10000, 2 thinking, 38 done, 1097 s
+   soft: step 11000, 2 thinking, 38 done, 1281 s
+   soft: step 12000, 2 thinking, 38 done, 1479 s
+   soft: step 13000, 0 thinking, 38 done, 1691 s
+{"label": "ornith9b", "mode": "soft", "n": 40, "correct": 34, "median_think_steps": 1856, "mean_think_steps": 3350.55, "ended": {"model": 34, "cold": 6, "cap": 0, "never": 0}, "seconds": 1706}
+   gumbel: step 0, 40 thinking, 0 done, 2 s
+   gumbel: step 1000, 25 thinking, 8 done, 51 s
+   gumbel: step 2000, 17 thinking, 19 done, 113 s
+   gumbel: step 3000, 15 thinking, 24 done, 189 s
+   gumbel: step 4000, 12 thinking, 26 done, 279 s
+   gumbel: step 5000, 10 thinking, 28 done, 381 s
+   gumbel: step 6000, 10 thinking, 30 done, 497 s
+   gumbel: step 7000, 9 thinking, 30 done, 626 s
+   gumbel: step 8000, 7 thinking, 31 done, 770 s
+   gumbel: step 9000, 5 thinking, 33 done, 926 s
+   gumbel: step 10000, 2 thinking, 35 done, 1097 s
+   gumbel: step 11000, 2 thinking, 38 done, 1281 s
+   gumbel: step 12000, 1 thinking, 38 done, 1479 s
+   gumbel: step 13000, 1 thinking, 39 done, 1692 s
+   gumbel: step 14000, 1 thinking, 39 done, 1919 s
+{"label": "ornith9b", "mode": "gumbel", "n": 40, "correct": 35, "median_think_steps": 1605, "mean_think_steps": 3402.525, "ended": {"model": 34, "cold": 5, "cap": 1, "never": 0}, "seconds": 2129}
