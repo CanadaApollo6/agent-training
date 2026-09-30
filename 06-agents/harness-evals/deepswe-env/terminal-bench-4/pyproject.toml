@@ -1,0 +1,10 @@
+[project]
+name = "terminal-bench-4"
+version = "0.1.0"
+description = "The harbor taskset pinned to Terminal-Bench 4 (terminal-bench/terminal-bench@4.0.0 on Harbor Hub)"
+requires-python = ">=3.12"
+dependencies = ["verifiers"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
