@@ -649,3 +649,45 @@ those apps open (median of 3, 256 tokens, R2 131K):
 - The 16-row rounds are the expensive ones: 170 µs a layer in experts, against 60 at 4 rows. They're 15% of rounds
   on these prompts. If they get cheaper, it should be through the copy window's size or the 16-row kernels, not the
   shared expert.
+
+### The 16-row verify rounds: copied continuations
+
+A 16-row round comes from the copy proposer. When the last 8 tokens occurred earlier in the context, it proposes the
+next 15 tokens that followed them then, in place of the MTP drafts. `tensorfold/copy_rounds.py` times each round and
+tags it copy or draft (R2, in-process, the 6 prompts × 1,024 tokens). It also records how far each copy would have
+matched with no window limit.
+
+- **Prediction (Claude, before measuring):** copy rounds keep ~6 tokens on average, a mix of full hits and early
+  misses, so per millisecond they're about even with draft rounds. **Wrong.** They keep 10.7 tokens (greedy), and
+  more than half are full 16-token hits. Per millisecond, they're the best rounds there are:
+
+| Round (greedy, run to 1,024 tokens) | Share of time | Tokens kept | ms | Tokens/ms |
+|---|---|---|---|---|
+| copy, 16 rows | 21.7% | 10.71 | 10.31 | 1.04 |
+| draft, 4 rows | 70.9% | 3.03 | 6.91 | 0.44 |
+| draft, 3 rows | 4.9% | 1.90 | 6.10 | 0.31 |
+| draft, 2 rows | 2.3% | 1.19 | 5.26 | 0.23 |
+
+- **A 16-row round is bound by bandwidth, not wasted work.** 16 rows × 8 routed experts touch ~100 of a layer's 256
+  experts, ~1.1 MB each in R2. That's ~115 MB a layer, ~130 µs at 870 GB/s, against 170 µs measured. Not much to take.
+- **Wider windows (24 and 32 rows, interleaved, greedy text identical): no gain.** Past 16 rows, verify leaves the
+  ≤16-row fast paths: 24 rows costs 14.8 ms, nearly the 32-row 16.4 ms. The 32-row copy rounds are a bit better
+  per millisecond (1.09 against 1.04 tokens/ms), but they're ~20% of the time, and the whole run moved within noise
+  (547, 519 and 524 tok/s for 16, 24 and 32).
+- **The benchmark inflates copying.** It forces 1,024 tokens and ignores the end of the answer, so the model runs on
+  and repeats itself. With no limit, greedy copies would have matched for a mean of 86 tokens, and 120 of 466 for
+  more than 128. Stopping at the answer's end (`--stop-eos`), copy rounds fall to 15.5% of greedy time and 8.6% at
+  temperature 1, where copies would match 17 tokens on average. Some greedy answers still loop to the 1,024 cap.
+  That's greedy decoding repeating itself, not text worth copying.
+- **Gating out copy misses: ≤2.3% even with an oracle.** About a third of copy rounds keep ≤4 tokens, at 0.22
+  tokens/ms, half a draft round's rate. Replacing every one of them with draft rounds would save ~0.39 s of 16.7 s.
+  A real gate (say, the copy's first token has to agree with the MTP draft) would catch only some, so ~1%.
+  Not built.
+- **Verdict: the verify rounds aren't a lever.** Copy rounds already pay 2.4× what a draft round pays, and they're
+  near their bandwidth floor. The mass is the 4-row draft round: 71-78% of time, and it's where host load shows up.
+  On one run to the next, the same 4-row round cost 6.9 to 8.4 ms as the load average moved. That points at the draft
+  loop's host syncs, the next lever.
+- Agent work (editing a file it just read, repeating tool output) should copy more than these prompts do. The copy
+  rounds are already efficient, so that helps rather than hurts.
+
+Results: `tensorfold/results/copy-rounds-3090-r2.txt`, `copy-windows-3090-r2.txt`, `copy-windows-stop-eos-3090-r2.txt`.

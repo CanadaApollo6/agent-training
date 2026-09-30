@@ -1,0 +1,26 @@
+== greedy, copy window 16 rows: 7652 tokens, 457.6 tok/s over 16.72 s
+  copy  width 16:  238 rounds (15.5% of time)  kept  8.76 tokens  10.56 ms  0.829 tokens/ms  kept hist {1: 28, 2: 8, 3: 30, 4: 16, 5: 20, 6: 18, 7: 20, 8: 2, 10: 2, 15: 2, 16: 92}
+  draft width  2:   72 rounds ( 2.4% of time)  kept  1.25 tokens   5.40 ms  0.231 tokens/ms  kept hist {1: 54, 2: 18}
+  draft width  3:  134 rounds ( 5.4% of time)  kept  1.96 tokens   6.57 ms  0.298 tokens/ms  kept hist {1: 30, 2: 80, 3: 24}
+  draft width  4: 1688 rounds (76.5% of time)  kept  3.06 tokens   7.33 ms  0.418 tokens/ms  kept hist {1: 204, 2: 288, 3: 396, 4: 800}
+  copies matching unbounded (240): mean 113.3 tokens  {'1-1': 8, '2-4': 68, '5-8': 22, '9-15': 4, '16-16': 0, '17-24': 2, '25-32': 2, '33-48': 2, '49-64': 2, '65-128': 20, '129-4096': 82}
+== greedy, copy window 32 rows: 7652 tokens, 423.6 tok/s over 18.06 s
+  copy  width 32:  132 rounds (12.1% of time)  kept 15.41 tokens  15.98 ms  0.964 tokens/ms  kept hist {1: 24, 2: 4, 3: 12, 4: 14, 5: 14, 7: 2, 8: 2, 10: 2, 15: 2, 20: 2, 28: 2, 32: 52}
+  draft width  2:   72 rounds ( 2.6% of time)  kept  1.25 tokens   6.36 ms  0.197 tokens/ms  kept hist {1: 54, 2: 18}
+  draft width  3:  134 rounds ( 5.1% of time)  kept  1.96 tokens   6.62 ms  0.295 tokens/ms  kept hist {1: 30, 2: 80, 3: 24}
+  draft width  4: 1688 rounds (78.5% of time)  kept  3.06 tokens   8.10 ms  0.378 tokens/ms  kept hist {1: 204, 2: 288, 3: 396, 4: 800}
+  copies matching unbounded (152): mean 63.7 tokens  {'1-1': 8, '2-4': 64, '5-8': 4, '9-15': 4, '16-16': 0, '17-24': 2, '25-32': 0, '33-48': 0, '49-64': 2, '65-128': 8, '129-4096': 28}
+  greedy outputs identical across windows: True
+== temperature 1, copy window 16 rows: 9484 tokens, 372.4 tok/s over 25.47 s
+  copy  width 16:  186 rounds ( 8.6% of time)  kept  8.33 tokens  11.46 ms  0.727 tokens/ms  kept hist {1: 30, 2: 16, 3: 26, 4: 16, 5: 2, 6: 6, 7: 6, 8: 2, 9: 4, 10: 2, 11: 4, 13: 2, 14: 2, 16: 68}
+  draft width  2:  346 rounds ( 9.0% of time)  kept  1.36 tokens   6.46 ms  0.210 tokens/ms  kept hist {1: 222, 2: 124}
+  draft width  3:  480 rounds (14.4% of time)  kept  2.01 tokens   7.47 ms  0.269 tokens/ms  kept hist {1: 80, 2: 314, 3: 86}
+  draft width  4: 1994 rounds (67.9% of time)  kept  3.24 tokens   8.45 ms  0.383 tokens/ms  kept hist {1: 154, 2: 276, 3: 504, 4: 1060}
+  copies matching unbounded (188): mean 16.6 tokens  {'1-1': 16, '2-4': 62, '5-8': 32, '9-15': 14, '16-16': 0, '17-24': 22, '25-32': 4, '33-48': 0, '49-64': 0, '65-128': 2, '129-4096': 10}
+== temperature 1, copy window 32 rows: 9484 tokens, 369.4 tok/s over 25.68 s
+  copy  width 19:    6 rounds ( 0.3% of time)  kept  3.00 tokens  14.08 ms  0.213 tokens/ms  kept hist {2: 4, 5: 2}
+  copy  width 32:  130 rounds ( 8.7% of time)  kept 11.62 tokens  16.83 ms  0.690 tokens/ms  kept hist {1: 28, 2: 12, 3: 20, 4: 8, 6: 4, 7: 6, 8: 4, 9: 2, 13: 2, 14: 2, 19: 6, 20: 2, 25: 2, 26: 2, 27: 4, 32: 26}
+  draft width  2:  346 rounds ( 9.1% of time)  kept  1.36 tokens   6.61 ms  0.206 tokens/ms  kept hist {1: 222, 2: 124}
+  draft width  3:  480 rounds (14.5% of time)  kept  2.01 tokens   7.55 ms  0.267 tokens/ms  kept hist {1: 80, 2: 314, 3: 86}
+  draft width  4: 1994 rounds (66.7% of time)  kept  3.24 tokens   8.38 ms  0.386 tokens/ms  kept hist {1: 154, 2: 276, 3: 504, 4: 1060}
+  copies matching unbounded (146): mean 12.3 tokens  {'1-1': 16, '2-4': 42, '5-8': 22, '9-15': 8, '16-16': 0, '17-24': 20, '25-32': 4, '33-48': 0, '49-64': 0, '65-128': 2, '129-4096': 4}

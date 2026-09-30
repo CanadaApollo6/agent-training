@@ -1,0 +1,15 @@
+== greedy
+  copy  width 10:    1 rounds ( 0.1% of time)  kept 10.00 tokens   7.74 ms  1.291 tokens/ms  kept hist {10: 1}
+  copy  width 13:    1 rounds ( 0.1% of time)  kept  3.00 tokens   9.80 ms  0.306 tokens/ms  kept hist {3: 1}
+  copy  width 16:  231 rounds (21.2% of time)  kept 10.71 tokens  10.52 ms  1.018 tokens/ms  kept hist {1: 20, 2: 6, 3: 25, 4: 9, 5: 11, 6: 12, 7: 11, 8: 2, 10: 2, 11: 2, 12: 3, 13: 1, 14: 4, 15: 3, 16: 120}
+  draft width  2:   48 rounds ( 2.4% of time)  kept  1.19 tokens   5.74 ms  0.207 tokens/ms  kept hist {1: 39, 2: 9}
+  draft width  3:   88 rounds ( 5.0% of time)  kept  1.90 tokens   6.59 ms  0.288 tokens/ms  kept hist {1: 24, 2: 49, 3: 15}
+  draft width  4: 1125 rounds (71.2% of time)  kept  3.03 tokens   7.27 ms  0.417 tokens/ms  kept hist {1: 147, 2: 194, 3: 260, 4: 524}
+== temperature 1
+  copy  width 10:    1 rounds ( 0.1% of time)  kept  1.00 tokens   8.63 ms  0.116 tokens/ms  kept hist {1: 1}
+  copy  width 11:    1 rounds ( 0.1% of time)  kept 11.00 tokens  10.17 ms  1.082 tokens/ms  kept hist {11: 1}
+  copy  width 13:    2 rounds ( 0.1% of time)  kept  2.00 tokens  10.89 ms  0.184 tokens/ms  kept hist {1: 1, 3: 1}
+  copy  width 16:  165 rounds (12.3% of time)  kept  9.20 tokens  11.47 ms  0.802 tokens/ms  kept hist {1: 29, 2: 10, 3: 16, 4: 14, 5: 1, 6: 3, 7: 7, 8: 2, 9: 2, 10: 2, 11: 2, 12: 2, 13: 1, 14: 1, 15: 2, 16: 71}
+  draft width  2:  191 rounds ( 8.3% of time)  kept  1.37 tokens   6.67 ms  0.205 tokens/ms  kept hist {1: 121, 2: 70}
+  draft width  3:  276 rounds (13.8% of time)  kept  2.01 tokens   7.69 ms  0.261 tokens/ms  kept hist {1: 48, 2: 178, 3: 50}
+  draft width  4: 1168 rounds (65.5% of time)  kept  3.23 tokens   8.65 ms  0.374 tokens/ms  kept hist {1: 99, 2: 154, 3: 289, 4: 626}
