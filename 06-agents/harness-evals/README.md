@@ -173,13 +173,28 @@ or sandbox step that never returned. That is still worth a look, but it's not ab
 - **At R1's own contexts, R1 now writes less than it did in the live eval,** at 0.85×. The median turn is 266 tokens
   replayed vs 362 recorded. The prompts match token for token (median difference 0).
 
-In the replay, every prompt is prefilled from scratch. In the live eval, most turns continued from state in the cache:
-rows the model had generated itself, restored prefixes and RAM swap-ins. The engine is meant to make those exactly equal
-to a fresh prefill; the unit tests check that on a tiny model, not on R1. The control's interval still includes 1,
-so this is a lead, not a finding.
+In the replay, every prompt is prefilled from scratch. In the live eval, most turns continued from state in the cache.
+**Live cache vs cold prefill, bit for bit** (`cache_check.py`, `run_cache_check.sh`, under 2 minutes of GPU):
+- 6 of R1's eval conversations were driven through the running server for 6 turns each, taking turns so they pushed
+  each other out.
+- 3 of the conversations were greedy and 3 sampled with fixed seeds.
+- 30 of the 36 requests resumed from the RAM swap, bringing back 127–3,182 tokens each, on top of prefixes kept on
+  the GPU.
+- Then every prompt was generated again in-process from an empty cache.
 
-The decisive check is greedy and bit-exact. Run a multi-turn conversation through the live cache path, then send the
-same last prompt cold. Any divergence in tokens is a bug in the serving path.
+**36 of 36 replies came out identical, token for token, and every prompt matched too.** The serving path doesn't
+change R1's output, so the 0.85× control was sampling noise.
+
+What this covers: contexts up to ~6K tokens, requests one at a time. The eval ran contexts to 50K+ with 4 agents
+queued. The mechanisms are the same, but those sizes weren't run.
+
+**Where R1's extra length comes from.**
+- Not sampling, prompts or the engine.
+- Not wordier turns at the same context: 1.02× Q8's length at Q8's own contexts.
+- It comes from where R1's runs go. Its own runs reach states where it writes more per turn (477 vs 373 tokens a
+  call), and it takes more of them: detours, error recovery, and running out of turns.
+- That points to decision quality from the lower bits. Compressing the model's thinking wouldn't address it, since
+  R1 thinks about as much as Q8 does when they face the same context.
 
 ## So far
 
@@ -193,8 +208,8 @@ same last prompt cold. Any divergence in tokens is a bug in the serving path.
 
 ## Next
 
-- Greedy multi-turn check on R1: live cache/swap path vs a cold prefill, token for token. If they match, R1's extra
-  length comes from compounding over whole runs, not from wordier turns or the engine.
+- Close R1's gap with fidelity rather than shorter thinking. Measure KL against bf16 on agent turns, then give the
+  experts that matter most 4 bits within the 3090's budget. Re-run the eval to check.
 - Find what hangs git-multibranch and rstan-to-pystan for the full hour on the local runs.
 - More tasks or several attempts each before calling a harness winner. pi's lead is suggestive, not significant.
 - Fix the budget in tokens rather than wall-clock, or serve with vLLM, which batches MoE decode far better than
