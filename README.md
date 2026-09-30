@@ -196,6 +196,21 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
       paper never uses). Serving would need TensorFold to prefill embeddings instead of token ids.
     - Worth trying only after the R1/R2 agent evals show whether reasoning length, not quality, is what holds a
       low-bit build back.
+- [CUDA-L2: Surpassing cuBLAS for Matrix Multiplication through RL](https://arxiv.org/abs/2512.02551) (Su, Li, Wang,
+  Wang, Li, Shum; Dec 2025, v4 Aug 2026; [kernels](https://github.com/ornith-ai/CUDA-L2), MIT, under the same
+  `ornith-ai` GitHub org as the Ornith models).
+  - An LLM writes HGEMM kernels, and RL uses measured speed as the reward, across 1,000 (M, N, K) shapes.
+  - Only the kernels are released, not the RL pipeline. That's 3,741 files for A100, RTX 3090 and H100, fp16 inputs
+    with fp16 or fp32 accumulate, and each kernel is tuned for its own GPU.
+  - The 3090 set covers 736 shapes with M ≥ 64. Its own CSV claims 1.21× over `torch.matmul` on average (median
+    1.21×) and 1.13× over cuBLASLt auto-tuning. The gains are biggest on small shapes.
+  - **For us:** it doesn't drop into TensorFold.
+    - Decode runs 1–16 rows over quantized weights and is bound by memory, not math.
+    - Prefill uses our own dequantizing kernels, not fp16 HGEMM, and Ornith runs in bf16.
+    - Worth reading: the 3090 kernels' tiling and pipelining as ideas for `qmm_prefill8`, since prefill (~4,100 tok/s)
+      is what a returning or new long agent turn waits on. Also the method, speed as an RL reward, which is our
+      hand-driven hill-climb automated. That would need their unreleased pipeline, plus our bit-exact gate as a hard
+      constraint.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
 - [WorkflowEvals](https://evals.typesafe.ai/) (TypeSafe, the company behind Jev;
   [code](https://github.com/typesafe-ai/WorkflowEvals), Apache 2.0;
