@@ -3,6 +3,7 @@
 # The model is served by llama-server on the Prime pod, forwarded to 127.0.0.1:8000 over SSH.
 #
 #   ./run_pilot.sh <harness: pi|prime_agent> <label, e.g. ornith9b-q8> [concurrency]
+# Env: PORT (default 8000), ROLLOUTS attempts per task (default 1), TIMEOUT seconds per rollout (default 1800).
 set -euo pipefail
 cd "$(dirname "$0")"
 HARNESS=$1; LABEL=$2; CONC=${3:-4}
@@ -10,8 +11,8 @@ TASKS=$(python3 -c "import json; print(json.dumps(open('tasks.txt').read().split
 export LOCAL_KEY=none
 mkdir -p logs
 uv run vf-eval primeintellect/terminal-bench-2 -m "$LABEL" \
-  --client.base-url http://127.0.0.1:8000/v1 --client.api-key-var LOCAL_KEY \
+  --client.base-url http://127.0.0.1:${PORT:-8000}/v1 --client.api-key-var LOCAL_KEY \
   --env.agent.harness.id "$HARNESS" --env.agent.runtime.type prime --env.taskset.tasks "$TASKS" \
-  --env.agent.max-turns 60 --env.agent.timeout.rollout 1800 \
-  -n 20 -r 1 -c "$CONC" --no-push --no-rich > "logs/$LABEL-$HARNESS.log" 2>&1
+  --env.agent.max-turns 60 --env.agent.timeout.rollout ${TIMEOUT:-1800} \
+  -n 20 -r ${ROLLOUTS:-1} -c "$CONC" --no-push --no-rich > "logs/$LABEL-$HARNESS.log" 2>&1
 grep -E "rollout done" "logs/$LABEL-$HARNESS.log" | sed -E 's/.*task=([0-9]+) reward=([0-9.]+) turns=([0-9]+) stop=([a-z_]+).*/\1 \2 \3 \4/'
