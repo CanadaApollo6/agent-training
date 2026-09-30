@@ -2,6 +2,9 @@
 
     uv run compare_builds.py [--ref q8] [--drop qemu-startup]
 
+Tables: solves per attempt and per task, a paired test against the reference, length on shared solves (geometric mean
+of per-task median solved-run tokens, bootstrap CI), and how the failed runs ended.
+
 A build is a label prefix: its attempts are the output runs ``terminal-bench-2--ornith35b-<build>-a<N>--pi--*``. Runs
 set aside (renamed ``broken-*``) are skipped. Tasks that fail before the agent starts on every build (HarnessError) are
 dropped with ``--drop``. The paired test permutes build labels within each task: it asks whether the per-task solve
@@ -10,6 +13,7 @@ rates differ by more than swapping labels would give.
 import argparse
 import glob
 import json
+import math
 import random
 import re
 import statistics as st
@@ -18,7 +22,8 @@ from pathlib import Path
 OUT = Path(__file__).parent / "outputs" / "primeintellect"
 BUILDS = {"q8": "Q8_0 (pod, llama.cpp)", "q4km": "Q4_K_M (pod, llama.cpp)",
           "r2-c4s": "R2: gate/up 2-bit, down 3-bit (3090, TensorFold)",
-          "r1-c4s": "R1: all experts 3-bit (3090, TensorFold)"}
+          "r1-c4s": "R1: all experts 3-bit (3090, TensorFold)",
+          "r1s-c4s": "R1s: R1 + imatrix-searched 4-bit always-on path (3090, TensorFold)"}
 
 
 def attempts(build):
@@ -75,6 +80,34 @@ def main():
         losses = sum(d < 0 for d in diffs)
         print(f"- {b}: {obs / len(tasks) * 100:+.1f} points a task on average; better on {wins} tasks, worse on "
               f"{losses}; p = {hits / args.perms:.3f}")
+
+    # Length on shared solves: per task, the median output tokens of each build's solved runs, as a ratio to the
+    # reference; geometric mean over tasks both builds solved at least once, 95% bootstrap CI over those tasks.
+    def solved_median(a, t):
+        toks = [run[t]["out"] for run in a.values() if t in run and run[t]["solved"] and run[t]["out"]]
+        return st.median(toks) if toks else None
+    print(f"\n| Build | Solved-run tokens vs {args.ref} | 95% CI | Longer on | Output tokens per call (median run) |")
+    print("|---|---|---|---|---|")
+    for b, a in data.items():
+        runs = [run[t] for run in a.values() for t in tasks if t in run]
+        per_call = st.median(r["out"] / r["turns"] for r in runs if r["turns"] and r["out"])  # a run's tokens per call
+        if b == args.ref:
+            print(f"| {b} | - | - | - | {per_call:.0f} |")
+            continue
+        logs = [math.log(solved_median(a, t) / solved_median(data[args.ref], t)) for t in tasks
+                if solved_median(a, t) and solved_median(data[args.ref], t)]
+        boots = sorted(math.exp(st.mean(rng.choice(logs) for _ in logs)) for _ in range(5000))
+        print(f"| {b} | {math.exp(st.mean(logs)):.2f}x | {boots[125]:.2f}-{boots[4874]:.2f} "
+              f"| {sum(x > 0 for x in logs)} of {len(logs)} tasks | {per_call:.0f} |")
+
+    # How the failed runs ended: a wrong answer (the agent finished), the turn cap, the time cap, or anything else.
+    ends = {"agent_completed": "Gave a wrong answer", "max_turns": "Hit the turn cap", "agent_timeout": "Hit the time cap"}
+    print("\n| Build | " + " | ".join(ends.values()) + " | Other |")
+    print("|---|" + "---|" * (len(ends) + 1))
+    for b, a in data.items():
+        stops = [run[t]["stop"] for run in a.values() for t in tasks if t in run and not run[t]["solved"]]
+        print(f"| {b} | " + " | ".join(str(stops.count(k)) for k in ends)
+              + f" | {sum(x not in ends for x in stops)} |")
 
 
 if __name__ == "__main__":

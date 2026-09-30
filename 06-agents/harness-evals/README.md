@@ -196,21 +196,62 @@ queued. The mechanisms are the same, but those sizes weren't run.
 - That points to decision quality from the lower bits. Compressing the model's thinking wouldn't address it, since
   R1 thinks about as much as Q8 does when they face the same context.
 
+## R1s: the always-on path from the imatrix search
+
+The KL harness (`05-compression/ornith/kl/`) found that R1 loses most of its fidelity in the always-on path (attention,
+linear attention, shared expert), not in the experts. R1s is R1 with those matrices re-quantized at the same 4 bits by
+the imatrix-weighted search. Only the numbers change; size, format and kernels stay the same. It cut KL against bf16
+from 0.260 to 0.229, and on the 3090 it decodes at 95–104% of R1's speed. Same eval as above, on the 3090, three
+attempts (attempt 2 was re-run after the server exited mid-run with no error in its log). `compare_builds.py` makes these
+tables:
+
+| Build | Solved per attempt (of 19) | Mean | vs Q8, task by task | Median output tokens a task |
+|---|---|---|---|---|
+| Q8_0 | 9, 10, 12 | 10.3 (54%) | — | 9.2K |
+| R1 | 12, 8, 9 | 9.7 (51%) | −3.5 points, p = 0.82 | 18.5K |
+| R1s | 11, 10, 9 | 10.0 (53%) | −1.8 points (worse on 3 tasks, better on 4), p = 1.0 | 12.6K |
+
+| Build | Solved-run tokens vs Q8 | 95% CI | Longer on | Output tokens per call (median run) |
+|---|---|---|---|---|
+| R1 | 1.67× | 1.21–2.35 | 10 of 12 tasks | 478 |
+| R1s | 1.28× | 0.92–1.86 | 7 of 13 | 406 |
+
+(Q8 is 374 tokens per call on the same measure. The table above says 373 because of rounding.)
+
+| Build | Gave a wrong answer | Hit 60 turns | Hit 60 min |
+|---|---|---|---|
+| R1 | 10 | 14 | 4 |
+| R1s | 10 | 14 | 3 |
+
+- **Solves hold.** At 10.0 of 19, R1s is within noise of Q8 and R1, as predicted (~10).
+- **Most of R1's extra length is gone.** Solved runs went from 1.67× Q8's tokens to 1.28×, and that CI now includes
+  1.0. Tokens per call fell from 478 to 406. This is better than predicted (~1.5×).
+- **That fits the diagnosis above.** R1's length came from where its runs went, which is decision quality, not wordier
+  turns. Fixing the always-on path is a fidelity fix, and it shortened the runs without touching the thinking.
+- **On the 3090, a solved task costs ~20% less time than on R1.** It needs 0.77× the tokens at 95–104% of the decode
+  speed.
+- **The hour-long hangs are still there.** 5 runs hit 60 minutes: custom-memory-heap-crash twice, git-multibranch
+  twice and rstan-to-pystan once. Two of them still passed the verifier, so the model had finished and something after
+  it never returned.
+- **custom-memory-heap-crash is the task that got worse:** Q8 solved it 3 of 3, R1 1 of 3 and R1s 0 of 3. It's the
+  one to examine first.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
   cost tokens, and its REPL and daemon add failure modes. Its image tool assumes a vision-capable endpoint. None of
   this says what a model trained on prime_agent would do, which is Prime's actual claim.
 - **Model:** 35B-A3B over the 9B for agentic work (11 vs 6 under pi).
-- **Local build:** R1 (all experts 3-bit) is the local build. It is within noise of Q8 on solves, where R2 is 14
-  points behind. It writes ~1.7× Q8's tokens on the same solved tasks, and whether that comes from the bits or from
-  the engine is still open.
+- **Local build:** R1s (all experts 3-bit, imatrix-searched 4-bit always-on path, 15 GB) is the local build. It is
+  within noise of Q8 on solves (10.0 vs 10.3 of 19). It writes 1.28× Q8's tokens on the same solved tasks, down from
+  R1's 1.67×; the engine was ruled out, and fidelity closed most of the gap.
 
 ## Next
 
-- Close R1's gap with fidelity rather than shorter thinking. Measure KL against bf16 on agent turns, then give the
-  experts that matter most 4 bits within the 3090's budget. Re-run the eval to check.
-- Find what hangs git-multibranch and rstan-to-pystan for the full hour on the local runs.
+- Untrained harness baselines, one model per GPU: Ornith 35B, Qwen3.8 27B and Ornith 9B at Q8, each under pi and
+  prime_agent. They run on TB2 (3 attempts), DeepSWE (10 tasks) and Terminal-Bench 4 (20 tasks). This is the "before"
+  for harness training.
+- Find what hangs git-multibranch, rstan-to-pystan and custom-memory-heap-crash for the full hour on the local runs.
 - More tasks or several attempts each before calling a harness winner. pi's lead is suggestive, not significant.
 - Fix the budget in tokens rather than wall-clock, or serve with vLLM, which batches MoE decode far better than
   llama.cpp, so the time limit stops being a hidden token cap.
