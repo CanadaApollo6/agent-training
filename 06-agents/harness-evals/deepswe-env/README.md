@@ -23,3 +23,16 @@ separate verifier sandboxes, 8 h agent timeouts that we override with our own ca
 Hub, which Prime auto-builds from. `tb4_images.jsonl` pre-builds them so the first rollouts don't wait:
 
     uvx prime images push-bulk --manifest tb4_images.jsonl
+
+## Grading all changes, not just commits
+
+Upstream DeepSWE grades only committed work (`pre_artifacts.sh` runs `git diff <base> HEAD`), and each instruction
+says to commit. In the first baselines (2026-09-30) 1 run in 55 even mentioned `git commit`, so every patch was empty
+and every score 0: the verifier graded the untouched repo (all existing tests passed, no new ones). Since then
+`deep_swe_upstream` grades every change the agent made, committed or not (tracked edits plus new files under 1 MB,
+dependency and build caches left out), and records on each trace:
+
+- `committed_bytes` and `worktree_bytes`: the committed diff and the full diff.
+- `committed_all`: 1 when the commit already held everything.
+
+Official score = reward if `committed_all` is 1, else 0. Runs before the change are labelled `-a1`; reruns `-wt1`.
