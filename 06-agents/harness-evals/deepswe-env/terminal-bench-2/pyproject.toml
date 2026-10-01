@@ -1,0 +1,10 @@
+[project]
+name = "terminal-bench-2"
+version = "0.3.1+local"
+description = "The hub's terminal-bench-2 harbor taskset, for this project's newer verifiers (claude_code harness)"
+requires-python = ">=3.12"
+dependencies = ["verifiers"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

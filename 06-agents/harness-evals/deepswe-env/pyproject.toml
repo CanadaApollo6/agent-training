@@ -1,9 +1,9 @@
 [project]
 name = "deepswe-evals"
 version = "0.1.0"
-description = "Harbor tasksets that need newer verifiers (separate verifiers): DeepSWE with our own image copies, and Terminal-Bench 4"
+description = "Harbor tasksets that need newer verifiers (separate verifiers): DeepSWE with our own image copies, Terminal-Bench 4, and Terminal-Bench 2 for the claude_code harness"
 requires-python = ">=3.12,<3.13"
-dependencies = ["deep-swe", "deep-swe-upstream", "terminal-bench-4", "verifiers[harbor] @ git+https://github.com/PrimeIntellect-ai/verifiers@37e459a0"]
+dependencies = ["deep-swe", "deep-swe-upstream", "terminal-bench-2", "terminal-bench-4", "verifiers[harbor] @ git+https://github.com/PrimeIntellect-ai/verifiers@37e459a0"]
 
 [tool.uv]
 package = false
@@ -13,4 +13,5 @@ url = "https://hub.primeintellect.ai/primeintellect/deep-swe/install/simple/"
 
 [tool.uv.sources]
 deep-swe-upstream = { path = "deep-swe-upstream", editable = true }
+terminal-bench-2 = { path = "terminal-bench-2", editable = true }
 terminal-bench-4 = { path = "terminal-bench-4", editable = true }
