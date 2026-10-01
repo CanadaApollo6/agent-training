@@ -5,6 +5,8 @@
 prime-rl drops the MTP head (mtp.*) on load, so the export lacks it; the original's goes back in unchanged, since
 training never touched it. The export must otherwise hold exactly the original's tensors (names, shapes, dtypes), so
 the R1s rebuild reads it like the original. The vision tower and the routers were frozen and must be bit-identical.
+prime-rl keeps a few small tensors in fp32 (DeltaNet's A_log and gated norm) and exports them so; they are rounded back
+to the original's bf16 and their shards rewritten.
 Prints how far each kind of trained tensor moved (relative RMS change), then copies the original's config, chat template
 and tokenizer files over the export's.
 """
@@ -40,12 +42,15 @@ def main():
     extra = sorted(set(ew) - set(ow))
     assert not missing and not extra, f"missing {missing[:5]}, extra {extra[:5]}"
 
-    moved, problems = collections.defaultdict(list), []
+    moved, problems, recast = collections.defaultdict(list), [], {}
     for k in sorted(ew):
         with safe_open(orig / ow[k], "pt") as f:
             t0 = f.get_tensor(k)
         with safe_open(exp / ew[k], "pt") as f:
             t1 = f.get_tensor(k)
+        if t0.shape == t1.shape and (t0.dtype, t1.dtype) == (torch.bfloat16, torch.float32):
+            recast[k] = ew[k]
+            t1 = t1.to(torch.bfloat16)
         if t0.shape != t1.shape or t0.dtype != t1.dtype:
             problems.append(f"{k}: {tuple(t0.shape)} {t0.dtype} -> {tuple(t1.shape)} {t1.dtype}")
             continue
@@ -61,6 +66,13 @@ def main():
     print("relative RMS change per tensor kind (mean, max):")
     for kind, ds in sorted(moved.items()):
         print(f"  {sum(ds) / len(ds):.2e} {max(ds):.2e}  {kind}")
+
+    for shard in sorted(set(recast.values())):
+        with safe_open(exp / shard, "pt") as f:
+            ts = {k: f.get_tensor(k) for k in f.keys()}
+        ts = {k: t.to(torch.bfloat16) if k in recast else t for k, t in ts.items()}
+        save_file(ts, exp / shard, metadata={"format": "pt"})
+    print(f"{len(recast)} fp32 tensors rounded to bf16 in {len(set(recast.values()))} shards")
 
     tensors = {}
     for k in mtp:

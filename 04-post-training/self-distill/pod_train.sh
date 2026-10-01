@@ -58,8 +58,10 @@ export_weights() {
     cd $W/prime-rl
     ckpt=$(ls -d $W/run/*/checkpoints/step_* | sort -t_ -k2 -n | tail -1)
     log "exporting $ckpt"
+    # the converter writes all the weights, then dies saving assets (the text-only FSDP model has no generation_config);
+    # finish_export.py copies the original's assets anyway, so only a missing index is fatal
     uv run torchrun --nproc-per-node 8 tools/convert_dcp_to_bf16.py $ckpt $W/ornith-sd-bf16 \
-        > $SD/export.log 2>&1
+        > $SD/export.log 2>&1 || [ -f $W/ornith-sd-bf16/model.safetensors.index.json ]
     uv run python $SD/finish_export.py --orig $W/ornith-bf16 --export $W/ornith-sd-bf16 | tee $SD/finish-export.log
     log "export done"
 }

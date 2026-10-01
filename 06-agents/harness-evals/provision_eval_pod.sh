@@ -16,6 +16,8 @@ $S ubuntu@$P 'mkdir -p ~/at/01-inference/tools ~/at/01-inference/envs/tensorfold
 rsync -a -e "$S" --exclude .git --exclude __pycache__ --exclude .venv 01-inference/tools/TensorFold ubuntu@$P:at/01-inference/tools/
 rsync -a -e "$S" 01-inference/envs/tensorfold/pyproject.toml 01-inference/envs/tensorfold/uv.lock ubuntu@$P:at/01-inference/envs/tensorfold/
 rsync -a -e "$S" 01-inference/speed-hillclimb/tensorfold/serve_kernels.py ubuntu@$P:at/01-inference/speed-hillclimb/tensorfold/
-rsync -aL -e "$S" ~/models/ornith/$BUILD ubuntu@$P:models/ornith/
+# WAIT_FOR_BUILD=1: the build is still being copied home; wait for its .complete marker
+[ -z "${WAIT_FOR_BUILD:-}" ] || until [ -e ~/models/ornith/$BUILD/.complete ]; do sleep 30; done
+rsync -aL -e "$S" --exclude .complete ~/models/ornith/$BUILD ubuntu@$P:models/ornith/
 until $S ubuntu@$P 'grep -q SETUP_DONE /tmp/setup.log'; do sleep 15; done
 $S ubuntu@$P "MODEL_DIR=\$HOME/models/ornith/$BUILD NAME=$NAME bash ~/serve_r1s_pod.sh"

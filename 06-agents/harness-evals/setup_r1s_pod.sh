@@ -10,5 +10,5 @@ wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_
 sudo dpkg -i cuda-keyring_1.1-1_all.deb >/dev/null
 sudo apt-get -o DPkg::Lock::Timeout=900 update -qq
 sudo DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=900 install -y -qq cuda-toolkit-13-0 g++-12 build-essential > /tmp/apt.log 2>&1
-curl -LsSf https://astral.sh/uv/install.sh | sh > /dev/null 2>&1
+command -v uv > /dev/null || [ -x ~/.local/bin/uv ] || curl -LsSf https://astral.sh/uv/install.sh | sh > /dev/null 2>&1
 echo SETUP_DONE
