@@ -68,7 +68,8 @@ export_weights() {
 
 rebuild() {
     cd $W/prime-rl
-    PY="uv run --with gguf python"
+    # --project: export_always_on runs from its own directory, outside prime-rl's project
+    PY="uv run --project $W/prime-rl --with gguf python"
     $PY -c "import gguf" > /dev/null
     log "rebuilding R1s from the tuned weights"
     # routed experts 3-bit (R1), the imatrix-searched 4-bit always-on path (R1s), the rest as the MLX conversion makes it
