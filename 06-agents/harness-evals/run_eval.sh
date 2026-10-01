@@ -2,7 +2,8 @@
 # One harness x one served model on a Harbor taskset (Terminal-Bench 2 or DeepSWE), sandboxes on Prime.
 #
 #   ./run_eval.sh <tb2|tb2full|deepswe|tb4> <pi|prime_agent> <label> [concurrency]
-# Env: PORT (default 8000), TURNS, TIMEOUT seconds per rollout, ROLLOUTS (default 1).
+# Env: PORT (default 8000), TURNS, TIMEOUT seconds per rollout, ROLLOUTS (default 1), TASKS_FILE (overrides the
+# suite's task list, e.g. tb2_budget_pi.txt for the runs that hit a limit).
 # tb2: tasks.txt (20), 60 turns, 60 min. tb2full: all 89 tasks (tb2_full_tasks.txt), same caps. deepswe: deepswe_tasks.txt (10: seed 0 of the seed-0 25 of 113; Prime allows 10 private images), 100 turns, 90 min, run from
 # deepswe-env/ (newer verifiers, and our own copies of the task images; see deepswe-env/README.md). tb4: tb4_tasks.txt
 # (20, seed 0 of the 52 single-container CPU tasks in Terminal-Bench 4.0.0), 100 turns, 90 min, also from deepswe-env/.
@@ -18,6 +19,7 @@ case $SUITE in
   tb4) ENV=terminal-bench-4; FILE=tb4_tasks.txt; TURNS=${TURNS:-100}; TIMEOUT=${TIMEOUT:-5400}; PROJECT=deepswe-env ;;
   *) echo "suite: tb2, tb2full, deepswe or tb4"; exit 1 ;;
 esac
+FILE=${TASKS_FILE:-$FILE}
 TASKS=$(python3 -c "import json; print(json.dumps(open('$FILE').read().split()))")
 N=$(python3 -c "print(len(open('$FILE').read().split()))")
 export LOCAL_KEY=none
