@@ -42,7 +42,7 @@ def main():
     config = json.loads((base / "config.json").read_text())
     overrides = set()
     for k in new:
-        if k.endswith(".weight"):
+        if k.endswith(".weight") and k[:-len(".weight")] + ".scales" in new:     # quantized (norms etc. are not)
             m = k[:-len(".weight")]
             bits = new[k].shape[-1] * 32 // (new[m + ".scales"].shape[-1] * 64)
             if bits != module_bits(config, m):
@@ -71,7 +71,7 @@ def main():
                 tensors[k] = v
         save_file(tensors, out / shard, metadata=meta)
     (out / "config.json").write_text(json.dumps(config, indent=2))
-    print(f"{len(new) // 3} matrices replaced in {sorted(touched)}; {len(overrides)} bit overrides; -> {out}")
+    print(f"{len(new)} tensors replaced in {sorted(touched)}; {len(overrides)} bit overrides; -> {out}")
 
 
 if __name__ == "__main__":

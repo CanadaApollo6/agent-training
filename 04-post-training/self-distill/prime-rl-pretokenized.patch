@@ -1,0 +1,32 @@
+diff --git i/src/prime_rl/trainer/sft/data.py w/src/prime_rl/trainer/sft/data.py
+index f0c1b53e4..408a2fa2b 100644
+--- i/src/prime_rl/trainer/sft/data.py
++++ w/src/prime_rl/trainer/sft/data.py
+@@ -284,6 +284,27 @@ class SFTDataset(StatefulIterableDataset):
+             self.dataset = self.dataset.take(self.max_examples)
+ 
+     def _process(self, example: dict) -> dict | None:
++        # Pre-tokenized rows (input_ids + a per-token loss_mask, e.g. agent traces re-rendered exactly as they were
++        # served) skip the renderer.
++        if example.get("input_ids") is not None and example.get("loss_mask") is not None:
++            ids, mask = list(example["input_ids"]), [bool(m) for m in example["loss_mask"]]
++            assert len(ids) == len(mask), f"input_ids and loss_mask lengths differ: {len(ids)} vs {len(mask)}"
++            input_ids, target_ids, loss_mask = ids[:-1], ids[1:], mask[1:]
++            if sum(loss_mask[: self.seq_len]) == 0:
++                self.logger.warning(
++                    f"Skipping example {example.get('__index', '')}: no trainable tokens within {self.seq_len}"
++                )
++                return None
++            return {
++                "input_ids": input_ids,
++                "target_ids": target_ids,
++                "loss_mask": loss_mask,
++                "position_ids": list(range(len(input_ids))),
++                "seq_lens": [len(input_ids)],
++                "mm_kwargs": None,
++                "mm_token_type_ids": None,
++            }
++
+         def resolve_messages(example: dict) -> list[dict]:
+             # `messages` takes precedence over explicit split fields and is interpreted
+             # as a whole-chat training sample with an empty prompt. Null-check rather

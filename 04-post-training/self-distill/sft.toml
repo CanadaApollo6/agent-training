@@ -1,0 +1,54 @@
+# Self-distillation round 1: full fine-tune of Ornith 1.5 35B-A3B (bf16) on its own shortest TB2 solves.
+# One 8-GPU node (H200 at 128K; on H100 pass --data.seq-len 65536 --data.batch-size 8). pod_train.sh runs it:
+#   uv run sft @ sft.toml --model.name /workspace/ornith-bf16 --data.name /workspace/sd/data/train --output-dir ...
+#
+# The data is pre-tokenized (select_data.py, prime-rl-pretokenized.patch): TensorFold's exact render of every sampled
+# call, loss on the model's own tokens only. ~53 packs per epoch at 128K; 26 steps of 4 packs is two epochs.
+
+max_steps = 26
+
+[model]
+impl = "custom"
+attn = "flash_attention_2"
+seq_len = 131072
+# context parallelism shards each 128K pack over the 8 GPUs; ulysses is the style that handles Gated DeltaNet layers
+cp = 8
+cp_style = "ulysses"
+ep = 8
+# fp32 master weights: at lr 5e-6 most updates are below bf16's resolution and would round away.
+# No [model.vlm]: text-only training on the VLM checkpoint, vision tower frozen.
+optimization_dtype = "float32"
+reduce_dtype = "float32"
+# keep routing as it was: R1s's 3-bit experts were searched against the original routes' activations
+freeze_moe_router = true
+
+# unused by the pre-tokenized rows, but SFT requires a typed renderer; this is the one parity.py checked
+[renderer]
+name = "qwen3.6"
+enable_thinking = true
+preserve_thinking = true
+
+[data]
+type = "sft"
+seq_len = 131072
+batch_size = 4
+micro_batch_size = 1
+shuffle = true
+
+[optim]
+type = "adamw"
+lr = 5e-6
+weight_decay = 0.0
+max_norm = 1.0
+
+[scheduler]
+type = "cosine"
+warmup_steps = 3
+min_lr = 5e-7
+
+# only at the end: the checkpoint carries fp32 weights and Adam moments (~420 GB)
+[ckpt]
+
+[deployment]
+type = "single_node"
+num_train_gpus = 8
