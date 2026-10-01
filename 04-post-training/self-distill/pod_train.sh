@@ -67,7 +67,7 @@ rebuild() {
     (cd $SD/repo/05-compression/ornith/kl && CUDA_VISIBLE_DEVICES=1 $PY export_always_on.py --bf16 $W/ornith-sd-bf16 \
         --imatrix $SD/Ornith-1.5-35B-A3B-imatrix.gguf --parts attention linear_attention shared_expert --bits 4 \
         --out $W/always-on-q4.safetensors > $SD/always-on.log 2>&1) &
-    CUDA_VISIBLE_DEVICES= $PY $SD/requant_rest.py --bf16 $W/ornith-sd-bf16 --base $W/mlx4 --out $W/rest.safetensors \
+    CUDA_VISIBLE_DEVICES= $PY $SD/repo/04-post-training/self-distill/requant_rest.py --bf16 $W/ornith-sd-bf16 --base $W/mlx4 --out $W/rest.safetensors \
         > $SD/rest.log 2>&1
     wait
     $PY $SD/repo/05-compression/ornith/kl/make_build.py --base $W/r1sd-experts \
