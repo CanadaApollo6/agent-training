@@ -1,0 +1,3655 @@
+diff --git a/src/tensorfold/cli.py b/src/tensorfold/cli.py
+index 4ee0f43..a3cb2ff 100644
+--- a/src/tensorfold/cli.py
++++ b/src/tensorfold/cli.py
+@@ -253,6 +253,8 @@ def _serve_cuda(args: argparse.Namespace, family: Any, model_dir: Path, context:
+         options["decode_share"] = float(args.decode_share)
+     options["context"] = context if context is not None else args.context
+     options["context_explicit"] = args.context is not None
++    if getattr(args, "swap_gib", 0.0):
++        options["swap_gib"] = float(args.swap_gib)
+     streams = 1 if str(args.parallel).strip().lower() == "auto" else _parallel(args.parallel)
+     if streams > 1:
+         options["parallel"] = streams
+diff --git a/src/tensorfold/cli_args.py b/src/tensorfold/cli_args.py
+index a9eb51e..04ac9c7 100644
+--- a/src/tensorfold/cli_args.py
++++ b/src/tensorfold/cli_args.py
+@@ -81,6 +81,9 @@ def build_parser(handlers: dict[str, Callable[[argparse.Namespace], int]]) -> ar
+     speed.add_argument("--spill-gib", type=float, default=0.0,
+                        help="write evicted conversation prefixes to disk, up to this many GiB, and read them back on "
+                             "demand instead of prefilling again (0: off; needs --snapshot-dir)")
++    speed.add_argument("--swap-gib", type=float, default=0.0,
++                       help="CUDA Qwen3.6 MoE: park conversations another prompt evicts in pinned RAM, up to this many "
++                            "GiB, and copy them back when they return instead of prefilling again (0: off)")
+     speed.add_argument("--snapshot-dir", default=str(Path.home() / ".cache" / "tensorfold" / "prefix-snapshots"),
+                        help="where system-block and conversation snapshots are kept ('none': in memory only)")
+     speed.add_argument("--max-snapshots", type=int, default=3, help="system-block snapshots loaded at start")
+diff --git a/src/tensorfold/cuda/build.py b/src/tensorfold/cuda/build.py
+index ba1786d..bbf6cd1 100644
+--- a/src/tensorfold/cuda/build.py
++++ b/src/tensorfold/cuda/build.py
+@@ -6,7 +6,7 @@ import os
+ import threading
+ from typing import Any
+ 
+-MIN_CAPABILITY = (8, 9)         # FP8 MMA and e4m3 conversions (Ada); kernels with clusters use them from 9.0
++MIN_CAPABILITY = (8, 0)         # bf16 MMA and cp.async; clusters (9.0) and FP8 MMA (8.9) have fallbacks below them
+ CLUSTERS = (9, 0)               # extensions built only on thread-block clusters (NVFP4) need Hopper or newer
+ # stop first: when the lock goes, a waiting start imports whatever module is there without building, even an old one
+ HINT = "if no other build is running, a killed build left it: stop this start, delete the lock and start again"
+@@ -20,13 +20,21 @@ def arch_flags(need: tuple[int, int] = MIN_CAPABILITY) -> list[str]:
+ 
+     major, minor = torch.cuda.get_device_capability()
+     if (major, minor) < need:
+-        why = "thread-block clusters" if need >= CLUSTERS else "FP8 MMA"
++        why = "thread-block clusters" if need >= CLUSTERS else "FP8 MMA" if need >= (8, 9) else "bf16 MMA and cp.async"
+         raise RuntimeError(f"TensorFold's CUDA kernels need compute capability {need[0]}.{need[1]} or newer ({why}"
+                            f"{' for these weights' if need > MIN_CAPABILITY else ''}); this GPU "
+                            f"({torch.cuda.get_device_name()}) is {major}.{minor}")
+     return [f"-gencode=arch=compute_{major}{minor},code=sm_{major}{minor}"]
+ 
+ 
++def fp8_mma() -> bool:
++    """Whether this GPU has FP8 MMA (8.9 and newer); below it prompts take the bf16 kernels."""
++
++    import torch
++
++    return torch.cuda.get_device_capability() >= (8, 9)
++
++
+ def refuse_old_gpu(need: tuple[int, int] = MIN_CAPABILITY) -> None:
+     """At startup, before any weight loads: a GPU older than ``need`` is refused by name (no GPU: skipped)."""
+ 
+@@ -114,4 +122,4 @@ def _say(text: str) -> None:
+     print(f"[tensorfold] {text}", flush=True)
+ 
+ 
+-__all__ = ["CLUSTERS", "MIN_CAPABILITY", "arch_flags", "load"]
++__all__ = ["CLUSTERS", "MIN_CAPABILITY", "arch_flags", "fp8_mma", "load", "refuse_old_gpu"]
+diff --git a/src/tensorfold/cuda/capacity.py b/src/tensorfold/cuda/capacity.py
+index e646bf9..db7fb29 100644
+--- a/src/tensorfold/cuda/capacity.py
++++ b/src/tensorfold/cuda/capacity.py
+@@ -173,7 +173,11 @@ def reserve_bytes(total: int, *, host: bool = False) -> int:
+ 
+ def available_bytes(torch) -> int:
+     free, total = map(int, torch.cuda.mem_get_info())
+-    available = max(0, free - reserve_bytes(total))
++    # TENSORFOLD_CUDA_RESERVE_GIB: the GPU's reserve alone, below the 2 GiB floor of TENSORFOLD_MEMORY_RESERVE_GIB, for
++    # a 24 GB card whose weights leave little room
++    reserve = os.environ.get("TENSORFOLD_CUDA_RESERVE_GIB")
++    held = int(float(reserve) * GIB) if reserve else reserve_bytes(total)
++    available = max(0, free - held)
+     memory = _meminfo()
+     if memory is None:
+         return available
+diff --git a/src/tensorfold/cuda/experts.cpp b/src/tensorfold/cuda/experts.cpp
+index 85c2887..e3df4ce 100644
+--- a/src/tensorfold/cuda/experts.cpp
++++ b/src/tensorfold/cuda/experts.cpp
+@@ -2,13 +2,19 @@
+ 
+ void experts_plan_cuda(const at::Tensor& picks, int64_t pairs, int64_t experts, int64_t tile, at::Tensor& members,
+                        at::Tensor& items, at::Tensor& counts, at::Tensor& rank, at::Tensor& hist);
+-void experts_run_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
++void experts_run_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride, int64_t slots,
+                       const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items, const at::Tensor& counts,
+-                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units);
+-void experts_prefill_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
+-                          const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
++                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units,
++                      const at::Tensor& w4, int64_t e4, int64_t split, const at::Tensor& cw, const at::Tensor& cout,
++                      const at::Tensor& csync, int64_t cslots);
++void experts_prefill_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride,
++                          int64_t slots, const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
+                           const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int64_t n,
+-                          double limit, int64_t max_items);
++                          double limit, int64_t max_items, const at::Tensor& w4, int64_t e4);
++
++void experts_select_cuda(const at::Tensor& logits, int64_t rows, int64_t experts, int64_t top_k, int64_t tile,
++                         at::Tensor& picks, at::Tensor& wts, at::Tensor& members, at::Tensor& items,
++                         at::Tensor& counts);
+ 
+ void experts_pack_cuda(const at::Tensor& words, const at::Tensor& scales, const at::Tensor& biases, int64_t gs,
+                        at::Tensor& out);
+@@ -40,18 +46,59 @@ void plan(const at::Tensor& picks, int64_t pairs, int64_t experts, int64_t tile,
+   experts_plan_cuda(picks, pairs, experts, tile, members, items, counts, rank, hist);
+ }
+ 
+-void run(int64_t gs, int64_t epi, const at::Tensor& x, int64_t slots, const at::Tensor& w, int64_t kg, int64_t nb,
+-         const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor out, int64_t n,
+-         double limit, int64_t max_units) {
+-  check_call(x, kg * gs, w, out, n, nb, epi);
+-  experts_run_cuda(gs, epi, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit, max_units);
++// bits: the experts' width (2, 3 or 4); w4 holds expert e4 (the shared expert) at 4 bits when bits < 4 (e4 -1: none)
++static void check_bits(int64_t gs, int64_t bits, const at::Tensor& w4, int64_t e4) {
++  TORCH_CHECK(bits == 4 || (gs == 64 && (bits == 2 || bits == 3)), "experts: 4-bit, or 2- and 3-bit in groups of 64");
++  check(w4, "w4", at::kInt);
++  TORCH_CHECK(w4.is_contiguous() && (e4 < 0 || bits < 4), "w4: contiguous, used only below 4 bits");
+ }
+ 
+-void prefill(int64_t gs, int64_t epi, const at::Tensor& x, int64_t slots, const at::Tensor& w, int64_t kg,
+-             int64_t nb, const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor out,
+-             int64_t n, double limit, int64_t max_items) {
++void run(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t slots, const at::Tensor& w, int64_t kg,
++         int64_t nb, const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor out,
++         int64_t n, double limit, int64_t max_units, const at::Tensor& w4, int64_t e4, int64_t split,
++         const at::Tensor& cw, at::Tensor cout, at::Tensor csync, int64_t cslots) {
+   check_call(x, kg * gs, w, out, n, nb, epi);
+-  experts_prefill_cuda(gs, epi, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit, max_items);
++  check_bits(gs, bits, w4, e4);
++  TORCH_CHECK(split >= -1, "split: -1 the one-warp kernel, 0 picks, else warps a unit (rounded to a power of two)");
++  if (cslots > 0) {
++    // out [rows * cslots, n] fp32 per pair, then cout [rows, n] bf16: each row's slots summed with weights cw
++    check(cw, "cw", at::kFloat);
++    check(cout, "cout", at::kBFloat16);
++    check(csync, "csync", at::kInt);
++    const int64_t rows = cout.numel() / n;
++    TORCH_CHECK(epi == 0 && gs == 64 && split >= 0 && slots == 0, "combine: down (epilogue 0), decode kernel");
++    TORCH_CHECK(cw.is_contiguous() && cw.numel() >= rows * cslots && cout.is_contiguous() && cout.size(-1) == n &&
++                    out.numel() >= rows * cslots * n && csync.numel() >= rows * nb,
++                "combine: cw [rows, slots], cout [rows, n], csync [rows * n / 32]");
++  }
++  experts_run_cuda(gs, epi, bits, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit, max_units,
++                   w4, e4, split, cw, cout, csync, cslots);
++}
++
++void prefill(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t slots, const at::Tensor& w,
++             int64_t kg, int64_t nb, const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members,
++             at::Tensor out, int64_t n, double limit, int64_t max_items, const at::Tensor& w4, int64_t e4) {
++  check_call(x, kg * gs, w, out, n, nb, epi);
++  check_bits(gs, bits, w4, e4);
++  experts_prefill_cuda(gs, epi, bits, x, x.stride(0), slots, w, kg, nb, items, counts, members, out, n, limit,
++                       max_items, w4, e4);
++}
++
++// Decode routing: logits [R, experts + 1] fp32 (the shared expert's gate last) -> picks, wts [R, top_k + 1] (the
++// shared expert last), and plan's members, items and counts; moe._topk_rows's bits, then plan's.
++void route_topk(const at::Tensor& logits, int64_t experts, int64_t top_k, int64_t tile, at::Tensor picks, at::Tensor wts,
++            at::Tensor members, at::Tensor items, at::Tensor counts) {
++  check(logits, "logits", at::kFloat);
++  check(picks, "picks", at::kInt);
++  check(wts, "wts", at::kFloat);
++  for (const auto* t : {&members, &items, &counts}) check(*t, "plan buffer", at::kInt);
++  const int64_t rows = logits.size(0), slots = top_k + 1;
++  TORCH_CHECK(logits.dim() == 2 && logits.stride(1) == 1 && logits.size(1) == experts + 1, "logits: [R, experts + 1]");
++  TORCH_CHECK(picks.is_contiguous() && wts.is_contiguous() && picks.numel() >= rows * slots &&
++                  wts.numel() >= rows * slots && members.numel() >= rows * slots && counts.numel() >= 2 &&
++                  items.numel() >= 3 * (std::min(rows * slots, experts + 1) + rows * slots / tile),
++              "select: buffers too small");
++  experts_select_cuda(logits, rows, experts, top_k, tile, picks, wts, members, items, counts);
+ }
+ 
+ // MLX words [E, N, K/8] (32-bit), scales and biases [E, N, K/gs] (2-byte) -> int32 blocks [E, N/32, K/gs, 32 * gs / 8 + 32]
+@@ -76,7 +123,8 @@ void pack(const at::Tensor& words, const at::Tensor& scales, const at::Tensor& b
+ 
+ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+   m.def("pack", &pack, "repack MLX 4-bit experts into the grouped kernels' blocks, in one pass");
++  m.def("route_topk", &route_topk, "decode routing: top-k experts and weights, then the plan, in one launch");
+   m.def("plan", &plan, "group a layer's (row, slot) pairs by expert into items of at most tile pairs");
+-  m.def("run", &run, "grouped 4-bit expert matmul, decode form (epilogue 0: fp32, 1: relu^2, 2: SwiGLU)");
+-  m.def("prefill", &prefill, "grouped 4-bit expert matmul, prefill form (3: bf16 out)");
++  m.def("run", &run, "grouped 2/3/4-bit expert matmul, decode form (epilogue 0: fp32, 1: relu^2, 2: SwiGLU); split: warps a unit; cslots > 0: moe.combine too");
++  m.def("prefill", &prefill, "grouped 2/3/4-bit expert matmul, prefill form (3: bf16 out)");
+ }
+diff --git a/src/tensorfold/cuda/experts.cu b/src/tensorfold/cuda/experts.cu
+index 6cb5ba9..9036cfc 100644
+--- a/src/tensorfold/cuda/experts.cu
++++ b/src/tensorfold/cuda/experts.cu
+@@ -18,6 +18,12 @@ __device__ __forceinline__ uint4 ld_w(const uint4* p) {
+   return r;
+ }
+ 
++__device__ __forceinline__ uint2 ld_w2(const uint2* p) {
++  uint2 r;
++  asm volatile("ld.global.nc.L1::no_allocate.v2.u32 {%0, %1}, [%2];\n" : "=r"(r.x), "=r"(r.y) : "l"(p));
++  return r;
++}
++
+ __device__ __forceinline__ uint4 ld_x(const __nv_bfloat16* p) { return __ldg(reinterpret_cast<const uint4*>(p)); }
+ 
+ // a row's group sum: the lane's inputs in order, then the quad (every lane of the quad gets the same bits)
+@@ -37,25 +43,25 @@ __device__ __forceinline__ float group_sum(const uint4 (&v)[XV]) {
+   return s;
+ }
+ 
+-template <int GS, int M>
++template <int GS, int M, int BITS>
+ struct Stage {
+-  uint4 w[M][Geo<GS>::WV];
+-  uint4 sb[M][Geo<GS>::SBV];
++  uint32_t w[M][Geo<GS, BITS>::WORDS];
++  uint4 sb[M][Geo<GS, BITS>::SBV];
+   uint4 xa[Geo<GS>::XV];       // row gq of the tile: the lane's inputs of the group
+   uint4 xb[Geo<GS>::XV];       // row gq + 8
+ };
+ 
+-template <int GS, int M>
+-__device__ __forceinline__ void load_stage(Stage<GS, M>& st, const uint4* blk, int g, int lane, int t,
++template <int GS, int M, int BITS>
++__device__ __forceinline__ void load_stage(Stage<GS, M, BITS>& st, const uint4* blk, int g, int lane, int t,
+                                            const __nv_bfloat16* x0, const __nv_bfloat16* x1, bool v0, bool v1) {
+-  using G = Geo<GS>;
++  using G = Geo<GS, BITS>;
+   const uint4* b = blk + (size_t)g * (M * G::BLOCK);
+ #pragma unroll
+   for (int m = 0; m < M; ++m) {
++    lane_words<GS, BITS>(st.w[m], b + m * G::BLOCK, lane, [](const uint4* q) { return ld_w(q); },
++                         [](const uint2* q) { return ld_w2(q); });
+ #pragma unroll
+-    for (int c = 0; c < G::WV; ++c) st.w[m][c] = ld_w(b + m * G::BLOCK + c * 32 + lane);
+-#pragma unroll
+-    for (int c = 0; c < G::SBV; ++c) st.sb[m][c] = ld_w(b + m * G::BLOCK + 32 * G::WV + t * G::SBV + c);
++    for (int c = 0; c < G::SBV; ++c) st.sb[m][c] = ld_w(b + m * G::BLOCK + G::WU + t * G::SBV + c);
+   }
+   const uint4 zero = make_uint4(0u, 0u, 0u, 0u);
+   const int k0 = g * GS;
+@@ -66,72 +72,84 @@ __device__ __forceinline__ void load_stage(Stage<GS, M>& st, const uint4* blk, i
+   }
+ }
+ 
+-template <int GS, int M>
+-__device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const Stage<GS, M>& st, bool hi) {
+-  using G = Geo<GS>;
++// one matrix's products of a group: p[j] = the levels times the inputs, from zero
++template <int GS, int BITS>
++__device__ __forceinline__ void products(float (&p)[NTW][4], const uint32_t (&w)[Geo<GS, BITS>::WORDS],
++                                         const uint4 (&xa)[Geo<GS>::XV], const uint4 (&xb)[Geo<GS>::XV]) {
++#pragma unroll
++  for (int j = 0; j < NTW; ++j) p[j][0] = p[j][1] = p[j][2] = p[j][3] = 0.f;
++#pragma unroll
++  for (int ks = 0; ks < Geo<GS>::KS; ++ks) {
++    // k-step ks: the lane's inputs 4 ks .. 4 ks + 3 (pairs at the mma's k positions 2t and 2t + 8)
++    const uint32_t a0 = comp(xa[ks >> 1], 2 * (ks & 1));
++    const uint32_t a2 = comp(xa[ks >> 1], 2 * (ks & 1) + 1);
++    const uint32_t a1 = comp(xb[ks >> 1], 2 * (ks & 1));
++    const uint32_t a3 = comp(xb[ks >> 1], 2 * (ks & 1) + 1);
++    const int sh = (ks & 1) ? 8 : 0;
++#pragma unroll
++    for (int j = 0; j < NTW; ++j) {
++      const int wi = j * (GS / 32) + (ks >> 1);
++      const uint32_t word = nibword<BITS>(w, wi);
++      mma(p[j], a0, a1, a2, a3, nib2(word, sh), nib2(word, sh + 4));
++    }
++  }
++}
++
++// tile j's step of the decode form: sb holds the quad's scales (uint4 0 .. NTW/4 - 1) then biases
++__device__ __forceinline__ void accumulate(float (&a)[4], const float (&p)[4], const uint4* sb, int j, float xsa,
++                                           float xsb, bool hi) {
++  const uint32_t sp = comp(sb[j >> 2], j & 3);
++  const uint32_t bp = comp(sb[(NTW + j) >> 2], (NTW + j) & 3);
++  const float s0 = lo_f(sp), s1 = hi_f(sp), b0 = lo_f(bp), b1 = hi_f(bp);
++  a[0] = fmaf(xsa, b0, fmaf(p[0], s0, a[0]));
++  a[1] = fmaf(xsa, b1, fmaf(p[1], s1, a[1]));
++  if (hi) {
++    a[2] = fmaf(xsb, b0, fmaf(p[2], s0, a[2]));
++    a[3] = fmaf(xsb, b1, fmaf(p[3], s1, a[3]));
++  }
++}
++
++template <int GS, int M, int BITS>
++__device__ __forceinline__ void compute_stage(float (&acc)[M][1][NTW][4], const Stage<GS, M, BITS>& st, bool hi) {
++  using G = Geo<GS, BITS>;
+   const float xsa = group_sum<G::XV>(st.xa);
+   const float xsb = group_sum<G::XV>(st.xb);
+ #pragma unroll
+   for (int m = 0; m < M; ++m) {
+     float p[NTW][4];
++    products<GS, BITS>(p, st.w[m], st.xa, st.xb);
+ #pragma unroll
+-    for (int j = 0; j < NTW; ++j) p[j][0] = p[j][1] = p[j][2] = p[j][3] = 0.f;
+-#pragma unroll
+-    for (int ks = 0; ks < G::KS; ++ks) {
+-      // k-step ks: the lane's inputs 4 ks .. 4 ks + 3 (pairs at the mma's k positions 2t and 2t + 8)
+-      const uint32_t a0 = comp(st.xa[ks >> 1], 2 * (ks & 1));
+-      const uint32_t a2 = comp(st.xa[ks >> 1], 2 * (ks & 1) + 1);
+-      const uint32_t a1 = comp(st.xb[ks >> 1], 2 * (ks & 1));
+-      const uint32_t a3 = comp(st.xb[ks >> 1], 2 * (ks & 1) + 1);
+-      const int sh = (ks & 1) ? 8 : 0;
+-#pragma unroll
+-      for (int j = 0; j < NTW; ++j) {
+-        const int wi = j * (GS / 32) + (ks >> 1);
+-        const uint32_t word = comp(st.w[m][wi >> 2], wi & 3);
+-        mma(p[j], a0, a1, a2, a3, nib2(word, sh), nib2(word, sh + 4));
+-      }
+-    }
+-#pragma unroll
+-    for (int j = 0; j < NTW; ++j) {
+-      const uint32_t sp = comp(st.sb[m][j >> 2], j & 3);
+-      const uint32_t bp = comp(st.sb[m][(NTW + j) >> 2], (NTW + j) & 3);
+-      const float s0 = lo_f(sp), s1 = hi_f(sp), b0 = lo_f(bp), b1 = hi_f(bp);
+-      float(&a)[4] = acc[m][0][j];
+-      a[0] = fmaf(xsa, b0, fmaf(p[j][0], s0, a[0]));
+-      a[1] = fmaf(xsa, b1, fmaf(p[j][1], s1, a[1]));
+-      if (hi) {
+-        a[2] = fmaf(xsb, b0, fmaf(p[j][2], s0, a[2]));
+-        a[3] = fmaf(xsb, b1, fmaf(p[j][3], s1, a[3]));
+-      }
+-    }
++    for (int j = 0; j < NTW; ++j) accumulate(acc[m][0][j], p[j], st.sb[m], j, xsa, xsb, hi);
+   }
+ }
+ 
+-template <int GS, int M, int D>
++template <int GS, int M, int D, int BITS>
+ __device__ __forceinline__ void k_loop(float (&acc)[M][1][NTW][4], const uint4* blk, int KG, int lane, int t,
+                                        const __nv_bfloat16* x0, const __nv_bfloat16* x1, bool v0, bool v1) {
+-  Stage<GS, M> st[D];
++  Stage<GS, M, BITS> st[D];
+ #pragma unroll
+   for (int d = 0; d < D; ++d)
+-    if (d < KG) load_stage<GS, M>(st[d], blk, d, lane, t, x0, x1, v0, v1);
++    if (d < KG) load_stage<GS, M, BITS>(st[d], blk, d, lane, t, x0, x1, v0, v1);
+   for (int g0 = 0; g0 < KG; g0 += D) {
+ #pragma unroll
+     for (int d = 0; d < D; ++d) {
+       const int g = g0 + d;
+       if (g < KG) {
+-        compute_stage<GS, M>(acc, st[d], v1);
+-        if (g + D < KG) load_stage<GS, M>(st[d], blk, g + D, lane, t, x0, x1, v0, v1);
++        compute_stage<GS, M, BITS>(acc, st[d], v1);
++        if (g + D < KG) load_stage<GS, M, BITS>(st[d], blk, g + D, lane, t, x0, x1, v0, v1);
+       }
+     }
+   }
+ }
+ 
+ // Pair p reads X row p / slots when slots > 0 (X holds tokens), else X row p (X holds a row a pair).
+-template <int GS, int M, int EPI, int D, int WARPS>
++// Experts are BITS wide, except expert e4 (the shared expert, -1: none), which is 4-bit in W4.
++template <int GS, int M, int EPI, int D, int WARPS, int BITS>
+ __global__ void __launch_bounds__(WARPS * 32)
+     expert_kernel(const __nv_bfloat16* __restrict__ X, int x_stride, int slots, const uint4* __restrict__ W, int KG,
+                   int NB, const int* __restrict__ items, const int* __restrict__ counts,
+-                  const int* __restrict__ members, void* __restrict__ out, int N, float limit) {
++                  const int* __restrict__ members, void* __restrict__ out, int N, float limit,
++                  const uint4* __restrict__ W4, int e4) {
+   const int lane = threadIdx.x & 31, gq = lane >> 2, t = lane & 3;
+   const int units = __ldg(counts) * NB;
+   for (int unit = blockIdx.x * WARPS + (threadIdx.x >> 5); unit < units; unit += gridDim.x * WARPS) {
+@@ -143,17 +161,245 @@ __global__ void __launch_bounds__(WARPS * 32)
+     const int r0 = slots ? pr0 / slots : pr0, r1 = slots ? pr1 / slots : pr1;
+     const __nv_bfloat16* x0 = X + (size_t)r0 * x_stride + t * (GS / 4);
+     const __nv_bfloat16* x1 = X + (size_t)r1 * x_stride + t * (GS / 4);
+-    const uint4* blk = W + ((size_t)e * NB + cb) * (size_t)KG * (M * Geo<GS>::BLOCK);
+     float acc[M][1][NTW][4];
+ #pragma unroll
+     for (int m = 0; m < M; ++m)
+ #pragma unroll
+       for (int j = 0; j < NTW; ++j) acc[m][0][j][0] = acc[m][0][j][1] = acc[m][0][j][2] = acc[m][0][j][3] = 0.f;
+-    k_loop<GS, M, D>(acc, blk, KG, lane, t, x0, x1, v0, v1);
++    if (BITS != 4 && e == e4) {                    // warp-uniform: a unit is one expert's tile
++      const uint4* blk = W4 + (size_t)cb * KG * (M * Geo<GS, 4>::BLOCK);
++      k_loop<GS, M, D, 4>(acc, blk, KG, lane, t, x0, x1, v0, v1);
++    } else {
++      const uint4* blk = W + ((size_t)e * NB + cb) * (size_t)KG * (M * Geo<GS, BITS>::BLOCK);
++      k_loop<GS, M, D, BITS>(acc, blk, KG, lane, t, x0, x1, v0, v1);
++    }
+     epilogue<EPI, M, 1>(acc, 0, out, N, cb * COLS + 2 * t, pr0, pr1, v0, v1, limit);
+   }
+ }
+ 
++// Swapped form, the decode kernel: the weights are the mma's A (16 rows: column gq of tiles j and j + 1) and a token's
++// inputs its B (8 columns: tokens h8 + gq), so a unit of at most 8 pairs takes half the mmas; an item of more takes
++// two passes. A lane ends with column gq of each tile for tokens h8 + 2t and h8 + 2t + 1. The tensor core's dot
++// product doesn't depend on which operand is which, and the steps above run on the same values in the same order,
++// so every output has the decode form's bits (test_experts_split.py).
++// S warps can share a unit: warp w takes groups w, w + S, ..., writes its products, group sums and scales to shared
++// memory, and warp j folds tile j over each round's groups in order.
++
++template <int GS, int BITS>
++__device__ __forceinline__ void swapped_products(float (&q)[NTW][2], const uint32_t (&w)[Geo<GS, BITS>::WORDS],
++                                                 const uint4 (&xa)[Geo<GS>::XV]) {
++  float c[NTW / 2][4];
++#pragma unroll
++  for (int P = 0; P < NTW / 2; ++P) c[P][0] = c[P][1] = c[P][2] = c[P][3] = 0.f;
++#pragma unroll
++  for (int ks = 0; ks < Geo<GS>::KS; ++ks) {
++    const uint32_t b0 = comp(xa[ks >> 1], 2 * (ks & 1));
++    const uint32_t b1 = comp(xa[ks >> 1], 2 * (ks & 1) + 1);
++    const int sh = (ks & 1) ? 8 : 0;
++#pragma unroll
++    for (int P = 0; P < NTW / 2; ++P) {
++      const uint32_t w0 = nibword<BITS>(w, 2 * P * (GS / 32) + (ks >> 1));
++      const uint32_t w1 = nibword<BITS>(w, (2 * P + 1) * (GS / 32) + (ks >> 1));
++      mma(c[P], nib2(w0, sh), nib2(w1, sh), nib2(w0, sh + 4), nib2(w1, sh + 4), b0, b1);
++    }
++  }
++#pragma unroll
++  for (int P = 0; P < NTW / 2; ++P) {
++    q[2 * P][0] = c[P][0];
++    q[2 * P][1] = c[P][1];
++    q[2 * P + 1][0] = c[P][2];
++    q[2 * P + 1][1] = c[P][3];
++  }
++}
++
++// tile j's step for column gq (odd: gq & 1) and two tokens; sb holds scales of columns 2 (gq >> 1) and 2 (gq >> 1) + 1
++__device__ __forceinline__ void accumulate_t(float (&a)[2], const float (&p)[2], const uint4* sb, int j, bool odd,
++                                             const float (&xt)[2]) {
++  const uint32_t sp = comp(sb[j >> 2], j & 3);
++  const uint32_t bp = comp(sb[(NTW + j) >> 2], (NTW + j) & 3);
++  const float sc = odd ? hi_f(sp) : lo_f(sp), bi = odd ? hi_f(bp) : lo_f(bp);
++  a[0] = fmaf(xt[0], bi, fmaf(p[0], sc, a[0]));
++  a[1] = fmaf(xt[1], bi, fmaf(p[1], sc, a[1]));
++}
++
++template <int GS, int M>
++struct Part {
++  float p[M][NTW][2][32];          // [.., lane]
++  float xs[32];                    // token gq's group sum, at lane 4 gq
++  uint4 sb[M][4][NTW / 2];         // [.., gq >> 1, ..]
++};
++
++template <int GS, int M, int D, int S, int BITS>
++__device__ __forceinline__ void swap_loop(float (&acc)[M][NTW][2], Part<GS, M>* part, const uint4* blk, int KG,
++                                          int warp, int lane, const __nv_bfloat16* x0, bool v0) {
++  using G = Geo<GS, BITS>;
++  const int gq = lane >> 2, t = lane & 3, sq = gq >> 1;
++  const bool odd = gq & 1;
++  Stage<GS, M, BITS> st[D];
++#pragma unroll
++  for (int d = 0; d < D; ++d)
++    if (warp + d * S < KG) load_stage<GS, M, BITS>(st[d], blk, warp + d * S, lane, sq, x0, x0, v0, false);
++  const int rounds = (KG + S - 1) / S;
++  for (int r0 = 0; r0 < rounds; r0 += D) {
++#pragma unroll
++    for (int d = 0; d < D; ++d) {
++      const int r = r0 + d;
++      if (r >= rounds) break;                                   // block-uniform
++      const int g = r * S + warp;
++      if constexpr (S == 1) {
++        const float xs = group_sum<G::XV>(st[d].xa);
++        const float xt[2] = {__shfl_sync(0xffffffffu, xs, 8 * t), __shfl_sync(0xffffffffu, xs, 8 * t + 4)};
++#pragma unroll
++        for (int m = 0; m < M; ++m) {
++          float q[NTW][2];
++          swapped_products<GS, BITS>(q, st[d].w[m], st[d].xa);
++#pragma unroll
++          for (int j = 0; j < NTW; ++j) accumulate_t(acc[m][j], q[j], st[d].sb[m], j, odd, xt);
++        }
++        if (g + D < KG) load_stage<GS, M, BITS>(st[d], blk, g + D, lane, sq, x0, x0, v0, false);
++      } else {
++        Part<GS, M>* buf = part + (r & 1) * S;
++        if (g < KG) {
++          Part<GS, M>& me = buf[warp];
++          me.xs[lane] = group_sum<G::XV>(st[d].xa);
++#pragma unroll
++          for (int m = 0; m < M; ++m) {
++            float q[NTW][2];
++            swapped_products<GS, BITS>(q, st[d].w[m], st[d].xa);
++#pragma unroll
++            for (int j = 0; j < NTW; ++j) {
++              me.p[m][j][0][lane] = q[j][0];
++              me.p[m][j][1][lane] = q[j][1];
++            }
++            if (t == 0 && !odd)
++#pragma unroll
++              for (int c = 0; c < G::SBV; ++c) me.sb[m][sq][c] = st[d].sb[m][c];
++          }
++          if (g + D * S < KG) load_stage<GS, M, BITS>(st[d], blk, g + D * S, lane, sq, x0, x0, v0, false);
++        }
++        __syncthreads();
++        const int n = min(S, KG - r * S);
++        for (int s = 0; s < n; ++s) {
++          const Part<GS, M>& b = buf[s];
++          const float xt[2] = {b.xs[8 * t], b.xs[8 * t + 4]};
++#pragma unroll
++          for (int m = 0; m < M; ++m)
++#pragma unroll
++            for (int j = 0; j < NTW; ++j) {
++              if (j % S != warp) continue;
++              const float q[2] = {b.p[m][j][0][lane], b.p[m][j][1][lane]};
++              accumulate_t(acc[m][j], q, b.sb[m][sq], j, odd, xt);
++            }
++        }
++      }
++    }
++  }
++}
++
++// tokens tok0 and tok0 + 1 (those below cnt) of column col of each tile j in js
++template <int EPI, int M>
++__device__ __forceinline__ void epilogue_t(const float (&acc)[M][NTW][2], void* out, int N, int col,
++                                           const int* members, int first, int cnt, int tok0, float limit,
++                                           unsigned js) {
++#pragma unroll
++  for (int h = 0; h < 2; ++h) {
++    if (tok0 + h >= cnt) continue;
++    const size_t row = (size_t)members[first + tok0 + h] * N;          // members: global or shared
++#pragma unroll
++    for (int j = 0; j < NTW; ++j) {
++      if (!((js >> j) & 1u)) continue;
++      const float a = acc[0][j][h];
++      if constexpr (EPI == 0) {
++        reinterpret_cast<float*>(out)[row + col + 8 * j] = a;
++      } else {
++        const float o = EPI == 1 ? relu2(a) : swiglu(a, acc[M - 1][j][h], limit);
++        reinterpret_cast<__nv_bfloat16*>(out)[row + col + 8 * j] = __float2bfloat16_rn(o);
++      }
++    }
++  }
++}
++
++// EPI 4: down (fp32 out, as 0), then moe.combine: the last unit to finish a (row, tile) sums the row's slots in slot
++// order, fp32 fma(w, y, acc) from 0, rounded once to bf16 (Triton's steps, so its bits). sync [rows x tiles] is zero
++// before a launch and after it.
++struct Combine {
++  const float* w;                  // [rows, slots]
++  __nv_bfloat16* out;              // [rows, N]
++  int* sync;
++  int slots;
++};
++
++__device__ __forceinline__ void combine_tiles(const Combine& c, const float* y, const int* members, int first,
++                                              int cnt, int cb, int NB, int N, int lane) {
++  for (int h = 0; h < cnt; ++h) {
++    const int r = members[first + h] / c.slots;
++    int last = 0;
++    if (lane == 0) last = atomicAdd(c.sync + r * NB + cb, 1) == c.slots - 1;
++    if (__shfl_sync(0xffffffffu, last, 0)) {
++      __threadfence();
++      const int col = cb * COLS + lane;
++      float a = 0.f;
++      for (int k = 0; k < c.slots; ++k)
++        a = fmaf(__ldg(c.w + r * c.slots + k), __ldcg(y + ((size_t)r * c.slots + k) * N + col), a);
++      c.out[(size_t)r * N + col] = __float2bfloat16_rn(a);
++      if (lane == 0) c.sync[r * NB + cb] = 0;
++    }
++  }
++}
++
++// S == 1: four warps a block, a unit each; else S warps a unit
++template <int GS, int M, int EPI, int D, int S, int BITS>
++__global__ void __launch_bounds__((S == 1 ? 4 : S) * 32)
++    swap_kernel(const __nv_bfloat16* __restrict__ X, int x_stride, int slots, const uint4* __restrict__ W, int KG,
++                int NB, const int* __restrict__ items, const int* __restrict__ counts,
++                const int* __restrict__ members, void* __restrict__ out, int N, float limit,
++                const uint4* __restrict__ W4, int e4, Combine comb) {
++  constexpr int U = S == 1 ? 4 : 1;                // units a block
++  extern __shared__ uint4 smem[];
++  Part<GS, M>* part = reinterpret_cast<Part<GS, M>*>(smem);    // [2 rounds][S]
++  const int lane = threadIdx.x & 31, gq = lane >> 2, t = lane & 3;
++  const int warp = S == 1 ? 0 : threadIdx.x >> 5;
++  unsigned js = 0;
++#pragma unroll
++  for (int j = 0; j < NTW; ++j) js |= (j % S == warp) << j;
++  const int units = __ldg(counts) * NB;
++  for (int unit = blockIdx.x * U + (S == 1 ? threadIdx.x >> 5 : 0); unit < units; unit += gridDim.x * U) {
++    const int it = unit / NB, cb = unit - it * NB;
++    const int e = __ldg(items + 3 * it), first = __ldg(items + 3 * it + 1), cnt = __ldg(items + 3 * it + 2);
++    for (int h8 = 0; h8 < cnt; h8 += 8) {
++      const bool v = h8 + gq < cnt;
++      const int pr = v ? __ldg(members + first + h8 + gq) : 0;
++      const int r = slots ? pr / slots : pr;
++      const __nv_bfloat16* x0 = X + (size_t)r * x_stride + t * (GS / 4);
++      float acc[M][NTW][2];
++#pragma unroll
++      for (int m = 0; m < M; ++m)
++#pragma unroll
++        for (int j = 0; j < NTW; ++j) acc[m][j][0] = acc[m][j][1] = 0.f;
++      if (BITS != 4 && e == e4) {                  // uniform: a unit is one expert's tile
++        const uint4* blk = W4 + (size_t)cb * KG * (M * Geo<GS, 4>::BLOCK);
++        swap_loop<GS, M, D, S, 4>(acc, part, blk, KG, warp, lane, x0, v);
++      } else {
++        const uint4* blk = W + ((size_t)e * NB + cb) * (size_t)KG * (M * Geo<GS, BITS>::BLOCK);
++        swap_loop<GS, M, D, S, BITS>(acc, part, blk, KG, warp, lane, x0, v);
++      }
++      if (js) epilogue_t<EPI == 4 ? 0 : EPI, M>(acc, out, N, cb * COLS + gq, members, first, cnt, h8 + 2 * t, limit,
++                                                js);
++      if constexpr (S > 1) __syncthreads();        // the next pass's first rounds reuse the parts
++    }
++    if constexpr (EPI == 4) {
++      __threadfence();                             // this unit's y, then the tiles' slot counts
++      if constexpr (S == 1) {
++        __syncwarp();
++        combine_tiles(comb, reinterpret_cast<const float*>(out), members, first, cnt, cb, NB, N, lane);
++      } else {
++        __syncthreads();
++        if (warp == 0) combine_tiles(comb, reinterpret_cast<const float*>(out), members, first, cnt, cb, NB, N, lane);
++      }
++    }
++  }
++}
++
+ constexpr int PLAN_THREADS = 1024;
+ constexpr int EMAX = 1024;
+ constexpr int PSMALL = 1024;       // pairs the one-block plan takes; wider calls rank in blocks of PLAN_THREADS
+@@ -284,28 +530,198 @@ __global__ void plan_scatter(const int* __restrict__ picks, int P, int E, const
+   if (p < P) members[hist[(size_t)(p / PLAN_THREADS) * E + picks[p]] + rank[p]] = p;
+ }
+ 
+-template <int GS, int M, int EPI>
++// Decode routing in one launch: moe._topk_rows (the same instructions, so the same bits) then plan_kernel's plan.
++// A warp a row: its top_k experts by fp32 logit (largest first, the lower id among equal logits), weights
++// exp(l_k - l_0) / sum rounded to bf16, then the shared expert (id NE) with bf16(sigmoid(bf16(logit NE)))).
++constexpr float LOG2E = 1.44269502162933349609375f;             // 0x3FB8AA3B, as Triton's exp
++
++__device__ __forceinline__ float ex2_approx(float x) {
++  float r;
++  asm("ex2.approx.f32 %0, %1;\n" : "=f"(r) : "f"(x));
++  return r;
++}
++
++__device__ __forceinline__ float div_full(float a, float b) {
++  float r;
++  asm("div.full.f32 %0, %1, %2;\n" : "=f"(r) : "f"(a), "f"(b));
++  return r;
++}
++
++constexpr int SEL_THREADS = 256;                                // and at most as many pairs: one a thread
++
++// float -> key whose unsigned order is the float order (-0 counts as +0)
++__device__ __forceinline__ unsigned order_key(float f) {
++  const unsigned u = __float_as_uint(__fadd_rn(f, 0.f));
++  return (u & 0x80000000u) ? ~u : u | 0x80000000u;
++}
++
++__device__ __forceinline__ float key_value(unsigned k) {
++  return __uint_as_float((k & 0x80000000u) ? k ^ 0x80000000u : ~k);
++}
++
++template <int PL>                                                // logits a lane: 32 PL >= NE
++__global__ void __launch_bounds__(SEL_THREADS)
++    select_kernel(const float* __restrict__ logits, int R, int NL, int NE, int K, int T, int* __restrict__ picks,
++                  float* __restrict__ wts, int* __restrict__ members, int* __restrict__ items,
++                  int* __restrict__ counts) {
++  __shared__ int pk[SEL_THREADS];
++  __shared__ int hist[EMAX + 1];                                 // pairs an expert
++  __shared__ int part[SEL_THREADS / 32];
++  const int tid = threadIdx.x, lane = tid & 31, warp = tid >> 5, S = K + 1, P = R * S;
++  for (int e = tid; e <= NE; e += SEL_THREADS) hist[e] = 0;
++  for (int r = warp; r < R; r += SEL_THREADS / 32) {
++    const float* row = logits + (size_t)r * NL;
++    unsigned v[PL];
++#pragma unroll
++    for (int c = 0; c < PL; ++c) {
++      const int i = lane + 32 * c;
++      v[c] = i < NE ? order_key(row[i]) : 0u;
++    }
++    float top = 0.f, total = 0.f, ex_mine = 0.f;
++    int idx_mine = 0;
++    for (int k = 0; k < K; ++k) {
++      unsigned bk = 0u, bi = 0xffffffffu;                        // the lane's best, lowest index on ties
++#pragma unroll
++      for (int c = 0; c < PL; ++c)
++        if (v[c] > bk) {
++          bk = v[c];
++          bi = lane + 32 * c;
++        }
++      const unsigned m = __reduce_max_sync(0xffffffffu, bk);
++      bi = __reduce_min_sync(0xffffffffu, bk == m ? bi : 0xffffffffu);
++      const float bv = key_value(m);
++      if (k == 0) top = bv;
++      const float ex = ex2_approx(__fmul_rn(__fsub_rn(bv, top), LOG2E));
++      total = __fadd_rn(total, ex);
++      if (lane == k) {
++        ex_mine = ex;
++        idx_mine = bi;
++      }
++#pragma unroll
++      for (int c = 0; c < PL; ++c)
++        if (lane + 32 * c == (int)bi) v[c] = 0u;
++    }
++    if (lane < K) {
++      picks[r * S + lane] = idx_mine;
++      wts[r * S + lane] = bf(div_full(ex_mine, total));
++      pk[r * S + lane] = idx_mine;
++    } else if (lane == K) {
++      const float sg = bf(row[NE]);
++      picks[r * S + K] = NE;
++      wts[r * S + K] = bf(div_full(1.f, __fadd_rn(ex2_approx(__fmul_rn(sg, -LOG2E)), 1.f)));
++      pk[r * S + K] = NE;
++    }
++  }
++  __syncthreads();
++  // plan_kernel's plan: pair p's place is the pairs of lower experts, then the lower pairs of its own; items of <= T
++  // pairs in expert order
++  int e = 0, before = 0, below = 0;
++  if (tid < P) {
++    e = pk[tid];
++    int c = 0;
++    for (int q = 0; q < P; ++q) {
++      const int f = pk[q];
++      below += f < e;
++      before += (f == e) & (q < tid);
++      c += f == e;
++    }
++    if (before == 0) hist[e] = c;
++  }
++  __syncthreads();
++  if (tid < P) members[below + before] = tid;
++  // one scan over experts, a run of them a thread, of (items, pairs, 1 if used) packed 10 bits each (<= 256 pairs)
++  const int per = (NE + SEL_THREADS) / SEL_THREADS, e0 = tid * per;
++  int sum = 0;
++  for (int f = e0; f < e0 + per && f <= NE; ++f) {
++    const int c = hist[f];
++    if (c) sum += (((c + T - 1) / T) << 20) | (c << 10) | 1;
++  }
++  int inc = sum;
++#pragma unroll
++  for (int o = 1; o < 32; o <<= 1) {
++    const int y = __shfl_up_sync(0xffffffffu, inc, o);
++    if (lane >= o) inc += y;
++  }
++  if (lane == 31) part[warp] = inc;
++  __syncthreads();
++  int at = inc - sum;
++  for (int w = 0; w < warp; ++w) at += part[w];
++  for (int f = e0; f < e0 + per && f <= NE; ++f) {
++    const int c = hist[f];
++    if (!c) continue;
++    const int it = at >> 20, pairs = (at >> 10) & 1023, n = (c + T - 1) / T;
++    for (int j = 0; j < n; ++j) {
++      int* x = items + 3 * (it + j);
++      x[0] = f;
++      x[1] = pairs + T * j;
++      x[2] = min(T, c - T * j);
++    }
++    at += (n << 20) | (c << 10) | 1;
++  }
++  if (tid == SEL_THREADS - 1) {                                  // the last thread's running total is everything
++    counts[0] = at >> 20;
++    counts[1] = at & 1023;
++  }
++}
++
++template <int GS, int M, int EPI, int BITS>
+ void launch(const at::Tensor& x, int x_stride, int slots, const at::Tensor& w, int kg, int nb, const at::Tensor& items,
+             const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int n, float limit,
+-            int64_t max_units) {
++            int64_t max_units, const at::Tensor& w4, int e4) {
+   constexpr int D = 2, WARPS = 4;
+   static int per_sm = 0;
+   static int sms = 0;
+   if (per_sm == 0) {
+-    cudaOccupancyMaxActiveBlocksPerMultiprocessor(&per_sm, expert_kernel<GS, M, EPI, D, WARPS>, WARPS * 32, 0);
++    cudaOccupancyMaxActiveBlocksPerMultiprocessor(&per_sm, expert_kernel<GS, M, EPI, D, WARPS, BITS>, WARPS * 32, 0);
+     sms = at::cuda::getCurrentDeviceProperties()->multiProcessorCount;
+     per_sm = per_sm < 1 ? 1 : per_sm;
+   }
+   const int64_t need = (max_units + WARPS - 1) / WARPS;
+   const int grid = static_cast<int>(need < (int64_t)per_sm * sms ? need : (int64_t)per_sm * sms);
+   if (grid < 1) return;
+-  expert_kernel<GS, M, EPI, D, WARPS><<<grid, WARPS * 32, 0, at::cuda::getCurrentCUDAStream()>>>(
++  expert_kernel<GS, M, EPI, D, WARPS, BITS><<<grid, WARPS * 32, 0, at::cuda::getCurrentCUDAStream()>>>(
+       reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), x_stride, slots,
+       reinterpret_cast<const uint4*>(w.data_ptr()), kg, nb, items.data_ptr<int>(), counts.data_ptr<int>(),
+-      members.data_ptr<int>(), out.data_ptr(), n, limit);
++      members.data_ptr<int>(), out.data_ptr(), n, limit, reinterpret_cast<const uint4*>(w4.data_ptr()), e4);
+   C10_CUDA_KERNEL_LAUNCH_CHECK();
+ }
+ 
++template <int GS, int M, int EPI, int S, int BITS>
++void launch_swap(const at::Tensor& x, int x_stride, int slots, const at::Tensor& w, int kg, int nb,
++                 const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int n,
++                 float limit, int64_t max_units, const at::Tensor& w4, int e4, const Combine& comb) {
++  constexpr int D = 2, U = S == 1 ? 4 : 1, THREADS = (S == 1 ? 4 : S) * 32;
++  constexpr int SMEM = S == 1 ? 0 : 2 * S * sizeof(Part<GS, M>);
++  const auto kernel = swap_kernel<GS, M, EPI, D, S, BITS>;
++  static int per_sm = 0;
++  static int sms = 0;
++  if (per_sm == 0) {
++    if (SMEM > 48 * 1024)
++      C10_CUDA_CHECK(cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, SMEM));
++    cudaOccupancyMaxActiveBlocksPerMultiprocessor(&per_sm, kernel, THREADS, SMEM);
++    sms = at::cuda::getCurrentDeviceProperties()->multiProcessorCount;
++    per_sm = per_sm < 1 ? 1 : per_sm;
++  }
++  const int64_t need = (max_units + U - 1) / U;
++  const int grid = static_cast<int>(need < (int64_t)per_sm * sms ? need : (int64_t)per_sm * sms);
++  if (grid < 1) return;
++  kernel<<<grid, THREADS, SMEM, at::cuda::getCurrentCUDAStream()>>>(
++      reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), x_stride, slots,
++      reinterpret_cast<const uint4*>(w.data_ptr()), kg, nb, items.data_ptr<int>(), counts.data_ptr<int>(),
++      members.data_ptr<int>(), out.data_ptr(), n, limit, reinterpret_cast<const uint4*>(w4.data_ptr()), e4, comb);
++  C10_CUDA_KERNEL_LAUNCH_CHECK();
++}
++
++// warps a unit: up to about 8 warps an SM in all when units are few (3090, one row: gate/up 4, down 1), never more
++// than a unit has groups
++int pick_split(int64_t split, int64_t max_units, int kg) {
++  const int64_t cap = split > 0 ? split : 8;
++  const int64_t want = 8 * (int64_t)at::cuda::getCurrentDeviceProperties()->multiProcessorCount;
++  int s = 1;
++  while (2 * s <= cap && 2 * s <= kg && (split > 0 || max_units * 2 * s <= want)) s *= 2;
++  return s;
++}
++
+ }  // namespace
+ 
+ void experts_plan_cuda(const at::Tensor& picks, int64_t pairs, int64_t experts, int64_t tile, at::Tensor& members,
+@@ -333,19 +749,65 @@ void experts_plan_cuda(const at::Tensor& picks, int64_t pairs, int64_t experts,
+   C10_CUDA_KERNEL_LAUNCH_CHECK();
+ }
+ 
+-void experts_run_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
++void experts_run_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride, int64_t slots,
+                       const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items, const at::Tensor& counts,
+-                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units) {
++                      const at::Tensor& members, at::Tensor& out, int64_t n, double limit, int64_t max_units,
++                      const at::Tensor& w4, int64_t e4, int64_t split, const at::Tensor& cw, const at::Tensor& cout,
++                      const at::Tensor& csync, int64_t cslots) {
+   const c10::cuda::CUDAGuard guard(x.device());
++  // cslots > 0 (epilogue 0, decode kernel): moe.combine too, into cout
++  const Combine comb{cslots > 0 ? cw.data_ptr<float>() : nullptr,
++                     cslots > 0 ? reinterpret_cast<__nv_bfloat16*>(cout.data_ptr()) : nullptr,
++                     cslots > 0 ? csync.data_ptr<int>() : nullptr, static_cast<int>(cslots)};
++  if (cslots > 0) epi = 4;
+   const int xs = static_cast<int>(x_stride), sl = static_cast<int>(slots), k = static_cast<int>(kg);
+   const int b = static_cast<int>(nb), nn = static_cast<int>(n);
+   const float lim = static_cast<float>(limit);
+-#define TF_RUN(GS_, M_, EPI_)                                                                        \
+-  if (gs == GS_ && epi == EPI_) {                                                                    \
+-    launch<GS_, M_, EPI_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_units);     \
+-    return;                                                                                          \
++  const int ee = static_cast<int>(e4);
++  // split -1: the one-warp kernel (the decode form's reference); groups of 32 have only that
++  if (split >= 0 && gs == 64) {
++    const int sp = pick_split(split, max_units, k);
++#define TF_SWAP(M_, EPI_, B_, S_)                                                                              \
++  if (epi == EPI_ && bits == B_ && sp == S_) {                                                               \
++    launch_swap<64, M_, EPI_, S_, B_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_units, w4, \
++                                      ee, comb);                                                             \
++    return;                                                                                                  \
+   }
+-  TF_RUN(32, 1, 0) TF_RUN(32, 2, 2) TF_RUN(64, 1, 0) TF_RUN(64, 1, 1) TF_RUN(64, 2, 2)
++#define TF_SWAPS(M_, EPI_, B_) \
++  TF_SWAP(M_, EPI_, B_, 1) TF_SWAP(M_, EPI_, B_, 2) TF_SWAP(M_, EPI_, B_, 4) TF_SWAP(M_, EPI_, B_, 8)
++    TF_SWAPS(1, 0, 4) TF_SWAPS(1, 1, 4) TF_SWAPS(2, 2, 4) TF_SWAPS(1, 0, 3) TF_SWAPS(2, 2, 3)
++    TF_SWAPS(1, 0, 2) TF_SWAPS(2, 2, 2) TF_SWAPS(1, 4, 4) TF_SWAPS(1, 4, 3) TF_SWAPS(1, 4, 2)
++#undef TF_SWAPS
++#undef TF_SWAP
++  }
++#define TF_RUN(GS_, M_, EPI_, B_)                                                                          \
++  if (gs == GS_ && epi == EPI_ && bits == B_) {                                                            \
++    launch<GS_, M_, EPI_, B_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_units, w4, ee); \
++    return;                                                                                                \
++  }
++  TF_RUN(32, 1, 0, 4) TF_RUN(32, 2, 2, 4) TF_RUN(64, 1, 0, 4) TF_RUN(64, 1, 1, 4) TF_RUN(64, 2, 2, 4)
++  TF_RUN(64, 1, 0, 3) TF_RUN(64, 2, 2, 3) TF_RUN(64, 1, 0, 2) TF_RUN(64, 2, 2, 2)
+ #undef TF_RUN
+-  TORCH_CHECK(false, "experts: no kernel for group ", gs, " and epilogue ", epi);
++  TORCH_CHECK(false, "experts: no kernel for group ", gs, ", epilogue ", epi, " and ", bits, " bits",
++              epi == 4 ? " (combine takes the decode kernel, groups of 64)" : "");
++}
++
++
++void experts_select_cuda(const at::Tensor& logits, int64_t rows, int64_t experts, int64_t top_k, int64_t tile,
++                         at::Tensor& picks, at::Tensor& wts, at::Tensor& members, at::Tensor& items,
++                         at::Tensor& counts) {
++  const c10::cuda::CUDAGuard guard(logits.device());
++  TORCH_CHECK(experts <= EMAX && top_k < 32 && rows * (top_k + 1) <= SEL_THREADS,
++              "select: at most ", EMAX, " experts, top_k below 32 and ", SEL_THREADS, " pairs");
++  const auto run = [&](auto kernel) {
++    kernel<<<1, SEL_THREADS, 0, at::cuda::getCurrentCUDAStream()>>>(
++        logits.data_ptr<float>(), static_cast<int>(rows), static_cast<int>(logits.stride(0)),
++        static_cast<int>(experts), static_cast<int>(top_k), static_cast<int>(tile), picks.data_ptr<int>(),
++        wts.data_ptr<float>(), members.data_ptr<int>(), items.data_ptr<int>(), counts.data_ptr<int>());
++    C10_CUDA_KERNEL_LAUNCH_CHECK();
++  };
++  if (experts <= 128) run(select_kernel<4>);
++  else if (experts <= 256) run(select_kernel<8>);
++  else if (experts <= 512) run(select_kernel<16>);
++  else run(select_kernel<32>);
+ }
+diff --git a/src/tensorfold/cuda/experts.cuh b/src/tensorfold/cuda/experts.cuh
+index 27aa01a..69752dd 100644
+--- a/src/tensorfold/cuda/experts.cuh
++++ b/src/tensorfold/cuda/experts.cuh
+@@ -11,15 +11,52 @@ constexpr int COLS = 8 * NTW;
+ constexpr uint32_t LOW = 0x000F000Fu;
+ constexpr uint32_t K128 = 0x43004300u;       // the bf16 pair (128, 128)
+ 
+-template <int GS>
++// A block is one group of one 32-column tile: each lane's weight words, then scales and biases.
++// 4-bit: WORDS nibble words a lane, word wi at uint4 wi / 4 (lane-major). 2- and 3-bit (groups of 64): bit planes
++// that rebuild the same nibble words (see ``nibword``): 2-bit is one uint4 a lane of 2-bit fields; 3-bit adds a
++// 1-bit plane, one uint2 a lane after the 32 uint4.
++template <int GS, int BITS = 4>
+ struct Geo {
++  static_assert(BITS == 4 || (GS == 64 && (BITS == 2 || BITS == 3)), "2- and 3-bit experts take groups of 64");
+   static constexpr int KS = GS / 16;             // mma k-steps a group
+-  static constexpr int WV = NTW * GS / 128;      // weight uint4 a lane a group
++  static constexpr int WORDS = NTW * GS / 32 * BITS / 4;   // weight uint32 a lane a group (8 for 4-bit, groups of 64)
++  static constexpr int WU = 8 * WORDS;           // weight uint4 a block
+   static constexpr int XV = GS / 32;             // input uint4 a row a lane a group
+   static constexpr int SBV = NTW / 2;            // scale and bias uint4 a quad a group
+-  static constexpr int BLOCK = 32 * WV + 4 * SBV;
++  static constexpr int BLOCK = WU + 4 * SBV;
+ };
+ 
++// A lane's raw words of one block (b: the block's first uint4); L loads a uint4, L2 a uint2.
++template <int GS, int BITS, class L, class L2>
++__device__ __forceinline__ void lane_words(uint32_t (&r)[Geo<GS, BITS>::WORDS], const uint4* b, int lane, L ld4,
++                                           L2 ld2) {
++  if constexpr (BITS == 3) {
++    const uint4 v = ld4(b + lane);
++    const uint2 u = ld2(reinterpret_cast<const uint2*>(b + 32) + lane);
++    r[0] = v.x; r[1] = v.y; r[2] = v.z; r[3] = v.w; r[4] = u.x; r[5] = u.y;
++  } else {
++#pragma unroll
++    for (int c = 0; c < Geo<GS, BITS>::WORDS / 4; ++c) {
++      const uint4 v = ld4(b + c * 32 + lane);
++      r[4 * c] = v.x; r[4 * c + 1] = v.y; r[4 * c + 2] = v.z; r[4 * c + 3] = v.w;
++    }
++  }
++}
++
++// Nibble word wi of a lane (the 4-bit layout's word): 2-bit fields sit in the low half of each nibble, two words a
++// uint32 (word 2i at bits 4s, word 2i + 1 at bits 4s + 2); 3-bit adds each nibble's bit 2 from a plane of four words
++// a uint32 (word 4i + c at bits 4s + c).
++template <int BITS, int N>
++__device__ __forceinline__ uint32_t nibword(const uint32_t (&r)[N], int wi) {
++  if constexpr (BITS == 4) {
++    return r[wi];
++  } else {
++    const uint32_t lo = (r[wi >> 1] >> (2 * (wi & 1))) & 0x33333333u;
++    if constexpr (BITS == 2) return lo;
++    else return lo | (((r[4 + (wi >> 2)] >> (wi & 3)) & 0x11111111u) << 2);
++  }
++}
++
+ __device__ __forceinline__ void cp16(void* dst, const void* src) {
+   const uint32_t d = static_cast<uint32_t>(__cvta_generic_to_shared(dst));
+   asm volatile("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(d), "l"(src));
+@@ -70,15 +107,17 @@ __device__ __forceinline__ float relu2(float a) {
+ }
+ 
+ // EPI 0: fp32 out (down); 1: bf16 relu(bf16(acc))^2; 2: bf16 SwiGLU(matrix 0, matrix 1); 3: bf16 out (prefill down)
++// Writes the n8 tiles j with bit j of js set.
+ template <int EPI, int M, int RT>
+ __device__ __forceinline__ void epilogue(const float (&acc)[M][RT][NTW][4], int r, void* out, int N, int col0, int pr0,
+-                                         int pr1, bool v0, bool v1, float limit) {
++                                         int pr1, bool v0, bool v1, float limit, unsigned js = (1u << NTW) - 1u) {
+ #pragma unroll
+   for (int h = 0; h < 2; ++h) {
+     if (!(h ? v1 : v0)) continue;
+     const size_t row = (size_t)(h ? pr1 : pr0) * N;
+ #pragma unroll
+     for (int j = 0; j < NTW; ++j) {
++      if (!((js >> j) & 1u)) continue;
+       const int col = col0 + 8 * j;
+       const float a0 = acc[0][r][j][2 * h], a1 = acc[0][r][j][2 * h + 1];
+       if constexpr (EPI == 0) {
+diff --git a/src/tensorfold/cuda/experts.py b/src/tensorfold/cuda/experts.py
+index 54fd7ee..8e6819b 100644
+--- a/src/tensorfold/cuda/experts.py
++++ b/src/tensorfold/cuda/experts.py
+@@ -1,4 +1,4 @@
+-"""Grouped MoE experts on MLX 4-bit weights; a (row, slot) pair's bits never depend on the other rows of the call."""
++"""Grouped MoE experts on MLX 4-bit weights (2- and 3-bit too); a (row, slot) pair's bits never depend on the other rows of the call."""
+ 
+ from __future__ import annotations
+ 
+@@ -13,6 +13,10 @@ COLS = 8 * NTW           # output columns a warp
+ TILE = 16                # pairs an item holds (decode form), and the narrowest a prompt plan's consumer may take
+ PREFILL_TILE = 64        # this kernel's prompt item: 16 ran 1.64x slower on Flash Next's routed prompts
+ SMALL = 1024             # pairs the one-block plan takes; wider plans rank in blocks of 1024 pairs
++SELECT = True            # decode routing (top-k, then the plan) in one launch
++COMBINE = 1              # decode steps of up to this many rows: the slots' weighted sum in down's launch
++                         # (3090: 0.3-0.6 us a layer saved at 1 row, 1.5-6 us lost at 2-6 rows)
++SPLIT = 0                # decode form, warps a unit (the same bits whatever it is): 0 picks, -1 the one-warp kernel
+ 
+ 
+ @lru_cache(maxsize=1)
+@@ -20,16 +24,80 @@ def _ext():
+     from tensorfold.cuda.build import load
+ 
+     here = Path(__file__).parent
+-    return load(name="tensorfold_experts_v7", sources=[str(here / "experts.cpp"), str(here / "experts.cu"),
++    return load(name="tensorfold_experts_v14", sources=[str(here / "experts.cpp"), str(here / "experts.cu"),
+                                                         str(here / "experts_prefill.cu"), str(here / "experts_pack.cu")],
+                 extra_cuda_cflags=["-O3"], verbose=False)
+ 
+ 
+-def pack(words: torch.Tensor, scales: torch.Tensor, biases: torch.Tensor, gs: int) -> torch.Tensor:
+-    """MLX words [E, N, K/8], scales and biases -> [E, N/32, K/gs, block] in one kernel; nibbles (i0, i2, i4, i6, i1, i3, i5, i7), as ``unpack`` inverts."""
++def _nibbles(w: torch.Tensor) -> torch.Tensor:
++    """Nibbles to (i0, i2, i4, i6, i1, i3, i5, i7), so one shift and mask give two adjacent inputs as a bf16 pair."""
++
++    w = w.to(torch.int64) & 0xFFFFFFFF
++    out = torch.zeros_like(w)
++    for i in range(8):
++        out |= ((w >> (4 * i)) & 0xF) << (4 * (i // 2 + 4 * (i % 2)))
++    return torch.where(out >= 2 ** 31, out - 2 ** 32, out).to(torch.int32)
++
++
++def bits_of(words: torch.Tensor, scales: torch.Tensor, gs: int) -> int:
++    """An MLX tensor's width from its shapes: words [..., K * bits / 32], scales [..., K / gs]."""
++
++    return words.shape[-1] * 32 // (scales.shape[-1] * gs)
++
++
++def levels(words: torch.Tensor, bits: int) -> torch.Tensor:
++    """MLX words (an LSB-first bitstream, ``bits`` bytes per 8 values) [..., K * bits / 32] -> levels [..., K] uint8."""
++
++    b = words.contiguous().view(torch.uint8).to(torch.int64)
++    b = b.view(*b.shape[:-1], -1, bits)
++    v = (b << (8 * torch.arange(bits, device=b.device))).sum(-1)
++    q = (v[..., None] >> (bits * torch.arange(8, device=b.device))) & ((1 << bits) - 1)
++    return q.reshape(*words.shape[:-1], -1).to(torch.uint8)
++
++
++def _nibble_words(q: torch.Tensor) -> torch.Tensor:
++    """Levels [..., K] (below 16) -> MLX 4-bit words [..., K/8] int32."""
++
++    v = (q.to(torch.int64).view(*q.shape[:-1], -1, 8) << (4 * torch.arange(8, device=q.device))).sum(-1)
++    return torch.where(v >= 2 ** 31, v - 2 ** 32, v).to(torch.int32)
++
++
++def _planes(w: torch.Tensor, bits: int) -> torch.Tensor:
++    """4-bit block words [..., 2 uint4, 32 lanes, 4] (groups of 64) -> the 2- or 3-bit planes (see ``nibword``)."""
++
++    w = w.to(torch.int64) & 0xFFFFFFFF
++    w = w.movedim(-3, -2).reshape(*w.shape[:-3], 32, 8)          # [..., lane, word wi]
++    lo = w & 0x33333333
++    p2 = lo[..., 0::2] | (lo[..., 1::2] << 2)                      # [..., lane, 4]
++    parts = [p2.reshape(*w.shape[:-2], 128)]
++    if bits == 3:
++        hi = (w >> 2) & 0x11111111
++        p1 = sum(hi[..., c::4] << c for c in range(4))           # [..., lane, 2]
++        parts.append(p1.reshape(*w.shape[:-2], 64))
++    v = torch.cat(parts, dim=-1)
++    return torch.where(v >= 2 ** 31, v - 2 ** 32, v).to(torch.int32)
++
++
++def pack(words: torch.Tensor, scales: torch.Tensor, biases: torch.Tensor, gs: int, chunk: int = 32) -> torch.Tensor:
++    """MLX words [E, N, K * bits / 32], scales and biases -> [E, N/32, K/gs, block]: B-fragments, then scales and
++    biases. 4-bit words go as they are; 2- and 3-bit ones (groups of 64) as the bit planes ``nibword`` reads."""
+ 
+     if gs not in (32, 64):
+         raise ValueError(f"groups of 32 or 64 inputs, not {gs}")
++    bits = bits_of(words, scales, gs)
++    if bits != 4:
++        if bits not in (2, 3) or gs != 64:
++            raise ValueError(f"experts take 4 bits, or 2 and 3 in groups of 64; not {bits} in groups of {gs}")
++        e, n, kg = scales.shape
++        # a lane's 2 * bits words, 32 lanes, then the 8 * NTW words of scales and biases
++        out = torch.empty((e, n // COLS, kg, 64 * bits + 8 * NTW), dtype=torch.int32, device=words.device)
++        for e0 in range(0, e, chunk):
++            s4 = slice(e0, e0 + chunk)
++            four = pack(_nibble_words(levels(words[s4], bits)), scales[s4], biases[s4], gs, chunk)
++            c, nb = four.shape[0], four.shape[1]
++            out[s4, ..., :64 * bits] = _planes(four[..., :256].reshape(c, nb, kg, 2, 32, 4), bits)
++            out[s4, ..., 64 * bits:] = four[..., 256:]
++        return out
+     e, n, k8 = words.shape
+     k = k8 * 8
+     if n % COLS or k % gs or scales.shape != (e, n, k // gs) or biases.shape != scales.shape:
+@@ -68,10 +136,24 @@ class Experts:
+     width: int                # NI: the expert's (or this rank's) intermediate width
+     dims: int                 # D
+     limit: float = 0.0        # SwiGLU clip (0: none)
++    bits_up: int = 4          # gate and up's width (2, 3 or 4)
++    bits_down: int = 4
++    up4: torch.Tensor | None = None     # gate/up below 4 bits: the shared expert's at 4 bits, [1, ...] (expert E)
++    down4: torch.Tensor | None = None   # down below 4 bits: likewise
+ 
+     @property
+     def count(self) -> int:
+-        return self.up.shape[0]
++        return self.up.shape[0] + (self.up4 is not None)
++
++    @property
++    def shared_up(self) -> int:
++        """The id of the expert whose gate/up ``up4`` holds, or -1."""
++
++        return self.up.shape[0] if self.up4 is not None else -1
++
++    @property
++    def shared_down(self) -> int:
++        return self.down.shape[0] if self.down4 is not None else -1
+ 
+     @property
+     def swiglu(self) -> bool:
+@@ -81,15 +163,46 @@ class Experts:
+         return (self.up[0].numel() + self.down[0].numel()) * 4
+ 
+ 
+-def make(up: list[tuple], down: tuple, gs: int, *, limit: float = 0.0) -> Experts:
+-    """One layer's MLX arrays: ``up`` [gate, up] (SwiGLU) or [up] (relu^2), ``down``, each (words, scales, biases)."""
++def make(up: list[tuple], down: tuple, gs: int, *, limit: float = 0.0, shared: tuple | None = None) -> Experts:
++    """One layer's MLX arrays: ``up`` [gate, up] (SwiGLU) or [up] (relu^2), ``down``, each (words, scales, biases).
++
++    ``shared`` (up list, down) is a shared expert kept at 4 bits beside narrower experts: it becomes expert E."""
+ 
+     if len(up) not in (1, 2):
+         raise ValueError("experts take a gate and an up projection, or an up projection alone")
+-    width, dims = up[0][0].shape[1], up[0][0].shape[2] * 8
++    width, dims = up[0][0].shape[1], up[0][2].shape[2] * gs
++    bits_up = {bits_of(w, s, gs) for w, s, _ in up}
++    if len(bits_up) != 1:
++        raise ValueError("gate and up take the same width")
+     u = torch.stack([pack(*m, gs) for m in up], dim=3)
+     d = pack(*down, gs).unsqueeze(3)
+-    return Experts(u, d, gs, width, dims, float(limit))
++    ex = Experts(u, d, gs, width, dims, float(limit), bits_up.pop(), bits_of(down[0], down[1], gs))
++    if shared is not None:
++        s = make(*shared, gs, limit=limit)
++        if (s.bits_up, s.bits_down) != (4, 4):
++            raise ValueError("the shared expert beside narrower experts stays at 4 bits")
++        # a projection at 4 bits takes the shared expert as its expert E; a narrower one keeps it apart at 4 bits
++        if ex.bits_up == 4:
++            ex.up = torch.cat([u, s.up])
++        else:
++            ex.up4 = s.up
++        if ex.bits_down == 4:
++            ex.down = torch.cat([d, s.down])
++        else:
++            ex.down4 = s.down
++    return ex
++
++
++_NONE: dict = {}
++
++
++def _w4(t: torch.Tensor | None, like: torch.Tensor) -> torch.Tensor:
++    if t is not None:
++        return t
++    key = like.device
++    if key not in _NONE:
++        _NONE[key] = torch.zeros((4,), dtype=torch.int32, device=like.device)
++    return _NONE[key]
+ 
+ 
+ def max_items(pairs: int, experts: int, tile: int = TILE) -> int:
+@@ -131,20 +244,47 @@ def gate_up(x: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: i
+     items = max_items(rows * plan.slots, plan.experts, plan.tile)
+     epi = 2 if ex.swiglu else 1
+     if plan.prefill:
+-        _ext().prefill(ex.gs, epi, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items, plan.counts,
+-                       plan.members, out, ex.width, ex.limit, items)
++        _ext().prefill(ex.gs, epi, ex.bits_up, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items,
++                       plan.counts, plan.members, out, ex.width, ex.limit, items, _w4(ex.up4, x), ex.shared_up)
+     else:
+-        _ext().run(ex.gs, epi, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items, plan.counts,
+-                   plan.members, out, ex.width, ex.limit, items * (ex.width // COLS))
++        _ext().run(ex.gs, epi, ex.bits_up, x, plan.slots, ex.up, ex.dims // ex.gs, ex.width // COLS, plan.items,
++                   plan.counts, plan.members, out, ex.width, ex.limit, items * (ex.width // COLS), _w4(ex.up4, x),
++                   ex.shared_up, SPLIT, *_NO_COMBINE(x))
+ 
+ 
+-def down(act: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: int) -> None:
+-    """act [R * slots, NI] bf16 -> out [R * slots, D] per pair: fp32, or bf16 on a prefill plan when ``out`` is bf16."""
++def combinable(ex: Experts, plan: Plan, rows: int) -> bool:
++    return rows <= COMBINE and not plan.prefill and ex.gs == 64 and SPLIT >= 0
++
++
++def _NO_COMBINE(like: torch.Tensor) -> tuple:
++    return _w4(None, like), _w4(None, like), _w4(None, like), 0
++
++
++def down(act: torch.Tensor, ex: Experts, plan: Plan, out: torch.Tensor, rows: int,
++         combine: tuple | None = None) -> None:
++    """act [R * slots, NI] bf16 -> out [R * slots, D] per pair: fp32, or bf16 on a prefill plan when ``out`` is bf16.
++
++    ``combine`` (wts [R, slots] fp32, into [R, D] bf16, sync [R * D / 32] int32 zeroed once), decode plans only (see
++    ``combinable``): moe.combine's weighted sums of the slots too, in the same launch and with its bits."""
+ 
+     items = max_items(rows * plan.slots, plan.experts, plan.tile)
+     if plan.prefill:
+-        _ext().prefill(ex.gs, 3 if out.dtype == torch.bfloat16 else 0, act, 0, ex.down, ex.width // ex.gs,
+-                       ex.dims // COLS, plan.items, plan.counts, plan.members, out, ex.dims, 0.0, items)
++        _ext().prefill(ex.gs, 3 if out.dtype == torch.bfloat16 else 0, ex.bits_down, act, 0, ex.down,
++                       ex.width // ex.gs, ex.dims // COLS, plan.items, plan.counts, plan.members, out, ex.dims, 0.0,
++                       items, _w4(ex.down4, act), ex.shared_down)
+     else:
+-        _ext().run(ex.gs, 0, act, 0, ex.down, ex.width // ex.gs, ex.dims // COLS, plan.items, plan.counts,
+-                   plan.members, out, ex.dims, 0.0, items * (ex.dims // COLS))
++        _ext().run(ex.gs, 0, ex.bits_down, act, 0, ex.down, ex.width // ex.gs, ex.dims // COLS, plan.items,
++                   plan.counts, plan.members, out, ex.dims, 0.0, items * (ex.dims // COLS), _w4(ex.down4, act),
++                   ex.shared_down, SPLIT, *(_NO_COMBINE(act) if combine is None else (*combine, plan.slots)))
++
++
++
++def select(logits: torch.Tensor, top_k: int, plan: Plan, picks: torch.Tensor, wts: torch.Tensor) -> None:
++    """Decode routing in one launch: moe.select's picks and weights (logits [R, E + 1] fp32, the shared expert's gate
++    last), then ``route``'s plan, with the same bits."""
++
++    _ext().route_topk(logits, plan.experts - 1, top_k, plan.tile, picks, wts, plan.members, plan.items, plan.counts)
++
++
++def selectable(rows: int, slots: int, plan: Plan) -> bool:
++    return SELECT and not plan.prefill and rows * slots <= 256 and plan.experts <= 1024 and slots <= 32
+diff --git a/src/tensorfold/cuda/experts_prefill.cu b/src/tensorfold/cuda/experts_prefill.cu
+index 7745335..3e087e2 100644
+--- a/src/tensorfold/cuda/experts_prefill.cu
++++ b/src/tensorfold/cuda/experts_prefill.cu
+@@ -10,9 +10,9 @@
+ 
+ namespace {
+ 
+-template <int GS, int M, int RT, int WM, int WN>
++template <int GS, int M, int RT, int WM, int WN, int BITS = 4>
+ struct Pre {
+-  static constexpr int THREADS = WM * WN * 32, BM = 16 * RT * WM, SG = 64 / GS, XC = 8, WB = M * Geo<GS>::BLOCK;
++  static constexpr int THREADS = WM * WN * 32, BM = 16 * RT * WM, SG = 64 / GS, XC = 8, WB = M * Geo<GS, BITS>::BLOCK;
+   static constexpr int XU = BM * XC, WU = WN * SG * WB, SU = XU + WU;   // uint4 a stage: X rows, weight blocks
+   static constexpr int XPT = (XU + THREADS - 1) / THREADS;
+   static constexpr int STAGE_BYTES = SU * 16;
+@@ -28,18 +28,17 @@ __device__ __forceinline__ uint32_t hfma2(uint32_t q, uint32_t s, uint32_t b) {
+   return *reinterpret_cast<uint32_t*>(&r);
+ }
+ 
+-template <int GS, int M, int EPI, int RT, int WM, int WN>
+-__global__ void __launch_bounds__(WM * WN * 32)
+-    prefill_kernel(const __nv_bfloat16* __restrict__ X, int x_stride, int slots, const uint4* __restrict__ W,
+-                   int KG, int NB, const int* __restrict__ items, const int* __restrict__ counts,
+-                   const int* __restrict__ members, void* __restrict__ out, int N, float limit) {
+-  using G = Geo<GS>;
+-  using P = Pre<GS, M, RT, WM, WN>;
++// One item's tile at BITS; W holds expert ``slot`` (the shared expert's own 4-bit tensor holds it as slot 0).
++template <int GS, int M, int EPI, int RT, int WM, int WN, int BITS>
++__device__ __forceinline__ void prefill_body(const __nv_bfloat16* __restrict__ X, int x_stride, int slots,
++                                             const uint4* __restrict__ W, int slot, int KG, int NB, int it, int cbt,
++                                             const int* __restrict__ items, const int* __restrict__ members,
++                                             void* __restrict__ out, int N, float limit) {
++  using G = Geo<GS, BITS>;
++  using P = Pre<GS, M, RT, WM, WN, BITS>;
+   constexpr int STAGES = P::STAGES;
+   extern __shared__ uint4 sm[];
+-  const int nbt = (NB + WN - 1) / WN, it = blockIdx.x / nbt, cbt = blockIdx.x - it * nbt;
+-  if (it >= __ldg(counts)) return;
+-  const int e = __ldg(items + 3 * it), first = __ldg(items + 3 * it + 1), cnt = __ldg(items + 3 * it + 2);
++  const int first = __ldg(items + 3 * it + 1), cnt = __ldg(items + 3 * it + 2);
+   const int tid = threadIdx.x, lane = tid & 31, warp = tid >> 5, wm = warp / WN, wn = warp - wm * WN;
+   const int t = lane & 3, gq = lane >> 2, cb = cbt * WN + wn, cbs = min(WN, NB - cbt * WN);
+   const __nv_bfloat16* xsrc[P::XPT];
+@@ -54,7 +53,7 @@ __global__ void __launch_bounds__(WM * WN * 32)
+       xsrc[i] = X + (size_t)(slots ? p / slots : p) * x_stride + 8 * c;
+     }
+   }
+-  const uint4* wsrc = W + ((size_t)e * NB + cbt * WN) * (size_t)KG * P::WB;
++  const uint4* wsrc = W + ((size_t)slot * NB + cbt * WN) * (size_t)KG * P::WB;
+   auto stage = [&](int s, int g0) {                  // groups g0 .. g0 + ng - 1 (ng < SG only at an odd end)
+     const int ng = min(P::SG, KG - g0);
+     uint4* xs = sm + s * P::SU;
+@@ -95,14 +94,14 @@ __global__ void __launch_bounds__(WM * WN * 32)
+     for (int gi = 0; gi < P::SG; ++gi) {
+       if (k * P::SG + gi >= KG) break;
+       const uint4* ws = xs + P::XU + (wn * P::SG + gi) * P::WB;
+-      uint4 wv[M][G::WV];
++      uint32_t wv[M][G::WORDS];
+       uint32_t s2[M][NTW], b2[M][NTW];
+ #pragma unroll
+       for (int m = 0; m < M; ++m) {
+-#pragma unroll
+-        for (int c = 0; c < G::WV; ++c) wv[m][c] = ws[m * G::BLOCK + c * 32 + lane];
+-        const uint4 sp = ws[m * G::BLOCK + 32 * G::WV + (gq >> 1) * G::SBV];
+-        const uint4 bp = ws[m * G::BLOCK + 32 * G::WV + (gq >> 1) * G::SBV + 1];
++        lane_words<GS, BITS>(wv[m], ws + m * G::BLOCK, lane, [](const uint4* q) { return *q; },
++                             [](const uint2* q) { return *q; });
++        const uint4 sp = ws[m * G::BLOCK + G::WU + (gq >> 1) * G::SBV];
++        const uint4 bp = ws[m * G::BLOCK + G::WU + (gq >> 1) * G::SBV + 1];
+ #pragma unroll
+         for (int j = 0; j < NTW; ++j) {
+           s2[m][j] = __byte_perm(comp(sp, j), 0u, pick);
+@@ -124,7 +123,7 @@ __global__ void __launch_bounds__(WM * WN * 32)
+ #pragma unroll
+           for (int j = 0; j < NTW; ++j) {
+             const int wi = j * (GS / 32) + kk;
+-            const uint32_t word = comp(wv[m][wi >> 2], wi & 3);
++            const uint32_t word = nibword<BITS>(wv[m], wi);
+ #pragma unroll
+             for (int h = 0; h < 2; ++h) {
+               const uint32_t b0 = hfma2(nib2(word, 8 * h), s2[m][j], b2[m][j]);
+@@ -151,13 +150,33 @@ __global__ void __launch_bounds__(WM * WN * 32)
+   }
+ }
+ 
+-template <int GS, int M, int EPI, int RT, int WM, int WN>
++// Experts are BITS wide, except expert e4 (the shared expert, -1: none), which is 4-bit in W4.
++template <int GS, int M, int EPI, int RT, int WM, int WN, int BITS>
++__global__ void __launch_bounds__(WM * WN * 32)
++    prefill_kernel(const __nv_bfloat16* __restrict__ X, int x_stride, int slots, const uint4* __restrict__ W,
++                   int KG, int NB, const int* __restrict__ items, const int* __restrict__ counts,
++                   const int* __restrict__ members, void* __restrict__ out, int N, float limit,
++                   const uint4* __restrict__ W4, int e4) {
++  const int nbt = (NB + WN - 1) / WN, it = blockIdx.x / nbt, cbt = blockIdx.x - it * nbt;
++  if (it >= __ldg(counts)) return;
++  const int e = __ldg(items + 3 * it);
++  if (BITS != 4 && e == e4)                         // block-uniform: a block is one item, one expert
++    prefill_body<GS, M, EPI, RT, WM, WN, 4>(X, x_stride, slots, W4, 0, KG, NB, it, cbt, items, members, out, N,
++                                            limit);
++  else
++    prefill_body<GS, M, EPI, RT, WM, WN, BITS>(X, x_stride, slots, W, e, KG, NB, it, cbt, items, members, out, N,
++                                               limit);
++}
++
++template <int GS, int M, int EPI, int RT, int WM, int WN, int BITS>
+ void launch_prefill(const at::Tensor& x, int x_stride, int slots, const at::Tensor& w, int kg, int nb,
+                     const at::Tensor& items, const at::Tensor& counts, const at::Tensor& members, at::Tensor& out,
+-                    int n, float limit, int64_t max_items) {
+-  using P = Pre<GS, M, RT, WM, WN>;
+-  constexpr int SMEM = P::STAGES * P::STAGE_BYTES;
+-  auto* kern = prefill_kernel<GS, M, EPI, RT, WM, WN>;
++                    int n, float limit, int64_t max_items, const at::Tensor& w4, int e4) {
++  using P = Pre<GS, M, RT, WM, WN, BITS>;
++  using P4 = Pre<GS, M, RT, WM, WN, 4>;
++  constexpr int SMEM = P::STAGES * P::STAGE_BYTES > P4::STAGES * P4::STAGE_BYTES ? P::STAGES * P::STAGE_BYTES
++                                                                                   : P4::STAGES * P4::STAGE_BYTES;
++  auto* kern = prefill_kernel<GS, M, EPI, RT, WM, WN, BITS>;
+   static bool ready = false;
+   if (!ready) {
+     C10_CUDA_CHECK(cudaFuncSetAttribute(kern, cudaFuncAttributeMaxDynamicSharedMemorySize, SMEM));
+@@ -168,28 +187,32 @@ void launch_prefill(const at::Tensor& x, int x_stride, int slots, const at::Tens
+   kern<<<static_cast<unsigned>(grid), P::THREADS, SMEM, at::cuda::getCurrentCUDAStream()>>>(
+       reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), x_stride, slots,
+       reinterpret_cast<const uint4*>(w.data_ptr()), kg, nb, items.data_ptr<int>(), counts.data_ptr<int>(),
+-      members.data_ptr<int>(), out.data_ptr(), n, limit);
++      members.data_ptr<int>(), out.data_ptr(), n, limit, reinterpret_cast<const uint4*>(w4.data_ptr()), e4);
+   C10_CUDA_KERNEL_LAUNCH_CHECK();
+ }
+ 
+ }  // namespace
+ 
+-void experts_prefill_cuda(int64_t gs, int64_t epi, const at::Tensor& x, int64_t x_stride, int64_t slots,
+-                          const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
++void experts_prefill_cuda(int64_t gs, int64_t epi, int64_t bits, const at::Tensor& x, int64_t x_stride,
++                          int64_t slots, const at::Tensor& w, int64_t kg, int64_t nb, const at::Tensor& items,
+                           const at::Tensor& counts, const at::Tensor& members, at::Tensor& out, int64_t n,
+-                          double limit, int64_t max_items) {
++                          double limit, int64_t max_items, const at::Tensor& w4, int64_t e4) {
+   const c10::cuda::CUDAGuard guard(x.device());
+   const int xs = static_cast<int>(x_stride), sl = static_cast<int>(slots), k = static_cast<int>(kg);
+   const int b = static_cast<int>(nb), nn = static_cast<int>(n);
+   const float lim = static_cast<float>(limit);
+   // 8 warps a CTA, 64 pairs x 128 columns: two row tiles a warp, two warps down, four across
+-#define TF_PRE(GS_, M_, EPI_)                                                                                  \
+-  if (gs == GS_ && epi == EPI_) {                                                                              \
+-    launch_prefill<GS_, M_, EPI_, 2, 2, 4>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim, max_items); \
+-    return;                                                                                                    \
++  const int ee = static_cast<int>(e4);
++#define TF_PRE(GS_, M_, EPI_, B_)                                                                             \
++  if (gs == GS_ && epi == EPI_ && bits == B_) {                                                               \
++    launch_prefill<GS_, M_, EPI_, 2, 2, 4, B_>(x, xs, sl, w, k, b, items, counts, members, out, nn, lim,       \
++                                               max_items, w4, ee);                                           \
++    return;                                                                                                   \
+   }
+-  TF_PRE(32, 1, 0) TF_PRE(32, 1, 3) TF_PRE(32, 2, 2) TF_PRE(64, 1, 0) TF_PRE(64, 1, 3) TF_PRE(64, 1, 1)
+-  TF_PRE(64, 2, 2)
++  TF_PRE(32, 1, 0, 4) TF_PRE(32, 1, 3, 4) TF_PRE(32, 2, 2, 4) TF_PRE(64, 1, 0, 4) TF_PRE(64, 1, 3, 4)
++  TF_PRE(64, 1, 1, 4) TF_PRE(64, 2, 2, 4)
++  TF_PRE(64, 1, 0, 3) TF_PRE(64, 1, 3, 3) TF_PRE(64, 2, 2, 3) TF_PRE(64, 1, 0, 2) TF_PRE(64, 1, 3, 2)
++  TF_PRE(64, 2, 2, 2)
+ #undef TF_PRE
+-  TORCH_CHECK(false, "experts: no prefill kernel for group ", gs, " and epilogue ", epi);
++  TORCH_CHECK(false, "experts: no prefill kernel for group ", gs, ", epilogue ", epi, " and ", bits, " bits");
+ }
+diff --git a/src/tensorfold/cuda/geometry.py b/src/tensorfold/cuda/geometry.py
+index 44d7994..5559173 100644
+--- a/src/tensorfold/cuda/geometry.py
++++ b/src/tensorfold/cuda/geometry.py
+@@ -157,8 +157,10 @@ def live_kv(t: dict, world: int, window: int) -> int:
+ 
+ 
+ def gdn_geometry(t: dict, world: int, reserve: int, *, indexed: bool = False, mtp: bool = False,
+-                 kv_bits: int = 16, rows: int | None = None, prompt: int = 0, evicts: bool = False) -> Geometry:
+-    """``rows``: widest verify; ``prompt``: chunk rows sharing its scratch; ``evicts``: only the live window counts."""
++                 kv_bits: int = 16, rows: int | None = None, prompt: int = 0, evicts: bool = False,
++                 held_once: bool = False) -> Geometry:
++    """``rows``: widest verify; ``prompt``: chunk rows sharing its scratch; ``evicts``: only the live window counts;
++    ``held_once``: the engine allocates the window's attention rows (and the MTP layer's) once, up front."""
+ 
+     linear, attention = layer_counts(t)
+     d, h = int(t["hidden_size"]), int(t["num_attention_heads"]) // world
+@@ -197,6 +199,9 @@ def gdn_geometry(t: dict, world: int, reserve: int, *, indexed: bool = False, mt
+             blocks = (capacity + ratio - 1) // ratio
+             scratch = (2 if mtp else 1) * rows * (h * (hd + 2) * chunks + blocks) * 4
+             scratch += PREFILL_ATT_ROWS * (h * (hd + 2) * chunks + blocks) * 4
++        elif held_once:
++            cache = count * capacity * hk * hd * 4
++            scratch = rows * h * (hd + 2) * ((capacity + 511) // 512) * 4
+         else:
+             # Bound two retained prefixes, current KV state and a growth copy; speculative rows use separate workspace.
+             rounded = 1 << (max(1024, capacity - reserve) - 1).bit_length()
+diff --git a/src/tensorfold/cuda/kernels/attention.py b/src/tensorfold/cuda/kernels/attention.py
+index cbc9a2b..3e13d2b 100644
+--- a/src/tensorfold/cuda/kernels/attention.py
++++ b/src/tensorfold/cuda/kernels/attention.py
+@@ -111,7 +111,8 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
+         l = tl.zeros((16,), tl.float32)
+         o = tl.zeros((16, D), tl.float32)
+         key = chunk * CH + tl.arange(0, 64)
+-        for t in range(CH // 64):
++        last = tl.minimum(p + depth - chunk * CH, CH)        # past it every key is masked: tiles there are no-ops
++        for t in range(0, (last + 63) // 64):
+             logical = key + t * 64
+             committed = logical < p
+             path_slot = logical - p
+diff --git a/src/tensorfold/cuda/kernels/qmm.cpp b/src/tensorfold/cuda/kernels/qmm.cpp
+index 81c10c7..612de34 100644
+--- a/src/tensorfold/cuda/kernels/qmm.cpp
++++ b/src/tensorfold/cuda/kernels/qmm.cpp
+@@ -11,6 +11,44 @@ void qmm_prefill8w_cuda(const at::Tensor&, const at::Tensor&, const at::Tensor&,
+ void qmm_prefill8_cuda(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&,
+                        const at::Tensor&, at::Tensor&, int, int, bool, int);
+ 
++void qmm_seg_cuda(const at::Tensor&, const at::Tensor&, const std::vector<at::Tensor>&, const std::vector<at::Tensor>&,
++                  const std::vector<at::Tensor>&, const std::vector<at::Tensor>&, const std::vector<at::Tensor>&,
++                  const std::vector<int64_t>&, const std::vector<int64_t>&, const at::Tensor&, bool, bool);
++// x (M <= 16, K) bf16 times up to 4 packed 4-bit weights (groups of 64), each with its own K slices, in one launch.
++void qmm_seg(const at::Tensor& x, const at::Tensor& xs, const std::vector<at::Tensor>& w,
++             const std::vector<at::Tensor>& scales, const std::vector<at::Tensor>& biases,
++             const std::vector<at::Tensor>& out, const std::vector<at::Tensor>& part, const std::vector<int64_t>& n,
++             const std::vector<int64_t>& sk, const at::Tensor& sync, bool f32, bool swap) {
++    const size_t count = w.size();
++    TORCH_CHECK(count >= 1 && count <= 4 && scales.size() == count && biases.size() == count && out.size() == count &&
++                part.size() == count && n.size() == count && sk.size() == count, "1 to 4 weights, one entry each");
++    TORCH_CHECK(x.is_cuda() && x.scalar_type() == at::kBFloat16 && x.dim() == 2 && x.size(0) >= 1 &&
++                x.size(0) <= 16 && x.stride(1) == 1 && x.stride(0) >= x.size(1), "x: (M <= 16, K) bf16, contiguous rows");
++    TORCH_CHECK(reinterpret_cast<uintptr_t>(x.data_ptr()) % 16 == 0 && (x.size(0) == 1 || x.stride(0) % 8 == 0),
++                "x rows must start on 16-byte boundaries");
++    const int64_t m = x.size(0), k = x.size(1), gs = 64, kg = k / gs;
++    TORCH_CHECK(k % gs == 0, "K splits into whole groups");
++    TORCH_CHECK(xs.is_cuda() && xs.is_contiguous() && xs.scalar_type() == at::kFloat && xs.size(0) == m &&
++                xs.size(1) == kg, "xs: (M, K / 64) fp32");
++    TORCH_CHECK(sync.is_cuda() && sync.is_contiguous() && sync.scalar_type() == at::kInt, "sync: int32 counters");
++    for (size_t i = 0; i < count; ++i) {
++        const int64_t npad = (n[i] + 127) / 128 * 128;
++        TORCH_CHECK(sk[i] >= 1 && kg % sk[i] == 0, "K splits into whole groups a slice");
++        TORCH_CHECK(w[i].is_cuda() && w[i].is_contiguous() && w[i].scalar_type() == at::kInt &&
++                    w[i].numel() == npad * k / 8, "packed weight does not match n and K");
++        TORCH_CHECK(scales[i].stride(1) == 1 && biases[i].stride(1) == 1 && scales[i].stride(0) >= npad &&
++                    biases[i].stride(0) == scales[i].stride(0) && scales[i].scalar_type() == at::kBFloat16 &&
++                    biases[i].scalar_type() == at::kBFloat16 && scales[i].size(0) == kg && scales[i].size(1) == npad &&
++                    biases[i].sizes() == scales[i].sizes(), "scales and biases: (K / 64, n padded to 128) bf16");
++        TORCH_CHECK(out[i].is_cuda() && out[i].is_contiguous() && out[i].size(0) == m && out[i].size(1) == n[i] &&
++                    out[i].scalar_type() == (f32 ? at::kFloat : at::kBFloat16), "out: (M, n)");
++        if (sk[i] > 1)
++            TORCH_CHECK(part[i].is_cuda() && part[i].is_contiguous() && part[i].scalar_type() == at::kFloat &&
++                        part[i].numel() >= sk[i] * m * n[i], "part: at least (SK, M, n) fp32");
++    }
++    c10::cuda::CUDAGuard guard(x.device());
++    qmm_seg_cuda(x, xs, w, scales, biases, out, part, n, sk, sync, f32, swap);
++}
+ // x (M, K) bf16 times a packed 4-bit weight; ``reduce`` false leaves the K slices unadded in ``part`` (SK, M, n).
+ void qmm(const at::Tensor& x, const at::Tensor& xs, const at::Tensor& w, const at::Tensor& scales,
+          const at::Tensor& biases, at::Tensor& out, const c10::optional<at::Tensor>& part, int64_t n, int64_t sk,
+@@ -115,6 +153,7 @@ void qmm_prefill8w(const at::Tensor& x8, const at::Tensor& a, const at::Tensor&
+ 
+ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+     m.def("qmm", &qmm);
++    m.def("qmm_seg", &qmm_seg);
+     m.def("qmm_prefill", &qmm_prefill);
+     m.def("qmm_prefill8", &qmm_prefill8);
+     m.def("qmm_prefill8w", &qmm_prefill8w);
+diff --git a/src/tensorfold/cuda/kernels/qmm.cu b/src/tensorfold/cuda/kernels/qmm.cu
+index e8afd09..8d68c0b 100644
+--- a/src/tensorfold/cuda/kernels/qmm.cu
++++ b/src/tensorfold/cuda/kernels/qmm.cu
+@@ -30,18 +30,17 @@ struct Tile {
+     static constexpr int SMEM = STAGES * STAGE > PARTIALS ? STAGES * STAGE : PARTIALS;
+ };
+ 
+-template <int GS, int BM, int BN, int WM, int WN, int STAGES, bool F32, bool CLUSTER, bool PIPE = false>
+-__global__ void __launch_bounds__(WM * WN * 32) qmm_kernel(
+-        const __nv_bfloat16* __restrict__ x, const float* __restrict__ xs, const uint32_t* __restrict__ w,
+-        const __nv_bfloat16* __restrict__ scales, const __nv_bfloat16* __restrict__ biases,
+-        void* __restrict__ out, float* __restrict__ part, int M, int N, int K, int SK, int npad, int ldx, int group) {
++// A tile's K slice: acc = fma(xs, b, fma(p, s, acc)) per group of [g0, g0 + per) in order, from zero. Every launch form
++// runs these steps, so a column's bits depend only on its K slices.
++template <int GS, int BM, int BN, int WM, int WN, int STAGES, bool PIPE>
++__device__ __forceinline__ void tile_slice(float (&acc)[Tile<GS, BM, BN, WM, WN, STAGES>::MT]
++                                                      [Tile<GS, BM, BN, WM, WN, STAGES>::NT][4],
++        unsigned char* buf, const __nv_bfloat16* __restrict__ x, const float* __restrict__ xs,
++        const uint32_t* __restrict__ w, const __nv_bfloat16* __restrict__ scales,
++        const __nv_bfloat16* __restrict__ biases, int M, int KG, int per, int g0, int m0, int n0, int npad, int ldx) {
+     using T = Tile<GS, BM, BN, WM, WN, STAGES>;
+-    extern __shared__ __align__(128) unsigned char buf[];
+     const int tid = threadIdx.x, lane = tid & 31, warp = tid >> 5;
+     const int wm = warp / WN, wn = warp % WN;
+-    const int KG = K / GS, per = KG / SK;
+-    const int2 at = tile_of(blockIdx.x, M, N, BM, BN, group);
+-    const int m0 = at.x, n0 = at.y, slice = blockIdx.z, g0 = slice * per;
+ 
+     auto stage = [&](int s) { return buf + s * T::STAGE; };
+     // one group's inputs, weights, scales, biases and input sums into stage s
+@@ -72,7 +71,6 @@ __global__ void __launch_bounds__(WM * WN * 32) qmm_kernel(
+     };
+ 
+     {
+-        float acc[T::MT][T::NT][4];
+ #pragma unroll
+         for (int i = 0; i < T::MT; ++i)
+ #pragma unroll
+@@ -170,6 +168,25 @@ __global__ void __launch_bounds__(WM * WN * 32) qmm_kernel(
+         if (PIPE && per > 0) epilogue(acc, dp, sp, bp, xp);
+         wait<0>();
+         __syncthreads();
++    }
++}
++
++template <int GS, int BM, int BN, int WM, int WN, int STAGES, bool F32, bool CLUSTER, bool PIPE = false>
++__global__ void __launch_bounds__(WM * WN * 32) qmm_kernel(
++        const __nv_bfloat16* __restrict__ x, const float* __restrict__ xs, const uint32_t* __restrict__ w,
++        const __nv_bfloat16* __restrict__ scales, const __nv_bfloat16* __restrict__ biases,
++        void* __restrict__ out, float* __restrict__ part, int M, int N, int K, int SK, int npad, int ldx, int group) {
++    using T = Tile<GS, BM, BN, WM, WN, STAGES>;
++    extern __shared__ __align__(128) unsigned char buf[];
++    const int tid = threadIdx.x, lane = tid & 31, warp = tid >> 5;
++    const int wm = warp / WN, wn = warp % WN;
++    const int KG = K / GS, per = KG / SK;
++    const int2 at = tile_of(blockIdx.x, M, N, BM, BN, group);
++    const int m0 = at.x, n0 = at.y, slice = blockIdx.z, g0 = slice * per;
++    {
++        float acc[T::MT][T::NT][4];
++        tile_slice<GS, BM, BN, WM, WN, STAGES, PIPE>(acc, buf, x, xs, w, scales, biases, M, KG, per, g0, m0, n0, npad,
++                                                     ldx);
+         if constexpr (CLUSTER) {
+ #if __CUDA_ARCH__ < 900
+             __trap();                                     // no clusters before sm_90: the host never launches this
+@@ -246,6 +263,209 @@ __global__ void reduce_kernel(const float* __restrict__ part, void* __restrict__
+     else reinterpret_cast<__nv_bfloat16*>(out)[i] = __float2bfloat16_rn(acc);
+ }
+ 
++// tile_slice with the weights as the mma's A (16 rows: the warp's columns of n8 tiles 0 and 1, from the same words) and
++// the inputs as its B (8 columns: tokens 8 tt .. 8 tt + 7, the halves of the same ldmatrix), so TT = 1 (at most 8 rows)
++// takes half the mmas. A lane ends with its columns wn 16 + gq (acc 0, 1) and wn 16 + 8 + gq (acc 2, 3) for tokens
++// 8 tt + 2 t and + 1. The tensor core's dot product doesn't depend on which operand is which, and the steps run on the
++// same values in the same order, so every output has tile_slice's bits.
++template <int GS, int BN, int WN, int STAGES, int TT>
++__device__ __forceinline__ void tile_slice_swap(float (&acc)[TT][4], unsigned char* buf,
++        const __nv_bfloat16* __restrict__ x, const float* __restrict__ xs, const uint32_t* __restrict__ w,
++        const __nv_bfloat16* __restrict__ scales, const __nv_bfloat16* __restrict__ biases, int M, int KG, int per,
++        int g0, int n0, int npad, int ldx) {
++    constexpr int BM = 16;
++    using T = Tile<GS, BM, BN, 1, WN, STAGES>;
++    static_assert(T::NT == 2 && T::MT == 1, "a warp: one m16 tile of 16 columns");
++    const int tid = threadIdx.x, lane = tid & 31, wn = tid >> 5, gq = lane >> 2, t = lane & 3;
++
++    auto stage = [&](int s) { return buf + s * T::STAGE; };
++    auto load = [&](int s, int g) {
++        unsigned char* p = stage(s);
++        for (int c = tid; c < BM * T::CHUNKS; c += T::THREADS) {
++            const int r = c / T::CHUNKS, ch = c % T::CHUNKS;
++            const int row = min(r, M - 1);
++            cp16z(p + r * T::ROW + swz<T::CHUNKS>(r, ch) * 16, x + static_cast<size_t>(row) * ldx + g * GS + ch * 8,
++                  r < M);
++        }
++        unsigned char* pw = p + T::X;
++        constexpr int TILE_BYTES = 64 * GS / 2;
++        for (int c = tid; c < T::W / 16; c += T::THREADS) {
++            const int tl = c / (TILE_BYTES / 16), off = c % (TILE_BYTES / 16);
++            const size_t tile = static_cast<size_t>(n0 / 64 + tl) * KG + g;
++            cp16(pw + c * 16, reinterpret_cast<const unsigned char*>(w) + tile * TILE_BYTES + off * 16);
++        }
++        unsigned char* ps = pw + T::W;
++        for (int c = tid; c < 2 * (T::S / 16); c += T::THREADS) {
++            const int which = c / (T::S / 16), off = c % (T::S / 16);
++            const __nv_bfloat16* src = (which ? biases : scales) + static_cast<size_t>(g) * npad + n0 + off * 8;
++            cp16(ps + which * T::S + off * 16, src);
++        }
++        float* px = reinterpret_cast<float*>(ps + 2 * T::S);
++        for (int r = tid; r < BM; r += T::THREADS)
++            cp4(px + r, xs + static_cast<size_t>(min(r, M - 1)) * KG + g);
++    };
++
++#pragma unroll
++    for (int u = 0; u < TT; ++u) acc[u][0] = acc[u][1] = acc[u][2] = acc[u][3] = 0.0f;
++#pragma unroll
++    for (int s = 0; s < STAGES - 1; ++s) {
++        if (s < per) load(s, g0 + s);
++        commit();
++    }
++    const int c0 = wn * 16 + gq, c1 = c0 + 8;             // the lane's columns in the block
++    for (int it = 0; it < per; ++it) {
++        wait<STAGES - 2>();
++        __syncthreads();
++        const int next = it + STAGES - 1;
++        if (next < per) load(next % STAGES, g0 + next);
++        commit();
++        const unsigned char* p = stage(it % STAGES);
++        const uint32_t* pw = reinterpret_cast<const uint32_t*>(p + T::X);
++        const __nv_bfloat16* ps = reinterpret_cast<const __nv_bfloat16*>(p + T::X + T::W);
++        const float* px = reinterpret_cast<const float*>(p + T::X + T::W + 2 * T::S);
++        uint32_t words[2][GS / 32];
++#pragma unroll
++        for (int j = 0; j < 2; ++j)
++#pragma unroll
++            for (int v = 0; v < GS / 32; ++v) words[j][v] = pw[((wn * 2 + j) * 32 + lane) * (GS / 32) + v];
++        float d[TT][4];
++#pragma unroll
++        for (int kt = 0; kt < GS / 16; ++kt) {
++            uint32_t a[4];
++            const int r = (lane & 7) + ((lane >> 3) & 1) * 8;
++            ldmatrix4(a, p + r * T::ROW + swz<T::CHUNKS>(r, kt * 2 + (lane >> 4)) * 16);
++            const int sh = (kt & 1) * 8;
++            const uint32_t wa[4] = {pair(words[0][kt / 2], sh), pair(words[1][kt / 2], sh),
++                                    pair(words[0][kt / 2], sh + 4), pair(words[1][kt / 2], sh + 4)};
++#pragma unroll
++            for (int u = 0; u < TT; ++u) {
++                if (kt == 0) mma0(d[u], wa, a[u], a[u + 2]);
++                else mma(d[u], wa, a[u], a[u + 2]);
++            }
++        }
++        const float s0 = __bfloat162float(ps[c0]), s1 = __bfloat162float(ps[c1]);
++        const float b0 = __bfloat162float(ps[BN + c0]), b1 = __bfloat162float(ps[BN + c1]);
++#pragma unroll
++        for (int u = 0; u < TT; ++u) {
++            const float x0 = px[u * 8 + 2 * t], x1 = px[u * 8 + 2 * t + 1];
++            acc[u][0] = __fmaf_rn(x0, b0, __fmaf_rn(d[u][0], s0, acc[u][0]));
++            acc[u][1] = __fmaf_rn(x1, b0, __fmaf_rn(d[u][1], s0, acc[u][1]));
++            acc[u][2] = __fmaf_rn(x0, b1, __fmaf_rn(d[u][2], s1, acc[u][2]));
++            acc[u][3] = __fmaf_rn(x1, b1, __fmaf_rn(d[u][3], s1, acc[u][3]));
++        }
++    }
++    wait<0>();
++    __syncthreads();
++}
++
++// Several weights of the same input in one launch (decode, one row tile): segment i's blocks are its column tiles
++// times its own K slices, the slices it would get alone. Slices park in part (SK, M, N) and the tile's last block to
++// finish adds them in slice order and rounds once, as reduce_kernel does; sync counts a tile's finished slices and is
++// zero before and after a launch.
++constexpr int SEGS = 4;
++struct Seg {
++    const uint32_t* w;
++    const __nv_bfloat16* scales;
++    const __nv_bfloat16* biases;
++    void* out;
++    float* part;
++    int N, npad, SK, blocks, sync;                        // blocks: tiles x SK; sync: its tiles' first counter
++};
++struct Segs {
++    Seg s[SEGS];
++    int count;
++};
++
++template <bool F32>
++__device__ __forceinline__ void put(void* out, size_t i, float v) {
++    if (F32) reinterpret_cast<float*>(out)[i] = v;
++    else reinterpret_cast<__nv_bfloat16*>(out)[i] = __float2bfloat16_rn(v);
++}
++
++// TT 0: tile_slice; 1 or 2: tile_slice_swap with that many 8-token tiles
++template <int GS, int BM, int BN, int WM, int WN, int STAGES, bool F32, int TT>
++__global__ void __launch_bounds__(WM * WN * 32) qmm_seg_kernel(
++        const __nv_bfloat16* __restrict__ x, const float* __restrict__ xs, const Segs segs, int* __restrict__ sync,
++        int M, int K, int ldx) {
++    using T = Tile<GS, BM, BN, WM, WN, STAGES>;
++    extern __shared__ __align__(128) unsigned char buf[];
++    __shared__ int last;
++    const int tid = threadIdx.x, lane = tid & 31, warp = tid >> 5;
++    const int wm = warp / WN, wn = warp % WN;
++    int b = blockIdx.x;
++    Seg sg = segs.s[0];
++#pragma unroll
++    for (int i = 1; i < SEGS; ++i)
++        if (i < segs.count && b >= sg.blocks) {
++            b -= sg.blocks;
++            sg = segs.s[i];
++        }
++    const int KG = K / GS, per = KG / sg.SK, tiles = sg.blocks / sg.SK;
++    const int slice = b / tiles, tile = b - slice * tiles, n0 = tile * BN;
++    constexpr int E = TT ? TT * 4 : T::MT * T::NT * 4;  // the lane's outputs
++    float v[E];
++    int rows[E], cols[E];
++    if constexpr (TT == 0) {
++        float acc[T::MT][T::NT][4];
++        tile_slice<GS, BM, BN, WM, WN, STAGES, false>(acc, buf, x, xs, sg.w, sg.scales, sg.biases, M, KG, per,
++                                                      slice * per, 0, n0, sg.npad, ldx);
++#pragma unroll
++        for (int i = 0; i < T::MT; ++i)
++#pragma unroll
++            for (int j = 0; j < T::NT; ++j)
++#pragma unroll
++                for (int e = 0; e < 4; ++e) {
++                    const int q = (i * T::NT + j) * 4 + e;
++                    v[q] = acc[i][j][e];
++                    rows[q] = wm * (BM / WM) + i * 16 + (lane >> 2) + (e >> 1) * 8;
++                    cols[q] = n0 + wn * (BN / WN) + j * 8 + (lane & 3) * 2 + (e & 1);
++                }
++    } else {
++        static_assert(WM == 1 && BM == 16, "the swapped form: one 16-row tile, a warp's 16 columns");
++        float acc[TT][4];
++        tile_slice_swap<GS, BN, WN, STAGES, TT>(acc, buf, x, xs, sg.w, sg.scales, sg.biases, M, KG, per, slice * per,
++                                                n0, sg.npad, ldx);
++#pragma unroll
++        for (int u = 0; u < TT; ++u)
++#pragma unroll
++            for (int e = 0; e < 4; ++e) {
++                v[u * 4 + e] = acc[u][e];
++                rows[u * 4 + e] = u * 8 + 2 * (lane & 3) + (e & 1);
++                cols[u * 4 + e] = n0 + wn * 16 + (lane >> 2) + (e >> 1) * 8;
++            }
++    }
++    const int N = sg.N;
++    const size_t MN = static_cast<size_t>(M) * N;
++#pragma unroll
++    for (int q = 0; q < E; ++q) {
++        if (rows[q] >= M || cols[q] >= N) continue;
++        const size_t at = static_cast<size_t>(rows[q]) * N + cols[q];
++        if (sg.SK == 1) put<F32>(sg.out, at, v[q]);
++        else sg.part[slice * MN + at] = v[q];
++    }
++    if (sg.SK == 1) return;
++    __threadfence();                                      // this slice's partials, then its count
++    __syncthreads();
++    if (tid == 0) last = atomicAdd(sync + sg.sync + tile, 1) == sg.SK - 1;
++    __syncthreads();
++    if (!last) return;
++    __threadfence();
++#pragma unroll
++    for (int q = 0; q < E; ++q) {
++        if (rows[q] >= M || cols[q] >= N) continue;
++        const size_t at = static_cast<size_t>(rows[q]) * N + cols[q];
++        float p[8];                                       // every slice's load in flight, then added in order
++#pragma unroll
++        for (int s = 0; s < 8; ++s) p[s] = s < sg.SK ? __ldcg(sg.part + s * MN + at) : 0.f;
++        float a = p[0];
++#pragma unroll
++        for (int s = 1; s < 8; ++s)
++            if (s < sg.SK) a = a + p[s];
++        put<F32>(sg.out, at, a);
++    }
++    if (tid == 0) sync[sg.sync + tile] = 0;
++}
++
+ template <int GS, int BM, int BN, int WM, int WN, int STAGES, bool F32, bool CLUSTER, bool PIPE = false>
+ void launch(const at::Tensor& x, const at::Tensor& xs, const at::Tensor& w, const at::Tensor& scales,
+             const at::Tensor& biases, at::Tensor& out, const at::Tensor& part, int N, int SK) {
+@@ -292,6 +512,17 @@ void dispatch(int bm, const at::Tensor& x, const at::Tensor& xs, const at::Tenso
+     }
+ }
+ 
++// Whether this GPU launches thread-block clusters (9.0 and newer).
++bool clusters() {
++    static const bool yes = [] {
++        int device = 0, value = 0;
++        C10_CUDA_CHECK(cudaGetDevice(&device));
++        C10_CUDA_CHECK(cudaDeviceGetAttribute(&value, cudaDevAttrClusterLaunch, device));
++        return value != 0;
++    }();
++    return yes;
++}
++
+ } // namespace
+ 
+ // Clusters hold up to 8 K slices (the portable size) from sm_90; more, unreduced slices or older GPUs use the buffer.
+@@ -304,7 +535,10 @@ void qmm_cuda(const at::Tensor& x, const at::Tensor& xs, const at::Tensor& w, co
+               bool f32, bool reduce) {
+     const int M = x.size(0);
+     const bool cluster = qmm_clusters(SK, reduce);
+-#define GO(G, F, C) dispatch<G, F, C>(bm, x, xs, w, scales, biases, out, part, N, SK)
++    // without clusters, reduced slices park in a buffer (the caller's, else one of their own), added in slice order
++    const at::Tensor slices = SK > 1 && !cluster && !part.defined()
++        ? at::empty({SK, M, N}, x.options().dtype(at::kFloat)) : part;
++#define GO(G, F, C) dispatch<G, F, C>(bm, x, xs, w, scales, biases, out, slices, N, SK)
+     if (gs == 64) {
+         if (f32) { if (cluster) GO(64, true, true); else GO(64, true, false); }
+         else { if (cluster) GO(64, false, true); else GO(64, false, false); }
+@@ -318,8 +552,54 @@ void qmm_cuda(const at::Tensor& x, const at::Tensor& xs, const at::Tensor& w, co
+         const int threads = 256;
+         const int blocks = static_cast<int>((total + threads - 1) / threads);
+         auto stream = at::cuda::getCurrentCUDAStream();
+-        if (f32) reduce_kernel<true><<<blocks, threads, 0, stream>>>(part.data_ptr<float>(), out.data_ptr(), total, SK);
+-        else reduce_kernel<false><<<blocks, threads, 0, stream>>>(part.data_ptr<float>(), out.data_ptr(), total, SK);
++        if (f32) reduce_kernel<true><<<blocks, threads, 0, stream>>>(slices.data_ptr<float>(), out.data_ptr(), total, SK);
++        else reduce_kernel<false><<<blocks, threads, 0, stream>>>(slices.data_ptr<float>(), out.data_ptr(), total, SK);
+         C10_CUDA_KERNEL_LAUNCH_CHECK();
+     }
+ }
++
++void qmm_seg_cuda(const at::Tensor& x, const at::Tensor& xs, const std::vector<at::Tensor>& w,
++                  const std::vector<at::Tensor>& scales, const std::vector<at::Tensor>& biases,
++                  const std::vector<at::Tensor>& out, const std::vector<at::Tensor>& part,
++                  const std::vector<int64_t>& n, const std::vector<int64_t>& sk, const at::Tensor& sync, bool f32,
++                  bool swap) {
++    constexpr int BM = 16, BN = 64, WM = 1, WN = 4, STAGES = 4, GS = 64;
++    using T = Tile<GS, BM, BN, WM, WN, STAGES>;
++    Segs segs = {};
++    segs.count = static_cast<int>(w.size());
++    int blocks = 0, counters = 0;
++    for (int i = 0; i < segs.count; ++i) {
++        Seg& sg = segs.s[i];
++        sg.w = reinterpret_cast<const uint32_t*>(w[i].data_ptr());
++        sg.scales = reinterpret_cast<const __nv_bfloat16*>(scales[i].data_ptr());
++        sg.biases = reinterpret_cast<const __nv_bfloat16*>(biases[i].data_ptr());
++        sg.out = out[i].data_ptr();
++        sg.part = sk[i] > 1 ? part[i].data_ptr<float>() : nullptr;
++        sg.N = static_cast<int>(n[i]);
++        sg.npad = static_cast<int>(scales[i].stride(0));
++        sg.SK = static_cast<int>(sk[i]);
++        const int tiles = (sg.N + BN - 1) / BN;
++        sg.blocks = tiles * sg.SK;
++        sg.sync = counters;
++        if (sg.SK > 1) counters += tiles;
++        blocks += sg.blocks;
++    }
++    TORCH_CHECK(counters <= sync.numel(), "qmm_seg: more split tiles than counters");
++    auto run = [&](auto kernel) {
++        static bool configured = false;                   // one per instantiation (the lambda's type differs)
++        if (!configured) {
++            C10_CUDA_CHECK(cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, T::SMEM));
++            configured = true;
++        }
++        const int M = x.size(0), K = x.size(1);
++        kernel<<<blocks, T::THREADS, T::SMEM, at::cuda::getCurrentCUDAStream()>>>(
++            reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), xs.data_ptr<float>(), segs, sync.data_ptr<int>(), M,
++            K, M == 1 ? K : static_cast<int>(x.stride(0)));
++        C10_CUDA_KERNEL_LAUNCH_CHECK();
++    };
++    const int tt = swap ? (x.size(0) <= 8 ? 1 : 2) : 0;
++#define SEG(F, TT) run(qmm_seg_kernel<GS, BM, BN, WM, WN, STAGES, F, TT>)
++    if (f32) { if (tt == 0) SEG(true, 0); else if (tt == 1) SEG(true, 1); else SEG(true, 2); }
++    else { if (tt == 0) SEG(false, 0); else if (tt == 1) SEG(false, 1); else SEG(false, 2); }
++#undef SEG
++}
+diff --git a/src/tensorfold/cuda/kernels/qmm.py b/src/tensorfold/cuda/kernels/qmm.py
+index 2c8fc13..339e740 100644
+--- a/src/tensorfold/cuda/kernels/qmm.py
++++ b/src/tensorfold/cuda/kernels/qmm.py
+@@ -16,7 +16,7 @@ def _ext():
+     from tensorfold.cuda.build import load
+ 
+     here = Path(__file__).parent
+-    return load(name="tensorfold_qmm_v3", sources=[str(here / "qmm.cpp"), str(here / "qmm.cu"),
++    return load(name="tensorfold_qmm_v4", sources=[str(here / "qmm.cpp"), str(here / "qmm.cu"),
+                                                    str(here / "qmm_prefill.cu"), str(here / "qmm_prefill8.cu")],
+                 extra_cuda_cflags=["-O3"], verbose=False)
+ 
+@@ -137,6 +137,67 @@ def group_sums(x: torch.Tensor, gs: int = 64) -> torch.Tensor:
+     return xs
+ 
+ 
++SEG_ROWS = 16        # decode calls of up to this many rows take the segmented launch (one row tile)
++# a lone weight takes the segmented launch up to this many rows (weights as A there: 8 slices of o_proj 11.0 -> 8.7 us at
++# 1 row, 11.7 -> 9.4 at 8; the head 335 -> 329 at 1 row, the draft head 120 -> 108); past it the last block's slice sum
++# costs more than reduce_kernel's launch (8 slices, 16 rows: 11.4 -> 13.0) and the swapped heads lose
++SUM_ROWS = 8
++SWAP = True          # segmented launches with the weights as the mma's A (the same bits; half the mmas at <= 8 rows)
++_SYNC: dict = {}
++
++
++def _sync(device) -> torch.Tensor:
++    """Split tiles' finished-slice counters, zero between launches (each launch's last block clears its own)."""
++
++    s = _SYNC.get(device)
++    if s is None:
++        if torch.cuda.is_current_stream_capturing():     # a graph's pool would lend it out again once the graph goes
++            raise RuntimeError("qmm: run a segmented matmul once before capturing it")
++        s = _SYNC[device] = torch.zeros(1 << 14, dtype=torch.int32, device=device)
++    return s
++
++
++@lru_cache(maxsize=None)
++def _major(index: int) -> int:
++    return torch.cuda.get_device_capability(index)[0]
++
++
++def segmented(x: torch.Tensor, qs) -> bool:
++    """Whether ``matmul_many`` runs these in one launch: decode rows, groups of 64, and no thread-block clusters (9.0+
++    GPUs add K slices in clusters instead)."""
++
++    return (x.shape[0] <= SEG_ROWS and all(q.gs == 64 for q in qs)
++            and _major(x.device.index if x.device.index is not None else torch.cuda.current_device()) < 9)
++
++
++def matmul_many(x: torch.Tensor, qs, xs: torch.Tensor | None = None, *, sks=None,
++                f32: bool = False) -> list[torch.Tensor]:
++    """``[matmul(x, q, xs) for q in qs]`` with the same bits: each weight keeps its own K slices, 4 weights a launch,
++    and the slices are added inside the launch."""
++
++    if x.dtype != torch.bfloat16 or x.dim() != 2 or any(x.shape[1] != q.k for q in qs):
++        raise ValueError("matmul_many: x must be (M, K) bf16 with every weight's K")
++    if x.stride(1) != 1 or (x.shape[0] > 1 and x.stride(0) % 8) or x.data_ptr() % 16:
++        x = x.clone(memory_format=torch.contiguous_format)
++    if xs is None:
++        xs = group_sums(x, qs[0].gs)
++    sks = list(sks) if sks is not None else [split_k(q.n, q.k, q.gs) for q in qs]
++    if not segmented(x, qs) or max(sks) > 8:            # the launch adds up to 8 slices
++        return [matmul(x, q, xs, sk=sk, f32=f32) for q, sk in zip(qs, sks)]
++    m, outs = x.shape[0], []
++    dt = torch.float32 if f32 else torch.bfloat16
++    for i in range(0, len(qs), 4):
++        part = qs[i:i + 4]
++        sk = sks[i:i + 4]
++        out = [torch.empty((m, q.n), dtype=dt, device=x.device) for q in part]
++        slices = [torch.empty((k, m, q.n), dtype=torch.float32, device=x.device) if k > 1 else out[j]
++                  for j, (q, k) in enumerate(zip(part, sk))]
++        _ext().qmm_seg(x, xs, [q.weight for q in part], [q.scales for q in part], [q.biases for q in part], out,
++                       slices, [q.n for q in part], sk, _sync(x.device), f32, SWAP)
++        outs += out
++    return outs
++
++
+ def matmul(x: torch.Tensor, q: Q4, xs: torch.Tensor | None = None, *, sk: int | None = None, f32: bool = False,
+            out: torch.Tensor | None = None, part: torch.Tensor | None = None, reduce: bool = True) -> torch.Tensor:
+     """x @ q.T as (M, n) bf16, or unrounded fp32 with ``f32``; ``reduce=False`` returns K slices to add in order."""
+@@ -149,6 +210,9 @@ def matmul(x: torch.Tensor, q: Q4, xs: torch.Tensor | None = None, *, sk: int |
+     if xs is None:
+         xs = group_sums(x, q.gs)
+     sk = sk or split_k(q.n, q.k, q.gs)
++    if reduce and out is None and part is None and m <= SUM_ROWS and SWAP and segmented(x, (q,)):
++        # the swapped form, and any slices added in the same launch
++        return matmul_many(x, [q], xs, sks=[sk], f32=f32)[0]
+     if out is None:
+         out = torch.empty((m, q.n), dtype=torch.float32 if f32 else torch.bfloat16, device=x.device)
+     if sk > 1 and not reduce and part is None:
+diff --git a/src/tensorfold/cuda/kernels/qmm_prefill8.cu b/src/tensorfold/cuda/kernels/qmm_prefill8.cu
+index 5a5a275..798507d 100644
+--- a/src/tensorfold/cuda/kernels/qmm_prefill8.cu
++++ b/src/tensorfold/cuda/kernels/qmm_prefill8.cu
+@@ -15,18 +15,26 @@ namespace {
+ using namespace qmm_frag;
+ 
+ __device__ __forceinline__ void mma8(float (&d)[4], const uint32_t (&a)[4], uint32_t b0, uint32_t b1) {
++#if __CUDA_ARCH__ >= 890
+     asm("mma.sync.aligned.m16n8k32.row.col.f32.e4m3.e4m3.f32 {%0, %1, %2, %3}, {%4, %5, %6, %7}, {%8, %9}, "
+         "{%0, %1, %2, %3};\n"
+         : "+f"(d[0]), "+f"(d[1]), "+f"(d[2]), "+f"(d[3])
+         : "r"(a[0]), "r"(a[1]), "r"(a[2]), "r"(a[3]), "r"(b0), "r"(b1));
++#else
++    __trap();                                     // FP8 MMA is 8.9+; prompts there take the bf16 kernels
++#endif
+ }
+ 
+ __device__ __forceinline__ void mma8z(float (&d)[4], const uint32_t (&a)[4], uint32_t b0, uint32_t b1) {
++#if __CUDA_ARCH__ >= 890
+     const float z = 0.0f;
+     asm("mma.sync.aligned.m16n8k32.row.col.f32.e4m3.e4m3.f32 {%0, %1, %2, %3}, {%4, %5, %6, %7}, {%8, %9}, "
+         "{%10, %10, %10, %10};\n"
+         : "=f"(d[0]), "=f"(d[1]), "=f"(d[2]), "=f"(d[3])
+         : "r"(a[0]), "r"(a[1]), "r"(a[2]), "r"(a[3]), "r"(b0), "r"(b1), "f"(z));
++#else
++    __trap();                                     // FP8 MMA is 8.9+; prompts there take the bf16 kernels
++#endif
+ }
+ 
+ // e4m3 of the nibbles at bits [s, s + 4) (low byte) and [16 + s, 20 + s) (high byte): f16 1024 + q, minus 1024, cvt.
+@@ -34,8 +42,12 @@ __device__ __forceinline__ uint32_t e4m3_pair(uint32_t w, int s) {
+     const uint32_t t = ((w >> s) & 0x000F000Fu) | 0x64006400u;
+     uint32_t h;
+     asm("sub.rn.f16x2 %0, %1, %2;\n" : "=r"(h) : "r"(t), "r"(0x64006400u));
+-    uint16_t r;
++    uint16_t r = 0;
++#if __CUDA_ARCH__ >= 890
+     asm("cvt.rn.satfinite.e4m3x2.f16x2 %0, %1;\n" : "=h"(r) : "r"(h));
++#else
++    __trap();
++#endif
+     return r;
+ }
+ 
+diff --git a/src/tensorfold/cuda/moe.py b/src/tensorfold/cuda/moe.py
+index 9f0ae90..f4e73e4 100644
+--- a/src/tensorfold/cuda/moe.py
++++ b/src/tensorfold/cuda/moe.py
+@@ -46,12 +46,19 @@ def router(x: torch.Tensor, rows: torch.Tensor, out: torch.Tensor | None = None)
+     if out is None:
+         out = torch.empty((m, ne), dtype=torch.float32, device=x.device)
+     bm = _tile(m)
+-    if bm == 16:
+-        be, bk, stages = 32, 256, 4
++    # decode: 16 experts a program spreads the rows' read over twice the SMs (3090: 5.6 -> 4.6 us at 1 row, 5.1 at 4);
++    # a row's bits don't depend on the tile (K runs in order either way)
++    if m == 1:
++        be, bk, stages, warps = 16, 512, 4, 2
++    elif bm == 16:
++        be, bk, stages, warps = 16, 256, 4, 4
+     else:
+-        be, bk, stages = 64, 64, 3               # Smaller K tiles keep prefill within shared-memory limits.
++        be, bk, stages, warps = 64, 64, 3, 4     # Smaller K tiles keep prefill within shared-memory limits.
++    while d % bk:                                # K isn't masked: a tile never runs past a row
++        bk //= 2
+     grid = (triton.cdiv(m, bm), triton.cdiv(ne, be))
+-    _router[grid](x, rows, out, m, x.stride(0), D=d, NE=ne, BM=bm, BLOCK_E=be, BK=bk, num_warps=4, num_stages=stages)
++    _router[grid](x, rows, out, m, x.stride(0), D=d, NE=ne, BM=bm, BLOCK_E=be, BK=bk, num_warps=warps,
++                  num_stages=stages)
+     return out
+ 
+ 
+@@ -98,6 +105,8 @@ class MoEBuffers:
+         self.act = torch.empty((rows, slots, cfg.moe_intermediate_size), dtype=torch.bfloat16, device=device)
+         self.y = torch.empty((rows, slots, cfg.hidden_size), dtype=torch.bfloat16 if prefill else torch.float32,
+                              device=device)
++        # down's combine counters (decode): zero, and every launch leaves them zero
++        self.sync = None if prefill else torch.zeros((rows * cfg.hidden_size // 32,), dtype=torch.int32, device=device)
+ 
+ 
+ def select_rows(logits: torch.Tensor, buf: MoEBuffers, top_k: int, experts: int) -> None:
+@@ -112,8 +121,12 @@ def select(logits: torch.Tensor, buf: MoEBuffers, top_k: int, experts: int,
+            tile: int = grouped.PREFILL_TILE) -> None:
+     """Each row's experts and weights (rows in parallel), then the pairs grouped by expert, ``tile`` a prompt's item."""
+ 
++    rows = logits.shape[0]
++    if grouped.selectable(rows, top_k + 1, buf.plan) and experts + 1 == buf.plan.experts:
++        grouped.select(logits, top_k, buf.plan, buf.pick, buf.wts)          # one launch, the same bits
++        return
+     select_rows(logits, buf, top_k, experts)
+-    grouped.route(buf.pick[:logits.shape[0]], buf.plan, tile)
++    grouped.route(buf.pick[:rows], buf.plan, tile)
+ 
+ 
+ def moe(x: torch.Tensor, router_rows: torch.Tensor, ex: grouped.Experts, buf: MoEBuffers, top_k: int,
+@@ -182,5 +195,14 @@ def run(x: torch.Tensor, m: Routed, *, prefill: bool = False) -> torch.Tensor:
+     buf = _scratch.get(key)
+     if buf is None:
+         buf = _scratch[key] = MoEBuffers(size, _Shape(m), x.device, prefill=prefill)
+-    moe(x.contiguous(), m.router, m.experts, buf, m.top_k, m.count)
++    x = x.contiguous()
++    if grouped.combinable(m.experts, buf.plan, rows):
++        router(x, m.router, buf.logits[:rows])
++        select(buf.logits[:rows], buf, m.top_k, m.count)
++        out = torch.empty((rows, m.experts.dims), dtype=torch.bfloat16, device=x.device)
++        grouped.gate_up(x, m.experts, buf.plan, buf.act.view(-1, m.experts.width), rows)
++        grouped.down(buf.act.view(-1, m.experts.width), m.experts, buf.plan, buf.y.view(-1, m.experts.dims), rows,
++                     combine=(buf.wts[:rows], out, buf.sync))
++        return out
++    moe(x, m.router, m.experts, buf, m.top_k, m.count)
+     return combine(buf.y[:rows], buf.wts[:rows])
+diff --git a/src/tensorfold/cuda/reply_text.py b/src/tensorfold/cuda/reply_text.py
+index 6fa1026..516707a 100644
+--- a/src/tensorfold/cuda/reply_text.py
++++ b/src/tensorfold/cuda/reply_text.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import json
++import os
+ import re
+ import uuid
+ from typing import Any
+@@ -137,6 +138,11 @@ def parse_tool_calls(text: str, tools: list[dict[str, Any]], *, max_calls: int |
+                 glm = parse_glm_tool_call_block(block, tools, complete=max_calls is not None)
+                 if glm is not None:
+                     name, args = glm
++        # TF_PASS_UNKNOWN_TOOLS=1: a tool the request didn't declare still comes back as a call (as vLLM does), so the
++        # agent answers "unknown tool" and the model can retry; left in the text, it reads as a final answer and ends
++        # the episode (llama.cpp can't produce one at all: its grammar allows only the declared names)
++        if name and os.environ.get("TF_PASS_UNKNOWN_TOOLS") == "1":
++            known.setdefault(str(name).lower(), str(name).strip())
+         if not name or str(name).lower() not in known:
+             if max_calls is None:
+                 residue.append(match.group(0))
+diff --git a/src/tensorfold/families/qwen3_5/cuda/forward.py b/src/tensorfold/families/qwen3_5/cuda/forward.py
+index e83c649..22ac2ed 100644
+--- a/src/tensorfold/families/qwen3_5/cuda/forward.py
++++ b/src/tensorfold/families/qwen3_5/cuda/forward.py
+@@ -13,7 +13,7 @@ from tensorfold.cuda.kernels import attention as tree_attention
+ from tensorfold.cuda.kernels import gdn as deltanet
+ 
+ from . import glue
+-from .qmm_fast import matmul
++from .qmm_fast import matmul, matmul_many
+ from .weights import QLinear, Weights
+ 
+ 
+@@ -23,6 +23,14 @@ def _mm(x: torch.Tensor, w: QLinear, xs: torch.Tensor | None = None) -> torch.Te
+     return matmul(x, w, xs)
+ 
+ 
++def _mm_many(x: torch.Tensor, ws: list, xs: torch.Tensor | None = None) -> list[torch.Tensor]:
++    """Several projections of the same rows, one launch where the kernels allow (the same bits as one at a time)."""
++
++    if all(isinstance(w, QLinear) for w in ws):
++        return matmul_many(x, ws, xs)
++    return [_mm(x, w, xs) for w in ws]
++
++
+ def _row_mm(x: torch.Tensor, w: QLinear, tp: bool,
+             xs: torch.Tensor | None = None) -> torch.Tensor:
+     if not tp:
+@@ -229,17 +237,15 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+         x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
+         if layer.linear:
+             gdn = layer.gdn
+-            qkv = _mm(h, gdn.qkv, xs)
+             if gdn.zba is not None:
+-                zba = _mm(h, gdn.zba, xs)
++                qkv, zba = _mm_many(h, [gdn.qkv, gdn.zba], xs)
+                 vd = c.v_heads * c.dv
+                 z = zba[:, :vd].contiguous().reshape(W, c.v_heads, c.dv)
+                 b = zba[:, vd:vd + c.v_heads].contiguous()
+                 a = zba[:, vd + c.v_heads:].contiguous()
+             else:
+-                z = _mm(h, gdn.z, xs).reshape(W, c.v_heads, c.dv)
+-                b = _mm(h, gdn.b, xs)
+-                a = _mm(h, gdn.a, xs)
++                qkv, z, b, a = _mm_many(h, [gdn.qkv, gdn.z, gdn.b, gdn.a], xs)
++                z = z.reshape(W, c.v_heads, c.dv)
+             q, k, v, g, beta = glue.gdn_pre(qkv, st.conv[i], gdn.conv, windows, a, b,
+                                               gdn.A_log, gdn.dt_bias, kh=c.k_heads,
+                                               vh=c.v_heads, dk=c.dk)
+@@ -249,15 +255,14 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+             record.append(GDNRecord(q, k, v, g, beta, qkv))
+         else:
+             attn = layer.attn
+-            qg = _mm(h, attn.q, xs)
+             if attn.kv is not None:
+-                kv = _mm(h, attn.kv, xs)
++                qg, kv = _mm_many(h, [attn.q, attn.kv], xs)
+                 kd = c.kv_heads * c.head_dim
+                 key = kv[:, :kd].contiguous()
+                 value = kv[:, kd:].contiguous().reshape(W, c.kv_heads, c.head_dim)
+             else:
+-                key = _mm(h, attn.k, xs)
+-                value = _mm(h, attn.v, xs).reshape(W, c.kv_heads, c.head_dim)
++                qg, key, value = _mm_many(h, [attn.q, attn.k, attn.v], xs)
++                value = value.reshape(W, c.kv_heads, c.head_dim)
+             q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
+                                     w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
+                                     head_dim=c.head_dim)
+@@ -338,17 +343,15 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+         x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
+         if layer.linear:
+             gdn = layer.gdn
+-            qkv = _mm(h, gdn.qkv, xs)
+             if gdn.zba is not None:
+-                zba = _mm(h, gdn.zba, xs)
++                qkv, zba = _mm_many(h, [gdn.qkv, gdn.zba], xs)
+                 vd = c.v_heads * c.dv
+                 z = zba[:, :vd].contiguous().reshape(W, c.v_heads, c.dv)
+                 b = zba[:, vd:vd + c.v_heads].contiguous()
+                 a = zba[:, vd + c.v_heads:].contiguous()
+             else:
+-                z = _mm(h, gdn.z, xs).reshape(W, c.v_heads, c.dv)
+-                b = _mm(h, gdn.b, xs)
+-                a = _mm(h, gdn.a, xs)
++                qkv, z, b, a = _mm_many(h, [gdn.qkv, gdn.z, gdn.b, gdn.a], xs)
++                z = z.reshape(W, c.v_heads, c.dv)
+             conv = states[0].conv[i] if S == 1 else torch.cat([st.conv[i] for st in states])
+             q, k, v, g, beta = glue.gdn_pre(qkv, conv, gdn.conv, windows_t, a, b, gdn.A_log, gdn.dt_bias,
+                                             kh=c.k_heads, vh=c.v_heads, dk=c.dk, stream_ids=sid_t, nkeep=keep)
+@@ -358,15 +361,14 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+             record.append(GDNRecord(q, k, v, g, beta, qkv))
+         else:
+             attn = layer.attn
+-            qg = _mm(h, attn.q, xs)
+             if attn.kv is not None:
+-                kv = _mm(h, attn.kv, xs)
++                qg, kv = _mm_many(h, [attn.q, attn.kv], xs)
+                 kd = c.kv_heads * c.head_dim
+                 key = kv[:, :kd].contiguous()
+                 value = kv[:, kd:].contiguous().reshape(W, c.kv_heads, c.head_dim)
+             else:
+-                key = _mm(h, attn.k, xs)
+-                value = _mm(h, attn.v, xs).reshape(W, c.kv_heads, c.head_dim)
++                qg, key, value = _mm_many(h, [attn.q, attn.k, attn.v], xs)
++                value = value.reshape(W, c.kv_heads, c.head_dim)
+             q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
+                                     w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
+                                     head_dim=c.head_dim)
+diff --git a/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py b/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
+index 033f704..69b4e87 100644
+--- a/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
++++ b/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
+@@ -58,6 +58,14 @@ def matmul(x: torch.Tensor, q: QLinear, xs: torch.Tensor | None = None) -> torch
+     return lane_matmul(x, q.weight, q.scales, q.biases, xs=xs)
+ 
+ 
++def matmul_many(x: torch.Tensor, qs: list[QLinear], xs: torch.Tensor | None = None) -> list[torch.Tensor]:
++    """``[matmul(x, q, xs) for q in qs]`` with the same bits, tiled 4-bit weights in shared launches."""
++
++    if all(q.fast and q.layout == "tiled" for q in qs):
++        return shared.matmul_many(x, qs, xs)
++    return [matmul(x, q, xs) for q in qs]
++
++
+ def matmul_partial(x: torch.Tensor, q: QLinear, xs: torch.Tensor | None = None) -> torch.Tensor:
+     """fp32 sums for a tiled weight, unrounded: a row-parallel rank's share of a projection."""
+ 
+diff --git a/src/tensorfold/families/qwen3_5/cuda/weights.py b/src/tensorfold/families/qwen3_5/cuda/weights.py
+index ab0192c..2085ee7 100644
+--- a/src/tensorfold/families/qwen3_5/cuda/weights.py
++++ b/src/tensorfold/families/qwen3_5/cuda/weights.py
+@@ -215,6 +215,10 @@ class Weights:
+     def fast_prefill(self) -> bool:
+         """Whether every projection has an FP8 prompt kernel (run when prompts take FP8)."""
+ 
++        from tensorfold.cuda.build import fp8_mma
++
++        if not fp8_mma():                            # no FP8 MMA below 8.9: prompts take the bf16 kernels
++            return False
+         if self.quant == "exl3":                     # an EXL3 pack's prompt glue stays in bf16
+             return False
+         for layer in self.layers:
+diff --git a/src/tensorfold/families/qwen3_5_moe/__init__.py b/src/tensorfold/families/qwen3_5_moe/__init__.py
+index 7e635a9..f665314 100644
+--- a/src/tensorfold/families/qwen3_5_moe/__init__.py
++++ b/src/tensorfold/families/qwen3_5_moe/__init__.py
+@@ -11,7 +11,8 @@ LANES = True
+ # MLX 4-bit, groups of 64, routers 8-bit, MTP layer in mtp-4bit.safetensors (mlx-community's files take it too)
+ MODELS = ("Vontra/Qwen3.6-35B-A3B-MLX-4bit-MTP",)
+ REQUIRED_FILES = {MODELS[0]: ("mtp-4bit.safetensors",)}
+-# the CUDA engine's kernels read MLX affine weights of this (bits, group size)
++# the CUDA engine's kernels read MLX affine weights of this (bits, group size); routed experts may declare 2 or 3
++# bits per module (switch_mlp.*), the shared expert staying at 4
+ CUDA_QUANTIZATION = (4, 64)
+ CUDA_PREFILL_FP8 = True            # --prefill-fp8: the attention and DeltaNet projections' FP8 prompt kernel
+ 
+@@ -43,4 +44,4 @@ def cuda_engine(model_dir: str | Path, *, drafter: str = "", tp: int = 1, rank:
+     if streams > 1 and not 0 <= depth <= 15:
+         raise ValueError(f"--parallel verifies up to 16 rows a stream: --mtp-drafts 0 to 15, not {depth}")
+     return Qwen36Engine(Path(model_dir), depth=depth, context=context, context_explicit=options.get("context_explicit"),
+-                        streams=streams)
++                        streams=streams, swap_gib=float(options.get("swap_gib") or 0.0))
+diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/decode.py b/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
+index dccbaed..00b00a9 100644
+--- a/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
++++ b/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
+@@ -18,6 +18,8 @@ from tensorfold.families.qwen3_5.cuda.prefill import chunks, prefill_chunk
+ 
+ from .mtp import Cache, Head
+ 
++HEAD_ROWS = 1024     # prompt rows the MTP head absorbs at once: its per-row scratch stays small on long prompts
++
+ 
+ @dataclass
+ class Carry:
+@@ -137,8 +139,12 @@ def extend(w, head: Head | None, prompt: Sequence[int], st: State, mc: Cache | N
+         if head is not None:
+             rows = normed if held is None else torch.cat([held, normed])
+             start = a - (0 if held is None else 1)
+-            if rows.shape[0] > 1:
+-                head.forward(mc, rows[:-1], prompt[start + 1:b], start)
++            n = rows.shape[0] - 1
++            pieces = -(-n // HEAD_ROWS)                  # even pieces, each past tree attention's MAX_NODES
++            for i in range(pieces):
++                r0, r1 = n * i // pieces, n * (i + 1) // pieces
++                head.forward(mc, rows[r0:r1], prompt[start + 1 + r0:start + 1 + r1], start + r0)
++            if n > 0:
+                 mc.pos = b - 1
+             held = rows[-1:]
+         if keep is not None and keep_at is not None and a < keep_at <= b:
+@@ -153,6 +159,9 @@ def extend(w, head: Head | None, prompt: Sequence[int], st: State, mc: Cache | N
+ 
+ 
+ COPY_ROWS = 16       # a copied continuation's verify window
++COMMIT_GRAPH = True  # the accepted path committed by one replay (``Graphs.commit``)
++FOLLOW = True        # chained drafts verified in full by a replay launched straight after (no confidence cut)
++CHAIN = True         # greedy drafts chained on the device in one graph (``Graphs.chain``), not a host wait a step
+ 
+ 
+ @torch.no_grad()
+@@ -182,7 +191,8 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
+         tokens, path, new, carry = mtp_round(st, mc, carry, out[-1], count - len(out), sampling, context, copies,
+                                              depth=depth, confidence=confidence, ids=head.ids, verify=verify,
+                                              step=step, eos=w.config.eos if stop_eos else (),
+-                                             in_place=runner is not None, constraint=constraint)
++                                             in_place=runner is not None, constraint=constraint,
++                                             runner=runner)
+         out.extend(new)
+         context.extend(new)
+         rounds, drafted, kept = rounds + 1, drafted + len(tokens) - 1, kept + len(path) - 1
+@@ -195,13 +205,30 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
+ def mtp_round(st: State, mc: Cache, carry: Carry, pending: int, room: int, sampling: Sampling | None,
+               context: Sequence[int], copies: CopyIndex, *, depth: int, confidence: float, ids, verify, step,
+               eos: Sequence[int] = (), in_place: bool = False,
+-              constraint=None) -> tuple[list[int], list[int], list[int], Carry]:
+-    """One round (carry absorbed, copy or MTP chain proposed, verified, at most ``room`` rows kept): (tokens, path, new, carry)."""
++              constraint=None, runner=None) -> tuple[list[int], list[int], list[int], Carry]:
++    """One round (carry absorbed, copy or MTP chain proposed, verified, at most ``room`` rows kept): (tokens, path, new, carry);
++    ``runner``: a ``graphs.Graphs`` whose kept path commits in one replay and whose greedy drafts chain on the device."""
+ 
+     n = st.pos                                            # the pending token's position
+-    normed, logits = step(carry.states, carry.tokens, mc.pos)
+-    mc.pos += len(carry.tokens)
+     guesses = copies.propose(context, COPY_ROWS - 1)      # an exact repeat of the context first: a long, likely window
++    chained = CHAIN and runner is not None and constraint is None and not guesses and \
++        (sampling is None or sampling.temperature <= 0)
++    if chained and FOLLOW:      # greedy: drafts, then all of them verified, no wait between
++        picks, host = runner.chain(carry.states, carry.tokens, mc.pos, depth, wait=False)
++        mc.pos += len(carry.tokens)
++        logits, record, states = runner.verify([pending] + [0] * depth, picks)
++        sampled = sample_rows(logits, [n + 1 + i for i in range(depth + 1)], sampling)     # waits: host landed
++        tokens = [pending] + [int(t) for t in host[:depth].tolist()]
++        return _keep(st, runner, tokens, record, states, sampled, room, eos, in_place, constraint)
++    if chained:                 # greedy: the whole draft chain in one replay, one wait
++        picks, probs = runner.chain(carry.states, carry.tokens, mc.pos, depth)
++        mc.pos += len(carry.tokens)
++        guesses = picks[:1]
++        while len(guesses) < depth and probs[len(guesses) - 1] >= confidence:
++            guesses.append(picks[len(guesses)])
++    else:
++        normed, logits = step(carry.states, carry.tokens, mc.pos)
++        mc.pos += len(carry.tokens)
+     while not guesses:
+         token, prob = draft(logits, n + 1, sampling, ids)
+         guesses.append(token)
+@@ -217,8 +244,17 @@ def mtp_round(st: State, mc: Cache, carry: Carry, pending: int, room: int, sampl
+     if window is not None:
+         logits = constraint.mask(logits, window)
+     sampled = sample_rows(logits, [n + 1 + i for i in range(len(tokens))], sampling)
++    return _keep(st, runner, tokens, record, states, sampled, room, eos, in_place, constraint)
++
++
++def _keep(st, runner, tokens, record, states, sampled, room, eos, in_place, constraint):
++    """Accept a verified window, commit its path (one replay with a ``runner``) and carry it: (tokens, path, new, carry)."""
++
+     path, terminal = accept(tokens, list(range(-1, len(tokens) - 1)), sampled, room, eos)
+-    commit(st, record, path, in_place=in_place)
++    if runner is not None and COMMIT_GRAPH:
++        runner.commit(record, path)
++    else:
++        commit(st, record, path, in_place=in_place)
+     new = [tokens[r] for r in path[1:]] + [terminal]
+     if constraint is not None:
+         constraint.advance(new)
+diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/engine.py b/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
+index 81a1271..390b57f 100644
+--- a/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
++++ b/src/tensorfold/families/qwen3_5_moe/cuda/engine.py
+@@ -9,7 +9,7 @@ from typing import Any, Callable
+ 
+ from . import CONFIDENCE, DEPTH
+ 
+-KEEP = 4             # prompt states kept to resume from (they share the live request's buffers)
++KEEP = 4             # prompt states kept to resume from: prefixes of the last prompt, in its attention buffers
+ KEEP_MANY = 3        # prompt states a concurrent decoder keeps (each holds a DeltaNet copy), as the 27B's
+ 
+ 
+@@ -44,8 +44,11 @@ def stream_geometry(text: dict, streams: int, keep: int, depth: int):
+ class Qwen36Engine:
+     """``eos``, ``generate`` and ``context_window`` for ``tensorfold.cuda.server``; ``streams`` > 1 decodes that many requests together."""
+ 
++    scheduler = swap = None              # set in ``__init__``: --parallel's scheduler, the host swap
++
+     def __init__(self, model_dir: Path, *, depth: int = DEPTH, confidence: float = CONFIDENCE,
+-                 context: int | None = None, context_explicit: bool | None = None, streams: int = 1) -> None:
++                 context: int | None = None, context_explicit: bool | None = None, streams: int = 1,
++                 swap_gib: float = 0.0) -> None:
+         import torch
+ 
+         from tensorfold.cuda.capacity import admit
+@@ -62,9 +65,11 @@ class Qwen36Engine:
+         if many:             # streams' caches of many sizes come and go: growable segments, less slack
+             torch.cuda.memory._set_allocator_settings("expandable_segments:True")
+         extra = (Path(model_dir) / MTP_FILE,) if self.depth and (Path(model_dir) / MTP_FILE).is_file() else ()
+-        # one admission for one stream or many (every stream's states and caches, kept prompt ends), before any load
++        # one admission for one stream or many (every stream's states and caches, kept prompt ends), before any load;
++        # one stream holds its window's attention rows once (``held_once``)
+         geometry = ((lambda text: stream_geometry(text, streams, KEEP_MANY, self.depth)) if many else
+-                    (lambda text: gdn_geometry(text, 1, self.depth + 1, mtp=self.depth > 0)))
++                    (lambda text: gdn_geometry(text, 1, self.depth + 1, mtp=self.depth > 0,
++                                               held_once=self.depth > 0)))
+         self.capacity_plan = admit(model_dir, context, context_explicit, torch, geometry,
+                                    lambda name, info: (mtp_weights(name, info) if ".mtp." in name
+                                                        else linear_weights(name, info)),
+@@ -84,6 +89,9 @@ class Qwen36Engine:
+ 
+             # decoding buffers that outlive requests (with --parallel, the one stream decoding alone's)
+             self.graphs = Graphs(self.w, self.head, self.context_window + self.depth + 1)
++            # the whole window's attention rows once, up front: prompts prefill into them and decoding reads them in
++            # place, so the context is held once and never moves (no growth copies)
++            self.graphs.grow(self.graphs.capacity, exact=True)
+         torch.cuda.empty_cache()
+         self.eos = tuple(self.w.config.eos)
+         self.points = resume_points(model_dir)
+@@ -104,6 +112,11 @@ class Qwen36Engine:
+             print(f"[tensorfold] {streams} streams of {self.context_window} prompt/reply tokens: together, rounds run "
+                   f"eagerly; alone, in CUDA graphs; kernels warmed in {time.perf_counter() - started:.1f}s", flush=True)
+             self.scheduler = Scheduler(self.multi, max_streams=streams)
++        self.swap = None                     # kept prefixes a prompt drops, parked in pinned host memory
++        if swap_gib > 0 and self.graphs is not None and not many:
++            from .swap import Swap
++
++            self.swap = Swap(self.graphs, int(swap_gib * 1024**3))
+ 
+     def _resume(self, prompt: list[int]):
+         """The longest kept prefix, after dropping longer entries its resumed writes would overwrite (they share buffers)."""
+@@ -114,6 +127,27 @@ class Qwen36Engine:
+             self.cache.entries = [c for c in self.cache.entries if len(c[0]) <= n or c[0][:n] != best[0]]
+         return best
+ 
++    def _swap(self, prompt: list[int], before: list, hit):
++        """Park the kept prefixes the prompt dropped (the longest of each line), then copy back a parked prefix it
++        extends past the GPU's own: ``(hit, tokens copied back)``."""
++
++        from .swap import GAP
++
++        kept = {id(e) for e in self.cache.entries}
++        gone = [e for e in before if id(e) not in kept and list(prompt[:len(e[0])]) != e[0]]
++        for e in gone:
++            if not any(len(o[0]) > len(e[0]) and o[0][:len(e[0])] == e[0] for o in gone):
++                self.swap.save(e[0], e[1], *e[2])
++        n = len(hit[0]) if hit else 0
++        snap = self.swap.find(prompt)
++        if snap is None or len(snap.ids) < n + GAP:
++            return hit, 0
++        st, mc, held = self.swap.restore(snap, n, hit[2][0].pos if hit else 0)
++        entry = (list(snap.ids), st, (mc, held))
++        self.cache.add(*entry)
++        self.cache.hit.add(tuple(entry[0]))
++        return entry, len(snap.ids) - n
++
+     def generate(self, prompt: list[int], max_tokens: int, sampling, on_tokens: Callable[[list[int]], bool | None],
+                  draft: bool = True, stop_eos: bool = True, constraint=None,
+                  background: bool = False) -> dict[str, Any]:
+@@ -144,16 +178,27 @@ class Qwen36Engine:
+                                stop_eos=stop_eos, on_tokens=on_tokens, **grammar)
+             stats.update(decode_s=round(res.seconds, 4), rounds=res.rounds, min_rows=min(res.widths, default=0))
+             return stats
++        before = list(self.cache.entries)
+         hit = self._resume(prompt)
++        # one set of attention buffers: the prompt writes past its kept prefix, so only prefixes it extends stay
++        n = len(hit[0]) if hit else 0
++        self.cache.entries = [e for e in self.cache.entries if len(e[0]) <= n and list(prompt[:len(e[0])]) == e[0]]
++        self.cache.hit &= {tuple(e[0]) for e in self.cache.entries}
++        swapped = 0
++        if self.swap is not None:
++            hit, swapped = self._swap(prompt, before, hit)
++        if hit:
++            state, cache, held = hit[1], hit[2][0], hit[2][1]
++        else:
++            (state, cache), held = self.graphs.fresh() if self.graphs is not None else (None, None), None
+         stops = [p for p in (self.points(prompt) if self.points is not None else [])
+                  if p >= (len(hit[0]) if hit else 0) + MIN_GAP]
+         keep = lambda p, st, mc, held: self.cache.add(list(prompt[:p]), st, (mc, held))       # noqa: E731
+         end = None if stops and len(prompt) - stops[-1] < MIN_GAP else entry_end(prompt)
+-        st, mc, first, carry = prefill(self.w, self.head, prompt, sampling,
+-                                       state=hit[1] if hit else None, cache=hit[2][0] if hit else None,
+-                                       held=hit[2][1] if hit else None, stops=stops, keep=keep, keep_at=end, **grammar)
++        st, mc, first, carry = prefill(self.w, self.head, prompt, sampling, state=state, cache=cache, held=held,
++                                       stops=stops, keep=keep, keep_at=end, **grammar)
+         stats = {"prefill_s": round(time.perf_counter() - t0, 4), "cached": len(hit[0]) if hit else 0,
+-                 "drafts": True}
++                 "drafts": True, "swapped_in": swapped}
+         if on_tokens([first]) or (stop_eos and first in self.eos) or max_tokens <= 1:
+             return stats
+         res = mtp_decode(self.w, self.head, st, mc, carry, first, max_tokens, sampling, depth=self.depth,
+diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py b/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
+index 0f769c3..321d66b 100644
+--- a/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
++++ b/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
+@@ -7,7 +7,8 @@ from typing import Callable, Sequence
+ 
+ import torch
+ 
+-from tensorfold.families.qwen3_5.cuda.forward import State, reserve, stage, tree_forward
++from tensorfold.cuda.kernels import gdn as deltanet
++from tensorfold.families.qwen3_5.cuda.forward import GDNRecord, State, commit, reserve, stage, tree_forward
+ 
+ from .mtp import Cache, Head, Staged as HeadStaged
+ 
+@@ -23,17 +24,22 @@ class Graphs:
+         self.pool = None                                # a new pool each time the buffers grow (``load``)
+         self.target: dict[tuple[int, int], tuple] = {}
+         self.mtp: dict[tuple[int, int], tuple] = {}
++        self.chains: dict[tuple[int, int, int], tuple] = {}
++        self.commits: dict[tuple[int, int], tuple] = {}
++        self.last = None                                # the key of the last verify replayed
+ 
+     def _bucket(self, end: int) -> int:
+         return min(self.rows, max(BUCKET, 1 << (end - 1).bit_length()))
+ 
+-    def load(self, st: State, mc: Cache, need: int) -> tuple[State, Cache]:
+-        """A request's committed state and head cache in the fixed buffers, grown (graphs dropped) past ``need`` rows."""
++    def grow(self, need: int, exact: bool = False) -> bool:
++        """Buffers of at least ``need`` rows (graphs dropped when they move); ``exact``: ``need`` rows, not a power of two."""
+ 
+         if need > self.rows:
+-            self.rows = min(self.capacity, max(BUCKET, 1 << (need - 1).bit_length()))
++            self.rows = min(self.capacity, need if exact else max(BUCKET, 1 << (need - 1).bit_length()))
+             self.target.clear()
+             self.mtp.clear()
++            self.chains.clear()
++            self.commits.clear()
+             self.st = self.mc = None
+             gc.collect()
+             # torch refuses a capture into a pool left registered without a graph: capture into a new one
+@@ -41,17 +47,36 @@ class Graphs:
+             self.st = State(self.w)
+             reserve(self.st, self.rows)
+             self.mc = Cache(self.w, self.rows)
++            return True
++        return False
++
++    def fresh(self) -> tuple[State, Cache]:
++        """An empty prompt state and head cache whose attention rows are these buffers: a prefill into them writes the
++        rows decoding then reads in place, so the context is held once. Their GDN states are their own."""
++
++        st = State(self.w)
++        st.kv = list(self.st.kv)
++        st.limit = self.rows
++        mc = object.__new__(Cache)
++        mc.k, mc.v, mc.pos = self.mc.k, self.mc.v, 0
++        return st, mc
++
++    def load(self, st: State, mc: Cache, need: int) -> tuple[State, Cache]:
++        """A request's committed state and head cache in the fixed buffers, grown (graphs dropped) past ``need`` rows."""
++
++        self.grow(need)
+         dst = self.st
+         for a, b in zip(dst.rec + dst.conv, st.rec + st.conv):
+             if a is not None:
+                 a.copy_(b)
+         for kv, src in zip(dst.kv, st.kv):
+-            if kv is not None:
++            if kv is not None and kv[0].data_ptr() != src[0].data_ptr():      # a prefill into ``fresh`` is in place
+                 kv[0][:st.pos].copy_(src[0][:st.pos])
+                 kv[1][:st.pos].copy_(src[1][:st.pos])
+         dst.pos = st.pos
+-        self.mc.k[:mc.pos].copy_(mc.k[:mc.pos])
+-        self.mc.v[:mc.pos].copy_(mc.v[:mc.pos])
++        if self.mc.k.data_ptr() != mc.k.data_ptr():
++            self.mc.k[:mc.pos].copy_(mc.k[:mc.pos])
++            self.mc.v[:mc.pos].copy_(mc.v[:mc.pos])
+         self.mc.pos = mc.pos
+         return dst, self.mc
+ 
+@@ -69,8 +94,9 @@ class Graphs:
+         return g, out
+ 
+     @torch.no_grad()
+-    def verify(self, tokens: Sequence[int]):
+-        """The chain [pending, drafts...] at the stream's position: (logits, record, final normed rows)."""
++    def verify(self, tokens: Sequence[int], drafted: torch.Tensor | None = None):
++        """The chain [pending, drafts...] at the stream's position: (logits, record, final normed rows).
++        ``drafted``: rows 1.. come from this device tensor (a ``chain``'s picks, not yet on the host)."""
+ 
+         width, st = len(tokens), self.st
+         key = (width, self._bucket(st.pos + width))
+@@ -84,7 +110,10 @@ class Graphs:
+             entry = self.target[key] = (g, staged, out)
+         g, staged, out = entry
+         staged.refresh(tokens, st.pos)
++        if drafted is not None:
++            staged.ids[1:width].copy_(drafted[:width - 1])
+         g.replay()
++        self.last = key
+         return out
+ 
+     @torch.no_grad()
+@@ -110,3 +139,119 @@ class Graphs:
+         staged.refresh(states, tokens, p0)
+         g.replay()
+         return out
++
++    @torch.no_grad()
++    def chain(self, states: torch.Tensor, tokens: Sequence[int], p0: int, depth: int, *, wait: bool = True):
++        """Greedy drafting in one replay: ``Head.forward`` for these rows at ``p0``, then ``depth - 1`` one-row steps,
++        each fed the previous step's argmax on the device. The same calls and picks as ``draft`` then ``decode.draft``
++        step by step, with one wait for the host: (the ``depth`` draft tokens, each one's probability).
++        ``wait=False``: no wait; returns (the picks and probabilities on the device, their pinned host copy in flight),
++        for a verify launched straight after and a host that reads them once it next waits."""
++
++        width = states.shape[0]
++        key = (width, depth, self._bucket(p0 + width + depth - 1))
++        entry = self.chains.get(key)
++        c = self.w.config
++        at = [p0] + [p0 + width + i for i in range(depth - 1)]
++        if entry is None:
++            staged = [HeadStaged(self.mc, width if i == 0 else 1, key[2], c.heads // c.kv_heads, c.hidden)
++                      for i in range(depth)]
++            staged[0].refresh(states, tokens, p0)
++            for s, q in zip(staged[1:], at[1:]):
++                s.refresh(None, [0], q)
++            ids = self.head.ids
++
++            def run():
++                picks, probs = [], []
++                for i, s in enumerate(staged):
++                    normed = self.head.forward(self.mc, s.states, (), at[i], staged=s)
++                    row = self.head.logits(normed[-1:]).float()[0]
++                    pick = row.argmax().view(1)                 # indexed by index_select: [pick] would wait on the host
++                    token = ids.index_select(0, pick) if ids is not None else pick
++                    picks.append(token)
++                    probs.append(torch.softmax(row, -1).index_select(0, pick))
++                    if i + 1 < depth:
++                        staged[i + 1].ids.copy_(token)
++                        staged[i + 1].states.copy_(normed[-1:])
++                return torch.cat([torch.cat(picks).double(), torch.cat(probs).double()])
++
++            run()
++            g, out = self._capture(run)
++            host = torch.empty(out.shape, dtype=out.dtype, pin_memory=True)
++            entry = self.chains[key] = (g, staged, out, host)
++        g, staged, out, host = entry
++        staged[0].refresh(states, tokens, p0)
++        for s, q in zip(staged[1:], at[1:]):
++            s.refresh(None, [0], q)
++        g.replay()
++        host.copy_(out, non_blocking=True)
++        if not wait:
++            return out, host
++        torch.cuda.current_stream().synchronize()
++        v = host.tolist()
++        return [int(t) for t in v[:depth]], v[depth:]
++
++    @torch.no_grad()
++    def commit(self, record, path: Sequence[int]) -> None:
++        """``forward.commit`` in place of the last verify's accepted ``path``, as one replay: the path's rows, its
++        length, the conv rows to keep and the stream's position are staged on the device. The attention layers take
++        all the window's rows at [pos, pos + width): rows past the path land past the committed end, where nothing
++        reads them before a later commit writes them. Falls back to ``commit`` when the window would pass the buffers."""
++
++        st, key = self.st, self.last
++        width = key[0]
++        if record is not self.target[key][2][1] or st.pos + width > st.kv[self._first_attention(record)][0].shape[0]:
++            commit(st, record, path, in_place=True)
++            return
++        entry = self.commits.get(key)
++        linear = [(i, r) for i, r in enumerate(record) if isinstance(r, GDNRecord)]
++        att = [(i, r) for i, r in enumerate(record) if not isinstance(r, GDNRecord)]
++        keep = st.conv[linear[0][0]].shape[0]
++        if entry is None:
++            host = torch.zeros(width + 2 + keep, dtype=torch.int64).pin_memory()
++            dev = host.to(record[0].k.device)
++            rows32 = torch.zeros(width, dtype=torch.int32, device=dev.device)
++            count32 = torch.zeros(1, dtype=torch.int32, device=dev.device)
++            items = [r for _, r in linear]
++            table = deltanet.to_device(deltanet.replay_table([t.k for t in items], [t.v for t in items],
++                                                             [t.g for t in items], [t.beta for t in items],
++                                                             [[st.rec[i] for i, _ in linear]]), torch.int64, dev.device)
++            span = torch.arange(width, dtype=torch.int64, device=dev.device)
++
++            def run():
++                rows, count, pick, pos = dev[:width], dev[width:width + 1], dev[width + 1:width + 1 + keep], dev[-1:]
++                rows32.copy_(rows)
++                count32.copy_(count)
++                deltanet.replay(table, len(items), 1, rows32.view(1, -1), count32, items[0].k, items[0].v,
++                                in_place=True)
++                olds = [st.conv[i] for i, _ in linear]
++                news = torch.cat([torch.stack(olds), torch.stack([t.qkv for t in items])], dim=1) \
++                    .index_select(1, pick).unbind(0)
++                for (i, _), new in zip(linear, news):
++                    st.conv[i].copy_(new)
++                at = pos + span
++                for i, r in att:
++                    st.kv[i][0].index_copy_(0, at, r.k.index_select(0, rows))
++                    st.kv[i][1].index_copy_(0, at, r.v.index_select(0, rows))
++
++            entry = self.commits[key] = (None, host, dev, run)
++        g, host, dev, run = entry
++        n = len(path)
++        h = host.numpy()
++        h[:n] = path
++        h[n:width] = 0
++        h[width] = n
++        h[width + 1:width + 1 + keep] = list(range(n, keep)) + [keep + r for r in path[max(0, n - keep):]]
++        h[-1] = st.pos
++        dev.copy_(host, non_blocking=True)
++        if g is None:                                   # the first call commits eagerly, then is captured (not run)
++            run()
++            g, _ = self._capture(run)
++            self.commits[key] = (g, host, dev, run)
++        else:
++            g.replay()
++        st.pos += n
++
++    @staticmethod
++    def _first_attention(record) -> int:
++        return next(i for i, r in enumerate(record) if not isinstance(r, GDNRecord))
+diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py b/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
+index e56e2df..b2a8436 100644
+--- a/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
++++ b/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
+@@ -11,7 +11,7 @@ from tensorfold.cuda import moe
+ from tensorfold.cuda.kernels import attention as tree_attention
+ from tensorfold.cuda.kernels.prefill_attention import attention as prefill_attention
+ from tensorfold.families.qwen3_5.cuda import glue
+-from tensorfold.families.qwen3_5.cuda.qmm_fast import matmul, tile, untile
++from tensorfold.families.qwen3_5.cuda.qmm_fast import matmul, matmul_many, tile, untile
+ from tensorfold.families.qwen3_5.cuda.weights import QLinear, Weights
+ 
+ from .weights import MTP
+@@ -57,14 +57,15 @@ class Staged:
+         self.aoffs = offsets(cache)
+         self.states = torch.zeros((width, hidden), dtype=torch.bfloat16, device=cache.k.device)
+ 
+-    def refresh(self, states: torch.Tensor, tokens: Sequence[int], p0: int) -> None:
++    def refresh(self, states: torch.Tensor | None, tokens: Sequence[int], p0: int) -> None:
+         w, h = self.width, self.host.numpy()
+         h[:w] = tokens
+         h[w:2 * w] = np.arange(p0, p0 + w)
+         h[3 * w + 2] = p0
+         h[3 * w + 3] = -(-(p0 + w) // tree_attention.CHUNK)
+         self.dev.copy_(self.host, non_blocking=True)
+-        self.states.copy_(states)
++        if states is not None:                          # None: a chained step's state is written inside its graph
++            self.states.copy_(states)
+ 
+ 
+ class Head:
+@@ -154,9 +155,8 @@ class Head:
+         x = (matmul(en, m.fc_e, exs).float() + matmul(hn, m.fc_h, hxs).float()).to(torch.bfloat16)
+         x, h, xs = glue.add_rmsnorm(x, None, m.input_norm, c.eps)
+         a = m.attn
+-        qg = matmul(h, a.q, xs)
+-        key = matmul(h, a.k, xs)
+-        value = matmul(h, a.v, xs).reshape(n, c.kv_heads, c.head_dim).contiguous()
++        qg, key, value = matmul_many(h, [a.q, a.k, a.v], xs)
++        value = value.reshape(n, c.kv_heads, c.head_dim).contiguous()
+         q, key = glue.attn_prep(qg, key, a.q_norm, a.k_norm, pos, w.inv_freq, c.eps, heads=c.heads,
+                                 kv_heads=c.kv_heads, head_dim=c.head_dim)
+         key = key.view(n, c.kv_heads, c.head_dim).contiguous()
+diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/multi.py b/src/tensorfold/families/qwen3_5_moe/cuda/multi.py
+index 5e7fbac..7d59e8b 100644
+--- a/src/tensorfold/families/qwen3_5_moe/cuda/multi.py
++++ b/src/tensorfold/families/qwen3_5_moe/cuda/multi.py
+@@ -239,7 +239,7 @@ class MultiDecoder:
+                                                    s.sampling, s.context, s.copies, depth=self.depth,
+                                                    confidence=self.confidence, ids=self.head.ids, verify=g.verify,
+                                                    step=g.draft, eos=self._ends(s), in_place=True,
+-                                                   constraint=s.constraint)
++                                                   constraint=s.constraint, runner=g)
+         except GrammarError as exc:                   # this request ends with its error
+             s.error, s.done = exc, True
+             return [s]
+diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/swap.py b/src/tensorfold/families/qwen3_5_moe/cuda/swap.py
+new file mode 100644
+index 0000000..4928d58
+--- /dev/null
++++ b/src/tensorfold/families/qwen3_5_moe/cuda/swap.py
+@@ -0,0 +1,128 @@
++"""Evicted conversations parked in pinned host memory and copied back when they return, instead of prefilled again.
++
++The engine holds one set of attention rows, so a prompt that doesn't extend the kept prefixes overwrites them. Before
++it does, each kept prefix it drops is copied out here: its attention and head-cache rows, its GDN states and its held
++row. A later prompt that extends one gets it copied back, the rows it already shares with the GPU's kept prefix left
++in place. Prefill rows have the same bits whatever the chunking, so a copy back equals prefilling again, bit for bit.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass, field
++
++import torch
++
++ROWS = 2048          # rows per host chunk: 2 MiB a source at 1 KiB a row, a size the pinned allocator doesn't round
++GAP = 64             # a parked prefix is copied back only when it is this many tokens past the GPU's kept prefix
++
++
++@dataclass
++class Snapshot:
++    """A kept prefix in host memory: ``chunks[s]`` holds source ``s``'s rows ``ROWS`` at a time (the last may be short)."""
++
++    ids: list[int]
++    pos: int
++    mc_pos: int
++    rec: list[torch.Tensor | None]
++    conv: list[torch.Tensor | None]
++    held: torch.Tensor | None
++    chunks: list[list[torch.Tensor]] = field(default_factory=list)
++
++
++def _common(a: list[int], b: list[int]) -> int:
++    n = min(len(a), len(b))
++    i = 0
++    while i < n and a[i] == b[i]:
++        i += 1
++    return i
++
++
++def _host(t: torch.Tensor) -> torch.Tensor:
++    out = torch.empty(t.shape, dtype=t.dtype, pin_memory=True)
++    out.copy_(t, non_blocking=True)
++    return out
++
++
++class Swap:
++    """Parked prefixes, newest last, within ``budget`` bytes of pinned memory (chunks shared between snapshots count once)."""
++
++    def __init__(self, graphs, budget: int) -> None:
++        self.graphs, self.budget = graphs, int(budget)
++        self.snaps: list[Snapshot] = []
++
++    def _sources(self) -> list[tuple[torch.Tensor, bool]]:
++        """The shared row buffers, each with whether it is the head's (its rows run one behind the target's)."""
++
++        out = []
++        for kv in self.graphs.st.kv:
++            if kv is not None:
++                out += [(kv[0], False), (kv[1], False)]
++        return out + [(self.graphs.mc.k, True), (self.graphs.mc.v, True)]
++
++    def used(self) -> int:
++        seen: dict[int, int] = {}
++        for s in self.snaps:
++            for t in [*s.rec, *s.conv, s.held, *(c for cs in s.chunks for c in cs)]:
++                if t is not None:
++                    seen[t.data_ptr()] = t.untyped_storage().nbytes()
++        return sum(seen.values())
++
++    def save(self, ids: list[int], st, mc, held: torch.Tensor | None) -> Snapshot:
++        """Copy a kept prefix out, reusing the full chunks a parked snapshot already holds for the same leading ids."""
++
++        donor, shared = None, 0
++        for s in self.snaps:
++            c = _common(s.ids, ids)
++            if c > shared:
++                donor, shared = s, c
++        snap = Snapshot(list(ids), st.pos, mc.pos, [None if t is None else _host(t) for t in st.rec],
++                        [None if t is None else _host(t) for t in st.conv], None if held is None else _host(held))
++        for i, (buf, head) in enumerate(self._sources()):
++            rows = snap.mc_pos if head else snap.pos
++            same = shared - 1 if head else shared          # a head row also reads the next token
++            if donor is not None:
++                same = min(same, donor.mc_pos if head else donor.pos)
++            out = []
++            for j in range(-(-rows // ROWS)):
++                a, b = j * ROWS, min(rows, (j + 1) * ROWS)
++                if donor is not None and b - a == ROWS and b <= same:
++                    out.append(donor.chunks[i][j])
++                else:
++                    out.append(_host(buf[a:b]))
++            snap.chunks.append(out)
++        # a snapshot the new one extends is covered by it (agents append), so it goes
++        self.snaps = [s for s in self.snaps if not (len(s.ids) <= len(ids) and ids[:len(s.ids)] == s.ids)] + [snap]
++        while self.snaps and self.used() > self.budget:
++            self.snaps.pop(0)
++        return snap
++
++    def find(self, prompt: list[int]) -> Snapshot | None:
++        """The longest parked prefix the prompt strictly extends, now newest."""
++
++        best = None
++        for s in self.snaps:
++            if len(s.ids) < len(prompt) and (best is None or len(s.ids) > len(best.ids)) and \
++                    list(prompt[:len(s.ids)]) == s.ids:
++                best = s
++        if best is not None:
++            self.snaps = [s for s in self.snaps if s is not best] + [best]
++        return best
++
++    def restore(self, snap: Snapshot, rows: int, head_rows: int):
++        """Copy a snapshot back into the shared buffers past the first ``rows`` target and ``head_rows`` head rows (which
++        the GPU already holds for the same ids), and its states into a fresh prompt state: ``(state, head cache, held)``."""
++
++        for i, (buf, head) in enumerate(self._sources()):
++            end, lo = (snap.mc_pos, head_rows) if head else (snap.pos, rows)
++            for j, chunk in enumerate(snap.chunks[i]):
++                a, b = j * ROWS, min(end, (j + 1) * ROWS)
++                if b > lo:
++                    s = max(a, lo)
++                    buf[s:b].copy_(chunk[s - a:b - a], non_blocking=True)
++        st, mc = self.graphs.fresh()
++        for dst, src in zip(st.rec + st.conv, snap.rec + snap.conv):
++            if dst is not None:
++                dst.copy_(src, non_blocking=True)
++        st.pos, mc.pos = snap.pos, snap.mc_pos
++        held = None if snap.held is None else snap.held.to(self.graphs.mc.k.device, non_blocking=True)
++        return st, mc, held
+diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/weights.py b/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
+index e6009d9..92e36cc 100644
+--- a/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
++++ b/src/tensorfold/families/qwen3_5_moe/cuda/weights.py
+@@ -20,12 +20,7 @@ GS = 64
+ def dequantize(words: torch.Tensor, scales: torch.Tensor, biases: torch.Tensor, gs: int = GS) -> torch.Tensor:
+     """MLX affine words [..., K * bits / 32] with scales and biases [..., K / gs] -> fp32 [..., K] (s * q + b)."""
+ 
+-    k = scales.shape[-1] * gs
+-    bits = 32 * words.shape[-1] // k
+-    per = 32 // bits
+-    w = words.view(torch.int32).to(torch.int64) & 0xFFFFFFFF
+-    shifts = torch.arange(per, device=words.device, dtype=torch.int64) * bits
+-    q = ((w[..., None] >> shifts) & ((1 << bits) - 1)).reshape(*words.shape[:-1], k).to(torch.float32)
++    q = grouped.levels(words.view(torch.int32), grouped.bits_of(words, scales, gs)).to(torch.float32)
+     return q * scales.float().repeat_interleave(gs, -1) + biases.float().repeat_interleave(gs, -1)
+ 
+ 
+@@ -38,11 +33,14 @@ def routed(prefix: str, get: Callable, top_k: int) -> Routed:
+ 
+     router = torch.cat([dequantize(*triple(prefix + "gate")), dequantize(*triple(prefix + "shared_expert_gate"))])
+ 
+-    def table(proj: str) -> tuple[torch.Tensor, ...]:
+-        mine, shared = triple(prefix + f"switch_mlp.{proj}"), triple(prefix + f"shared_expert.{proj}")
+-        return tuple(torch.cat([a, b[None]]).contiguous() for a, b in zip(mine, shared))
+-
+-    experts = grouped.make([table("gate_proj"), table("up_proj")], table("down_proj"), GS)
++    projs = ("gate_proj", "up_proj", "down_proj")
++    mine = [triple(prefix + f"switch_mlp.{proj}") for proj in projs]
++    shared = [tuple(t[None] for t in triple(prefix + f"shared_expert.{proj}")) for proj in projs]
++    if all(grouped.bits_of(w, s, GS) == 4 for w, s, _ in mine):     # one width: the shared expert is simply expert E
++        table = [tuple(torch.cat([a, b]).contiguous() for a, b in zip(m, sh)) for m, sh in zip(mine, shared)]
++        experts = grouped.make(table[:2], table[2], GS)
++    else:                                                            # narrower routed experts, the shared one at 4 bits
++        experts = grouped.make(mine[:2], mine[2], GS, shared=(shared[:2], shared[2]))
+     return Routed(router.to(torch.bfloat16).contiguous(), experts, int(top_k))
+ 
+ 
+diff --git a/tests/cuda/test_experts_lowbit.py b/tests/cuda/test_experts_lowbit.py
+new file mode 100644
+index 0000000..d647e15
+--- /dev/null
++++ b/tests/cuda/test_experts_lowbit.py
+@@ -0,0 +1,105 @@
++"""2- and 3-bit experts (bit planes): the same levels give the 4-bit kernels' exact bits, decode and prefill, with the
++shared expert kept at 4 bits beside them."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda import experts  # noqa: E402
++
++DEV = "cuda"
++GS = 64
++
++
++def mlx_words(q: torch.Tensor, bits: int) -> torch.Tensor:
++    """Levels [..., K] -> MLX words [..., K * bits / 32]: an LSB-first bitstream (as mx.quantize packs)."""
++
++    bitsarr = ((q.to(torch.int64)[..., None] >> torch.arange(bits, device=q.device)) & 1).reshape(*q.shape[:-1], -1, 32)
++    v = (bitsarr << torch.arange(32, device=q.device)).sum(-1)
++    return torch.where(v >= 2 ** 31, v - 2 ** 32, v).to(torch.int32)
++
++
++def tensor(e: int, n: int, k: int, bits: int, seed: int):
++    g = torch.Generator(device=DEV).manual_seed(seed)
++    q = torch.randint(0, 2 ** bits, (e, n, k), generator=g, device=DEV)
++    scales = (torch.rand((e, n, k // GS), generator=g, device=DEV) * 0.02 + 0.001).to(torch.bfloat16)
++    biases = (torch.randn((e, n, k // GS), generator=g, device=DEV) * 0.02).to(torch.bfloat16)
++    return q, scales, biases
++
++
++def as_bits(t, bits: int):
++    q, s, b = t
++    return mlx_words(q, bits), s, b
++
++
++def test_levels_round_trip():
++    for bits in (2, 3, 4):
++        q, _, _ = tensor(3, 32, 256, bits, bits)
++        assert torch.equal(experts.levels(mlx_words(q, bits), bits).long(), q)
++
++
++def run(ex, x, picks, *, prefill=False, y_dtype=torch.float32):
++    rows, slots = picks.shape
++    plan = experts.Plan(rows, slots, ex.count, DEV, prefill=prefill)
++    experts.route(picks.contiguous(), plan)
++    act = torch.empty((rows * slots, ex.width), dtype=torch.bfloat16, device=DEV)
++    y = torch.empty((rows * slots, ex.dims), dtype=y_dtype, device=DEV)
++    experts.gate_up(x, ex, plan, act, rows)
++    experts.down(act, ex, plan, y, rows)
++    return act, y
++
++
++def pair(bits_up, bits_down, e=18, d=512, ni=128):
++    """The same levels twice: narrow experts with a 4-bit shared expert beside them, and all at 4 bits."""
++
++    up = [tensor(e, ni, d, bits_up, 10 + i) for i in range(2)]
++    down = tensor(e, d, ni, bits_down, 20)
++    s_up = [tensor(1, ni, d, 4, 30 + i) for i in range(2)]
++    s_down = tensor(1, d, ni, 4, 40)
++    narrow = experts.make([as_bits(t, bits_up) for t in up], as_bits(down, bits_down), GS, limit=10.0,
++                          shared=([as_bits(t, 4) for t in s_up], as_bits(s_down, 4)))
++    cat = lambda t, st: tuple(torch.cat([a, b]) for a, b in zip(t, st))  # noqa: E731
++    full = experts.make([as_bits(cat(t, st), 4) for t, st in zip(up, s_up)], as_bits(cat(down, s_down), 4), GS,
++                        limit=10.0)
++    return narrow, full
++
++
++def picks_for(rows, e, k=6, seed=5):
++    g = torch.Generator().manual_seed(seed)
++    return torch.stack([torch.cat([torch.randperm(e, generator=g)[:k], torch.tensor([e])])
++                        for _ in range(rows)]).to(torch.int32).to(DEV)
++
++
++WIDTHS = [(2, 3), (3, 3), (2, 2), (3, 4), (4, 2)]
++
++
++@pytest.mark.parametrize("prefill,y_dtype", [(False, torch.float32), (True, torch.float32), (True, torch.bfloat16)])
++@pytest.mark.parametrize("bits_up,bits_down", WIDTHS)
++def test_narrow_experts_match_the_4bit_kernels(bits_up, bits_down, prefill, y_dtype):
++    narrow, full = pair(bits_up, bits_down)
++    assert (narrow.bits_up, narrow.bits_down) == (bits_up, bits_down) and narrow.count == full.count == 19
++    rows = 150 if prefill else 37
++    x = (torch.randn((rows, 512), device=DEV) * 0.5).to(torch.bfloat16)
++    picks = picks_for(rows, 18)
++    a_n, y_n = run(narrow, x, picks, prefill=prefill, y_dtype=y_dtype)
++    a_f, y_f = run(full, x, picks, prefill=prefill, y_dtype=y_dtype)
++    assert torch.equal(a_n, a_f) and torch.equal(y_n, y_f)
++
++
++@pytest.mark.parametrize("bits_up,bits_down", [(2, 3), (3, 3)])
++def test_narrow_pairs_do_not_depend_on_the_window(bits_up, bits_down):
++    narrow, _ = pair(bits_up, bits_down)
++    rows = 24
++    x = (torch.randn((rows, 512), device=DEV) * 0.5).to(torch.bfloat16)
++    picks = picks_for(rows, 18, seed=9)
++    act, y = run(narrow, x, picks)
++    alone = [run(narrow, x[r:r + 1], picks[r:r + 1]) for r in range(rows)]
++    assert torch.equal(act, torch.cat([a[0] for a in alone])) and torch.equal(y, torch.cat([a[1] for a in alone]))
++
++
++def test_narrow_is_smaller():
++    narrow, full = pair(2, 3)
++    # a block: 2 * bits words a lane (4-bit: 8), then 32 words of scales and biases
++    assert (narrow.up.shape[-1], narrow.down.shape[-1], full.up.shape[-1]) == (160, 224, 288)
+diff --git a/tests/cuda/test_experts_split.py b/tests/cuda/test_experts_split.py
+new file mode 100644
+index 0000000..c28ce0d
+--- /dev/null
++++ b/tests/cuda/test_experts_split.py
+@@ -0,0 +1,52 @@
++"""The decode kernel (weights as the mma's A, S warps sharing a unit's groups, then folding them in order) gives the
++one-warp reference kernel's exact bits: every width, 1 to 16 rows (items past 8 pairs take two passes), groups that
++don't divide by S, the 4-bit shared expert beside narrow ones."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda import experts  # noqa: E402
++
++from test_experts_lowbit import GS, as_bits, picks_for, run, tensor  # noqa: E402
++
++WIDTHS = [(4, 4), (3, 3), (2, 3), (2, 2), (4, 2)]
++
++
++def layer(bits_up, bits_down, e=18, d=320, ni=192):
++    """d = 5 groups (gate/up), ni = 3 groups (down): rounds of 2, 4 and 8 warps end part full."""
++
++    up = [as_bits(tensor(e, ni, d, bits_up, 50 + i), bits_up) for i in range(2)]
++    down = as_bits(tensor(e, d, ni, bits_down, 60), bits_down)
++    shared = ([as_bits(tensor(1, ni, d, 4, 70 + i), 4) for i in range(2)], as_bits(tensor(1, d, ni, 4, 80), 4))
++    return experts.make(up, down, GS, limit=10.0, shared=shared)
++
++
++@pytest.mark.parametrize("bits_up,bits_down", WIDTHS)
++def test_split_equals_one_warp(bits_up, bits_down, monkeypatch):
++    ex = layer(bits_up, bits_down)
++    g = torch.Generator().manual_seed(bits_up * 10 + bits_down)
++    for rows in (1, 2, 3, 6, 16):
++        x = (torch.randn((rows, ex.dims), generator=g) * 0.5).to(torch.bfloat16).to("cuda")
++        picks = picks_for(rows, 18, seed=rows)
++        monkeypatch.setattr(experts, "SPLIT", -1)
++        want = run(ex, x, picks)
++        for split in (0, 1, 2, 4, 8):
++            monkeypatch.setattr(experts, "SPLIT", split)
++            got = run(ex, x, picks)
++            assert torch.equal(got[0], want[0]) and torch.equal(got[1], want[1]), (rows, split)
++
++
++def test_relu2_split_equals_one_warp(monkeypatch):
++    up = [as_bits(tensor(12, 128, 256, 4, 90), 4)]
++    ex = experts.make(up, as_bits(tensor(12, 256, 128, 4, 91), 4), GS)
++    x = (torch.randn((4, 256), generator=torch.Generator().manual_seed(3)) * 0.5).to(torch.bfloat16).to("cuda")
++    picks = picks_for(4, 12, k=5)[:, :5].contiguous()
++    monkeypatch.setattr(experts, "SPLIT", -1)
++    want = run(ex, x, picks)
++    for split in (0, 1, 2, 4):
++        monkeypatch.setattr(experts, "SPLIT", split)
++        got = run(ex, x, picks)
++        assert torch.equal(got[0], want[0]) and torch.equal(got[1], want[1]), split
+diff --git a/tests/cuda/test_moe_decode_path.py b/tests/cuda/test_moe_decode_path.py
+new file mode 100644
+index 0000000..0476ecd
+--- /dev/null
++++ b/tests/cuda/test_moe_decode_path.py
+@@ -0,0 +1,81 @@
++"""The decode MoE path (one-launch routing, the swapped expert kernels, combine inside down) gives the old path's exact
++bits: every width, 1 to 14 rows, items past 8 and 16 pairs, call after call (the combine counters come back to zero),
++and replayed in a CUDA graph."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda import experts, moe  # noqa: E402
++
++from test_experts_lowbit import GS, as_bits, tensor  # noqa: E402
++
++WIDTHS = [(4, 4), (2, 3), (3, 3), (2, 2), (4, 2)]
++
++
++def block(bits_up, bits_down, e=24, d=512, ni=256, k=8, seed=0):
++    up = [as_bits(tensor(e, ni, d, bits_up, seed + 1 + i), bits_up) for i in range(2)]
++    down = as_bits(tensor(e, d, ni, bits_down, seed + 3), bits_down)
++    shared = ([as_bits(tensor(1, ni, d, 4, seed + 4 + i), 4) for i in range(2)],
++              as_bits(tensor(1, d, ni, 4, seed + 6), 4))
++    ex = experts.make(up, down, GS, limit=10.0, shared=shared)
++    g = torch.Generator(device="cuda").manual_seed(seed)
++    router = (torch.randn((e + 1, d), generator=g, device="cuda") * 0.05).to(torch.bfloat16)
++    return moe.Routed(router, ex, k)
++
++
++def old(monkeypatch):
++    for name, value in (("SELECT", False), ("COMBINE", 0), ("SPLIT", -1)):
++        monkeypatch.setattr(experts, name, value)
++
++
++def new(monkeypatch):
++    for name, value in (("SELECT", True), ("COMBINE", 64), ("SPLIT", 0)):
++        monkeypatch.setattr(experts, name, value)
++
++
++def both(m, x, monkeypatch):
++    old(monkeypatch)
++    want = moe.run(x, m)
++    new(monkeypatch)
++    return moe.run(x, m), want
++
++
++@pytest.mark.parametrize("bits_up,bits_down", WIDTHS)
++def test_decode_path_equals_old(bits_up, bits_down, monkeypatch):
++    m = block(bits_up, bits_down)
++    g = torch.Generator().manual_seed(bits_up * 10 + bits_down)
++    for rows in (1, 2, 3, 4, 6, 8, 14, 1, 4):
++        for _ in range(2):
++            x = (torch.randn((rows, 512), generator=g) * 0.5).to(torch.bfloat16).to("cuda")
++            got, want = both(m, x, monkeypatch)
++            assert torch.equal(got, want), rows
++
++
++def test_items_past_8_and_16_pairs(monkeypatch):
++    # 12 routed experts, top 8: up to 20 pairs on an expert (two passes; items split at 16), 20 on the shared one
++    m = block(2, 3, e=12)
++    g = torch.Generator().manual_seed(7)
++    for rows in (9, 14, 20, 12):
++        x = (torch.randn((rows, 512), generator=g) * 0.5).to(torch.bfloat16).to("cuda")
++        got, want = both(m, x, monkeypatch)
++        assert torch.equal(got, want), rows
++
++
++def test_decode_path_in_a_graph(monkeypatch):
++    m = block(4, 4, seed=20)
++    x = (torch.randn((4, 512), generator=torch.Generator().manual_seed(3)) * 0.5).to(torch.bfloat16).to("cuda")
++    old(monkeypatch)
++    want = [moe.run(x * s, m) for s in (1, 2, 3)]
++    new(monkeypatch)
++    xs = x.clone()
++    moe.run(xs, m)
++    graph = torch.cuda.CUDAGraph()
++    with torch.cuda.graph(graph):
++        out = moe.run(xs, m)
++    for s, w in zip((1, 2, 3), want):
++        xs.copy_(x * s)
++        graph.replay()
++        assert torch.equal(out, w), s
+diff --git a/tests/cuda/test_moe_router.py b/tests/cuda/test_moe_router.py
+new file mode 100644
+index 0000000..d62abd4
+--- /dev/null
++++ b/tests/cuda/test_moe_router.py
+@@ -0,0 +1,30 @@
++"""The decode router's tiles (16 experts a program) give the old tiles' logits (32 a program) bit for bit: a row's
++chain of K steps is the same whatever the tile."""
++
++import pytest
++import torch
++import triton
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda import moe  # noqa: E402
++
++
++def _old(x, w):
++    m, d = x.shape
++    ne = w.shape[0]
++    out = torch.empty((m, ne), dtype=torch.float32, device=x.device)
++    moe._router[(1, triton.cdiv(ne, 32))](x, w, out, m, x.stride(0), D=d, NE=ne, BM=16, BLOCK_E=32, BK=256,
++                                           num_warps=4, num_stages=4)
++    return out
++
++
++@pytest.mark.parametrize("ne,d", [(257, 2048), (25, 512), (17, 256)])
++def test_decode_router_equals_the_old_tiles(ne, d):
++    g = torch.Generator(device="cuda").manual_seed(ne)
++    w = (torch.randn((ne, d), device="cuda", generator=g) * 0.02).to(torch.bfloat16)
++    for rows in (1, 2, 3, 4, 7, 16, 1):
++        for _ in range(4):
++            x = torch.randn((rows, d), device="cuda", generator=g).to(torch.bfloat16)
++            assert torch.equal(moe.router(x, w).view(torch.int32), _old(x, w).view(torch.int32)), (ne, rows)
+diff --git a/tests/cuda/test_moe_select.py b/tests/cuda/test_moe_select.py
+new file mode 100644
+index 0000000..3c3dfc8
+--- /dev/null
++++ b/tests/cuda/test_moe_select.py
+@@ -0,0 +1,40 @@
++"""Decode routing in one launch (experts.select) gives moe._topk_rows's picks and weights and plan's members, items and
++counts, bit for bit: ties to the lower id, 1 to 28 rows, 256 or 24 experts, items split past 16 pairs."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda import experts, moe  # noqa: E402
++
++
++class _Cfg:
++    def __init__(self, e, k):
++        self.num_experts, self.num_experts_per_tok = e, k
++        self.moe_intermediate_size, self.hidden_size = 64, 64
++
++
++@pytest.mark.parametrize("e,k", [(256, 8), (24, 8), (64, 4)])
++def test_select_equals_topk_then_plan(e, k, monkeypatch):
++    g = torch.Generator(device="cuda").manual_seed(e + k)
++    for rows in (1, 2, 4, 7, 16, 28, 60):
++        if rows * (k + 1) > 256:
++            continue
++        logits = torch.randn((rows, e + 1), generator=g, device="cuda") * 3
++        if rows % 2 == 0:
++            logits = torch.round(logits * 2) / 2                   # many equal logits: ties go to the lower id
++        a = moe.MoEBuffers(rows, _Cfg(e, k), "cuda")
++        b = moe.MoEBuffers(rows, _Cfg(e, k), "cuda")
++        monkeypatch.setattr(experts, "SELECT", False)
++        moe.select(logits, a, k, e)
++        monkeypatch.setattr(experts, "SELECT", True)
++        moe.select(logits, b, k, e)
++        assert torch.equal(a.pick[:rows], b.pick[:rows]), rows
++        assert torch.equal(a.wts[:rows].view(torch.int32), b.wts[:rows].view(torch.int32)), rows
++        p = rows * (k + 1)
++        assert torch.equal(a.plan.members[:p], b.plan.members[:p]), rows
++        assert torch.equal(a.plan.counts, b.plan.counts), rows
++        n = int(a.plan.counts[0])
++        assert torch.equal(a.plan.items[:n], b.plan.items[:n]), rows
+diff --git a/tests/cuda/test_qmm_seg.py b/tests/cuda/test_qmm_seg.py
+new file mode 100644
+index 0000000..f9327d5
+--- /dev/null
++++ b/tests/cuda/test_qmm_seg.py
+@@ -0,0 +1,95 @@
++"""The segmented decode launch (several weights of one input, each with its own K slices, the slices added inside the
++launch) gives each weight's single-launch bits: the reduce kernel's slice order, rounded once."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda.kernels import qmm  # noqa: E402
++
++if not qmm.segmented(torch.empty((1, 64), device="cuda"), ()):
++    pytest.skip("GPUs with clusters add K slices in clusters", allow_module_level=True)
++
++
++@pytest.fixture(params=[False, True], ids=["tokens-as-A", "weights-as-A"], autouse=True)
++def swap(request, monkeypatch):
++    monkeypatch.setattr(qmm, "SWAP", request.param)
++    return request.param
++
++
++def _weight(n, k, g):
++    w = torch.randint(-2 ** 31, 2 ** 31 - 1, (n, k // 8), device="cuda", dtype=torch.int32, generator=g)
++    s = (torch.rand((n, k // 64), device="cuda", generator=g) * 0.02).to(torch.bfloat16)
++    b = (torch.randn((n, k // 64), device="cuda", generator=g) * 0.05).to(torch.bfloat16)
++    return qmm.pack(w, s, b, 64)
++
++
++def _old(x, q, xs, f32):
++    """The two-launch path: slices to a buffer, then reduce_kernel."""
++    sk = qmm.split_k(q.n, q.k, q.gs)
++    out = torch.empty((x.shape[0], q.n), dtype=torch.float32 if f32 else torch.bfloat16, device=x.device)
++    qmm._ext().qmm(x, xs, q.weight, q.scales, q.biases, out, None, q.n, sk, q.gs, qmm.bucket(x.shape[0]), f32, True)
++    return out
++
++
++def _same(a, b):
++    return torch.equal(a.view(torch.int16 if a.dtype == torch.bfloat16 else torch.int32),
++                       b.view(torch.int16 if b.dtype == torch.bfloat16 else torch.int32))
++
++
++@pytest.mark.parametrize("shapes", [
++    [(8192, 2048), (4096, 2048), (32, 2048), (32, 2048)],      # a GDN layer's qkv, z, b, a
++    [(8192, 2048), (512, 2048), (512, 2048)],                   # attention q, k, v
++    [(2048, 4096)],                                             # o / out (8 slices)
++    [(1000, 2048), (33, 2048), (130, 2048), (4160, 2048), (64, 2048)],   # ragged widths, more than 4 weights
++])
++@pytest.mark.parametrize("f32", [False, True])
++def test_segmented_equals_single_launches(shapes, f32):
++    g = torch.Generator(device="cuda").manual_seed(len(shapes))
++    k = shapes[0][1]
++    qs = [_weight(n, kk, g) for n, kk in shapes]
++    for m in (1, 2, 3, 4, 5, 8, 13, 16):
++        x = (torch.randn((m, k), device="cuda", generator=g) * 2).to(torch.bfloat16)
++        xs = qmm.group_sums(x)
++        for _ in range(2):                                      # counters are back at zero after a launch
++            got = qmm.matmul_many(x, qs, xs, f32=f32)
++            for q, o in zip(qs, got):
++                assert _same(o, _old(x, q, xs, f32)), (m, q.n)
++
++
++def test_single_matmul_takes_the_fused_reduce_and_replays_in_a_graph():
++    g = torch.Generator(device="cuda").manual_seed(7)
++    q = _weight(2048, 4096, g)
++    x = torch.randn((4, 4096), device="cuda", generator=g).to(torch.bfloat16)
++    xs = qmm.group_sums(x)
++    ref = _old(x, q, xs, False)
++    assert _same(qmm.matmul(x, q, xs), ref)
++    graph = torch.cuda.CUDAGraph()
++    with torch.cuda.graph(graph):
++        out = qmm.matmul(x, q, xs)
++    for _ in range(3):
++        out.zero_()
++        graph.replay()
++        assert _same(out, ref)
++
++
++def test_strided_scales_of_a_row_block():
++    g = torch.Generator(device="cuda").manual_seed(3)
++    full = _weight(1024, 2048, g)
++    part = qmm.Q4(full.weight[2:10], full.scales[:, 128:640], full.biases[:, 128:640], 512, 2048, 64)
++    x = torch.randn((3, 2048), device="cuda", generator=g).to(torch.bfloat16)
++    xs = qmm.group_sums(x)
++    assert _same(qmm.matmul_many(x, [part], xs)[0], _old(x, part, xs, False))
++
++
++@pytest.mark.parametrize("n,k", [(8200, 2048), (2048, 4096), (33, 512)])
++def test_single_matmul_at_decode_rows_equals_the_old_kernel(n, k):
++    g = torch.Generator(device="cuda").manual_seed(n)
++    q = _weight(n, k, g)
++    for m in (1, 2, 5, 8, 9, 16):
++        x = torch.randn((m, k), device="cuda", generator=g).to(torch.bfloat16)
++        xs = qmm.group_sums(x)
++        for f32 in (False, True):
++            assert _same(qmm.matmul(x, q, xs, f32=f32), _old(x, q, xs, f32)), (m, f32)
+diff --git a/tests/cuda/test_qwen36_moe.py b/tests/cuda/test_qwen36_moe.py
+index d69a0d6..5115b85 100644
+--- a/tests/cuda/test_qwen36_moe.py
++++ b/tests/cuda/test_qwen36_moe.py
+@@ -114,7 +114,9 @@ def test_prefill_chunks_give_the_same_state_and_head_cache(monkeypatch, fp8):
+     from tensorfold.families.qwen3_5.cuda import prefill as prefill_mod
+ 
+     w, head = _model()
+-    assert w.fast_prefill                                               # the FP8 prompt path exists for --prefill-fp8
++    from tensorfold.cuda.build import fp8_mma
++
++    assert w.fast_prefill == fp8_mma()                 # the FP8 prompt path exists for --prefill-fp8 (none below 8.9)
+     prompt = list(range(20, 43))
+     st, mc, first, carry = decode.prefill(w, head, prompt, None)
+     monkeypatch.setattr(prefill_mod, "CHUNK", 5)
+@@ -163,6 +165,28 @@ def test_graph_replays_equal_eager_rounds(sampling):
+     assert runner.target and runner.mtp                  # captured once, replayed by the later requests
+ 
+ 
++@pytest.mark.parametrize("chain,commit_graph,follow", [(False, False, False), (True, False, False),
++                                                       (True, True, False), (True, True, True)])
++@pytest.mark.parametrize("sampling", [None, Sampling(1234, 1.0, 20, 0.95)])
++def test_host_free_rounds_equal_serial(monkeypatch, chain, commit_graph, follow, sampling):
++    """Greedy drafts chained on the device, the path committed by a replay, and the verify launched behind the chain
++    (all drafts, no confidence cut) keep serial decoding's tokens, request after request."""
++
++    from tensorfold.families.qwen3_5_moe.cuda.graphs import Graphs
++
++    monkeypatch.setattr(decode, "CHAIN", chain)
++    monkeypatch.setattr(decode, "COMMIT_GRAPH", commit_graph)
++    monkeypatch.setattr(decode, "FOLLOW", follow)
++    w, head = _model()
++    runner = Graphs(w, head, 128)
++    for prompt in (PROMPTS[1], PROMPTS[0], PROMPTS[1]):
++        st, mc, first, carry = decode.prefill(w, head, prompt, sampling)
++        res = decode.mtp_decode(w, head, st, mc, carry, first, 40, sampling, depth=3, confidence=0.3, runner=runner)
++        assert res.tokens == _serial(w, prompt, sampling, 40)
++    assert bool(runner.commits) == commit_graph
++    assert bool(runner.chains) == (chain and sampling is None)
++
++
+ @pytest.mark.parametrize("expandable", [False, True])
+ @pytest.mark.parametrize("sampling", [None, Sampling(1234, 1.0, 20, 0.95)])
+ def test_graphs_recapture_after_the_buffers_grow(expandable, sampling):
+@@ -252,10 +276,10 @@ def _segments(expandable: bool):
+         torch.cuda.memory._set_allocator_settings(f"expandable_segments:{default}")
+ 
+ 
+-def _solo(w, head, prompt, sampling, count, confidence=0.3):
++def _solo(w, head, prompt, sampling, count, confidence=0.3, runner=None):
+     st, mc, first, carry = decode.prefill(w, head, prompt, sampling)
+     return decode.mtp_decode(w, head, st, mc, carry, first, count, sampling, depth=3, confidence=confidence,
+-                             prompt=prompt)
++                             prompt=prompt, runner=runner)
+ 
+ 
+ def _drain(dec):
+@@ -583,10 +607,11 @@ def test_a_stream_alone_replays_the_one_stream_graphs(sampling):
+     a = Stream(PROMPTS[1], 24, sampling)
+     dec.admit(a)
+     _drain(dec)
+-    solo = _solo(w, head, PROMPTS[1], sampling, 24)
++    solo = _solo(w, head, PROMPTS[1], sampling, 24, runner=Graphs(w, head, 1024))     # the solo engine's graphs
+     assert a.out == _serial(w, PROMPTS[1], sampling, 24) == solo.tokens and a.rounds == solo.rounds
+     assert runner.target and runner.mtp and dec.resident is None
+-    first, second = Stream(list(range(20, 60)), 64, sampling), Stream(PROMPTS[0], 12, SAMPLED[1])
++    # long enough that greedy chained rounds (``decode.CHAIN``) leave it decoding when the second joins
++    first, second = Stream(list(range(20, 60)), 160, sampling), Stream(PROMPTS[0], 12, SAMPLED[1])
+     dec.admit(first)
+     for _ in range(4):
+         dec.finish(dec.round())
+@@ -598,7 +623,7 @@ def test_a_stream_alone_replays_the_one_stream_graphs(sampling):
+         rounds += 1
+     assert rounds > 2 and not first.done and dec.resident is first    # decoded together, first still resident
+     _drain(dec)
+-    assert first.out == _serial(w, first.prompt, sampling, 64)
++    assert first.out == _serial(w, first.prompt, sampling, 160)
+     assert second.out == _serial(w, PROMPTS[0], SAMPLED[1], 12)
+ 
+ 
+diff --git a/tests/cuda/test_qwen36_moe_arena.py b/tests/cuda/test_qwen36_moe_arena.py
+new file mode 100644
+index 0000000..1ed8192
+--- /dev/null
++++ b/tests/cuda/test_qwen36_moe_arena.py
+@@ -0,0 +1,77 @@
++"""The MoE engine holds the context once: prompts prefill into the decode graphs' buffers, kept prompt states live
++there too, and every request still equals serial decoding whatever came before it."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda.streams import PrefixCache  # noqa: E402
++from tensorfold.families.qwen3_5_moe.cuda import decode, engine as engine_mod  # noqa: E402
++from tensorfold.families.qwen3_5_moe.cuda.graphs import Graphs  # noqa: E402
++
++from test_qwen36_moe import SAMPLINGS, _model, _serial  # noqa: E402
++
++WINDOW = 512
++
++
++def _engine(w, head, depth=3):
++    e = object.__new__(engine_mod.Qwen36Engine)
++    e.w, e.head, e.depth, e.confidence = w, head, depth, engine_mod.CONFIDENCE
++    e.context_window = WINDOW
++    e.graphs = Graphs(w, head, WINDOW + depth + 1)
++    e.graphs.grow(e.graphs.capacity, exact=True)
++    e.eos, e.points, e.cache, e.swap = (), None, PrefixCache(engine_mod.KEEP), None
++    return e
++
++
++def _run(e, prompt, sampling, count):
++    out = []
++    e.generate(prompt, count, sampling, lambda toks: out.extend(toks) and False, stop_eos=False)
++    return out[:count]
++
++
++@pytest.mark.parametrize("sampling", SAMPLINGS[:2])
++def test_requests_equal_serial_whatever_came_before(sampling):
++    w, head = _model()
++    e = _engine(w, head)
++    a = list(range(20, 60))
++    b = [7, 9, 11] * 9
++    turns = [a, a + [3, 4, 5, 6] * 5, b, a + [3, 4, 5, 6] * 5, a[:25], a + [8] * 30]
++    rows = e.graphs.st.kv[1][0].data_ptr()
++    for prompt in turns:
++        got = _run(e, prompt, sampling, 24)
++        assert got == _serial(w, prompt, sampling, 24)[:24], prompt[:8]
++        # the kept states are prefixes of the last prompt, in the one set of buffers
++        assert all(prompt[:len(ids)] == ids for ids, _, _ in e.cache.entries)
++        assert all(st.kv[1][0].data_ptr() == rows for _, st, _ in e.cache.entries)
++        for ids, st, (mc, _) in e.cache.entries:           # and hold exactly what a fresh prefill of them writes
++            fresh, fmc, _, _ = decode.prefill(w, head, ids, None)
++            n = len(ids)
++            assert torch.equal(st.kv[1][0][:n], fresh.kv[1][0][:n]) and torch.equal(st.kv[1][1][:n], fresh.kv[1][1][:n])
++            assert torch.equal(mc.k[:n - 1], fmc.k[:n - 1]) and torch.equal(mc.v[:n - 1], fmc.v[:n - 1])
++    assert e.graphs.st.kv[1][0].data_ptr() == rows            # never regrown
++
++
++def test_a_resumed_request_reuses_the_prefix():
++    w, head = _model()
++    e = _engine(w, head)
++    a = list(range(20, 60))
++    stats = []
++    for prompt in (a, a + [1, 2, 3] * 4):
++        out = []
++        stats.append(e.generate(prompt, 8, None, lambda toks: out.extend(toks) and False, stop_eos=False))
++    assert stats[1]["cached"] == len(a) - 1                 # the entry end: the prompt but its last token
++
++
++def test_the_head_absorbs_a_long_prompt_in_pieces(monkeypatch):
++    w, head = _model()
++    prompt = [(i * 37) % 250 + 3 for i in range(420)]
++    want = _serial(w, prompt, None, 16)[:16]
++    whole = decode.prefill(w, head, prompt, None)
++    monkeypatch.setattr(decode, "HEAD_ROWS", 150)          # 3 pieces of 139-140 rows, each past MAX_NODES
++    e = _engine(w, head)
++    assert _run(e, prompt, None, 16) == want
++    pieces = decode.prefill(w, head, prompt, None)
++    assert pieces[1].pos == whole[1].pos == len(prompt) - 1 and pieces[2] == whole[2]
+diff --git a/tests/cuda/test_qwen36_moe_swap.py b/tests/cuda/test_qwen36_moe_swap.py
+new file mode 100644
+index 0000000..640efee
+--- /dev/null
++++ b/tests/cuda/test_qwen36_moe_swap.py
+@@ -0,0 +1,105 @@
++"""Conversations another prompt evicts are parked in host memory and copied back: a returning conversation resumes
++where it was, without prefilling again, and decodes exactly as serial decoding does."""
++
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.families.qwen3_5_moe.cuda import decode, swap as swap_mod  # noqa: E402
++from tensorfold.families.qwen3_5_moe.cuda.swap import Swap  # noqa: E402
++from tensorfold.families.qwen3_5.cuda.engine import entry_end  # noqa: E402
++
++from test_qwen36_moe import SAMPLINGS, _model, _serial  # noqa: E402
++from test_qwen36_moe_arena import _engine  # noqa: E402
++
++
++@pytest.fixture(autouse=True)
++def small_chunks(monkeypatch):
++    monkeypatch.setattr(swap_mod, "ROWS", 16)            # prompts span several chunks, so snapshots share some
++    monkeypatch.setattr(swap_mod, "GAP", 4)
++
++
++def _swapping(w, head, budget=1 << 30):
++    e = _engine(w, head)
++    e.swap = Swap(e.graphs, budget)
++    return e
++
++
++def _generate(e, prompt, sampling, count):
++    out = []
++    stats = e.generate(prompt, count, sampling, lambda toks: out.extend(toks) and False, stop_eos=False)
++    return out[:count], stats
++
++
++def _hold_a_fresh_prefill(w, head, e):
++    """Every kept prefix, copied back or not, holds the rows and states a fresh prefill of its ids gives (the tiny test
++    model's tokens barely depend on the context, so equal tokens alone would not show it)."""
++
++    for ids, st, (mc, held) in e.cache.entries:
++        fresh, fmc, _, carry = decode.prefill(w, head, ids, None)
++        n = len(ids)
++        for kv, fkv in zip(st.kv, fresh.kv):
++            if kv is not None:
++                assert torch.equal(kv[0][:n], fkv[0][:n]) and torch.equal(kv[1][:n], fkv[1][:n])
++        assert torch.equal(mc.k[:n - 1], fmc.k[:n - 1]) and torch.equal(mc.v[:n - 1], fmc.v[:n - 1])
++        for x, y in zip(st.rec + st.conv, fresh.rec + fresh.conv):
++            assert (x is None) == (y is None) and (x is None or torch.equal(x, y))
++        assert st.pos == n and mc.pos == n - 1 and torch.equal(held, carry.states)
++
++
++@pytest.mark.parametrize("sampling", SAMPLINGS[:2])
++def test_interleaved_conversations_resume_from_host_and_equal_serial(sampling):
++    w, head = _model()
++    e = _swapping(w, head)
++    system = list(range(100, 120))
++    a = system + [(i * 7) % 90 + 3 for i in range(45)]
++    b = system + [(i * 11) % 90 + 3 for i in range(38)]
++    a2, b2 = a + [5, 6, 7] * 6, b + [9, 8] * 10
++    a3 = a2 + [4] * 21
++    # kept prefixes sit at prompt entry ends here (no message markers), so a returning conversation comes back whole
++    # but its last token
++    turns = [(a, 0), (b, 0), (a2, entry_end(a)), (b2, entry_end(b)), (a3, entry_end(a2)), (a3 + [1, 2], 0)]
++    first = None
++    for i, (prompt, back) in enumerate(turns):
++        got, stats = _generate(e, prompt, sampling, 20)
++        assert got == _serial(w, prompt, sampling, 20)[:20], i
++        assert stats["swapped_in"] == back, i
++        if back:
++            assert stats["cached"] == back
++        _hold_a_fresh_prefill(w, head, e)
++        if i == 2:
++            first = next(s for s in e.swap.snaps if s.ids == a[:-1]).chunks[0][0].data_ptr()
++        if i == 3:        # parked again, longer: the full chunks it already had are shared, the shorter snapshot gone
++            longer = next(s for s in e.swap.snaps if s.ids == a2[:-1])
++            assert longer.chunks[0][0].data_ptr() == first
++            assert not any(s.ids == a[:-1] for s in e.swap.snaps)
++    assert sorted(len(s.ids) for s in e.swap.snaps) == sorted([entry_end(a2), entry_end(b2)])
++
++
++def test_a_parked_state_holds_what_a_fresh_prefill_writes():
++    w, head = _model()
++    e = _swapping(w, head)
++    a, b = list(range(30, 90)), list(range(150, 190))
++    _generate(e, a, None, 8)
++    _generate(e, b, None, 8)
++    (snap,) = e.swap.snaps
++    a = a[:entry_end(a)]                                 # the kept entry: the prompt but its last token
++    assert snap.ids == a
++    fresh, fmc, _, carry = decode.prefill(w, head, a, None)
++    k = torch.cat(snap.chunks[0]).cuda()
++    hk = torch.cat(snap.chunks[-2]).cuda()
++    assert torch.equal(k, fresh.kv[1][0][:len(a)]) and torch.equal(hk, fmc.k[:len(a) - 1])
++    assert all(torch.equal(x.cuda(), y) for x, y in zip(snap.rec, fresh.rec) if x is not None)
++    assert torch.equal(snap.held.cuda(), carry.states)
++
++
++def test_over_budget_nothing_is_parked_and_requests_still_equal_serial():
++    w, head = _model()
++    e = _swapping(w, head, budget=1)
++    a, b = list(range(30, 70)), list(range(150, 180))
++    for prompt in (a, b, a + [3] * 10):
++        got, stats = _generate(e, prompt, None, 12)
++        assert got == _serial(w, prompt, None, 12)[:12] and stats["swapped_in"] == 0
++    assert e.swap.snaps == []
+diff --git a/tests/test_cuda_build.py b/tests/test_cuda_build.py
+index 7d8fb21..67434c3 100644
+--- a/tests/test_cuda_build.py
++++ b/tests/test_cuda_build.py
+@@ -38,11 +38,19 @@ def test_the_flags_name_only_this_gpu(monkeypatch):
+ 
+ @pytest.mark.torch
+ def test_an_older_gpu_is_refused_by_name(monkeypatch):
+-    _gpu(monkeypatch, (8, 6), "NVIDIA GeForce RTX 3090")
+-    with pytest.raises(RuntimeError, match=r"capability 8\.9 or newer \(FP8 MMA\).*RTX 3090.*is 8\.6"):
++    _gpu(monkeypatch, (7, 5), "NVIDIA GeForce RTX 2080")
++    with pytest.raises(RuntimeError, match=r"capability 8\.0 or newer \(bf16 MMA and cp\.async\).*RTX 2080.*is 7\.5"):
+         build.arch_flags()
+ 
+ 
++@pytest.mark.torch
++def test_ampere_builds_without_fp8_mma_and_fp8_weights_still_need_clusters(monkeypatch):
++    _gpu(monkeypatch, (8, 6), "NVIDIA GeForce RTX 3090")
++    assert build.arch_flags() == ["-gencode=arch=compute_86,code=sm_86"] and not build.fp8_mma()
++    with pytest.raises(RuntimeError, match=r"capability 9\.0 or newer \(thread-block clusters"):
++        build.arch_flags(build.CLUSTERS)
++
++
+ @pytest.mark.torch
+ def test_ada_builds_all_but_the_cluster_only_extensions(monkeypatch):
+     _gpu(monkeypatch, (8, 9), "NVIDIA GeForce RTX 4090")
+@@ -151,8 +159,8 @@ def test_a_build_directory_argument_is_the_one_checked(ext, tmp_path):
+ 
+ @pytest.mark.torch
+ def test_an_older_gpu_is_refused_before_any_line(ext, monkeypatch):
+-    _gpu(monkeypatch, (8, 6), "NVIDIA GeForce RTX 3090")
+-    with pytest.raises(RuntimeError, match="RTX 3090"):
++    _gpu(monkeypatch, (7, 5), "NVIDIA GeForce RTX 2080")
++    with pytest.raises(RuntimeError, match="RTX 2080"):
+         ext.build.load(name="tf_test", sources=ext.sources, verbose=False)
+     assert ext.said == [] and ext.calls == []
+ 

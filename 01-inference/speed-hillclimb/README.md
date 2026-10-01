@@ -779,3 +779,64 @@ greedy; time to first token):
   the row copy, skip the GDN states or zero the held row now fail.
 - The full `tests/cuda` suite has hundreds of failures from other families (FlashNext, GLM, EXL3 and more) that don't
   run on sm_86. There is also a lock message torch leaves after a clean build. The MoE files pass (72).
+
+## TensorFold 0.6.0 port (2026-09-30)
+
+What 0.6.0 brings for us:
+- `--parallel N` for the MoE family: N requests decoded together, each bit-identical to running alone.
+- Kept prompt states saved one token before the prompt's end. A resent turn re-renders that token, so this is where
+  the next turn can resume.
+- bf16 prompts by default, with FP8 opt-in (`--prefill-fp8`).
+- 4-bit expert packing in CUDA.
+
+It still refuses anything below 8.9, so our patches are still needed.
+
+**The port** ([`tensorfold/port-060.patch`](tensorfold/port-060.patch), against tag v0.6.0; tree
+`01-inference/tools/TensorFold-060`, branch `port-060`, env `envs/tensorfold060`):
+- Kept as before:
+  - the sm_86 build floor, with `fp8_mma()` gates;
+  - 2/3-bit experts;
+  - `--swap-gib`;
+  - attention rows held once;
+  - the head absorbing long prompts in pieces;
+  - unknown-tools.
+- Upstream moved each decode round into `mtp_round`, so our on-GPU draft chain and one-shot graph commit now live there.
+  The lone stream under `--parallel` gets them too. Requests with a grammar skip the chain.
+- `--parallel` and `--swap-gib` combine. The swap is on only with one stream.
+
+**Tests on the 3090:**
+- Kernels: 184/185. The failure is a false "waits on the build lock" line. Since torch 2.14 the `lock` file stays on
+  disk as an advisory lock, and upstream takes the file as a held lock. It fails on pristine 0.6.0 too.
+- Qwen3.6 MoE engine: 78/78. Four tests changed:
+  - two follow the one-token-short keep rule;
+  - one compares the lone stream with the solo engine *in graphs*, since greedy chained rounds differ from eager ones;
+  - one expects no FP8 prompt kernel below 8.9.
+- CPU suite, diffed against pristine 0.6.0 on this machine (the rest of the failures need MLX):
+  - the port fixes 50 capacity and admission tests that fail on pristine, which refuses the 3090;
+  - two tests now say 8.0 is the floor;
+  - the only failure left that pristine doesn't share is a timing flake: 242/242 pass when rerun alone.
+
+**Exactness:** drafted greedy replies equal serial ones on the port (`--no-drafts`, 4 prompts × 1,024 tokens).
+
+**Port vs the old build** (0.3.6.3 + patches; same R1s weights):
+- Greedy text differs, forking within the first few hundred characters.
+- `build_logits.py` teacher-forces the old build's replies through both builds (48 cut points, full vocabulary).
+- Mean KL(old ‖ new) is 0.028. That's under the ~0.04 that bf16 kernel noise alone gives, and an eighth of R1s's 0.229
+  against bf16.
+- Top-1 agreement is 92%. All 4 disagreements are near-ties in the old build: 0.478/0.478, 0.104/0.104, 0.141/0.103,
+  0.107/0.100.
+- So upstream's kernels round differently, and greedy forks at ties. Nothing broke.
+
+**Speed** (`bench_e2e_3090.sh`, R1s, 16K context, decode tok/s median of 3):
+
+| Prompt | old, T=1 | port, T=1 | old, greedy | port, greedy |
+|---|---|---|---|---|
+| fibonacci (raw) | 425 | 426 | 538 | 513 |
+| GPU chat, no think | 311 | 354 | 389 | 413 |
+
+Chat, the agent-like case, is 6–14% faster. Raw-text greedy is 5% slower.
+
+- 0.6.0 also dropped logprobs on this backend, and the old build ignored the field silently. That's why
+  `build_logits.py` reads logits in-process.
+- Next: agent throughput with `--parallel 4` against one stream plus swap, on a pod (the 3090 fits 4×16K, an A6000
+  4×64K+).

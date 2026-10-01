@@ -1,0 +1,58 @@
+[
+ {
+  "label": "r1s-060-serial",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 95.64057980346398,
+  "decode_tps_all": [
+   95.64,
+   95.65,
+   88.36
+  ],
+  "ttft_s_median": 0.035919532005209476,
+  "sample": "\n\n<think>\nThe user wants me to write a short Python function that computes the Fibonacci sequence and explain it. Let me create a clean, well-documented functio"
+ },
+ {
+  "label": "r1s-060-serial",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 95.26058417185934,
+  "decode_tps_all": [
+   96.38,
+   95.1,
+   95.26
+  ],
+  "ttft_s_median": 0.04131453501759097,
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nA GPU (Graphics Processing Unit) is essentially a chip packed with *thousands* of tiny worker cores. Unlike "
+ },
+ {
+  "label": "r1s-060-serial",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 97.98722553393083,
+  "decode_tps_all": [
+   97.81,
+   99.15,
+   97.99
+  ],
+  "ttft_s_median": 0.03509448503609747,
+  "sample": "\n\nHere is a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a "
+ },
+ {
+  "label": "r1s-060-serial",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 98.6275317571358,
+  "decode_tps_all": [
+   99.82,
+   98.44,
+   98.63
+  ],
+  "ttft_s_median": 0.041075929009821266,
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Basic Idea\n\nMatrix multiplication combines two matrices into a third one. If you have a matrix **A** (with dimensions *"
+ }
+]

@@ -1,0 +1,18 @@
+[project]
+name = "env-tensorfold060"
+version = "0.1.0"
+description = "TensorFold (v0.6.0 + our patches, 01-inference/tools/TensorFold-060) on the local 3090"
+requires-python = ">=3.12,<3.13"
+dependencies = ["torch", "tensorfold[test]", "safetensors", "gguf", "ninja"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+tensorfold = { path = "../../tools/TensorFold-060", editable = true }
+torch = { index = "pytorch-cu130" }
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
