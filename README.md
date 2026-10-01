@@ -240,6 +240,19 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     - The RAM swap already snapshots GDN state per conversation, which is half the machinery.
     - It doesn't touch R1's current problem: its failures run out of turns, not context.
     - The code is non-commercial. Reimplementing the idea is fine, but copying their code into Smart Data isn't.
+- [Raven](https://github.com/EverMind-AI/Raven) (EverMind; Apache 2.0; paper arXiv 2609.33439): "the harness of
+  harnesses", a host agent that orchestrates its own agents (research, code, design, on-call) and 13 third-party ones
+  over ACP, CLI or OpenAI-compatible APIs, with EverOS (a local-first Markdown memory store) across sessions.
+  - The interesting part is the Curator, recursive self-improvement of the *harness*. The agent loop splits into four
+    modules (Memory: what a turn sees; Planning; Capability: which tools a turn gets; Action), and the Curator rewrites
+    them in rounds. A change is installed only after it passes a check, and the reference answer is stripped from the
+    signals it sees.
+  - Evidence is thin. The README doesn't name the models behind its numbers (DataAgentBench 0.8762 Pass@1; nanochat
+    val_bpb −5.8% in the same 20-minute, one-GPU budget), and nothing is reported for small or open models.
+  - **For us:** it's the opposite lever to Riel's thesis. Raven adapts the harness to the model; we want to train the
+    model to the harness. Ornith 1.5's "scaffold construction" does both. A Curator-style search over prime_agent's
+    prompt and tools for R1s is a no-training baseline that training should beat, but the Curator itself needs a
+    strong model, so it would run on an API.
 - [Qwen-Image-2.1 viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo): DMD step distillation, LoRA merge precision loss.
 - [WorkflowEvals](https://evals.typesafe.ai/) (TypeSafe, the company behind Jev;
   [code](https://github.com/typesafe-ai/WorkflowEvals), Apache 2.0;

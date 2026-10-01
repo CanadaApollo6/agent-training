@@ -1,0 +1,628 @@
+--- a/src/tensorfold/cuda/server.py
++++ b/src/tensorfold/cuda/server.py
+@@ -4,6 +4,7 @@
+ import hashlib
+ import inspect
+ import json
++import queue
+ import threading
+ import time
+ import traceback
+@@ -14,6 +15,7 @@
+ from pathlib import Path
+ from typing import Any, Callable
+ 
++from tensorfold.server import anthropic
+ from tensorfold.server.cancellation import RequestCancelled, socket_cancellation
+ from tensorfold.server.errors import CapacityError, RequestError
+ from tensorfold.server.http import Server
+@@ -413,6 +415,9 @@
+                                      encode=lambda t: list(self.tok.encode(t, add_special_tokens=False).ids))
+ 
+ 
++ANTHROPIC_PING_S = 10.0           # a Messages stream waiting on the engine sends a ping this often
++
++
+ def token_sha(tokens: list[int]) -> str:
+     """A reply's token ids, hashed as the Mac server does: drafted and ``"draft": false`` replies must match."""
+ 
+@@ -464,7 +469,113 @@
+             else:
+                 self._json(404, {"error": "not found"})
+ 
++        def _anthropic(self, count: bool) -> None:
++            """``/v1/messages`` (and ``/count_tokens``): the Messages API over the chat path, for Claude Code. The
++            reply runs on a worker thread so a stream gets pings while it waits for the engine."""
++
++            def refuse(code: int, kind: str, text: str) -> None:
++                self._json(code, anthropic.error(kind, text))
++
++            try:
++                length = int(self.headers.get("Content-Length", 0))
++                if not 0 <= length <= 32 * 1024**2:
++                    self.close_connection = True
++                    return refuse(400, "invalid_request_error", "request body exceeds the 32 MiB limit")
++                body = json.loads(self.rfile.read(length) or b"{}")
++                chat = anthropic.to_chat(body)
++            except (json.JSONDecodeError, UnicodeDecodeError):
++                return refuse(400, "invalid_request_error", "the request body is not JSON")
++            except (KeyError, TypeError, ValueError, AttributeError) as exc:
++                return refuse(400, "invalid_request_error", f"malformed Messages request: {exc}")
++            asked = chat.pop("max_tokens", None)      # clamped to the room left below, never refused for it
++            try:
++                prepared = app._prepare(chat, True) if count else app.prepare(chat, True)
++            except RequestError as exc:
++                if isinstance(exc, CapacityError):
++                    return refuse(529, "overloaded_error", str(exc))
++                return refuse(400, "invalid_request_error", anthropic.too_long(str(exc), app._context_limit())
++                              or str(exc))
++            except Exception as exc:
++                _log_error(exc)
++                return refuse(400, "invalid_request_error", _error_message(exc))
++            if count:
++                return self._json(200, {"input_tokens": len(prepared.prompt)})
++            if asked is not None:
++                limit = app._context_limit()
++                room = limit - len(prepared.prompt) if limit else int(asked)
++                prepared.max_tokens = max(1, min(int(asked), room))
++            rid = f"msg_{uuid.uuid4().hex[:24]}"
++            model = str(body.get("model") or app.served)
++            gone = socket_cancellation(self.connection)
++            left = threading.Event()                                  # a stream's writer saw the client go
++            cancelled = lambda: gone.cancelled or left.is_set()      # noqa: E731
++            if not chat["stream"]:
++                try:
++                    result = app.run(chat, True, lambda delta: True, prepared=prepared, cancelled=cancelled)
++                except RequestCancelled:
++                    self.close_connection = True
++                    return
++                except RequestError as exc:
++                    return refuse(400, "invalid_request_error", str(exc))
++                except Exception as exc:
++                    _log_error(exc)
++                    return refuse(500, "api_error", _error_message(exc))
++                return self._json(200, anthropic.message(result, model, rid))
++
++            events: queue.Queue = queue.Queue()
++
++            def work() -> None:
++                try:
++                    events.put(("done", app.run(chat, True, lambda delta: (events.put(("delta", delta)),
++                                                                            not left.is_set())[1],
++                                                prepared=prepared, cancelled=cancelled)))
++                except BaseException as exc:            # noqa: BLE001  handed to the writer
++                    events.put(("error", exc))
++
++            def write(text: str) -> bool:
++                if left.is_set():
++                    return False
++                try:
++                    self.wfile.write(text.encode())
++                    self.wfile.flush()
++                    return True
++                except OSError:
++                    left.set()
++                    return False
++
++            self.send_response(200)
++            self.send_header("Content-Type", "text/event-stream")
++            self.send_header("Cache-Control", "no-cache")
++            self.send_header("Connection", "close")
++            self.end_headers()
++            self.close_connection = True
++            reply = anthropic.EventStream(model, rid, len(prepared.prompt))
++            write(reply.start())
++            threading.Thread(target=work, name="tf-messages", daemon=True).start()
++            while True:
++                try:
++                    kind, item = events.get(timeout=ANTHROPIC_PING_S)
++                except queue.Empty:
++                    write(anthropic.sse("ping", {"type": "ping"}))
++                    continue
++                if kind == "delta":
++                    write(reply.delta(item))
++                elif kind == "done":
++                    write(reply.finish(item))
++                    return
++                else:
++                    if not isinstance(item, RequestCancelled):
++                        if not isinstance(item, RequestError):
++                            _log_error(item)
++                        write(anthropic.sse("error", anthropic.error(
++                            "invalid_request_error" if isinstance(item, RequestError) else "api_error",
++                            str(item) if isinstance(item, RequestError) else _error_message(item))))
++                    return
++
+         def do_POST(self):
++            route = self.path.split("?", 1)[0].rstrip("/")     # Claude Code asks /v1/messages?beta=true
++            if route.endswith("/messages") or route.endswith("/messages/count_tokens"):
++                return self._anthropic(route.endswith("/count_tokens"))
+             chat = self.path.rstrip("/").endswith("/chat/completions")
+             if not chat and not self.path.rstrip("/").endswith("/completions"):
+                 return self._json(404, {"error": "not found"})
+--- a/src/tensorfold/cuda/reply_text.py
++++ b/src/tensorfold/cuda/reply_text.py
+@@ -98,6 +98,15 @@
+     return str((fn or tool).get("name") or "").strip() if isinstance(tool, dict) else ""
+ 
+ 
++def _qwen_value(value: str, schema: dict[str, Any]) -> Any:
++    """``decode_parameter``, and Python's ``True``/``False`` for a boolean as the boolean, as vLLM's Qwen3-Coder parser
++    reads them (Qwen models write them so); Qwen's template writes a boolean back the same way, so history re-renders."""
++
++    if schema.get("type") == "boolean" and value.strip() in ("True", "False"):
++        return value.strip() == "True"
++    return decode_parameter(value, schema)
++
++
+ def parse_tool_calls(text: str, tools: list[dict[str, Any]], *, max_calls: int | None = None) -> tuple[str, list[dict[str, Any]] | None]:
+     """Qwen ``<function=name><parameter=k>v</parameter></function>``, GLM ``name<arg_key>..`` or JSON calls."""
+ 
+@@ -131,7 +140,7 @@
+                 name = m.group(1).strip()
+                 # typed parameters (array, object, number...) decode per the tool's schema, as the Mac server does
+                 props = schemas.get(name.lower(), {})
+-                args = {key: decode_parameter(value, props.get(key, {}))
++                args = {key: _qwen_value(value, props.get(key, {}))
+                         for key, value in ((p.group(1).strip(), p.group(2))
+                                            for p in _TOOL_PARAMETER_BLOCK_RE.finditer(m.group(2)))}
+             else:
+--- /dev/null
++++ b/src/tensorfold/server/anthropic.py
+@@ -0,0 +1,233 @@
++"""The Anthropic Messages API (``/v1/messages``) over the chat path, so Claude Code can drive a served model.
++
++A Messages request becomes a chat-completions body: the system blocks a system message, ``tool_use`` blocks tool calls,
++``tool_result`` blocks tool messages, and ``thinking`` blocks the assistant's ``reasoning_content``, so the chat template
++replays the model's earlier reasoning exactly as it would for an OpenAI client. The reply comes back as a Message, or
++as Messages stream events: a thinking block, then a text block, then one ``tool_use`` block per call.
++
++The server serves one model and has no vision here, so ``model`` is echoed and an image becomes a short note.
++"""
++from __future__ import annotations
++
++import json
++import re
++from typing import Any
++
++IMAGE_NOTE = "[image omitted: this server reads text only]"
++SIGNATURE = "tensorfold"           # thinking blocks need a signature; only this server reads it back
++STOP_REASONS = {"tool_calls": "tool_use", "stop": "end_turn", "length": "max_tokens"}
++
++
++def _text(content: Any) -> str:
++    """A tool result's or a system prompt's content as plain text."""
++
++    if content is None:
++        return ""
++    if isinstance(content, str):
++        return content
++    parts = []
++    for block in content:
++        kind = block.get("type")
++        if kind == "text":
++            parts.append(block.get("text", ""))
++        elif kind == "image":
++            parts.append(IMAGE_NOTE)
++        else:                                      # documents, search results: their JSON, rather than nothing
++            parts.append(json.dumps(block, ensure_ascii=False))
++    return "\n\n".join(p for p in parts if p)
++
++
++def _messages(body: dict[str, Any]) -> list[dict[str, Any]]:
++    out: list[dict[str, Any]] = []
++    system = _text(body.get("system"))
++    if system:
++        out.append({"role": "system", "content": system})
++    for message in body.get("messages") or []:
++        role, content = message.get("role"), message.get("content")
++        if role == "system":                       # Claude Code sends some mid-conversation; the chat path places them
++            out.append({"role": "system", "content": _text(content)})
++            continue
++        if role not in ("user", "assistant"):
++            raise ValueError(f"messages: role must be user, assistant or system, not {role!r}")
++        if isinstance(content, str):
++            out.append({"role": role, "content": content})
++            continue
++        if role == "assistant":
++            text, reasoning, calls = [], [], []
++            for block in content or []:
++                kind = block.get("type")
++                if kind == "text":
++                    text.append(block.get("text", ""))
++                elif kind == "thinking":
++                    reasoning.append(block.get("thinking", ""))
++                elif kind in ("tool_use", "server_tool_use"):
++                    calls.append({"id": block["id"], "type": "function",
++                                  "function": {"name": block["name"],
++                                               "arguments": json.dumps(block.get("input") or {}, ensure_ascii=False)}})
++            turn: dict[str, Any] = {"role": "assistant", "content": "".join(text)}
++            if reasoning:
++                turn["reasoning_content"] = "".join(reasoning)
++            if calls:
++                turn["tool_calls"] = calls
++            out.append(turn)
++            continue
++        text = []
++        for block in content or []:                # tool results lead a user turn, as the API requires
++            kind = block.get("type")
++            if kind == "tool_result":
++                result = _text(block.get("content"))
++                if block.get("is_error") and not result.lstrip().startswith(("Error", "<tool_use_error>")):
++                    result = f"Error: {result}"
++                out.append({"role": "tool", "tool_call_id": block.get("tool_use_id"), "content": result})
++            elif kind == "text":
++                text.append(block.get("text", ""))
++            elif kind == "image":
++                text.append(IMAGE_NOTE)
++            elif kind == "document":
++                text.append(_text([block]))
++        if text:
++            out.append({"role": "user", "content": "\n\n".join(text)})
++    return out
++
++
++def _tool_choice(choice: dict[str, Any] | None) -> Any:
++    kind = (choice or {}).get("type", "auto")
++    if kind == "any":
++        return "required"
++    if kind == "tool":
++        return {"type": "function", "function": {"name": choice["name"]}}
++    return "none" if kind == "none" else "auto"
++
++
++def to_chat(body: dict[str, Any]) -> dict[str, Any]:
++    """The chat-completions body for a Messages request; ValueError, KeyError or TypeError if it's malformed."""
++
++    if not isinstance(body, dict):
++        raise ValueError("the request body must be a JSON object")
++    chat: dict[str, Any] = {"messages": _messages(body), "stream": bool(body.get("stream"))}
++    tools = [{"type": "function", "function": {"name": t["name"], "description": t.get("description", ""),
++                                               "parameters": t.get("input_schema") or {"type": "object",
++                                                                                       "properties": {}}}}
++             for t in body.get("tools") or [] if "input_schema" in t]   # server tools (web search...) have none
++    if tools:
++        chat["tools"] = tools
++        chat["tool_choice"] = _tool_choice(body.get("tool_choice"))
++        if (body.get("tool_choice") or {}).get("disable_parallel_tool_use"):
++            chat["parallel_tool_calls"] = False
++    thinking = (body.get("thinking") or {}).get("type")
++    if thinking == "disabled":
++        chat["chat_template_kwargs"] = {"enable_thinking": False}
++    elif thinking in ("enabled", "adaptive"):
++        chat["chat_template_kwargs"] = {"enable_thinking": True}
++    for name in ("max_tokens", "temperature", "top_p", "top_k"):
++        if body.get(name) is not None:
++            chat[name] = body[name]
++    if body.get("stop_sequences"):
++        chat["stop"] = list(body["stop_sequences"])
++    return chat
++
++
++def _input(arguments: Any) -> dict[str, Any]:
++    if isinstance(arguments, str):
++        try:
++            arguments = json.loads(arguments or "{}")
++        except json.JSONDecodeError:
++            return {"_raw": arguments}
++    return arguments if isinstance(arguments, dict) else {"_value": arguments}
++
++
++def message(result: dict[str, Any], model: str, rid: str) -> dict[str, Any]:
++    """A whole reply (``App.run``'s result) as a Message."""
++
++    content: list[dict[str, Any]] = []
++    if result["reasoning"]:
++        content.append({"type": "thinking", "thinking": result["reasoning"], "signature": SIGNATURE})
++    if result["content"]:
++        content.append({"type": "text", "text": result["content"]})
++    for call in result["calls"] or []:
++        content.append({"type": "tool_use", "id": call["id"], "name": call["function"]["name"],
++                        "input": _input(call["function"]["arguments"])})
++    return {"id": rid, "type": "message", "role": "assistant", "model": model, "content": content,
++            "stop_reason": STOP_REASONS.get(result["finish"], "end_turn"), "stop_sequence": None,
++            "usage": {"input_tokens": result["prompt_tokens"], "output_tokens": result["completion_tokens"]}}
++
++
++def sse(event: str, data: dict[str, Any]) -> str:
++    return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
++
++
++class EventStream:
++    """A streamed reply as Messages events: ``start``, then ``delta`` per chat delta, then ``finish``."""
++
++    def __init__(self, model: str, rid: str, input_tokens: int):
++        self.model, self.rid, self.input_tokens = model, rid, input_tokens
++        self.index, self.open = -1, None
++
++    def start(self) -> str:
++        return sse("message_start", {"type": "message_start", "message": {
++            "id": self.rid, "type": "message", "role": "assistant", "model": self.model, "content": [],
++            "stop_reason": None, "stop_sequence": None,
++            "usage": {"input_tokens": self.input_tokens, "output_tokens": 0}}})
++
++    def _close(self) -> str:
++        if self.open is None:
++            return ""
++        out = ""
++        if self.open == "thinking":
++            out += sse("content_block_delta", {"type": "content_block_delta", "index": self.index,
++                                               "delta": {"type": "signature_delta", "signature": SIGNATURE}})
++        self.open = None
++        return out + sse("content_block_stop", {"type": "content_block_stop", "index": self.index})
++
++    def _block(self, kind: str) -> str:
++        if self.open == kind:
++            return ""
++        out = self._close()
++        self.index += 1
++        self.open = kind
++        block = {"type": "thinking", "thinking": "", "signature": ""} if kind == "thinking" else {"type": "text",
++                                                                                                    "text": ""}
++        return out + sse("content_block_start", {"type": "content_block_start", "index": self.index,
++                                                 "content_block": block})
++
++    def delta(self, delta: dict[str, Any]) -> str:
++        out = ""
++        if delta.get("reasoning_content"):
++            out += self._block("thinking") + sse("content_block_delta", {
++                "type": "content_block_delta", "index": self.index,
++                "delta": {"type": "thinking_delta", "thinking": delta["reasoning_content"]}})
++        if delta.get("content"):
++            out += self._block("text") + sse("content_block_delta", {
++                "type": "content_block_delta", "index": self.index,
++                "delta": {"type": "text_delta", "text": delta["content"]}})
++        return out
++
++    def finish(self, result: dict[str, Any]) -> str:
++        out = self.delta(result["final"]) + self._close()
++        for call in result["calls"] or []:
++            self.index += 1
++            arguments = call["function"]["arguments"]
++            out += sse("content_block_start", {"type": "content_block_start", "index": self.index, "content_block": {
++                "type": "tool_use", "id": call["id"], "name": call["function"]["name"], "input": {}}})
++            out += sse("content_block_delta", {"type": "content_block_delta", "index": self.index, "delta": {
++                "type": "input_json_delta",
++                "partial_json": json.dumps(_input(arguments), ensure_ascii=False)}})
++            out += sse("content_block_stop", {"type": "content_block_stop", "index": self.index})
++        out += sse("message_delta", {"type": "message_delta",
++                                     "delta": {"stop_reason": STOP_REASONS.get(result["finish"], "end_turn"),
++                                               "stop_sequence": None},
++                                     "usage": {"output_tokens": result["completion_tokens"]}})
++        return out + sse("message_stop", {"type": "message_stop"})
++
++
++def error(kind: str, text: str) -> dict[str, Any]:
++    return {"type": "error", "error": {"type": kind, "message": text}}
++
++
++def too_long(text: str, limit: int | None) -> str | None:
++    """The API's own wording for a prompt over the window, which Claude Code reads as a cue to compact."""
++
++    found = re.match(r"the rendered prompt has (\d+) tokens", text)
++    if found and limit:
++        return f"prompt is too long: {found.group(1)} tokens > {limit} maximum"
++    return None
+--- /dev/null
++++ b/tests/test_cuda_anthropic.py
+@@ -0,0 +1,220 @@
++"""``/v1/messages``: the Anthropic Messages API over the CUDA server's chat path, the way Claude Code calls it."""
++
++import http.client
++import json
++import time
++
++import pytest
++
++from tensorfold.cuda import server
++from tensorfold.server import anthropic
++from tests.test_cuda_admission import http_server
++from tests.test_cuda_tool_choice import CLOSE, EOS, Engine, Tokens, app_for
++
++TOOLS = [{"name": "get_weather", "description": "Weather in a city",
++          "input_schema": {"type": "object", "properties": {"city": {"type": "string"}}}},
++         {"type": "web_search_20250305", "name": "web_search", "max_uses": 3}]
++
++
++def post(port, body, path="/v1/messages?beta=true"):
++    connection = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
++    try:
++        connection.request("POST", path, json.dumps(body), {"Content-Type": "application/json",
++                                                             "x-api-key": "none", "anthropic-version": "2023-06-01"})
++        response = connection.getresponse()
++        return response.status, response.read().decode()
++    finally:
++        connection.close()
++
++
++def ask(app, path="/v1/messages?beta=true", **body):
++    body = {"model": "ornith-test", "max_tokens": 64, "messages": [{"role": "user", "content": "Say hello."}], **body}
++    with http_server(app) as port:
++        return post(port, body, path)
++
++
++def events(text):
++    """(event, data) pairs of an SSE stream."""
++
++    out = []
++    for chunk in text.split("\n\n"):
++        lines = dict(line.split(": ", 1) for line in chunk.splitlines() if ": " in line)
++        if "event" in lines:
++            out.append((lines["event"], json.loads(lines["data"])))
++    return out
++
++
++def test_a_claude_code_conversation_becomes_the_chat_it_means():
++    body = {
++        "model": "x", "max_tokens": 32000, "stream": True, "temperature": 1, "stop_sequences": ["END"],
++        "system": [{"type": "text", "text": "You are Claude Code.", "cache_control": {"type": "ephemeral"}},
++                   {"type": "text", "text": "Be brief."}],
++        "messages": [
++            {"role": "user", "content": [{"type": "text", "text": "<system-reminder>x</system-reminder>"},
++                                         {"type": "text", "text": "Weather in Oslo?"}]},
++            {"role": "assistant", "content": [
++                {"type": "thinking", "thinking": "need the tool", "signature": "tensorfold"},
++                {"type": "text", "text": "Checking."},
++                {"type": "tool_use", "id": "call_1", "name": "get_weather", "input": {"city": "Oslo"}}]},
++            {"role": "user", "content": [
++                {"type": "tool_result", "tool_use_id": "call_1", "content": [{"type": "text", "text": "rain"},
++                                                                           {"type": "image", "source": {}}]},
++                {"type": "text", "text": "And tomorrow?"}]},
++            {"role": "assistant", "content": "Sun."},
++            {"role": "system", "content": [{"type": "text", "text": "Plan mode is off."}]},
++            {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "call_2", "is_error": True,
++                                          "content": "no such city"}]}],
++        "tools": TOOLS, "tool_choice": {"type": "any", "disable_parallel_tool_use": True},
++        "thinking": {"type": "disabled"}}
++    chat = anthropic.to_chat(body)
++    assert chat["messages"] == [
++        {"role": "system", "content": "You are Claude Code.\n\nBe brief."},
++        {"role": "user", "content": "<system-reminder>x</system-reminder>\n\nWeather in Oslo?"},
++        {"role": "assistant", "content": "Checking.", "reasoning_content": "need the tool",
++         "tool_calls": [{"id": "call_1", "type": "function",
++                         "function": {"name": "get_weather", "arguments": '{"city": "Oslo"}'}}]},
++        {"role": "tool", "tool_call_id": "call_1", "content": f"rain\n\n{anthropic.IMAGE_NOTE}"},
++        {"role": "user", "content": "And tomorrow?"},
++        {"role": "assistant", "content": "Sun."},
++        {"role": "system", "content": "Plan mode is off."},
++        {"role": "tool", "tool_call_id": "call_2", "content": "Error: no such city"}]
++    assert [t["function"]["name"] for t in chat["tools"]] == ["get_weather"]       # the server tool is dropped
++    assert chat["tools"][0]["function"]["parameters"] == TOOLS[0]["input_schema"]
++    assert chat["tool_choice"] == "required" and chat["parallel_tool_calls"] is False
++    assert chat["chat_template_kwargs"] == {"enable_thinking": False}
++    assert (chat["max_tokens"], chat["temperature"], chat["stop"], chat["stream"]) == (32000, 1, ["END"], True)
++    assert anthropic.to_chat({"messages": [], "tool_choice": {"type": "tool", "name": "f"},
++                              "tools": TOOLS[:1]})["tool_choice"] == {"type": "function", "function": {"name": "f"}}
++    assert "chat_template_kwargs" not in anthropic.to_chat({"messages": []})       # the server's default
++
++
++def test_a_whole_reply_is_a_message_with_thinking_then_text(tmp_path):
++    status, text = ask(app_for(tmp_path, Engine()), thinking={"type": "enabled", "budget_tokens": 1000})
++    reply = json.loads(text)
++    assert status == 200 and reply["type"] == "message" and reply["model"] == "ornith-test"
++    assert reply["id"].startswith("msg_") and reply["stop_reason"] == "end_turn"
++    assert reply["content"] == [{"type": "thinking", "thinking": "the user wants hi", "signature": "tensorfold"},
++                                {"type": "text", "text": "Hi!"}]
++    assert reply["usage"]["input_tokens"] > 0 and reply["usage"]["output_tokens"] > 0
++
++
++def test_a_streamed_reply_opens_one_block_at_a_time(tmp_path):
++    status, text = ask(app_for(tmp_path, Engine()), stream=True, thinking={"type": "enabled"})
++    seen = events(text)
++    assert status == 200 and seen[0][0] == "message_start" and seen[-1][0] == "message_stop"
++    starts = [(d["index"], d["content_block"]["type"]) for e, d in seen if e == "content_block_start"]
++    stops = [d["index"] for e, d in seen if e == "content_block_stop"]
++    assert starts == [(0, "thinking"), (1, "text")] and stops == [0, 1]
++    deltas = [d["delta"] for e, d in seen if e == "content_block_delta"]
++    assert "".join(d.get("thinking", "") for d in deltas) == "the user wants hi"
++    assert "".join(d.get("text", "") for d in deltas) == "Hi!"
++    assert {"type": "signature_delta", "signature": "tensorfold"} in deltas
++    last = [d for e, d in seen if e == "message_delta"][0]
++    assert last["delta"]["stop_reason"] == "end_turn" and last["usage"]["output_tokens"] > 0
++    # every delta lands inside its open block
++    open_block = None
++    for event, data in seen:
++        if event == "content_block_start":
++            assert open_block is None
++            open_block = data["index"]
++        elif event == "content_block_delta":
++            assert data["index"] == open_block
++        elif event == "content_block_stop":
++            open_block = None
++
++
++@pytest.mark.parametrize("stream", [False, True])
++def test_a_call_comes_back_as_tool_use(tmp_path, stream):
++    status, text = ask(app_for(tmp_path, Engine()), stream=stream, tools=TOOLS, tool_choice={"type": "any"},
++                       max_tokens=256)
++    assert status == 200
++    if stream:
++        seen = events(text)
++        blocks = [d["content_block"] for e, d in seen if e == "content_block_start"]
++        assert [b["type"] for b in blocks] == ["tool_use"] and blocks[0]["name"] == "get_weather"
++        parts = [d["delta"]["partial_json"] for e, d in seen
++                 if e == "content_block_delta" and d["delta"]["type"] == "input_json_delta"]
++        assert json.loads("".join(parts)) == {"city": "Oslo"}
++        assert [d for e, d in seen if e == "message_delta"][0]["delta"]["stop_reason"] == "tool_use"
++        assert "<tool_call>" not in text
++    else:
++        reply = json.loads(text)
++        assert reply["stop_reason"] == "tool_use"
++        assert [(b["type"], b["name"], b["input"]) for b in reply["content"]] == [
++            ("tool_use", "get_weather", {"city": "Oslo"})]
++
++
++def test_a_tool_result_reaches_the_template_as_a_tool_message(tmp_path):
++    engine = Engine()
++    ask(app_for(tmp_path, engine), messages=[
++        {"role": "user", "content": "Weather?"},
++        {"role": "assistant", "content": [{"type": "tool_use", "id": "c1", "name": "get_weather", "input": {}}]},
++        {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "c1", "content": "rain"}]}])
++    rendered = Tokens().decode(engine.calls[0][0])
++    assert "tool:rain;" in rendered and "<function=get_weather>" in rendered
++
++
++def test_count_tokens_is_the_rendered_prompt(tmp_path):
++    engine = Engine()
++    app = app_for(tmp_path, engine)
++    status, text = ask(app, path="/v1/messages/count_tokens?beta=true")
++    assert status == 200 and not engine.calls
++    _, whole = ask(app)
++    assert json.loads(text)["input_tokens"] == json.loads(whole)["usage"]["input_tokens"] == len(engine.calls[0][0])
++
++
++def test_max_tokens_is_clamped_to_the_room_left_not_refused(tmp_path):
++    engine = Engine()
++    app = app_for(tmp_path, engine)
++    app.context_window = 200
++    status, _ = ask(app, max_tokens=32000)
++    prompt, max_tokens, _ = engine.calls[0]
++    assert status == 200 and max_tokens == 200 - len(prompt)
++
++
++def test_a_prompt_over_the_window_is_refused_in_the_apis_words(tmp_path):
++    app = app_for(tmp_path, Engine())
++    app.context_window = 20
++    status, text = ask(app, messages=[{"role": "user", "content": "x" * 100}])
++    reply = json.loads(text)
++    assert status == 400 and reply["type"] == "error"
++    assert reply["error"]["type"] == "invalid_request_error"
++    assert reply["error"]["message"].startswith("prompt is too long: ") and "> 20 maximum" in reply["error"]["message"]
++
++
++def test_a_waiting_stream_gets_pings(tmp_path, monkeypatch):
++    class Slow(Engine):
++        def generate(self, prompt, max_tokens, sampling, on_tokens, draft=True):
++            time.sleep(0.3)
++            return super().generate(prompt, max_tokens, sampling, on_tokens, draft)
++
++    monkeypatch.setattr(server, "ANTHROPIC_PING_S", 0.05)
++    status, text = ask(app_for(tmp_path, Slow()), stream=True)
++    names = [e for e, _ in events(text)]
++    assert status == 200 and names[0] == "message_start" and "ping" in names and names[-1] == "message_stop"
++
++
++def test_a_malformed_request_is_refused_as_an_api_error(tmp_path):
++    status, text = ask(app_for(tmp_path, Engine()), messages=[{"role": "robot", "content": "x"}])
++    assert status == 400 and json.loads(text)["type"] == "error"
++
++
++def test_chat_completions_are_untouched(tmp_path):
++    with http_server(app_for(tmp_path, Engine())) as port:
++        status, text = post(port, {"messages": [{"role": "user", "content": "Say hello."}]}, "/v1/chat/completions")
++    assert status == 200 and json.loads(text)["choices"][0]["message"]["content"] == "Hello! How can I help?"
++    assert CLOSE and EOS == 0
++
++
++
++def test_a_qwen_boolean_in_pythons_spelling_is_the_boolean():
++    from tensorfold.cuda.reply_text import parse_tool_calls
++
++    tools = [{"type": "function", "function": {"name": "Edit", "parameters": {"type": "object", "properties": {
++        "replace_all": {"type": "boolean"}, "old_string": {"type": "string"}}}}}]
++    def args(flag, text="False"):
++        call = (f"<tool_call>\n<function=Edit>\n<parameter=replace_all>\n{flag}\n</parameter>\n"
++                f"<parameter=old_string>\n{text}\n</parameter>\n</function>\n</tool_call>")
++        return json.loads(parse_tool_calls(call, tools)[1][0]["function"]["arguments"])
++    assert [args(f)["replace_all"] for f in ("False", "True", "false", "true")] == [False, True, False, True]
++    assert args("maybe")["replace_all"] == "maybe" and args("False")["old_string"] == "False"   # strings stay strings
