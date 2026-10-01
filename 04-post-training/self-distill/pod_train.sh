@@ -56,9 +56,9 @@ train() {
 
 export_weights() {
     cd $W/prime-rl
-    step=$(ls -d $W/run/checkpoints/step_* | sed 's/.*step_//' | sort -n | tail -1)
-    log "exporting step $step"
-    uv run torchrun --nproc-per-node 8 tools/convert_dcp_to_bf16.py $W/run/checkpoints/step_$step $W/ornith-sd-bf16 \
+    ckpt=$(ls -d $W/run/*/checkpoints/step_* | sort -t_ -k2 -n | tail -1)
+    log "exporting $ckpt"
+    uv run torchrun --nproc-per-node 8 tools/convert_dcp_to_bf16.py $ckpt $W/ornith-sd-bf16 \
         > $SD/export.log 2>&1
     uv run python $SD/finish_export.py --orig $W/ornith-bf16 --export $W/ornith-sd-bf16 | tee $SD/finish-export.log
     log "export done"
