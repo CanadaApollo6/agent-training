@@ -274,6 +274,16 @@ These runs used Prime A6000 pods, with R1s served by TensorFold at 131K context.
   - 8 of 10 R1s runs hit the 90-minute timeout. R1s decoded 7–15 tokens/s per stream with 4 at once at 100K+
     context on one A6000, against vLLM's 40–49 on two.
 
+**Claude Code on full TB2** (same limits as pi and prime_agent: 60 turns, 1 hour; two A6000 pods, 4 at once each).
+- **R1s solved 33/89**, against pi 40 and prime_agent 35. The prediction was "north of 45".
+- Against pi, Claude Code solved 5 tasks pi missed and missed 12 pi solved (McNemar p ≈ 0.14). Against prime_agent the
+  split was 8 to 10.
+- Only 2 tasks were solved by Claude Code alone (configure-git-webserver, tune-mjcf). All three harnesses together
+  solved 50.
+- One rollout (model-extraction-relu-logits) hung past its 1-hour timeout for 4.4 hours. It was killed and scored as
+  a failure: the same hang as the local runs.
+- The harness the model was trained in is not the best one on TB2. On DeepSWE it was (2 vs 0).
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
