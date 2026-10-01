@@ -41,8 +41,25 @@ class Upstream:
                                          {"Content-Type": "application/json"})
         return urllib.request.urlopen(request, timeout=timeout)
 
+    @staticmethod
+    def messages(chat: dict) -> list:
+        """The chat messages as TensorFold renders them for this template: leading system messages merged into one,
+        later ones (Claude Code sends some) as user messages, since Qwen's template refuses a system message after the
+        start; and earlier reasoning under both keys, since vLLM 0.30 renders ``reasoning`` and silently drops
+        ``reasoning_content``, which older servers (and the model's template) read."""
+
+        out, lead = [], []
+        for m in chat["messages"]:
+            if m["role"] == "system":
+                if not out:
+                    lead.append(m["content"])
+                    continue
+                m = {**m, "role": "user"}
+            out.append({**m, "reasoning": m["reasoning_content"]} if m.get("reasoning_content") else m)
+        return ([{"role": "system", "content": "\n\n".join(lead)}] if lead else []) + out
+
     def count(self, chat: dict) -> int:
-        body = {"model": self.model, "messages": chat["messages"], "add_generation_prompt": True}
+        body = {"model": self.model, "messages": self.messages(chat), "add_generation_prompt": True}
         for key in ("tools", "chat_template_kwargs"):
             if key in chat:
                 body[key] = chat[key]
@@ -51,7 +68,8 @@ class Upstream:
     def stream(self, chat: dict):
         """(kind, value) events of one streamed chat reply: ("delta", {...}), then ("done", result)."""
 
-        body = {**chat, "model": self.model, "stream": True, "stream_options": {"include_usage": True}}
+        body = {**chat, "messages": self.messages(chat), "model": self.model, "stream": True,
+                "stream_options": {"include_usage": True}}
         reasoning, content, calls, finish, usage = [], [], {}, "stop", {}
         with self.post("/v1/chat/completions", body, timeout=4 * 3600) as response:
             for line in response:
