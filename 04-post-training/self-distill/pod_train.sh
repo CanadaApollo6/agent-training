@@ -15,11 +15,16 @@ shift || true
 PRIME_RL_COMMIT=1bddcf6
 export PATH=$HOME/.local/bin:$PATH HF_HUB_ENABLE_HF_TRANSFER=1
 log() { echo "$(date +%T) $*" | tee -a $SD/pod.log; }
+# prime-rl's torch is built for CUDA 13 (driver >= 580); older drivers on datacenter GPUs run it through NVIDIA's
+# forward-compatibility libraries (apt install cuda-compat-13-0)
+driver=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader | head -1 | cut -d. -f1)
+if [ "$driver" -lt 580 ] && [ -d /usr/local/cuda-13.0/compat ]; then
+    export LD_LIBRARY_PATH=/usr/local/cuda-13.0/compat${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+fi
 
 setup() {
     nvidia-smi --query-gpu=driver_version,name,memory.total --format=csv,noheader | tee -a $SD/pod.log
-    driver=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader | head -1 | cut -d. -f1)
-    [ "$driver" -ge 580 ] || { log "driver $driver < 580: prime-rl's torch is built for CUDA 13"; exit 1; }
+    [ "$driver" -ge 580 ] || [ -d /usr/local/cuda-13.0/compat ] || { log "driver $driver < 580 and no cuda-compat-13-0"; exit 1; }
     command -v uv > /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
     log "downloading weights"
     (uvx --with hf_transfer hf download ornith-ai/Ornith-1.5-35B-A3B --local-dir $W/ornith-bf16 > $SD/dl-bf16.log 2>&1) &
@@ -31,7 +36,7 @@ setup() {
         git apply $SD/prime-rl-pretokenized.patch
     fi
     cd $W/prime-rl && uv sync --all-extras > $SD/uv-sync.log 2>&1
-    uv run python -c "import flash_attn, torch; print('torch', torch.__version__, torch.cuda.device_count(), 'GPUs')" | tee -a $SD/pod.log
+    uv run python -c "import flash_attn, torch; print('torch', torch.__version__, torch.cuda.device_count(), 'GPUs', torch.ones(1).cuda().item())" | tee -a $SD/pod.log
     wait
     cp -n $SD/mtp-4bit.safetensors $W/mlx4/
     log "setup done: $(du -sh $W/ornith-bf16 | cut -f1) bf16, $(du -sh $W/mlx4 | cut -f1) mlx4"
@@ -40,6 +45,10 @@ setup() {
 train() {
     log "training $*"
     cd $W/prime-rl
+    # Qwen3.5's DeltaNet context-parallel path copies cu_seqlens to the CPU in every layer. Activation checkpointing
+    # saves CUDA-to-CPU copies and replays them in the backward recompute, and there the replay hands an int tensor to
+    # a float op ("Autograd not support dtype: Int"). Recomputing the copy instead is correct and cheap.
+    export SD_RECOMPUTE_CPU_COPIES=1
     uv run sft @ $SD/sft.toml --model.name $W/ornith-bf16 --model.conversion-dir $W/ornith-prime \
         --data.name $SD/data/train --output-dir $W/run "$@" 2>&1 | tee $SD/train.log
     log "training done"

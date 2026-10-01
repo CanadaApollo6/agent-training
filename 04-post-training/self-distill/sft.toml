@@ -21,6 +21,8 @@ optimization_dtype = "float32"
 reduce_dtype = "float32"
 # keep routing as it was: R1s's 3-bit experts were searched against the original routes' activations
 freeze_moe_router = true
+# fits without it at 128K on A100 80GB (peak 67 GB); pod_train.sh passed it as --model.ac-offloading None
+ac_offloading = "None"
 
 # unused by the pre-tokenized rows, but SFT requires a typed renderer; this is the one parity.py checked
 [renderer]

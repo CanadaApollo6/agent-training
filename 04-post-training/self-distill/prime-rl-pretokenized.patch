@@ -1,3 +1,23 @@
+diff --git i/src/prime_rl/trainer/activation_checkpointing.py w/src/prime_rl/trainer/activation_checkpointing.py
+index f813ae920..9462c143f 100644
+--- i/src/prime_rl/trainer/activation_checkpointing.py
++++ w/src/prime_rl/trainer/activation_checkpointing.py
+@@ -1,5 +1,6 @@
+ """Whole-block activation checkpointing with an operator-based policy."""
+ 
++import os
+ from collections.abc import Callable
+ from functools import partial
+ 
+@@ -90,7 +91,7 @@ def _mandatory_checkpoint_policy(
+     if operation.namespace in MANDATORY_SAVE_NAMESPACES or operation.name() in MANDATORY_SAVE_OPERATIONS:
+         return CheckpointPolicy.MUST_SAVE
+ 
+-    if operation.name() == "aten::_to_copy":
++    if operation.name() == "aten::_to_copy" and not os.environ.get("SD_RECOMPUTE_CPU_COPIES"):
+         device = kwargs.get("device")
+         if isinstance(device, torch.device) and device.type == "cpu":
+             return CheckpointPolicy.MUST_SAVE
 diff --git i/src/prime_rl/trainer/sft/data.py w/src/prime_rl/trainer/sft/data.py
 index f0c1b53e4..408a2fa2b 100644
 --- i/src/prime_rl/trainer/sft/data.py
