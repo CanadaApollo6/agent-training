@@ -236,6 +236,44 @@ tables:
 - **custom-memory-heap-crash is the task that got worse:** Q8 solved it 3 of 3, R1 1 of 3 and R1s 0 of 3. It's the
   one to examine first.
 
+## R1s on full TB2, with a bigger budget, and under Claude Code
+
+These runs used Prime A6000 pods, with R1s served by TensorFold at 131K context.
+- Full TB2 (89 tasks, 60 turns, 1 hour): pi 40, prime_agent 35.
+- `sort_failures.py` sorted the unsolved runs into four causes:
+
+  | Cause | prime_agent | pi |
+  |---|---|---|
+  | setup | 9 | 2 |
+  | budget | 22 | 22 |
+  | harness misuse | 1 | 0 |
+  | task | 22 | 25 |
+
+- Misuse is a tax rather than a cause of failure. 148 of 3,088 prime_agent calls went to tools that don't exist, mostly
+  `bash`.
+
+**Big-budget rerun.** Each harness's 22 budget failures were rerun once at 200 turns and 4 hours (`run_bigbudget.sh`).
+- pi rescued 5, for 45/89. prime_agent rescued 7, for 42/89.
+- **Most of prime_agent's extra rescues weren't budget.** A rescue counts as budget-driven only if the run went past 60
+  turns or 1 hour. By that test, budget explains 4 rescues for each harness.
+  - prime_agent's other 3 (break-filter-js-from-html, crack-7z-hash, kv-store-grpc) and pi's tune-mjcf finished
+    within the old limits. They are second-attempt luck.
+- **prime_agent overflowed the context twice** (make-doom-for-mips, path-tracing-reverse). Each time the prompt reached
+  ~123K tokens plus a 16K reply against the 131K cache. The model can edit its own context, but it didn't do so before
+  the server refused.
+- pi stayed under ~111K throughout.
+
+**Claude Code** (`run_claude_code.sh`). This tests whether Ornith 1.5's Claude Code training survived compression.
+- Endpoints: TensorFold got `/v1/messages` (`claude-code.patch`). The bf16 original ran on vLLM behind
+  `messages_proxy.py`, which applies the same translation.
+- Setup: DeepSWE, 10 tasks, one attempt each, 100 turns, 90 minutes.
+- **R1s solved 2 (fd, ofetch); bf16 solved 1 (fd), p = 1.0.** Compression cost nothing visible.
+- This beats R1s's 0/16 on DeepSWE under pi and prime_agent: the model does best in the harness it was trained in.
+- Budget bound both models:
+  - every bf16 run hit the 100-turn cap;
+  - 8 of 10 R1s runs hit the 90-minute timeout. R1s decoded 7–15 tokens/s per stream with 4 at once at 100K+
+    context on one A6000, against vLLM's 40–49 on two.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
