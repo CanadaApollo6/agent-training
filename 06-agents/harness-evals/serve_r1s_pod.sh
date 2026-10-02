@@ -9,6 +9,7 @@
 set -euo pipefail
 export PATH=/usr/local/cuda-13.0/bin:$HOME/.local/bin:$PATH CUDA_HOME=/usr/local/cuda-13.0
 PORT=${PORT:-8080}
+[ -d /usr/local/cuda-13.0/compat ] && export LD_LIBRARY_PATH=/usr/local/cuda-13.0/compat${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 [ -n "${GPU:-}" ] && export CUDA_VISIBLE_DEVICES=$GPU
 cd ~/at/01-inference/envs/tensorfold
 uv sync -q
