@@ -32,5 +32,5 @@ uv run --project "$PROJECT" vf-eval "$ENV" -m "$LABEL" \
   --client.base-url ${BASE_URL:-http://127.0.0.1:${PORT:-8000}/v1} --client.api-key-var ${KEY_VAR:-LOCAL_KEY} \
   --env.agent.harness.id "$HARNESS" --env.agent.runtime.type prime --env.taskset.tasks "$TASKS" \
   --env.agent.max-turns "$TURNS" --env.agent.timeout.rollout "$TIMEOUT" \
-  -n "$N" -r ${ROLLOUTS:-1} -c "$CONC" --no-push --no-rich > "logs/$SUITE-$LABEL-$HARNESS.log" 2>&1
-grep -E "rollout done" "logs/$SUITE-$LABEL-$HARNESS.log" | sed -E 's/.*task=([0-9]+) reward=([0-9.]+) turns=([0-9]+) stop=([A-Za-z_]+).*/\1 \2 \3 \4/'
+  -n "$N" -r ${ROLLOUTS:-1} -c "$CONC" --no-push --no-rich > "logs/$SUITE-${LABEL//\//_}-$HARNESS.log" 2>&1
+grep -E "rollout done" "logs/$SUITE-${LABEL//\//_}-$HARNESS.log" | sed -E 's/.*task=([0-9]+) reward=([0-9.]+) turns=([0-9]+) stop=([A-Za-z_]+).*/\1 \2 \3 \4/'
