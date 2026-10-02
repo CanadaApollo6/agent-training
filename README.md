@@ -277,3 +277,29 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     and answers must be strict JSON (llama.cpp can enforce that, TensorFold's server can't). The full set is ~6–7M
     input tokens and 0.6M (thinking off) to 3M (thinking on) output tokens, so it's a pod job. The 240 security cases
     are the local version. It's also a ready harness for the Jev vs Kev vs Julia plan.
+- [The ultimate guide to multi-harness RL](https://huggingface.co/spaces/FineEnvs/multi-harness-rl) (Hugging Face and
+  Liquid AI, 2026-10-01; [code](https://github.com/adithya-s-k/FineEnvs)). The same weights score very differently
+  across agent harnesses: GLM-5.2 gets 23% vs 52% on SWE-bench Pro. Training in one harness mostly helps that harness.
+  - What they built: GRPO through unmodified Claude Code, Codex, OpenCode and Mini-SWE-Agent. A capture proxy records
+    exact tokens and logprobs, Harbor supplies tasks and sandboxes, and TRL trains.
+  - Setup: LFM2.5-2.6B on 1,000 SmolDataEnvs data-analysis tasks, 2×H100, 32-46 h, scored on 250 held-out tasks.
+  - Results:
+    - Multi-harness RL went 42 → 54% pass@1, gaining under all four harnesses.
+    - OpenCode-only RL gained mostly in OpenCode (34 → 58%).
+    - SFT on Qwen3.8-27B's successful rollouts helped less: 47.5% for OpenCode-only, 43.1% for multi-harness. The
+      multi-harness SFT model fell from 62 to 45% under Mini-SWE-Agent.
+  - Reward: correctness plus a bonus of at most 0.1 for fewer tool calls on correct answers. In 18-23% of groups this
+    bonus was the only contrast, because all 8 rollouts were correct. Tool calls fell 31%.
+  - Without the bonus, the Qwen3.5-2B runs drifted from 13 to 41 calls, and 35-58% of steps taught nothing (whole
+    groups all right or all wrong).
+  - Claude Code's history rewrites turned each rollout into about 8 training rows.
+  - Weak evidence: one seed per setup, one task family, unequal data between runs. RL vs SFT differs in data source and
+    compute as well as method.
+  - For us:
+    - It matches our flat self-distill round 1 (SFT on a three-harness mix). It also says a prime_agent-trained model
+      should be checked under pi for lock-in.
+    - Our round-2 data, 8 rollouts per task, has GRPO's group shape. Tasks solved 3-5 of 8 are the ones RL learns from.
+      Picking the shortest solve is a crude version of their efficiency bonus.
+    - TB2's 69 training tasks are too few for RL. SmolDataEnvs is a 1,000+ task pool of data-analysis work, which is
+      close to Smart Data. Its SFT data ([SmolDataEnvs-multiharness-sft](https://huggingface.co/datasets/FineEnvs/SmolDataEnvs-multiharness-sft))
+      is public, with no license shown.
