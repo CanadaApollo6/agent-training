@@ -65,3 +65,28 @@ Self-distillation on the model's own shortest solves didn't make it shorter: tur
 - Teacher traces as well as self traces.
 - A larger dose.
 - An eval with more power, such as full TB2's 89 tasks.
+
+# Round 2: expert-iteration data (prime_agent only)
+
+R1s-SD sampled prime_agent rollouts on the 69 TB2 training tasks (never the pilot), at the eval caps (60 turns,
+1 hour). `run_datagen.sh` ran 3 shards on three lambdalabs A100-40GB pods (2026-10-02, about $58 including a failed
+massedcompute probe).
+
+- **Tasks solved before:** 42 tasks, 8 attempts each, 334 rollouts. 175 were solved (52%), on 36 tasks. Two rollouts
+  hung and were discarded.
+- **Never-solved tasks:** 27 tasks, 2 attempts each. The first shard went 0/18, so the rest were skipped.
+
+`harvest.py --runs "../../06-agents/harness-evals/outputs/**/*r1s-sd-dg-*/**/traces.jsonl" --out data/round2.jsonl`
+gives 175 solves, 331 samples and 5.05M loss tokens. On 8 tasks these are the first prime_agent solves; no task is
+solved for the first time by any harness.
+
+| solves of 8 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|---|
+| tasks | 5 | 4 | 3 | 3 | 3 | 5 | 8 | 5 |
+
+| shortest per task | rollouts | samples | loss tokens |
+|---|---|---|---|
+| 2 | 67 | 118 | 1.65M |
+| 3 | 94 | 163 | 2.37M |
+| 4 | 118 | 210 | 3.12M |
+| all | 175 | 331 | 5.05M |
