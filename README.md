@@ -303,3 +303,19 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     - TB2's 69 training tasks are too few for RL. SmolDataEnvs is a 1,000+ task pool of data-analysis work, which is
       close to Smart Data. Its SFT data ([SmolDataEnvs-multiharness-sft](https://huggingface.co/datasets/FineEnvs/SmolDataEnvs-multiharness-sft))
       is public, with no license shown.
+- [Prime Inference](https://www.primeintellect.ai/blog/prime-inference) (Prime Intellect, 2026-10): Prime's serving
+  platform, built to close the train → serve → collect traces → retrain loop. It has serverless and reserved endpoints,
+  is OpenAI-compatible at `api.pinference.ai/api/v1`, and runs on Blackwell. The blog gives no prices or terms; the
+  `/models` endpoint does.
+  - Checked 2026-10-02: GLM-5.3 costs $1.40 in, $4.40 out and $0.26 cached-read per 1M tokens. It has 1M context and
+    reasoning is always on (low/high/max, default max). It returns `logprobs` with `top_logprobs` on reasoning tokens
+    too. The catalog also has GLM-5.3-Flash, Kimi K3, DeepSeek V4 Pro and V4.1 Flash, Qwen3.8-max and MiMo V2.5.
+  - The GLM-5.3 license is MIT-style. Its only extra condition is a security review for API businesses earning over
+    $10B a year, so training on its outputs is allowed.
+  - For us: this is the teacher endpoint for SFT on teacher traces. GLM's tokenizer isn't Ornith's (Qwen3.5), so its
+    logprobs can't drive token-level or on-policy distillation directly. The teacher contributes whole trajectories.
+- [Kled AI datasets](https://www.kled.ai/datasets): a marketplace selling exclusive-rights data licenses at quoted
+  prices. It has film and animation video, 50M de-identified US medical records, 12M radiology reports, 200M
+  claims/billing entries and 8M papers. Sourcing and consent details aren't published.
+  - For us: not useful now. There are no agent trajectories, spreadsheet or ETL tasks, or open licenses. It's only
+    worth revisiting if a Smart Data client is in healthcare and wants a gym built from claims-like tables.
