@@ -317,5 +317,10 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
 - [Kled AI datasets](https://www.kled.ai/datasets): a marketplace selling exclusive-rights data licenses at quoted
   prices. It has film and animation video, 50M de-identified US medical records, 12M radiology reports, 200M
   claims/billing entries and 8M papers. Sourcing and consent details aren't published.
-  - For us: not useful now. There are no agent trajectories, spreadsheet or ETL tasks, or open licenses. It's only
-    worth revisiting if a Smart Data client is in healthcare and wants a gym built from claims-like tables.
+  - For us: there are no agent trajectories, spreadsheet or ETL tasks, or open licenses. But Smart Data has a
+    healthcare client, CareSource, a Medicaid/Medicare managed-care plan, and the claims/billing set is their domain.
+    Real member data is PHI, so it can't go to cloud teachers or sandboxes without a BAA. De-identified or synthetic
+    claims are how to build a CareSource-like gym and teacher traces. Try the free sources first:
+    [CMS DE-SynPUF](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files)
+    (synthetic Medicare claims) and [Synthea](https://github.com/synthetichealth/synthea) (synthetic patients and
+    claims). Kled is the paid option if the client needs real-world distributions.
