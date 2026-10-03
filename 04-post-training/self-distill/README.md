@@ -115,3 +115,30 @@ Teacher data is clearly off-policy, mostly in the reasoning.
 
 This is the regime where Finetuning with Sampling finds plain SFT forgets more and generalizes worse. The agent-scale
 version of its fix is to keep each teacher tool call and let Ornith rewrite the reasoning that leads to it.
+
+## Teacher reasoning rewritten by Ornith (arm B data)
+
+`rewrite.py` keeps every teacher action and replaces the reasoning before it, turn by turn. At each turn Ornith samples
+4 drafts from the context so far, and the draft under which the teacher's tail (`</think>`, answer text, tool calls)
+is most likely is kept. The teacher reasoning is never shown to Ornith, and earlier turns are already rewritten when a
+later one is drafted. The script runs vLLM in-process because the scores need prompt log-probs with the prefix cache
+on, which the OpenAI server doesn't allow. With the cache on, vLLM returns log-probs only for the uncached suffix; they
+matched an uncached run exactly.
+
+The run covered 129 teacher samples (47 solves on 11 tasks: DeepSeek's 27, Qwen's 20 at the time) on one 8×A100-80GB
+pod, with 4 engines at TP=2 and `pods/rewrite_pod.sh` (2026-10-03, about 1h55m, ~$43).
+
+| per token, nats | teacher reasoning | Ornith's chosen draft |
+|---|---|---|
+| reasoning | -1.12 (1.50M tokens) | -0.53 (1.04M tokens) |
+| teacher tail after it | -0.39 | -0.50 |
+
+- **Coverage:** the drafts replaced the teacher's reasoning on 1,473 of 1,499 turns. The other 26 kept it because no
+  draft closed within 8,192 tokens.
+- **Reasoning:** it now sits where Ornith's own does (-0.49 on round-2 data).
+- **Tail:** the teacher's actions became somewhat less likely, by a median of 0.09 nats per tail token (90th
+  percentile 0.30). The draft explained the action better than the teacher's reasoning on 234 turns. Teacher
+  reasoning often writes out the command it then runs, and Ornith's drafts don't.
+- **Size:** the data comes to 1.84M loss tokens out of 4.93M (raw: 2.06M of 5.15M), and every sample fits in 128K.
+
+Rewritten samples are in `data/teacher_rewritten.jsonl` (gitignored), per-turn scores in `results/rewrite.jsonl`.
