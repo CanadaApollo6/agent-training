@@ -33,6 +33,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 EVALS = ROOT / "06-agents/harness-evals"
 sys.path.insert(0, str(ROOT / "01-inference/tools/TensorFold/src"))
+from tensorfold.server.errors import RequestError  # noqa: E402
 from tensorfold.server.messages import (_normalize_tool_call_arguments, late_system_role,  # noqa: E402
                                         normalize_messages)
 
@@ -126,6 +127,8 @@ def harvest(trace: dict, tmpl: Template, tok: Tokenizer, exact: bool):
     messages_api = any(c.get("endpoint") == "/v1/messages" for c in trace["calls"])
     samples, problems = [], []
     for call in trace["calls"]:
+        if "node" not in call:                            # a failed call (429, provider error) the harness retried
+            continue
         r = call["node"]                                  # the reply this call sampled; its parent ends the prompt
         p = nodes[r].get("parent")
         if not nodes[r].get("sampled") or (nodes[r]["message"] or {}).get("role") != "assistant" or p is None:
@@ -163,7 +166,8 @@ def harvest(trace: dict, tmpl: Template, tok: Tokenizer, exact: bool):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", nargs="*", default=[str(EVALS / "outputs/**/traces.jsonl")])
-    ap.add_argument("--model", default="ornith35b", help="label prefix of the runs to harvest")
+    ap.add_argument("--model", nargs="+", default=["ornith35b"],
+                    help="label prefixes of the runs to harvest (hosted model ids keep their slash: deepseek/...)")
     ap.add_argument("--out", type=Path, default=HERE / "data/all.jsonl")
     a = ap.parse_args()
     tmpl, tok = Template(MODEL), Tokenizer.from_file(str(MODEL / "tokenizer.json"))
@@ -174,9 +178,11 @@ def main():
     with a.out.open("w") as out:
         for f in files:
             run = Path(f).parent.name
-            if any(s in f for s in ("/broken", "/contended")) or not run.split("--")[1].startswith(a.model):
+            # <env>--<label>--<harness>--<hash>; a label's slash (hosted model ids) is written as "--" too
+            parts = run.split("--")
+            label, harness = "/".join(parts[1:-2]), parts[-2]
+            if any(s in f for s in ("/broken", "/contended")) or not label.startswith(tuple(a.model)):
                 continue
-            harness = run.split("--")[2]
             for line in open(f):
                 r = json.loads(line)
                 if not r.get("traces"):
@@ -190,9 +196,11 @@ def main():
                     stats["held_out"] += 1
                     continue
                 try:
-                    samples, problems = harvest(t, tmpl, tok, run.split("--")[1].startswith(TENSORFOLD))
+                    samples, problems = harvest(t, tmpl, tok, label.startswith(TENSORFOLD))
                 except jinja2.exceptions.TemplateError as exc:
                     samples, problems = [], [f"template: {exc}"]
+                except RequestError as exc:              # image inputs (hosted teachers); Ornith serves text only
+                    samples, problems = [], [f"request: {exc}"]
                 if problems:
                     stats["dropped"] += 1
                     print(f"DROP {run} {task}: {len(problems)} problems, first: {problems[0]}")
