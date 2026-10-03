@@ -90,3 +90,28 @@ solved for the first time by any harness.
 | 3 | 94 | 163 | 2.37M |
 | 4 | 118 | 210 | 3.12M |
 | all | 175 | 331 | 5.05M |
+
+## How off-policy is teacher data?
+
+`offpolicy.py` scores harvested samples under bf16 Ornith 35B, served by vLLM on one H100 pod
+(`pods/offpolicy_pod.sh`, about $5). For every token the agent wrote, it records the log-probability Ornith gives it,
+split into reasoning (before a turn's `</think>`) and action (answer text and tool calls). The scored set was the 61
+teacher samples from the bake-off and 80 random round-2 samples of Ornith's own. Per-sample results are in
+`results/offpolicy.jsonl`.
+
+| source | samples | written tokens | logprob/tok | ppl | reasoning | action | under e^-5 |
+|---|---|---|---|---|---|---|---|
+| own (R1s-SD, round 2) | 80 | 1.10M | -0.41 | 1.51 | -0.49 | -0.20 | 0.4% |
+| Qwen3.8-Max | 31 | 0.48M | -0.79 | 2.21 | -1.02 | -0.35 | 2.9% |
+| DeepSeek V4.1 Flash | 24 | 0.33M | -0.88 | 2.40 | -1.09 | -0.32 | 3.2% |
+| GLM-5.3 | 6 | 0.10M | -0.91 | 2.48 | -1.15 | -0.36 | 3.7% |
+
+Teacher data is clearly off-policy, mostly in the reasoning.
+- **Reasoning:** teacher reasoning costs about twice the nats per token of Ornith's own. 48 of 50 teacher samples fall
+  below the 10th percentile of own samples (own median -0.53, teacher median -1.26).
+- **Actions:** these are closer but still off. Teachers average -0.32 to -0.36 against -0.20, and 27 of 55 samples fall
+  below the own 10th percentile.
+- **Surprising tokens:** tokens Ornith gives under 0.7% are 7-9× as common in teacher data.
+
+This is the regime where Finetuning with Sampling finds plain SFT forgets more and generalizes worse. The agent-scale
+version of its fix is to keep each teacher tool call and let Ornith rewrite the reasoning that leads to it.
