@@ -5,6 +5,7 @@
 # Env: PORT (default 8000), TURNS, TIMEOUT seconds per rollout, ROLLOUTS (default 1), TASKS_FILE (overrides the
 # suite's task list, e.g. tb2_budget_pi.txt for the runs that hit a limit). BASE_URL and KEY_VAR (the name of the env var
 # holding the key) point at a hosted API instead of the local server; the label is then the API's model id.
+# EXTRA: more vf-eval flags, e.g. "--sampling.max-tokens 32768 --sampling.reasoning-effort high".
 # tb2: tasks.txt (20), 60 turns, 60 min. tb2full: all 89 tasks (tb2_full_tasks.txt), same caps. deepswe: deepswe_tasks.txt (10: seed 0 of the seed-0 25 of 113; Prime allows 10 private images), 100 turns, 90 min, run from
 # deepswe-env/ (newer verifiers, and our own copies of the task images; see deepswe-env/README.md). tb4: tb4_tasks.txt
 # (20, seed 0 of the 52 single-container CPU tasks in Terminal-Bench 4.0.0), 100 turns, 90 min, also from deepswe-env/.
@@ -32,5 +33,5 @@ uv run --project "$PROJECT" vf-eval "$ENV" -m "$LABEL" \
   --client.base-url ${BASE_URL:-http://127.0.0.1:${PORT:-8000}/v1} --client.api-key-var ${KEY_VAR:-LOCAL_KEY} \
   --env.agent.harness.id "$HARNESS" --env.agent.runtime.type prime --env.taskset.tasks "$TASKS" \
   --env.agent.max-turns "$TURNS" --env.agent.timeout.rollout "$TIMEOUT" \
-  -n "$N" -r ${ROLLOUTS:-1} -c "$CONC" --no-push --no-rich > "logs/$SUITE-${LABEL//\//_}-$HARNESS.log" 2>&1
+  -n "$N" -r ${ROLLOUTS:-1} -c "$CONC" --no-push --no-rich ${EXTRA:-} > "logs/$SUITE-${LABEL//\//_}-$HARNESS.log" 2>&1
 grep -E "rollout done" "logs/$SUITE-${LABEL//\//_}-$HARNESS.log" | sed -E 's/.*task=([0-9]+) reward=([0-9.]+) turns=([0-9]+) stop=([A-Za-z_]+).*/\1 \2 \3 \4/'

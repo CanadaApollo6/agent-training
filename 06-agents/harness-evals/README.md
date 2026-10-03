@@ -284,6 +284,45 @@ These runs used Prime A6000 pods, with R1s served by TensorFold at 131K context.
   a failure: the same hang as the local runs.
 - The harness the model was trained in is not the best one on TB2. On DeepSWE it was (2 vs 0).
 
+## Teacher bake-off: who solves what Ornith never has (2026-10-02)
+
+`teacher_bakeoff.sh` runs hosted models through Prime Inference under prime_agent on the TB2 training tasks no harness
+has ever solved with Ornith (`datagen/never.txt`, 27). Each teacher gets one attempt per task at the eval caps.
+
+Ten of the 27 put an image in the opening prompt: chess-best-move, code-from-image, extract-moves-from-video,
+gcode-to-text, install-windows-3-11, path-tracing, path-tracing-reverse, raman-fitting, sam-cell-seg and
+video-processing. TensorFold serves Ornith text-only, so those can't become training data. The comparison uses the
+other 17 (`datagen/never_text.txt`), at high reasoning effort with 32K tokens per call.
+
+| teacher | solved / 17 | list-price cost |
+|---|---|---|
+| Qwen3.8-Max | 8 | ~$10 |
+| DeepSeek V4.1 Flash | 7 | ~$1 |
+| GLM-5.3 | 3 | ~$5 |
+
+- Together DeepSeek and Qwen solved 10 tasks: caffe-cifar-10, circuit-fibsqrt, dna-insert,
+  feal-linear-cryptanalysis, gpt2-codegolf, mteb-leaderboard, polyglot-rust-c, prove-plus-comm, reshard-c4-data and
+  write-compressor. Every GLM solve was also a DeepSeek solve.
+- Riel predicted GLM-5.3 would be the best solver. It came last under these caps:
+  - Three rollouts spent a whole 32K-token call thinking and never acted.
+  - Six ended with a confident "done, fully tested" that the hidden tests failed.
+  - Z.ai's 88% on TB2.1 was measured under Claude Code with 6-hour runs and 64K tokens per turn.
+- The first round, at the harness's default 16K tokens per call and GLM's default max effort, is invalid: GLM 1/27,
+  DeepSeek 7/27. Eleven GLM rollouts ended on an empty, length-capped first reply, which prime_agent takes as done.
+  Hosted thinking models need their effort and per-call cap set explicitly.
+- These are single attempts on 17 tasks, so DeepSeek vs Qwen is a tie. GLM vs DeepSeek is 0 tasks to 4 (p = 0.125).
+
+## FrogNano-4B on the pilot (2026-10-02)
+
+[FrogNano](https://huggingface.co/microsoft/FrogNano-4B-2609), Microsoft's RL-only Qwen3.5-4B coding agent, was served
+with vLLM 0.30 on the 3090 at its card's settings (temperature 0.6, 8K tokens per turn, 131K context). It ran under
+the usual caps, 4 at a time per harness.
+
+- **pi: 7/20.** FrogNano's own 31.1% on full TB2, in its Leaf harness with 150 steps, would be ~6. R1s gets ~12.
+- **prime_agent: 3/20, not a clean number.** The vLLM engine died at 22:38 with no traceback, and no OOM or GPU
+  fault in the kernel log. The rollouts in flight on tasks 6, 13, 15, 17 and 19 failed with connection errors. They
+  were not rerun.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
