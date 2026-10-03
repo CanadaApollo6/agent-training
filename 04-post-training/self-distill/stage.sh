@@ -5,11 +5,12 @@ cd "$(dirname "$0")"
 HOST=$1; W=${2:-/workspace}
 ROOT=$(git rev-parse --show-toplevel)
 SSH="ssh -i $HOME/.ssh/prime_ed25519 -o StrictHostKeyChecking=no"
-test -f data/train/train.parquet
+DATA=${DATA:-data/train}   # one or more training sets, e.g. DATA="data/train-a data/train-b"
+for d in $DATA; do test -f $d/train.parquet; done
 $SSH "$HOST" "sudo mkdir -p $W && sudo chown \$(id -u):\$(id -g) $W && mkdir -p $W/sd/data $W/sd/repo"
-rsync -a -e "$SSH" pod_train.sh sft.toml prime-rl-pretokenized.patch finish_export.py requant_rest.py \
+rsync -a -e "$SSH" pod_train.sh run_arms.sh sft.toml prime-rl-pretokenized.patch finish_export.py requant_rest.py \
     "$HOME/models/ornith/Ornith-1.5-35B-A3B-imatrix.gguf" "$HOME/models/ornith/mlx4/mtp-4bit.safetensors" "$HOST:$W/sd/"
-rsync -a -e "$SSH" data/train "$HOST:$W/sd/data/"
+rsync -a -e "$SSH" $DATA "$HOST:$W/sd/data/"
 (cd "$ROOT" && rsync -aR -e "$SSH" 01-inference/speed-hillclimb/tensorfold/quantize_experts.py \
     05-compression/ornith/kl/kl_harness.py 05-compression/ornith/kl/export_always_on.py \
     05-compression/ornith/kl/make_build.py "$HOST:$W/sd/repo/")
