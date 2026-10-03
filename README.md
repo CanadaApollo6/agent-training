@@ -350,3 +350,21 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
       tasks are calibrated on the student.
     - Our round-2 8-attempt data is already TaskPilot's calibration measurement for the 69 TB2 tasks.
     - Ornith R1s (pi 40/89 = 45%) is already above FrogNano's TB2 31%.
+- [Etalon](https://arxiv.org/abs/2407.07000) (Agrawal et al., the Sarathi-Serve/Vidur group; via wafer's series, part
+  8): how to judge streamed LLM serving by deadlines, not averages.
+  - Averages hide stalls. TPOT averages them away and TBT percentiles lose where in the reply they happened.
+  - fluidity-index: the share of per-token deadlines met. Early tokens bank slack and a miss resets the clock.
+  - fluid token rate: the fastest steady playback that meets a fluidity target.
+  - capacity search: the highest request rate one replica sustains under the targets.
+  - Their Figure 5 shows Groq's fast average with long stalls and Anyscale's TTFT tails.
+  - [Code](https://github.com/project-etalon/etalon) (Apache-2.0) hasn't been pushed since 2025-02. The ideas outlived
+    the tool: `vllm bench serve` reports TTFT/TPOT/ITL percentiles, and capacity search is a loop over request rates.
+  - For us:
+    - Agents don't watch tokens stream, so fluidity barely matters for prime_agent rollouts. What counts there is
+      per-turn latency: TTFT on long prefix-cached prompts plus decode time, and throughput at concurrency.
+    - Fluidity matters when a Smart Data chat UI streams to a person, and with speculative decoding (TensorFold's MTP
+      drafts), whose tokens arrive in bursts that a client buffer smooths.
+    - Capacity search is the right question for pricing self-host vs Prime per client: requests per GPU under a TTFT
+      and TBT target, on the client's own workload.
+  - Also: [vLLM's optimization guide](https://docs.vllm.ai/en/v0.21.0/configuration/optimization/) covers chunked prefill
+    (`max_num_batched_tokens` trades TTFT against decode stalls), preemption when KV runs out, and parallelism.
