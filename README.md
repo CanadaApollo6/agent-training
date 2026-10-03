@@ -324,3 +324,29 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     [CMS DE-SynPUF](https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files)
     (synthetic Medicare claims) and [Synthea](https://github.com/synthetichealth/synthea) (synthetic patients and
     claims). Kled is the paid option if the client needs real-world distributions.
+- [FrogNano](https://arxiv.org/abs/2609.07925) (Microsoft debug-gym, 2026-09;
+  [weights](https://huggingface.co/microsoft/FrogNano-4B-2609), MIT): Qwen3.5-4B trained with RL only, no SFT. It
+  reaches 61.5% on SWE-bench Verified, plus 37.6% on SWE-bench Pro and 31.1% on Terminal-Bench 2.0.
+  - Harness first: switching to Leaf, a 5-tool harness (read, write, edit, glob, bash) modeled on Claude Code, took the
+    base model from 8.3% to 37.2%, before any training. 96% of the old harness's runs hit the turn limit.
+    MiniMax-M2.5 scored 66.5% on both harnesses. Small models are harness-sensitive and big ones aren't.
+  - TaskPilot: a stronger model writes tasks (problem statement, gold patch, hidden tests) on real SWE-rebench repo
+    snapshots. Each candidate is run 8 times on the current policy and kept only near a 0.5 solve rate (0-0.5 in
+    round 5, where a stronger author was also used). That gives about 300 new tasks per round, for 5 rounds.
+  - "Zero distillation" means no teacher trajectories. Teachers still author the tasks.
+  - Training: DPPO with 8 rollouts per task, 150 steps, 131K context, on one 8×B200 node. The reward is success with a
+    log-length penalty, and 0.5 for correct but truncated runs. They detected reward hacking in 2.5% of runs and
+    blocked it.
+  - Weak spots:
+    - SWE-bench Verified was their *validation* set, so the 61.5 headline was used to steer training. Pro, TB2 and
+      PatchEval are the held-out numbers.
+    - At equal task counts, synthetic and real are about even: 49.1 vs 48.0 at 300 tasks. The advantage appears with
+      scale: 61.5 vs 53.4 at 1,500.
+  - For us:
+    - It backs both halves of Riel's thesis: the harness matters most for small models, and RL on calibrated tasks
+      scales without a teacher's trajectories.
+    - It suggests a third way to use GLM-5.3 and the other teachers: as task authors, not demonstrators.
+    - That's also the CareSource-safe recipe. The author model only sees a schema and synthetic claims (Synthea), and
+      tasks are calibrated on the student.
+    - Our round-2 8-attempt data is already TaskPilot's calibration measurement for the 69 TB2 tasks.
+    - Ornith R1s (pi 40/89 = 45%) is already above FrogNano's TB2 31%.
