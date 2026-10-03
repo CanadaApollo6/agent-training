@@ -368,3 +368,35 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
       and TBT target, on the client's own workload.
   - Also: [vLLM's optimization guide](https://docs.vllm.ai/en/v0.21.0/configuration/optimization/) covers chunked prefill
     (`max_num_batched_tokens` trades TTFT against decode stalls), preemption when KV runs out, and parallelism.
+- [Finetuning with Sampling](https://arxiv.org/abs/2610.02140) (Karan, Chen, Du, 2026-10-01;
+  [page](https://aakaran.github.io/finetuning_with_sampling/), [code](https://github.com/aakaran/finetuning-with-sampling),
+  no license yet): plain SFT on an expert's traces generalizes poorly and makes the model forget, because the traces
+  are off-policy. Their fix is to change the data, not the objective.
+  - **Projection sampling:**
+    - The student itself rewrites each expert trace. It's prompted with the question, the expert solution and its own
+      partial answer, then told to "continue in your own words".
+    - Metropolis-Hastings accepts or rejects each rewrite by the student's own likelihood.
+    - This walks the trace toward the distribution closest to the student that still carries the expert's
+      information.
+    - Cost is |D|·N·T²/4B tokens, with N = 10 steps, block size B = 32 and length T = 1856.
+  - **Results:**
+
+    | | Plain SFT | Sampling SFT |
+    |---|---|---|
+    | Chemistry, Qwen2.5-7B (base 0.343) | 0.618 | 0.660 |
+    | Prior skills, Qwen2.5-7B (base 0.597) | 0.520 | 0.586 |
+    | Medical SFT's GSM8K (base 0.918) | 0.364 | 0.833 |
+
+    - Math on Qwen2.5-3B: 0.534 average, beating GRPO's 0.457. Sampling SFT followed by RL reached 0.567.
+    - A one-shot rewrite (0 MCMC steps) gets part of the gain. Accuracy rises with steps as KL to the base falls.
+    - Traces boosted for Olmo hurt Qwen, so on-policy means on-policy *for this student*.
+  - Weak spots: 3B-7B models on short single-turn answers (T < 2K). The Qwen2.5-3B math base is oddly low (MATH500
+    0.245), which suggests format effects. Medical is graded by GPT-5-mini. Each method had its own hyperparameter
+    grid.
+  - For us:
+    - Round 2's teacher traces (DeepSeek V4.1 Flash, Qwen3.8-Max) are exactly the off-policy data this warns about.
+      Our own R1s-SD solves are on-policy, which may be why round 1 neither helped nor hurt.
+    - The full algorithm doesn't scale to agent rollouts: T² over tens of thousands of written tokens.
+    - A per-turn version does: keep the teacher's tool calls and let Ornith rewrite only the reasoning, about 70% of
+      what's written. The environment stays consistent, and it costs one generation per turn on the training pod.
+    - Cheap first check: Ornith's average log-prob on teacher turns vs its own.
