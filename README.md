@@ -400,3 +400,41 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     - A per-turn version does: keep the teacher's tool calls and let Ornith rewrite only the reasoning, about 70% of
       what's written. The environment stays consistent, and it costs one generation per turn on the training pod.
     - Cheap first check: Ornith's average log-prob on teacher turns vs its own.
+- [RLTL;DR](https://arxiv.org/abs/2609.37633) (Kirchhof et al., Apple, 2026-09-29; no code): RL on tasks the policy
+  never solves (Pass@128 = 0), with no teacher.
+  - **Loop:**
+    - After each failed attempt the policy reads its own rollout plus the verifier's failing tests. It writes a
+      summary, the error step and a fix, then a one-sentence "TL;DR" insight of about 17 words, e.g. "Call
+      complete_task without passing an answer parameter for non-QA tasks".
+    - Later attempts at the task carry all insights so far in context.
+    - Loss is GRPO on the rollouts plus SFT on the insight tokens given only the task, which teaches task → insight.
+      Every reported number is measured *without* insights in context.
+  - **Results** (Qwen 3.5 9B Thinking):
+
+    | | Plain GRPO | RLTL;DR |
+    |---|---|---|
+    | Frontier-hard tasks, Pass@1 | 0-1% | 12-13% without insights (14-31% with them) |
+    | Held-out SAPI | 57.8 | 91.1 |
+    | Held-out AppWorld | 33.7 | 61.7 |
+    | Held-out Leetcode | 55.1 | 49.1 |
+
+    - The SFT on insights does the work. SFT alone on the insights nearly matches the full method (17.0 vs 18.9), and
+      without it RLTL;DR drops to 13.2.
+    - **SFTL;DR:** SFT on just 4K deduplicated (task, insight) pairs gets 16.9 eval. SFT on 3.5K full rollouts gets
+      20.9 at about 100× the backward tokens.
+  - **Weak spots:**
+    - Insights are task-specific API facts. They transfer within one API family (SAPI, AppWorld) but not across
+      Leetcode problems, where it lost to GRPO.
+    - Insight quality depends on the verifier showing failing tests: 21.4 drops to 3.4 without them.
+    - SAPI is proprietary. The compute was 8×B200 for 1-4 days per run.
+  - **For us:**
+    - It attacks round 2's problem from the other side. Ornith went 0/18 on the never-solved TB2 tasks, and we
+      bought solves from teachers. RLTL;DR gets them from the model's own failures and the task's own tests.
+    - That's the CareSource-shaped route: no cloud teacher, only a verifier on the client's own tasks.
+    - TB2 is closer to Leetcode than to one API family, since every task is its own world. Expect the in-context loop
+      to help on the training tasks and the task → insight training to transfer little to the held-out 20.
+    - A cheap test needs no training. Run Ornith on the 5 text-only tasks no model has solved, feed it the pytest
+      failures after each attempt, and see whether in-context insights unlock solves (the paper's 14-31% regime).
+    - Keep this off the held-out 20, since their test outputs would leak into the insights.
+    - The Smart Data version is a per-client insight bank of short rules learned from failures, a natural fit for
+      prime_agent's editable context.
