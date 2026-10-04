@@ -7,6 +7,7 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "deep-swe>=0.1.0",
     "terminal-bench-2>=0.3.1",
+    "tb2-lessons",
     "verifiers[harbor] @ git+https://github.com/PrimeIntellect-ai/verifiers@aa924e7d",
 ]
 
@@ -18,3 +19,6 @@ url = "https://hub.primeintellect.ai/primeintellect/deep-swe/install/simple/"
 
 [[tool.uv.index]]
 url = "https://hub.primeintellect.ai/primeintellect/terminal-bench-2/install/simple/"
+
+[tool.uv.sources]
+tb2-lessons = { path = "tb2-lessons", editable = true }

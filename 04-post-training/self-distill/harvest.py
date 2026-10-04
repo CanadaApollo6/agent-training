@@ -181,7 +181,7 @@ def main():
             # <env>--<label>--<harness>--<hash>; a label's slash (hosted model ids) is written as "--" too
             parts = run.split("--")
             label, harness = "/".join(parts[1:-2]), parts[-2]
-            if any(s in f for s in ("/broken", "/contended")) or not label.startswith(tuple(a.model)):
+            if any(s in f for s in ("/broken", "/contended", "/lessons/")) or not label.startswith(tuple(a.model)):
                 continue
             for line in open(f):
                 r = json.loads(line)

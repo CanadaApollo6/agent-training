@@ -1,0 +1,10 @@
+[project]
+name = "tb2-lessons"
+version = "0.1.0"
+description = "Terminal-Bench 2 with per-task lessons in the prompt and the test output kept in the trace (lessons_loop.py)"
+requires-python = ">=3.12"
+dependencies = ["terminal-bench-2", "verifiers"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
