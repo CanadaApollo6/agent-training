@@ -142,3 +142,14 @@ pod, with 4 engines at TP=2 and `pods/rewrite_pod.sh` (2026-10-03, about 1h55m, 
 - **Size:** the data comes to 1.84M loss tokens out of 4.93M (raw: 2.06M of 5.15M), and every sample fits in 128K.
 
 Rewritten samples are in `data/teacher_rewritten.jsonl` (gitignored), per-turn scores in `results/rewrite.jsonl`.
+
+A second pass on one H100 PCIe (about 1h50m, ~$6) rewrote Qwen's last 8 solves: 41 samples, 394 turns, two of them
+the first solves of regex-chess and train-fasttext. Short on KV memory, vLLM sometimes returned prompt log-probs that
+didn't line up with its cached-token count. `rewrite.py` rescores those uncached (18 times in this pass). With both
+passes, the teacher set is 55 solves on 13 tasks, 170 samples and 1,893 turns. Teacher reasoning was replaced on 1,861
+turns: reasoning went from -1.14 to -0.54 nats/token, and the teacher tail from -0.38 to -0.48.
+
+| arm | data | rollouts | tokens | trained on | packs/epoch | steps (2 epochs) |
+|---|---|---|---|---|---|---|
+| A | own K=4 + raw teacher | 173 | 14.58M | 5.78M | ~140 | 70 |
+| B | own K=4 + rewritten teacher | 173 | 14.23M | 5.43M | ~135 | 68 |

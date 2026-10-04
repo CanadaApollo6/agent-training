@@ -46,6 +46,7 @@ class Rewriter:
             tensor_parallel_size=a.tp, enable_prefix_caching=True, max_logprobs=1, language_model_only=True,
             trust_remote_code=True, max_num_seqs=a.max_seqs))
         self.ids = itertools.count()
+        self.mismatch = 0
 
     async def run(self, ids: list, sp: SamplingParams):
         sp.output_kind = RequestOutputKind.FINAL_ONLY
@@ -84,7 +85,9 @@ class Rewriter:
         if first_t <= c:
             return await self.score(prefix, reasoning, tail, skip_cache=True)
         plp = res.prompt_logprobs
-        assert len(plp) == len(enc.ids) - c
+        if len(plp) != len(enc.ids) - c:     # seen once KV memory ran short (a preempted request?); recompute uncached
+            self.mismatch += 1
+            return await self.score(prefix, reasoning, tail, skip_cache=True)
         lp = lambda j: plp[j - c][enc.ids[j]].logprob
         ok_r = first_r > c
         return {"tail": sum(lp(j) for j in range(first_t, len(enc.ids))), "n_tail": len(enc.ids) - first_t,
@@ -146,7 +149,7 @@ async def main_async(a):
             out.write(json.dumps(res) + "\n")
             out.flush()
             print(f"{time.time() - t0:7.0f}s {r['task'][:28]:28} {len(r['loss']):3} turns  "
-                  f"{r['loss_tokens']} -> {res['loss_tokens']} loss tokens", flush=True)
+                  f"{r['loss_tokens']} -> {res['loss_tokens']} loss tokens  ({rw.mismatch} rescored uncached)", flush=True)
         await asyncio.gather(*(one(r) for r in todo))
     rw.engine.shutdown()
 
