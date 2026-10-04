@@ -438,3 +438,44 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     - Keep this off the held-out 20, since their test outputs would leak into the insights.
     - The Smart Data version is a per-client insight bank of short rules learned from failures, a natural fit for
       prime_agent's editable context.
+- [Mid-Harness](https://arxiv.org/abs/2609.39982) (Kang et al., NVIDIA/KAIST, 2026-09; no code mentioned): best-of-N
+  per action instead of per trajectory.
+  - **Loop:**
+    - It sits between the model and the harness, and neither one changes. At each step the generator samples N
+      candidate actions from the same history (temp 0.8, N = 4 or 8). A verifier picks one, and only that one runs.
+    - The verifier sees the task, the history so far and the candidate actions, not their reasoning.
+    - Three verifier types: listwise (all candidates in one prompt), pointwise (a score each, N parallel calls) and
+      pairwise (every pair, 28 calls at N = 8).
+    - The distilled verifier is a LoRA on the same base model. It's trained on 117K pairwise judgments by GPT-5.6 Sol,
+      from 732 trajectories on 244 hard tasks. Offline agreement with Sol goes 59 → 75%. The generator is untouched.
+  - **Results** (TMAX-9B generator, N = 8, pairwise, Pass@1):
+
+    | | Base | Zero-shot self-verify | Distilled verifier | Frontier verifier |
+    |---|---|---|---|---|
+    | TerminalBench-Lite | 50.0 | 54.8 | 57.1 | 68.0 |
+    | Terminal-Bench 2.1 | 21.7 | 27.3 | 26.6 | |
+    | FeatureBench-Mini | 1.5 | | 7.3 | |
+    | SWE-bench Verified Mini | 46.7 | | 48.7 | |
+
+    - It holds across sizes. TMAX-4B goes 38.8 → 43.9 and TMAX-27B 71.1 → 76.2, both with the distilled verifier.
+    - Zero-shot listwise barely helps (51.0). Pairwise works but costs the most tokens.
+    - "Decision-only" verifiers that answer without reasoning score higher and cost about 20-24% less.
+    - It needs one environment run per task. It matches trajectory best-of-3, which needs three runs, at under half the
+      cost. It stacks with trajectory best-of-3 (66.3).
+  - **Weak spots:**
+    - Even the distilled verifier stays far below the frontier one (57 vs 68).
+    - Agreement falls late in a trajectory, from 68% at turns 1-4 to 54% at turns 17-32. Most misses (67%) are
+      about what a command does or whether it can run, which a judge can't see without running it.
+    - There are no gold per-step labels, so verifier accuracy is only agreement with Sol.
+  - **For us:**
+    - It's another way to spend compute on top of the model, with no training. On TB2.1 a 9B model judging its own
+      candidates gained +5.6 points. That's the "harness gains without a frontier model" bet in its cheapest form.
+    - It fits as a proxy, like messages_proxy.py. An OpenAI-compatible endpoint takes each request, samples n=8, and
+      returns the winner. pi and prime_agent run on it unchanged.
+    - The local cost is bounded. The 8 candidates share the prefix, so it's one batched decode. Pointwise
+      decision-only judging is mostly prefill of a cached prefix, with a few output tokens per candidate.
+    - The distilled verifier is CareSource-safe to deploy. Train it on public tasks with a teacher judge, then run only
+      the LoRA on the client's box.
+    - **Measurement problem:** +5 points is invisible on the held-out 20 at one rollout each (a ±11-point standard
+      error). Testing it needs about 4 rollouts per task, or the full 89.
+    - Pointwise judgments double as step-level preference data, which could feed training later.
