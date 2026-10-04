@@ -23,7 +23,7 @@ export PATH=$HOME/.local/bin:$PATH HF_HUB_ENABLE_HF_TRANSFER=1
 log() { echo "$(date +%T) $*" | tee -a $SD/pod.log; }
 # prime-rl's torch is built for CUDA 13 (driver >= 580); older drivers on datacenter GPUs run it through NVIDIA's
 # forward-compatibility libraries (apt install cuda-compat-13-0)
-driver=$(nvidia-smi --query-gpu=driver_version --format=csv,noheader | head -1 | cut -d. -f1)
+driver=$(nvidia-smi -i 0 --query-gpu=driver_version --format=csv,noheader | cut -d. -f1)   # -i 0, not | head: under pipefail head's early close SIGPIPEs nvidia-smi on 8 GPUs
 if [ "$driver" -lt 580 ] && [ -d /usr/local/cuda-13.0/compat ]; then
     export LD_LIBRARY_PATH=/usr/local/cuda-13.0/compat${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 fi
