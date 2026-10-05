@@ -1,0 +1,35 @@
+# Terminal-Lego-15k task ids to drop before training (Lego-X/Terminal-Lego-15k @ 9c197f1c).
+# Hand verdicts from decontam.py candidates; reasons in decontam.md. Format: task_id  # TB2 task: verdict
+# Held-out-20 neighbours (conservative: same / closely related / distinctive-component overlap)
+task_10503  # git-leak-recovery: closely related (purge unreachable commit: reflog expire + gc --prune=now)
+task_11504  # git-leak-recovery (+ sanitize-git-repo): closely related (purge secret file from all history, verify with fsck)
+task_11392  # git-leak-recovery: component (recover dropped work from fsck dangling commits)
+task_10506  # git-leak-recovery: component (recover lost commits via reflog/fsck)
+task_11747  # git-multibranch + configure-git-webserver: closely related (push over SSH -> post-receive hook deploys to web root)
+task_12106  # kv-store-grpc: closely related (.proto + grpc_tools codegen + Python gRPC server with in-memory store + client)
+task_12432  # kv-store-grpc: closely related (Python gRPC server/client from .proto, benchmarked)
+task_02365  # nginx-request-logging: component (nginx on 8080 with custom log_format to a custom access log)
+task_02299  # nginx-request-logging: component (nginx on 8080 with custom log_format of extracted vars)
+task_05331  # pypi-server: component (local PyPI simple index for pip --index-url)
+# Other TB2 tasks (same / closely related only)
+task_11565  # fix-git: closely related (merge commits made on a detached HEAD back into master)
+task_01865  # fix-git: closely related (commit on detached HEAD, then recover onto a branch)
+task_11606  # fix-git: closely related (detached-HEAD commit must land on master)
+task_03130  # openssl-selfsigned-cert: same skill/deliverable (openssl req -x509 key+cert)
+task_03143  # openssl-selfsigned-cert: same
+task_03210  # openssl-selfsigned-cert: same (RSA 2048, 365 days, server.key/server.crt)
+task_03211  # openssl-selfsigned-cert: same
+task_03212  # openssl-selfsigned-cert: same (RSA 2048 key, self-signed cert, 365 days)
+task_03231  # openssl-selfsigned-cert: same
+task_03239  # openssl-selfsigned-cert: same (+SAN)
+task_03250  # openssl-selfsigned-cert: same
+task_03291  # openssl-selfsigned-cert: same
+task_03293  # openssl-selfsigned-cert: same (2048-bit key, 365 days, CN/O fields)
+task_03327  # openssl-selfsigned-cert: same (self-signed CA cert)
+task_03349  # openssl-selfsigned-cert: same
+task_03398  # openssl-selfsigned-cert: same (non-interactive subject fields)
+task_03431  # openssl-selfsigned-cert: same (from CSR)
+task_03440  # openssl-selfsigned-cert: same (+PKCS#12)
+task_10488  # openssl-selfsigned-cert: same (+SAN)
+task_12545  # openssl-selfsigned-cert: same
+task_12644  # openssl-selfsigned-cert: same
