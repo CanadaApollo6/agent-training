@@ -92,6 +92,12 @@ def chat(a, prompt: str) -> str:
     return json.load(urllib.request.urlopen(req, timeout=3600))["choices"][0]["message"]["content"] or ""
 
 
+def tldr(reply: str):
+    """The last TL;DR line, written as "TL;DR: ...", "**TL;DR:** ..." or a "## TL;DR" heading over the sentence."""
+    m = re.findall(r"TL;DR\**\s*:?\**[ \t]*\n*[ \t]*(\S.*)", reply)
+    return m[-1].strip() if m else None
+
+
 def reward(t: dict) -> float:
     return sum((v or {}).get("score", 0) * (v or {}).get("weight", 1) for v in (t.get("rewards") or {}).values())
 
@@ -159,8 +165,7 @@ def main():
                         reply = chat(a, prompt)
                     except Exception as e:  # noqa: BLE001 - keep the round's records; this task just gets no lesson
                         reply = f"(lesson call failed: {e!r})"
-                    m = re.findall(r"TL;DR:\s*(.+)", reply)
-                    rec["lesson"] = m[-1].strip() if m else None
+                    rec["lesson"] = tldr(reply)
                     rec["lesson_reply"] = reply[-3000:]
                     if rec["lesson"]:
                         lessons.setdefault(task, []).append(rec["lesson"])
