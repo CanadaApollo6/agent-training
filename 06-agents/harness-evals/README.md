@@ -323,6 +323,25 @@ the usual caps, 4 at a time per harness.
   fault in the kernel log. The rollouts in flight on tasks 6, 13, 15, 17 and 19 failed with connection errors. They
   were not rerun.
 
+## Reply cap under prime_agent: 16K vs 32K tokens per call (2026-10-05)
+
+R1s-SD on the held-out 20, 3 attempts per cap, 4 at a time, servers with the context clamp. Same 60 turns and
+1-hour rollouts.
+
+| | 16K | 32K |
+|---|---|---|
+| Solved (3 attempts) | 26/60 (9, 9, 8) | 31/60 (11, 9, 11) |
+| Runs ending on a length-cut reply | 7 (12%) | 7 (12%) |
+
+- 32K is worth about 1.7 solves an attempt and is the setting for every prime_agent run since.
+- The doubled cap did not cut the length-cut endings. A reply that hits the cap before any tool call ends the run as
+  `agent_completed`; at 32K the model thinks for 32K tokens instead of 16K. Examples: decoding sqlite pages byte by
+  byte in its head (sqlite-db-truncate), redesigning the interpreter in prose (schemelike-metacircular-eval). These
+  are 7 of the 11 (16K) and 7 of the 10 (32K) runs that finished on their own and were wrong, all on hard tasks.
+- The earlier ~35% figure (of runs that finished on their own) came from older servers without the clamp; on these
+  runs it is ~20% at both caps.
+- The lever is a thinking budget per reply, or turning a cut reply into "continue, and act" instead of an ending.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
