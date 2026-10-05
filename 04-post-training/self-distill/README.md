@@ -202,3 +202,42 @@ Same protocol on the 13 tasks with teacher solves in the training data (`../../0
 - **The 60-turn cap doubled again**, as on the held-out 20.
 - **Caveat:** the data was collected under prime_agent and this ran under pi. About 4 teacher solves per task over 2
   epochs did not install the solutions, at least not in a form that carries across harnesses.
+
+### Did the arms fit their data? Yes, and only the exact samples they trained on
+
+`fit_check.py` scores round 2's trained-on tokens (the loss-masked spans) under four models with vLLM 0.30 on one HF
+`h200` (2026-10-05, ~70 min, ~$6). The four models are base Ornith, R1s-SD's bf16 and both arms' tuned weights. Each
+sample's tokens are split into reasoning (before `</think>`) and tail (`</think>` on: the answer and tool calls,
+i.e. the actions). The four sets:
+
+- `teacher_raw`: arm A's 170 teacher rows.
+- `teacher_rw`: arm B's rewritten versions of the same 170 rows.
+- `own_trained`: 80 own-solve rows both arms trained on.
+- `own_unseen`: 80 own-solve rows from the same harvest that weren't selected. 19 of their 21 tasks are also in
+  `own_trained`.
+
+Negative log-prob in nats per token, reasoning | tail (lower = more likely):
+
+| set | base | R1s-SD | arm A | arm B |
+|---|---|---|---|---|
+| teacher_raw (1.91M / 0.79M tokens) | 1.028 \| 0.348 | 1.048 \| 0.354 | **0.724 \| 0.215** | 0.960 \| 0.259 |
+| teacher_rw (1.57M / 0.79M) | 0.656 \| 0.482 | 0.680 \| 0.492 | 0.683 \| 0.374 | **0.484 \| 0.300** |
+| own_trained (0.61M / 0.30M) | 0.523 \| 0.205 | 0.447 \| 0.171 | 0.289 \| 0.096 | 0.265 \| 0.092 |
+| own_unseen (0.85M / 0.33M) | 0.474 \| 0.197 | 0.411 \| 0.167 | 0.406 \| 0.166 | 0.405 \| 0.165 |
+
+- **The training took.** Each arm cut its own data's action loss by about 40% (A on teacher_raw 0.354 → 0.215, B on
+  teacher_rw 0.492 → 0.300). Every one of the 170 samples improved. The trained own-solves dropped further still,
+  0.171 → 0.096.
+- **None of it reached unseen samples of the same tasks.** On `own_unseen` the arms moved 0.167 → 0.166 (median
+  gain +0.001 nats per token, 45/80 samples better, a coin flip). Those are other solves of mostly the same tasks
+  from the same harvest. The arms learned the particular rollouts, not the tasks.
+- **So it's memorization, not underfitting.** That fits both evals: no gain on the held-out 20, no teacher-only task
+  learned on the 13. More epochs on these ~250 rollouts would fit them harder and still not transfer. The teacher
+  solves sit on 13 tasks, about 13 rollouts per task, so the arms can memorize the traces without learning the
+  tasks. What's missing is task diversity: many more tasks, a few solves each.
+- **The teacher's actions stay unlikely after training.** A teacher trace's median 1,374 action tokens still cost
+  475 nats under arm A (821 under R1s-SD). Replaying a trace isn't expected anyway, but the actions are far from the
+  model's own (0.17 nats/token on its own solves).
+- **Base vs R1s-SD:** round 1 lowered loss on Ornith's own solves (0.205 → 0.171 tail on `own_trained`, 0.197 →
+  0.167 on `own_unseen`) and left the teacher data alone. That matches a model that drifted toward its own
+  harness-solving style.
