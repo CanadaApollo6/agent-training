@@ -177,7 +177,8 @@ build was served by TensorFold on its own HF `a10g-large` (`../../06-agents/harn
   R1s-SD itself scored 12, 12, 12 on A6000s in round 1, so its 9-12 range here is ordinary noise.
 - **One shift shows in both arms.** Twice as many runs hit the 60-turn cap (12 vs 7). Mean turns barely moved (26.4,
   26.7 vs 26.4), so it isn't longer runs overall. The arms quit easy tasks about as fast and grind longer on tasks
-  they don't solve. Teacher solves are longer than Ornith's own (more turns per solve), which may be what they taught.
+  they don't solve. Teacher solves are longer than Ornith's own (34 calls per solve against 29, medians 32 and 27),
+  partly because they are on harder tasks. Training on them may have taught the model to keep going.
 - **What it means for the data:** the 12 teacher-only tasks are not in the held-out 20. These numbers say the teacher
   traces did not transfer to new tasks, under pi. Whether they help on the tasks they came from (the 12 teacher-only
   and 36 self-solved tasks), and under prime_agent where the data was collected, is still unmeasured.
