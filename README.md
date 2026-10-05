@@ -479,3 +479,35 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     - **Measurement problem:** +5 points is invisible on the held-out 20 at one rollout each (a ±11-point standard
       error). Testing it needs about 4 rollouts per task, or the full 89.
     - Pointwise judgments double as step-level preference data, which could feed training later.
+- [LOOM: Looping Beyond Twice](https://arxiv.org/abs/2610.01153) (He et al., 2026-10-01; code at hed-ucas/LOOM):
+  looped mixture-of-experts. Shared blocks run several times per token for more depth from the same parameters.
+  - **Problem:** looped MoE models usually stop at 2 loops. Past that, the hidden state's variance grows with every
+    pass and the router keeps picking the same experts. A naive 100M model at 6 loops diverges (perplexity 1,311).
+  - **Fix, four parts:**
+    - Scale each loop's residual update down to keep the variance bounded.
+    - Re-inject the input embeddings at every loop.
+    - Give each loop its own router, so loops pick different experts.
+    - Carry earlier loops' outputs forward ("looping residual").
+  - **Ablation** (350M, 9 loops, perplexity 18.6 with all four parts):
+
+    | Part removed | Residual scaling | Embedding re-injection | Per-loop router | Looping residual |
+    |---|---|---|---|---|
+    | Perplexity | 24.6 | 26.1 | 19.8 | 19.3 |
+
+  - **Results:**
+    - At equal compute (700M, 10B tokens), 5 loops is best: perplexity 18.4 → 16.5, zero-shot 38.8 → 39.5%.
+    - Without matching compute (1.7B, 60B tokens), it scales stably to 9-12 loops: perplexity 9.6 → 7.8, zero-shot
+      42.4 → 47.7%. Most of that gain is the extra compute.
+  - **Weak spots:**
+    - Small models only (100M-1.7B, ≤60B tokens), and only perplexity plus zero-shot tasks.
+    - Nothing on inference cost or on converting a pretrained model.
+    - At equal compute, the downstream gain is +0.7 points.
+  - **For us:**
+    - Pretraining-only for now, so it doesn't apply to Ornith without retrofitting looping into a pretrained MoE,
+      which the paper doesn't attempt.
+    - Decode cost is the open question for TensorFold. Our decode is limited by memory bandwidth. A loop that reuses
+      the same experts would be nearly free on bandwidth. Per-loop routers deliberately pick *different* experts,
+      so each loop reads new expert weights, and per-token bandwidth grows with the loop count. The very change that
+      makes looping work in training may cost the most at decode.
+    - It joins the latent-thinking thread (inner-link / RecursiveMAS) as a "more compute per token" option. It would
+      be a pretraining-from-scratch mini-project: 100M at ~5B tokens is within a 3090's reach but means a long run.
