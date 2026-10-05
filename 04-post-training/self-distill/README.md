@@ -182,3 +182,23 @@ build was served by TensorFold on its own HF `a10g-large` (`../../06-agents/harn
 - **What it means for the data:** the 12 teacher-only tasks are not in the held-out 20. These numbers say the teacher
   traces did not transfer to new tasks, under pi. Whether they help on the tasks they came from (the 12 teacher-only
   and 36 self-solved tasks), and under prime_agent where the data was collected, is still unmeasured.
+
+### On the 13 tasks the teacher solved: nothing learned
+
+Same protocol on the 13 tasks with teacher solves in the training data (`../../06-agents/harness-evals/teacher_tasks.txt`;
+2026-10-05, three `a10g-large` jobs, ~10.5 GPU-hours, ~$16):
+
+| | R1s-SD | arm A | arm B |
+|---|---|---|---|
+| solved per attempt | 2, 1, 2 | 1, 0, 1 | 1, 0, 0 |
+| tasks solved | bn-fit-modify 2/3, reshard-c4-data 3/3 | reshard-c4-data 2/3 | reshard-c4-data 1/3 |
+| runs ending at 60 turns (of 39) | 5 | 10 | 10 |
+
+- **No teacher-only task was learned.** Neither arm solved any of the 11 tasks that only the teacher had solved.
+  reshard-c4-data doesn't count: R1s-SD solves it under pi without having trained on it (it was unsolved only under
+  prime_agent during data generation).
+- **The arms lost bn-fit-modify.** R1s-SD solved it in data generation and here (2/3). Both arms trained on those
+  solves and went 0/3.
+- **The 60-turn cap doubled again**, as on the held-out 20.
+- **Caveat:** the data was collected under prime_agent and this ran under pi. About 4 teacher solves per task over 2
+  epochs did not install the solutions, at least not in a form that carries across harnesses.
