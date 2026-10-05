@@ -1,0 +1,14 @@
+prompts: [('cancel-async-tasks', 62036), ('break-filter-js-from-html', 63879)]
+[tensorfold] CUDA rank 0 startup estimate 19.04 GiB within 21.58 GiB; native 262144, allocated prompt/reply window 66048, cache slots 66052
+outputs identical: True
+prompt 0 (62036 tokens):
+  window      0:  241.6 tok/s  10.68 ms/round  accepted 41.7% of drafts  2.58 tokens/round
+  window   8192:  249.3 tok/s  10.32 ms/round  accepted 41.2% of drafts  2.57 tokens/round
+  window   4096:  253.9 tok/s  10.11 ms/round  accepted 41.4% of drafts  2.57 tokens/round
+  window   2048:  250.4 tok/s  10.17 ms/round  accepted 40.9% of drafts  2.55 tokens/round
+prompt 1 (63879 tokens):
+  window      0:  222.4 tok/s  11.93 ms/round  accepted 32.7% of drafts  2.65 tokens/round
+  window   8192:  232.7 tok/s  11.49 ms/round  accepted 32.8% of drafts  2.67 tokens/round
+  window   4096:  231.6 tok/s  11.28 ms/round  accepted 32.1% of drafts  2.61 tokens/round
+  window   2048:  224.5 tok/s  11.21 ms/round  accepted 30.6% of drafts  2.52 tokens/round
+all: window 0 231.6 tok/s (+0.0%, accepted 36.6%), window 8192 240.7 tok/s (+4.0%, accepted 36.4%), window 4096 242.2 tok/s (+4.6%, accepted 36.1%), window 2048 236.7 tok/s (+2.2%, accepted 35.0%)

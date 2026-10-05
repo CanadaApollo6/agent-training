@@ -954,3 +954,37 @@ Results: `tensorfold/results/sampled-chain-kernel-3090-r1s-quiet.txt`, `sampled-
 - Attention, MoE engine and keyed-draw tests: 65 passed.
 
 Results: `tensorfold/results/profile-r1s-port-t1*.txt`.
+
+### The draft head's attention window (2026-10-05, port)
+
+At long context, the draft head (one attention layer) reads the whole KV cache once for each of its 3 draft steps:
+3 of the 13 full-cache reads in a round. Drafts are only guesses that the verify checks, so the head can look at less
+without changing any reply.
+
+**The change** (`kernels/attention.py`, `mtp.py` in the port):
+- `attention(..., window=N)`: `_shared` skips the committed chunks wholly older than the last N keys, and `_merge`
+  starts past them. A row sees between N and N + 512 of the latest keys. Its bits are exactly those of a cache cut at
+  that chunk (new test). `window=0` (the main model) keeps every bit as before.
+- `mtp.DRAFT_WINDOW = 4096` for the draft head.
+
+**A/B** (`tensorfold/draft_window_ab.py`): the contexts are real prime_agent TB2 transcripts (R1s rollouts of
+cancel-async-tasks and break-filter-js-from-html), rendered through the chat template with their tools and cut after
+a tool result at ~62-64K tokens. The run decodes the next assistant turn, 1,024 tokens, T = 1 / top_k 20 /
+top_p 0.95, 2 reps interleaved, in-process. Outputs were identical in every variant.
+
+| Draft window | tok/s | Change | Drafts accepted |
+|---|---|---|---|
+| All keys (before) | 231.6 | | 36.6% |
+| 8192 | 240.7 | +4.0% | 36.4% |
+| **4096** | **242.2** | **+4.6%** | 36.1% |
+| 2048 | 236.7 | +2.2% | 35.0% |
+
+- A round got ~0.6 ms shorter (10.68 → 10.11 and 11.93 → 11.28 ms). That's the ~0.45 ms of draft-head cache reads
+  plus their merges.
+- At 2048 the head starts missing context: acceptance falls enough to give back half the gain.
+- No effect below ~4.6K tokens of context, where the window already covers everything.
+- **Predictions:**
+  - Riel: 5% or more at 70K. Measured 4.6% at 62-64K: just short.
+  - Claude: ~+4%, acceptance down under 2%. Measured +4.6%, acceptance down 0.5 points (1.4% relative).
+
+Results: `tensorfold/results/draft-window-3090-r1s-64k.txt`.

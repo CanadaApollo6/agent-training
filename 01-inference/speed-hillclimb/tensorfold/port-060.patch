@@ -1407,7 +1407,7 @@ index 44d7994..5559173 100644
              # Bound two retained prefixes, current KV state and a growth copy; speculative rows use separate workspace.
              rounded = 1 << (max(1024, capacity - reserve) - 1).bit_length()
 diff --git a/src/tensorfold/cuda/kernels/attention.py b/src/tensorfold/cuda/kernels/attention.py
-index cbc9a2b..705308a 100644
+index cbc9a2b..c6dfaa6 100644
 --- a/src/tensorfold/cuda/kernels/attention.py
 +++ b/src/tensorfold/cuda/kernels/attention.py
 @@ -15,7 +15,8 @@ TILE = 64
@@ -1420,7 +1420,31 @@ index cbc9a2b..705308a 100644
  
  
  @triton.jit
-@@ -111,7 +112,8 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
+@@ -53,8 +54,9 @@ def _tile(q, k, v, m, l, o, valid, scale: tl.constexpr):
+ 
+ @triton.jit
+ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: tl.constexpr, D: tl.constexpr,
+-            G: tl.constexpr, CH: tl.constexpr, SCALE: tl.constexpr):
+-    """(Item, KV head), heads fastest: 16 (row, head) pairs of one stream against one chunk of committed keys."""
++            G: tl.constexpr, CH: tl.constexpr, SCALE: tl.constexpr, WINDOW: tl.constexpr):
++    """(Item, KV head), heads fastest: 16 (row, head) pairs of one stream against one chunk of committed keys;
++    ``WINDOW`` > 0: chunks wholly older than the last WINDOW committed keys are skipped (and the merge starts past them)."""
+ 
+     item = tl.program_id(0) // HK            # a chunk's heads and query tiles launch together: one DRAM read
+     hk = tl.program_id(0) % HK
+@@ -64,7 +66,10 @@ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: t
+     start = tl.load(STREAM + s * 4)
+     rows = tl.load(STREAM + s * 4 + 1)
+     p = tl.load(STREAM + s * 4 + 2)
+-    if (chunk + 1) * CH <= p:                 # a plan padded for a longer context (a graph's) skips missing chunks
++    low = p * 0
++    if WINDOW > 0:
++        low = tl.maximum(p - WINDOW, 0) // CH
++    if ((chunk + 1) * CH <= p) & (chunk >= low):    # a plan padded for a longer context (a graph's) skips missing chunks
+         koff = tl.multiple_of(tl.load(OFF + s * 2), 8)     # ``offsets`` checks 16 bytes: loads go 16 bytes wide
+         voff = tl.multiple_of(tl.load(OFF + s * 2 + 1), 8)
+         rr = first + tl.arange(0, 16)
+@@ -111,7 +116,8 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
          l = tl.zeros((16,), tl.float32)
          o = tl.zeros((16, D), tl.float32)
          key = chunk * CH + tl.arange(0, 64)
@@ -1430,11 +1454,12 @@ index cbc9a2b..705308a 100644
              logical = key + t * 64
              committed = logical < p
              path_slot = logical - p
-@@ -130,9 +132,23 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
-         tl.store(PL + base, l, mask=gg < G)
+@@ -131,30 +137,60 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
  
  
-+@triton.jit
+ @triton.jit
+-def _merge(PO, PM, PL, OUT, STREAM, ROWS, W, H: tl.constexpr, D: tl.constexpr, G: tl.constexpr, DS: tl.constexpr):
+-    """Row, head group, DS output columns: each column's fold is its own, and every part recomputes m and l alike."""
 +def _fold(m, l, o, cm, cl, co, here):
 +    """One chunk's partial folded into the running (m, l, o); ``here`` False (past the last chunk): unchanged."""
 +
@@ -1447,15 +1472,23 @@ index cbc9a2b..705308a 100644
 +    return next_m, l, o
 +
 +
- @triton.jit
- def _merge(PO, PM, PL, OUT, STREAM, ROWS, W, H: tl.constexpr, D: tl.constexpr, G: tl.constexpr, DS: tl.constexpr):
--    """Row, head group, DS output columns: each column's fold is its own, and every part recomputes m and l alike."""
++@triton.jit
++def _merge(PO, PM, PL, OUT, STREAM, ROWS, W, H: tl.constexpr, D: tl.constexpr, G: tl.constexpr, DS: tl.constexpr,
++           CH: tl.constexpr, WINDOW: tl.constexpr):
 +    """Row, head group, DS output columns: each column's fold is its own, and every part recomputes m and l alike.
 +    Four chunks' loads go out together, then fold in chunk order: a chunk at a time, the loop waited on each load."""
  
      node = tl.program_id(0)
      hk = tl.program_id(1)
-@@ -143,18 +159,29 @@ def _merge(PO, PM, PL, OUT, STREAM, ROWS, W, H: tl.constexpr, D: tl.constexpr, G
+-    nch = tl.load(STREAM + tl.load(ROWS + node) * 4 + 3)
++    s = tl.load(ROWS + node)
++    nch = tl.load(STREAM + s * 4 + 3)
++    low = nch * 0
++    if WINDOW > 0:
++        low = tl.maximum(tl.load(STREAM + s * 4 + 2) - WINDOW, 0) // CH
+     gg = tl.arange(0, 16)
+     d = tl.program_id(2) * DS + tl.arange(0, DS)
+     head = hk * G + gg
      m = tl.full((16,), float("-inf"), tl.float32)
      l = tl.zeros((16,), tl.float32)
      o = tl.zeros((16, DS), tl.float32)
@@ -1471,7 +1504,7 @@ index cbc9a2b..705308a 100644
 -        o = o * a[:, None] + co * b[:, None]
 -        l = l * a + cl * b
 -        m = next_m
-+    for chunk in range(0, nch, 4):
++    for chunk in range(low, nch, 4):
 +        h0, h1, h2, h3 = chunk < nch, chunk + 1 < nch, chunk + 2 < nch, chunk + 3 < nch
 +        b0 = (chunk * W + node) * H + head
 +        b1 = ((chunk + 1) * W + node) * H + head
@@ -1497,6 +1530,43 @@ index cbc9a2b..705308a 100644
      result = o / l[:, None]
      tl.store(OUT + (node * H + head[:, None]) * D + d[None, :], result.to(tl.bfloat16), mask=gg[:, None] < G)
  
+@@ -252,8 +288,10 @@ def offsets(caches: Sequence[tuple[torch.Tensor, torch.Tensor]], device) -> list
+ 
+ 
+ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, offs: torch.Tensor, p: Plan, *,
+-              scale: float) -> torch.Tensor:
+-    """Attend (W, H, D) queries to committed keys and own paths; ``offs`` holds ``offsets`` as device (S, 2) int64."""
++              scale: float, window: int = 0) -> torch.Tensor:
++    """Attend (W, H, D) queries to committed keys and own paths; ``offs`` holds ``offsets`` as device (S, 2) int64.
++    ``window`` (0: off, else at least CHUNK): only the committed chunks that hold any of the last ``window`` keys, so
++    a row sees between ``window`` and ``window + CHUNK`` of them; its bits are those of a cache starting at that chunk."""
+ 
+     w, h, d = q.shape
+     hk = k_nodes.shape[1]
+@@ -265,18 +303,21 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+     origin = base(q.device)
+     if not math.isfinite(scale) or scale <= 0:
+         raise ValueError("scale must be positive and finite")
++    if window and window < CHUNK:
++        raise ValueError(f"window: 0 or at least {CHUNK}")
+     g = h // hk
+     partial_o = torch.empty((p.chunks, w, h, d), dtype=torch.float32, device=q.device)
+     partial_m = torch.empty((p.chunks, w, h), dtype=torch.float32, device=q.device)
+     partial_l = torch.empty_like(partial_m)
+     if p.items.shape[0]:
+         _shared[(p.items.shape[0] * hk,)](q, origin, origin, offs, p.streams, p.items, partial_o, partial_m, partial_l,
+-                                          w, H=h, HK=hk, D=d, G=g, CH=CHUNK, SCALE=scale, num_warps=4, num_stages=1)
++                                          w, H=h, HK=hk, D=d, G=g, CH=CHUNK, SCALE=scale, WINDOW=window, num_warps=4,
++                                          num_stages=1)
+     tails = 1 + -(-MAX_NODES // CHUNK)
+     _tail[(w, hk, tails)](q, k_nodes, v_nodes, origin, origin, offs, p.streams, p.rows, p.paths, p.depths,
+                           partial_o, partial_m, partial_l, w, H=h, HK=hk, D=d, G=g, CH=CHUNK, MAXD=MAX_NODES,
+                           SCALE=scale, num_warps=4, num_stages=1)
+     out = torch.empty_like(q)
+     _merge[(w, hk, d // MERGE_COLUMNS)](partial_o, partial_m, partial_l, out, p.streams, p.rows, w, H=h, D=d, G=g,
+-                                        DS=MERGE_COLUMNS, num_warps=4)
++                                        DS=MERGE_COLUMNS, CH=CHUNK, WINDOW=window, num_warps=4)
+     return out
 diff --git a/src/tensorfold/cuda/kernels/keyed.cpp b/src/tensorfold/cuda/kernels/keyed.cpp
 new file mode 100644
 index 0000000..60442a7
@@ -3324,10 +3394,10 @@ index 0f769c3..9b8731d 100644
 +    def _first_attention(record) -> int:
 +        return next(i for i, r in enumerate(record) if not isinstance(r, GDNRecord))
 diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py b/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
-index e56e2df..b2a8436 100644
+index e56e2df..3cb0968 100644
 --- a/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
 +++ b/src/tensorfold/families/qwen3_5_moe/cuda/mtp.py
-@@ -11,7 +11,7 @@ from tensorfold.cuda import moe
+@@ -11,12 +11,17 @@ from tensorfold.cuda import moe
  from tensorfold.cuda.kernels import attention as tree_attention
  from tensorfold.cuda.kernels.prefill_attention import attention as prefill_attention
  from tensorfold.families.qwen3_5.cuda import glue
@@ -3336,7 +3406,17 @@ index e56e2df..b2a8436 100644
  from tensorfold.families.qwen3_5.cuda.weights import QLinear, Weights
  
  from .weights import MTP
-@@ -57,14 +57,15 @@ class Staged:
+ 
+ 
++DRAFT_WINDOW = 4096  # the draft head's attention: the last 4096 to 4608 committed keys (0: all of them). Drafts only,
++                     # the verify still decides every token. R1s at 64K agent contexts: +4.6%, drafts accepted
++                     # 36.6% -> 36.1% (8192: +4.0%, 2048: +2.2%)
++
++
+ class Cache:
+     """The head's attention cache: slot t holds position t; slots below ``pos`` are absorbed, the rest scratch."""
+ 
+@@ -57,14 +62,15 @@ class Staged:
          self.aoffs = offsets(cache)
          self.states = torch.zeros((width, hidden), dtype=torch.bfloat16, device=cache.k.device)
  
@@ -3354,7 +3434,27 @@ index e56e2df..b2a8436 100644
  
  
  class Head:
-@@ -154,9 +155,8 @@ class Head:
+@@ -105,7 +111,8 @@ class Head:
+                 cache.k.index_copy_(0, slots, key)
+                 cache.v.index_copy_(0, slots, value)
+                 return prefill_attention(q, cache.k, cache.v, p0, scale=c.head_dim ** -0.5)
+-            out = tree_attention.attention(q, key, value, aoffs, aplan, scale=c.head_dim ** -0.5)
++            out = tree_attention.attention(q, key, value, aoffs, aplan, scale=c.head_dim ** -0.5,
++                                           window=DRAFT_WINDOW)
+             cache.k.index_copy_(0, slots, key)
+             cache.v.index_copy_(0, slots, value)
+             return out
+@@ -132,7 +139,8 @@ class Head:
+                              device=device).view(len(caches), 2)
+ 
+         def attend(q: torch.Tensor, key: torch.Tensor, value: torch.Tensor) -> torch.Tensor:
+-            out = tree_attention.attention(q, key, value, aoffs, aplan, scale=c.head_dim ** -0.5)
++            out = tree_attention.attention(q, key, value, aoffs, aplan, scale=c.head_dim ** -0.5,
++                                           window=DRAFT_WINDOW)
+             dst, src, a0 = [], [], 0
+             for cache, n, p0 in zip(caches, sizes, starts):          # each stream's keys at its own slots
+                 dst += [cache.k[p0:p0 + n], cache.v[p0:p0 + n]]
+@@ -154,9 +162,8 @@ class Head:
          x = (matmul(en, m.fc_e, exs).float() + matmul(hn, m.fc_h, hxs).float()).to(torch.bfloat16)
          x, h, xs = glue.add_rmsnorm(x, None, m.input_norm, c.eps)
          a = m.attn
@@ -3551,6 +3651,44 @@ index e6009d9..92e36cc 100644
      return Routed(router.to(torch.bfloat16).contiguous(), experts, int(top_k))
  
  
+diff --git a/tests/cuda/test_attention.py b/tests/cuda/test_attention.py
+index a99887c..16215e4 100644
+--- a/tests/cuda/test_attention.py
++++ b/tests/cuda/test_attention.py
+@@ -22,10 +22,10 @@ def _inputs(w: int, p: int, *, h: int = 24, hk: int = 4, d: int = 256, seed: int
+     return q, kn, vn, kc, vc
+ 
+ 
+-def _attend(q, kn, vn, caches, trees, lengths, scale):
++def _attend(q, kn, vn, caches, trees, lengths, scale, window=0):
+     plan = shared.plan(trees, lengths, q.shape[1] // kn.shape[1], "cuda")
+     offs = torch.tensor(shared.offsets(caches, "cuda"), dtype=torch.int64, device="cuda").view(-1, 2)
+-    return shared.attention(q, kn, vn, offs, plan, scale=scale)
++    return shared.attention(q, kn, vn, offs, plan, scale=scale, window=window)
+ 
+ 
+ def _path(parents, node):
+@@ -115,3 +115,20 @@ def test_a_padded_plan_gives_the_exact_plans_bits(w, p, context):
+     plan = shared.from_packed(torch.tensor(flat, dtype=torch.int32, device="cuda"), 1, w, items, chunks)
+     offs = torch.tensor(shared.offsets([(kc, vc)], "cuda"), dtype=torch.int64, device="cuda").view(-1, 2)
+     assert torch.equal(shared.attention(q, kn, vn, offs, plan, scale=1 / 16), want)
++
++
++@pytest.mark.parametrize("p,window", [(20501, 4096), (20501, 512), (4096, 4096), (1300, 4096), (9000, 1000)])
++def test_a_window_gets_the_bits_of_a_cache_starting_at_its_chunk(p, window):
++    """The draft head's window: the same bits as the whole cache cut at the first chunk that holds any of the last
++    ``window`` keys (chunks are by absolute position, so the cut keeps every chunk's keys and order)."""
++
++    w = 4
++    inputs = _inputs(w, p, h=16, hk=2)
++    parents = list(range(-1, w - 1))
++    q, kn, vn, kc, vc = inputs
++    low = max(p - window, 0) // shared.CHUNK * shared.CHUNK
++    got = _attend(q, kn, vn, [(kc, vc)], [parents], [p], 1 / 16, window=window)
++    want = _attend(q, kn, vn, [(kc[low:], vc[low:])], [parents], [p - low], 1 / 16)
++    assert torch.equal(got, want)
++    if low:
++        assert not torch.equal(got, _attend(q, kn, vn, [(kc, vc)], [parents], [p], 1 / 16))
 diff --git a/tests/cuda/test_experts_lowbit.py b/tests/cuda/test_experts_lowbit.py
 new file mode 100644
 index 0000000..d647e15
