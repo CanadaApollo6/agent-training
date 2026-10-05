@@ -153,3 +153,31 @@ turns: reasoning went from -1.14 to -0.54 nats/token, and the teacher tail from 
 |---|---|---|---|---|---|---|
 | A | own K=4 + raw teacher | 173 | 14.58M | 5.78M | ~140 | 70 |
 | B | own K=4 + rewritten teacher | 173 | 14.23M | 5.43M | ~135 | 68 |
+
+## Round 2 training and held-out result: neither arm helps
+
+Both arms trained on one Hugging Face Jobs `a100x8` (Prime had no 8-GPU node), back to back with round 1's settings,
+then both R1s builds were rebuilt (`hf_job.sh`, 2026-10-04, 2h25m, ~$48). Arm A ran 70 steps in 68 min, arm B 68
+steps in 59 min, about 56 s/step as in round 1.
+
+Evaluation used round 1's protocol: pi, the held-out 20, 60 turns, 1-hour rollouts, 4 at a time, 3 attempts. Each
+build was served by TensorFold on its own HF `a10g-large` (`../../06-agents/harness-evals/hf_serve.sh`, ~3h20m each,
+~$15 for all three). R1s-SD was rerun on the same hardware as the baseline.
+
+| | R1s-SD (round 1) | arm A: + raw teacher | arm B: + rewritten teacher |
+|---|---|---|---|
+| solved per attempt | 12, 9, 10 (mean 10.3) | 7, 8, 10 (mean 8.3) | 9, 8, 10 (mean 9.0) |
+| solved at least once in 3 | 13/20 | 13/20 | 12/20 |
+| runs ending at 60 turns (of 60) | 7 | 12 | 12 |
+| tasks better / worse than R1s-SD | | 3 / 7 (sign test p = 0.34) | 1 / 4 (p = 0.38) |
+
+- **Riel predicted B beats A.** B is ahead by 0.7 per attempt, but it was better on 5 tasks and worse on 4 (p = 1):
+  a tie.
+- **Neither arm beats R1s-SD.** Both are lower, by 1.3 and 2.0 solves per attempt, though neither gap is significant.
+  R1s-SD itself scored 12, 12, 12 on A6000s in round 1, so its 9-12 range here is ordinary noise.
+- **One shift shows in both arms.** Twice as many runs hit the 60-turn cap (12 vs 7). Mean turns barely moved (26.4,
+  26.7 vs 26.4), so it isn't longer runs overall. The arms quit easy tasks about as fast and grind longer on tasks
+  they don't solve. Teacher solves are longer than Ornith's own (more turns per solve), which may be what they taught.
+- **What it means for the data:** the 12 teacher-only tasks are not in the held-out 20. These numbers say the teacher
+  traces did not transfer to new tasks, under pi. Whether they help on the tasks they came from (the 12 teacher-only
+  and 36 self-solved tasks), and under prime_agent where the data was collected, is still unmeasured.
