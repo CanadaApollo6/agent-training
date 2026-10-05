@@ -1,0 +1,22 @@
+--- i/src/tensorfold/cuda/server.py
++++ w/src/tensorfold/cuda/server.py
+@@ -4,6 +4,7 @@
+ import hashlib
+ import inspect
+ import json
++import os
+ import queue
+ import threading
+ import time
+@@ -240,6 +241,11 @@
+                     f"the server's {limit}-token {kind}{native}; shorten the prompt"
+                     f"{self._restart(len(prepared.prompt) + 1)}")
+         asked = body.get("max_tokens") or body.get("max_completion_tokens")
++        # TF_CLAMP_MAX_TOKENS=1: an explicit reply cap that overflows the window is cut to the room left (prepare
++        # does the cut), as for an unset cap; refused, a long agent transcript ends the episode on a 400 a few turns
++        # before the window is actually full
++        if os.environ.get("TF_CLAMP_MAX_TOKENS") == "1":
++            asked = None
+         if limit is not None and asked and len(prepared.prompt) + prepared.max_tokens > limit:
+             kind = "safe cache capacity" if limit == self._engine_capacity() else "context window"
+             return (f"the rendered prompt has {len(prepared.prompt)} tokens and requests {prepared.max_tokens} "

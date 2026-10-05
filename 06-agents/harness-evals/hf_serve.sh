@@ -9,6 +9,8 @@
 #
 # The code (TensorFold, its env lock, serve_kernels.py, this script) goes to the private bucket sd-in/tensorfold and
 # is mounted read-only at /code; the build is mounted read-only at /model and copied to local disk before loading.
+# TF_CLAMP_MAX_TOKENS=1 (clamp-max-tokens.patch; CLAMP=0 at submit turns it off): a reply cap that overflows the
+# 131K window is cut to the room left instead of refused with a 400, which ended long rollouts a few turns early.
 # Each attempt is run_eval.sh tb2 (tasks.txt, 60 turns, 1-hour rollouts, 4 at a time) labelled <label>-a<N>.
 set -euo pipefail
 HF="uvx --from huggingface_hub hf"
@@ -26,7 +28,7 @@ submit)
     $HF buckets create "$NS/sd-in" --private --exist-ok > /dev/null
     $HF buckets sync $S "hf://buckets/$NS/sd-in/tensorfold" --delete > /dev/null
     $HF jobs run --detach -q --flavor ${FLAVOR:-a10g-large} --timeout ${TIMEOUT:-10h} --expose 8080 --name "serve-$NAME" \
-        -e NAME=$NAME -e CONTEXT=${CONTEXT:-131072} \
+        -e NAME=$NAME -e CONTEXT=${CONTEXT:-131072} -e TF_CLAMP_MAX_TOKENS=${CLAMP:-1} \
         -v "hf://buckets/$NS/sd-in/tensorfold:/code:ro" -v "hf://buckets/$NS/$MODEL:/model:ro" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /code/hf_serve.sh entry
     ;;
