@@ -7,6 +7,7 @@ of its attempt and the tail of the test output, thinks, and writes a summary, th
 Only the TL;DR is kept, as in the paper. A task leaves the loop once solved.
 
     uv run python lessons_loop.py --label ornith35b-r1s --attempts 6 --name r1s-unsolved5
+    HF_TOKEN=... uv run python lessons_loop.py --base-url https://<job>--8080.hf.jobs/v1 --key-var HF_TOKEN ...
 
 Runs go to outputs/lessons/<name>/attempt-<k> (harvest.py skips outputs/lessons: these prompts carry lessons). State
 in results/lessons/<name>/: lessons.json (task -> lessons, also LESSONS_FILE for the runs) and attempts.jsonl (one
@@ -86,7 +87,8 @@ def chat(a, prompt: str) -> str:
     body = json.dumps({"model": a.label, "messages": [{"role": "user", "content": prompt}],
                        "max_tokens": a.lesson_tokens}).encode()
     req = urllib.request.Request(a.base_url + "/chat/completions", body,
-                                 {"Content-Type": "application/json", "Authorization": "Bearer none"})
+                                 {"Content-Type": "application/json",
+                                  "Authorization": f"Bearer {os.environ.get(a.key_var, 'none')}"})
     return json.load(urllib.request.urlopen(req, timeout=3600))["choices"][0]["message"]["content"] or ""
 
 
@@ -101,6 +103,8 @@ def main():
     ap.add_argument("--tasks", default=str(HERE / "datagen/unsolved_text.txt"))
     ap.add_argument("--attempts", type=int, default=6)
     ap.add_argument("--base-url", default="http://127.0.0.1:8000/v1")
+    ap.add_argument("--key-var", default="LOCAL_KEY",
+                    help="env var holding the API key (HF_TOKEN for a server behind the HF jobs proxy)")
     ap.add_argument("--conc", type=int, default=5)
     ap.add_argument("--turns", type=int, default=60)
     ap.add_argument("--timeout", type=int, default=3600)
@@ -126,12 +130,12 @@ def main():
         log = open(HERE / "logs" / f"lessons-{a.name}-{k}.log", "w")
         subprocess.run(
             ["uv", "run", "--project", str(HERE), "vf-eval", "tb2-lessons", "-m", a.label,
-             "--client.base-url", a.base_url, "--client.api-key-var", "LOCAL_KEY",
+             "--client.base-url", a.base_url, "--client.api-key-var", a.key_var,
              "--env.agent.harness.id", "prime_agent", "--env.agent.runtime.type", "prime",
              "--env.taskset.tasks", json.dumps(left), "--env.agent.max-turns", str(a.turns),
              "--env.agent.timeout.rollout", str(a.timeout), "-n", str(len(left)), "-r", "1", "-c", str(a.conc),
              "--no-push", "--no-rich", "-o", str(out)],
-            cwd=HERE, stdout=log, stderr=subprocess.STDOUT, env={**os.environ, "LOCAL_KEY": "none",
+            cwd=HERE, stdout=log, stderr=subprocess.STDOUT, env={"LOCAL_KEY": "none", **os.environ,
                                                                   "LESSONS_FILE": str(lessons_f)})
         recs = []
         for f in glob.glob(str(out / "**/traces.jsonl"), recursive=True):
@@ -148,7 +152,10 @@ def main():
                 if rec["reward"] <= 0 and tests:
                     prompt = LESSON_PROMPT.format(task=cut(r["task"]["data"]["prompt"], 8000),
                                                   transcript=transcript(t), tests=cut(tests, 6000))
-                    reply = chat(a, prompt)
+                    try:
+                        reply = chat(a, prompt)
+                    except Exception as e:  # noqa: BLE001 - keep the round's records; this task just gets no lesson
+                        reply = f"(lesson call failed: {e!r})"
                     m = re.findall(r"TL;DR:\s*(.+)", reply)
                     rec["lesson"] = m[-1].strip() if m else None
                     rec["lesson_reply"] = reply[-3000:]
