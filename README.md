@@ -539,3 +539,38 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
       answers. Being public, it's CareSource-safe to train on. It would make a second eval axis next to TB2.
     - HF Sandboxes could replace Prime sandboxes if verifiers gains a runtime for them. Our verifiers 0.3.2.dev153
       only has docker and prime. With both, a whole run (server, sandboxes, training) could stay on HF.
+- [SelfSearch: Reward-Free Search for Self-Improving Agents](https://arxiv.org/abs/2609.37968) (Yang, Kong, Jo,
+  2026-09-29; no code link): an agent edits its own harness (instructions, a policy library, tools, orchestration
+  code) over ten generations, with no benchmark scores during the search. The model weights and the runtime (model,
+  reasoning effort, output caps, step limits) are outside the editable repo.
+  - **How it searches without reward:** each self-improvement episode leaves a record: the trajectory, the code diff,
+    and the results of the agent's own local checks. The next generation reads earlier records to find what to fix.
+    For example, trouble reading long records led an agent to write an inspection tool. Both final lineages are kept
+    without any dev-set selection. The baselines pick revisions with a 10-task SWE-bench dev set.
+  - **Setup:** starts from the Darwin Gödel Machine coding agent. The improving model and the model it is evaluated
+    on are different: DeepSeek V4 Pro improves a harness that V4 Flash then runs; GPT-5.6 sol improves one for luna.
+    API models only.
+  - **Results:**
+    - TB2.1 with V4 Flash: 65.2% → 73.0% and 71.9% for the two lineages, with cost per task down 12-17%.
+    - Best agent: 73/89 = 82.0% (the paper's headline; the table lists 73.0% for that lineage), tying Codex as the
+      top harness. The whole search cost $4.03.
+    - SWE-bench Multilingual: +5.0 points at 38.5% lower cost.
+  - **Ablation** (SWE-bench Verified, mean of the two lineages):
+    - Without the episode records: −2.1 (GPT), −2.9 (DeepSeek).
+    - With the improver held fixed instead of improving itself: −1.7, −2.9.
+  - **Weak spots:**
+    - One search per setting. The authors themselves ask how consistent the gains are across searches.
+    - Ablation steps are 0.8 points, i.e. one task in ~120, so the 2-3 point differences are a few tasks each.
+    - Downstream runs had xhigh effort and up to 100K tool steps, far beyond our 60-turn cap.
+  - **For us:**
+    - It's the harness-side version of the bet: a stronger model improves the harness, a cheaper one runs it, and the
+      gain carries over. Our teacher (V4 Pro) could run the search on public tasks, and Ornith would run the result.
+      The output is code and prompts, not weights, so it deploys CareSource-safely next to the local model.
+    - Open question: does a harness tuned for V4 Flash help a 3B-active model? Richer tools and policies may cost a
+      small model more context and attention than they return. That would need checking on the held-out 20 at ~4
+      rollouts per task (a +5 effect is invisible at 1).
+    - It runs beside the lessons loop at a different level. The lessons are per-task facts the model writes after
+      failing; SelfSearch records are task-agnostic changes to the harness itself. Both learn from records instead
+      of reward, and neither touches weights.
+    - The "own local checks" part matters: the improver verifies its edits with tests it writes, the way our lessons
+      writer reads test output. No benchmark leaks into the search.
