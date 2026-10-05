@@ -511,3 +511,31 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
       makes looping work in training may cost the most at decode.
     - It joins the latent-thinking thread (inner-link / RecursiveMAS) as a "more compute per token" option. It would
       be a pretraining-from-scratch mini-project: 100M at ~5B tokens is within a 3090's reach but means a long run.
+- [RL environments on the Hub](https://huggingface.co/blog/rl-environments) (Hugging Face, 2026-10-05): environments
+  become ordinary dataset repos tagged `rl-environment` plus a framework tag (`harbor`, `verifiers`, `openenv`,
+  `nemo-gym`), listed at [datasets?other=rl-environment](https://huggingface.co/datasets?other=rl-environment).
+  - **What it is:** a catalogue, not a new runtime. Tasks, tests and Dockerfiles live on the Hub. They run locally,
+    on HF Jobs, or in HF Sandboxes (built on Jobs). The tags only declare compatibility. TB2.1 runs under verifiers
+    with `uvx --from 'verifiers[harbor]' eval harbor --env.taskset.repo <hub url>`.
+  - **Datasets that matter to us:**
+    - [Terminal-Lego-15k](https://huggingface.co/datasets/PrimeIntellect/Terminal-Lego-15k) (Apache 2.0): 15,389
+      TB-style tasks in Harbor layout (instruction, Dockerfile, reference solve.sh, tests), built from StackOverflow
+      questions. A task was kept only if its reference solution passed its own tests in Docker (41.8% of 36,846
+      candidates). SFT on 15.3K trajectories took an 8B model to 11.8% on TB2 (+9.3) and a 32B to 24.3% (+20.9).
+      The card says nothing about decontamination against TB2.
+    - [Long-Horizon-Terminal-Bench](https://huggingface.co/datasets/IntelligenceLab/Long-Horizon-Terminal-Bench):
+      46 long tasks.
+    - [SmolDataEnvs](https://huggingface.co/datasets/FineEnvs/SmolDataEnvs) (MIT): 5,390 data-analysis tasks on
+      Kaggle data. The agent runs pandas/sklearn/sqlite code in a sandbox, graded by tolerance-based numeric or
+      exact answers. Splits: 5k train, 250 test, 144 eval, in four difficulty tiers.
+    - Workplace Assistant (26 tools, 690 business tasks) and NVIDIA's calendar-scheduling env, both multi-step tool
+      use.
+  - **For us:**
+    - Terminal-Lego fixes our task shortage. Rounds 1-2 drew training tasks only from TB2's 69 non-held-out tasks,
+      and round 2's teacher data covered just 13 of them. RL or own-solve harvesting needs hundreds of tasks Ornith
+      solves sometimes, not never. With 15K tasks graded by difficulty we can pick that band and keep all of TB2
+      as a clean eval. That works only once we've checked it against the held-out 20 (its card is silent there).
+    - SmolDataEnvs is the closest public match to Smart Data work: sandboxed code over tabular files, verifiable
+      answers. Being public, it's CareSource-safe to train on. It would make a second eval axis next to TB2.
+    - HF Sandboxes could replace Prime sandboxes if verifiers gains a runtime for them. Our verifiers 0.3.2.dev153
+      only has docker and prime. With both, a whole run (server, sandboxes, training) could stay on HF.
