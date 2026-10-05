@@ -916,3 +916,41 @@ Results: `tensorfold/results/sampled-chain-3090-r1s-quiet.txt`, `sampled-chain-3
 - `SAMPLED_CHAIN` is now on.
 
 Results: `tensorfold/results/sampled-chain-kernel-3090-r1s-quiet.txt`, `sampled-chain-kernel-3090-r1s-burn18.txt`.
+
+### Where a sampled verify round goes on the port, short and long context (2026-10-05)
+
+`tensorfold/profile_step.py` now takes `--temperature` (agents' rule: T = 1, top_k 20, top_p 0.95) and `--fill N`
+(about N tokens of numbered records ahead of the request, a stand-in for a long agent transcript). R1s on the port,
+512 tokens, sampled chain on:
+
+| Context | ms a round (wall) | GPU busy | Attention over the KV cache | Its floor |
+|---|---|---|---|---|
+| ~0.5K | 7.2 | 96% | 0.3 ms | ~0 |
+| 35K | 9.1 | | 2.0 ms | 0.8 ms |
+| 71K | 11.0 | | 3.8 ms (35%) | 1.6 ms |
+
+- **The host is out of the picture:** GPU kernels fill 96% of a round's wall time.
+- **Short context**, per round, against the 3090's ~870 GB/s:
+
+| Part | Must read | Floor | Measured | Efficiency |
+|---|---|---|---|---|
+| Dense 4-bit linears (main, lm head, 3 draft steps) | ~1.45 GB | 1.66 ms | 2.27 ms | 73% |
+| Routed experts (~30 of 256 a layer for 4 rows) | ~1.6 GB | ~1.84 ms | 2.2 ms | ~84% |
+| Small kernels (norms, router, select, GDN, copies) | tiny | ~0 | ~1.4 ms | launch-bound |
+
+- **Long context:** the committed-key kernel (`_shared`) already reads the cache at ~765 GB/s. The cost is reading it
+  13 times a round: 10 full-attention layers plus the draft head's one layer for each of 3 draft steps. The merge was
+  the slack piece.
+
+**The merge fix** (`kernels/attention.py`, bit-identical):
+- `_merge` folds each chunk's partial result in key order (that order is what keeps a row's bits independent of its
+  launch). It ran 32 programs, each walking ~138 chunks and waiting on every chunk's load. Triton only pipelines loads
+  that feed a matrix multiply, so `num_stages` changed nothing.
+- Now four chunks' loads go out together, then fold in the same order, and a program takes 16 output columns instead
+  of 64 (128 programs).
+- Microbench (`tensorfold/attn_bench.py`, 70K keys, 4 rows): 59 → 26 µs, output bits equal to the old kernel's.
+- End to end, same seed: the same rounds and drafts (so the same replies). `_merge` per run: 164 → 61 ms at 71K and
+  72 → 36 ms at 35K. GPU time a round −3.5% at 71K, ~−2.5% at 35K.
+- Attention, MoE engine and keyed-draw tests: 65 passed.
+
+Results: `tensorfold/results/profile-r1s-port-t1*.txt`.

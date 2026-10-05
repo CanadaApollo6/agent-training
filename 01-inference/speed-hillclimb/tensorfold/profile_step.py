@@ -2,7 +2,8 @@
 profiler (CUPTI sees the kernels inside CUDA graphs), kernel time grouped by kind.
 
 Usage: python profile_step.py MODEL_DIR [--tokens 256] [--no-drafts] [--top 25] [--temperature 1.0]
-``--temperature``: sampled as agents run it (top_k 20, top_p 0.95, seed 0); 0 (default) is greedy.
+``--fill N``: about N tokens of numbered records ahead of the request, as a long agent context (attention reads
+the whole KV cache every round). ``--temperature``: sampled as agents run it (top_k 20, top_p 0.95, seed 0); 0 (default) is greedy.
 Sizes its context by GPU memory alone like serve_kernels.py (TF_GPU_ONLY_BUDGET); run it under a memory cap.
 """
 
@@ -45,6 +46,7 @@ def main() -> None:
     ap.add_argument("--top", type=int, default=25)
     ap.add_argument("--context", type=int, default=8192)
     ap.add_argument("--temperature", type=float, default=0.0)
+    ap.add_argument("--fill", type=int, default=0)
     a = ap.parse_args()
 
     reserve = float(os.environ.get("TENSORFOLD_CUDA_RESERVE_GIB", "0.3"))
@@ -58,7 +60,13 @@ def main() -> None:
     from tensorfold.cuda.server import ChatTemplate
 
     tok = TemplateTokens(Tokenizer.from_file(str(Path(a.model) / "tokenizer.json")), ChatTemplate(Path(a.model)))
-    ids = list(tok.apply_chat_template([{"role": "user", "content": PROMPT}], add_generation_prompt=True,
+    import random
+
+    rng, words, lines = random.Random(0), "alpha bravo charlie delta echo foxtrot golf hotel".split(), []
+    while len(lines) * 30 < a.fill:                              # ~30 tokens a record
+        lines.append(f"Record item-{len(lines)}: {' '.join(rng.choice(words) for _ in range(12))}; code {rng.randint(1000, 9999)}.")
+    content = ("\n".join(lines) + "\n\n" if lines else "") + PROMPT
+    ids = list(tok.apply_chat_template([{"role": "user", "content": content}], add_generation_prompt=True,
                                        enable_thinking=False))
     e = Qwen36Engine(a.model, context=a.context, context_explicit=True)
     from tensorfold.engine.exact_sampling import Sampling
@@ -90,6 +98,7 @@ def main() -> None:
     for n, (us, _) in per_name.items():
         by_kind[kind(n)] += us
     n = len(out)
+    print(f"prompt {len(ids)} tokens")
     print(f"{n} tokens in {wall:.3f} s unprofiled ({n / wall:.1f} tok/s incl. prefill); stats {stats}")
     print(f"GPU kernel time {total / 1e3:.1f} ms, {total / n:.1f} us a token")
     for k, us in sorted(by_kind.items(), key=lambda kv: -kv[1]):

@@ -1407,10 +1407,20 @@ index 44d7994..5559173 100644
              # Bound two retained prefixes, current KV state and a growth copy; speculative rows use separate workspace.
              rounded = 1 << (max(1024, capacity - reserve) - 1).bit_length()
 diff --git a/src/tensorfold/cuda/kernels/attention.py b/src/tensorfold/cuda/kernels/attention.py
-index cbc9a2b..3e13d2b 100644
+index cbc9a2b..705308a 100644
 --- a/src/tensorfold/cuda/kernels/attention.py
 +++ b/src/tensorfold/cuda/kernels/attention.py
-@@ -111,7 +111,8 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
+@@ -15,7 +15,8 @@ TILE = 64
+ CHUNK = 512
+ MAX_NODES = 128
+ QUERY_TILE = 16
+-MERGE_COLUMNS = 64      # output columns a merge program folds (the chunk fold is per column: more programs, same bits)
++MERGE_COLUMNS = 16      # output columns a merge program folds (the chunk fold is per column: more programs, same bits;
++                        # at 70K keys and 4 rows, 64 -> 16 with the 4-chunk loads: 59 -> 26 us)
+ 
+ 
+ @triton.jit
+@@ -111,7 +112,8 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
          l = tl.zeros((16,), tl.float32)
          o = tl.zeros((16, D), tl.float32)
          key = chunk * CH + tl.arange(0, 64)
@@ -1420,6 +1430,73 @@ index cbc9a2b..3e13d2b 100644
              logical = key + t * 64
              committed = logical < p
              path_slot = logical - p
+@@ -130,9 +132,23 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
+         tl.store(PL + base, l, mask=gg < G)
+ 
+ 
++@triton.jit
++def _fold(m, l, o, cm, cl, co, here):
++    """One chunk's partial folded into the running (m, l, o); ``here`` False (past the last chunk): unchanged."""
++
++    active = (cl > 0.0) & here
++    next_m = tl.where(active, tl.maximum(m, cm), m)
++    a = tl.where(active, tl.where(m == float("-inf"), 0.0, tl.exp(m - next_m)), 1.0)
++    b = tl.where(active, tl.exp(cm - next_m), 0.0)
++    o = tl.where(here, o * a[:, None] + co * b[:, None], o)
++    l = tl.where(here, l * a + cl * b, l)
++    return next_m, l, o
++
++
+ @triton.jit
+ def _merge(PO, PM, PL, OUT, STREAM, ROWS, W, H: tl.constexpr, D: tl.constexpr, G: tl.constexpr, DS: tl.constexpr):
+-    """Row, head group, DS output columns: each column's fold is its own, and every part recomputes m and l alike."""
++    """Row, head group, DS output columns: each column's fold is its own, and every part recomputes m and l alike.
++    Four chunks' loads go out together, then fold in chunk order: a chunk at a time, the loop waited on each load."""
+ 
+     node = tl.program_id(0)
+     hk = tl.program_id(1)
+@@ -143,18 +159,29 @@ def _merge(PO, PM, PL, OUT, STREAM, ROWS, W, H: tl.constexpr, D: tl.constexpr, G
+     m = tl.full((16,), float("-inf"), tl.float32)
+     l = tl.zeros((16,), tl.float32)
+     o = tl.zeros((16, DS), tl.float32)
+-    for chunk in range(nch):
+-        base = (chunk * W + node) * H + head
+-        cm = tl.load(PM + base, mask=gg < G, other=float("-inf"))
+-        cl = tl.load(PL + base, mask=gg < G, other=0.0)
+-        co = tl.load(PO + base[:, None] * D + d[None, :], mask=gg[:, None] < G, other=0.0)
+-        active = cl > 0.0
+-        next_m = tl.where(active, tl.maximum(m, cm), m)
+-        a = tl.where(active, tl.where(m == float("-inf"), 0.0, tl.exp(m - next_m)), 1.0)
+-        b = tl.where(active, tl.exp(cm - next_m), 0.0)
+-        o = o * a[:, None] + co * b[:, None]
+-        l = l * a + cl * b
+-        m = next_m
++    for chunk in range(0, nch, 4):
++        h0, h1, h2, h3 = chunk < nch, chunk + 1 < nch, chunk + 2 < nch, chunk + 3 < nch
++        b0 = (chunk * W + node) * H + head
++        b1 = ((chunk + 1) * W + node) * H + head
++        b2 = ((chunk + 2) * W + node) * H + head
++        b3 = ((chunk + 3) * W + node) * H + head
++        g = gg < G
++        cm0 = tl.load(PM + b0, mask=g & h0, other=float("-inf"))
++        cm1 = tl.load(PM + b1, mask=g & h1, other=float("-inf"))
++        cm2 = tl.load(PM + b2, mask=g & h2, other=float("-inf"))
++        cm3 = tl.load(PM + b3, mask=g & h3, other=float("-inf"))
++        cl0 = tl.load(PL + b0, mask=g & h0, other=0.0)
++        cl1 = tl.load(PL + b1, mask=g & h1, other=0.0)
++        cl2 = tl.load(PL + b2, mask=g & h2, other=0.0)
++        cl3 = tl.load(PL + b3, mask=g & h3, other=0.0)
++        co0 = tl.load(PO + b0[:, None] * D + d[None, :], mask=g[:, None] & h0, other=0.0)
++        co1 = tl.load(PO + b1[:, None] * D + d[None, :], mask=g[:, None] & h1, other=0.0)
++        co2 = tl.load(PO + b2[:, None] * D + d[None, :], mask=g[:, None] & h2, other=0.0)
++        co3 = tl.load(PO + b3[:, None] * D + d[None, :], mask=g[:, None] & h3, other=0.0)
++        m, l, o = _fold(m, l, o, cm0, cl0, co0, h0)
++        m, l, o = _fold(m, l, o, cm1, cl1, co1, h1)
++        m, l, o = _fold(m, l, o, cm2, cl2, co2, h2)
++        m, l, o = _fold(m, l, o, cm3, cl3, co3, h3)
+     result = o / l[:, None]
+     tl.store(OUT + (node * H + head[:, None]) * D + d[None, :], result.to(tl.bfloat16), mask=gg[:, None] < G)
+ 
 diff --git a/src/tensorfold/cuda/kernels/keyed.cpp b/src/tensorfold/cuda/kernels/keyed.cpp
 new file mode 100644
 index 0000000..60442a7

@@ -1,0 +1,29 @@
+[tensorfold] CUDA rank 0 startup estimate 19.36 GiB within 21.31 GiB; native 262144, allocated prompt/reply window 78848, cache slots 78852
+prompt 70590 tokens
+512 tokens in 2.086 s unprofiled (245.4 tok/s incl. prefill); stats {'prefill_s': 0.1734, 'cached': 70583, 'drafts': True, 'swapped_in': 0, 'decode_s': 1.9102, 'rounds': 181, 'drafted': 543, 'accepted': 330, 'min_rows': 4}
+GPU kernel time 1905.2 ms, 3721.2 us a token
+  other                              749.92 ms   39.4%   1464.7 us/token
+  experts (grouped, decode)          428.89 ms   22.5%    837.7 us/token
+  quantized linears (qmm)            422.18 ms   22.2%    824.6 us/token
+  attention                          139.98 ms    7.3%    273.4 us/token
+  routing (router GEMV)               47.27 ms    2.5%     92.3 us/token
+  norms                               44.53 ms    2.3%     87.0 us/token
+  routing (top-k + plan)              34.57 ms    1.8%     67.5 us/token
+  linear attention (GDN)              15.29 ms    0.8%     29.9 us/token
+  moe combine                         12.28 ms    0.6%     24.0 us/token
+  draft sampling (keyed draw)         10.04 ms    0.5%     19.6 us/token
+  routing (top-k)                      0.14 ms    0.0%      0.3 us/token
+  routing (plan)                       0.14 ms    0.0%      0.3 us/token
+top kernels:
+    440.36 ms    2354x  other        _shared
+    422.18 ms   17381x  quantized li void (anonymous namespace)::qmm_seg_kernel<64, 16, 64, 1, 4, 4, false, 1>(__nv_bfloat16 const*, float const*, 
+    273.08 ms    7240x  experts (gro void (anonymous namespace)::swap_kernel<64, 2, 2, 2, 1, 3>(__nv_bfloat16 const*, int, int, uint4 const*, int, 
+    136.48 ms    7240x  experts (gro void (anonymous namespace)::swap_kernel<64, 1, 0, 2, 1, 3>(__nv_bfloat16 const*, int, int, uint4 const*, int, 
+    133.98 ms      10x  attention    void (anonymous namespace)::pattn_kernel<256, 8, 8, 2>(__nv_bfloat16 const*, __nv_bfloat16 const*, __nv_bfloat
+     61.17 ms    2354x  other        _merge
+     60.45 ms    5430x  other        void (anonymous namespace)::tree_kernel<__nv_bfloat16, 0, 8, 4, true>(__nv_bfloat16 const*, __nv_bfloat16 cons
+     53.91 ms    2354x  other        _tail
+     47.27 ms    7824x  routing (rou _router
+     34.57 ms    7784x  routing (top void (anonymous namespace)::select_kernel<8>(float const*, int, int, int, int, int, int*, float*, int*, int*, 
+     34.49 ms   17462x  norms        _add_rmsnorm
+     28.76 ms     181x  other        void (anonymous namespace)::replay_kernel<__nv_bfloat16, 8, 4>(long long const*, int, int const*, int, int con
