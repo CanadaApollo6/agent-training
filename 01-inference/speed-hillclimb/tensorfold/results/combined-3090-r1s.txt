@@ -1,0 +1,16 @@
+prompts: [('short', 31), ('short', 37), ('short', 6), ('short', 61), ('short', 86), ('short', 270), ('long', 62036), ('long', 63879)] long tasks: ['terminal-bench/cancel-async-tasks', 'terminal-bench/break-filter-js-from-html']
+[tensorfold] CUDA rank 0 startup estimate 19.04 GiB within 21.65 GiB; native 262144, allocated prompt/reply window 66048, cache slots 66052
+outputs identical: True
+prompt 0 (short, 31 tokens):  morning  483.9 tok/s ( 7.90 ms/round, accepted 76.4%)  now  505.5 tok/s ( 7.73 ms/round, accepted 72.0%)
+prompt 1 (short, 37 tokens):  morning  567.4 tok/s ( 8.55 ms/round, accepted 74.0%)  now  578.9 tok/s ( 8.50 ms/round, accepted 70.7%)
+prompt 2 (short, 6 tokens):  morning  434.6 tok/s ( 7.50 ms/round, accepted 68.2%)  now  438.3 tok/s ( 7.61 ms/round, accepted 57.5%)
+prompt 3 (short, 61 tokens):  morning  553.5 tok/s ( 8.08 ms/round, accepted 81.8%)  now  577.2 tok/s ( 8.06 ms/round, accepted 78.7%)
+prompt 4 (short, 86 tokens):  morning  391.5 tok/s ( 7.83 ms/round, accepted 60.8%)  now  403.8 tok/s ( 7.73 ms/round, accepted 55.2%)
+prompt 5 (short, 270 tokens):  morning  369.3 tok/s ( 7.77 ms/round, accepted 60.7%)  now  380.1 tok/s ( 7.79 ms/round, accepted 55.0%)
+prompt 6 (long, 62036 tokens):  morning  238.7 tok/s (10.44 ms/round, accepted 48.3%)  now  249.1 tok/s (10.30 ms/round, accepted 41.4%)
+prompt 7 (long, 63879 tokens):  morning  222.7 tok/s (11.79 ms/round, accepted 36.2%)  now  230.5 tok/s (11.33 ms/round, accepted 32.1%)
+short: morning 454.6 tok/s, now 467.8 tok/s (+2.9%), accepted 69.9% -> 64.1%
+long: morning 230.5 tok/s, now 239.4 tok/s (+3.9%), accepted 41.3% -> 36.1%
+65
+
+[exited with code 0]

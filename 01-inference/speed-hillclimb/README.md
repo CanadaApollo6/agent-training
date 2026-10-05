@@ -988,3 +988,26 @@ top_p 0.95, 2 reps interleaved, in-process. Outputs were identical in every vari
   - Claude: ~+4%, acceptance down under 2%. Measured +4.6%, acceptance down 0.5 points (1.4% relative).
 
 Results: `tensorfold/results/draft-window-3090-r1s-64k.txt`.
+
+### Today's three changes together (2026-10-05, port)
+
+`tensorfold/combined_ab.py` runs the port as it was this morning (commit 3d9e583: sampled drafts drawn on the host,
+the old attention merge, the draft head reading every key) against now (keyed draw kernel chained on the device, the
+four-chunk merge, `DRAFT_WINDOW` 4096), in one process, interleaved, with each variant's own captured graphs. Prompts
+are sampled_ab's six short prompts plus the two ~62-64K prime_agent contexts from the window A/B, 1,024 tokens each,
+T = 1 / top_k 20 / top_p 0.95, 2 reps. Outputs were identical.
+
+| Context | Morning | Now | Change | Drafts accepted |
+|---|---|---|---|---|
+| Short (6 prompts) | 454.6 tok/s | 467.8 tok/s | **+2.9%** | 69.9% → 64.1% |
+| Long (62-64K, 2 prompts) | 230.5 tok/s | 239.4 tok/s | **+3.9%** | 41.3% → 36.1% |
+
+- The parts don't add up. Measured one at a time against different baselines they were +3.0% (keyed kernel, quiet),
+  +4.6% (window at 62-64K) and -3.5% GPU time a round (merge at 71K).
+- The likely gap is the chained draft path: it always drafts the full chain, where the host path could stop at an
+  unsure draft. Drafts accepted fall ~5-6 points with the chain on, so part of what the shorter rounds save goes on
+  drafts that get rejected.
+- This replaces my rough "+10%" for the day. It's about +3% on a quiet desktop and +4% at agent-length context. The
+  chain matters more with a busy host (+5.8% with 18 busy processes, measured earlier).
+
+Results: `tensorfold/results/combined-3090-r1s.txt`.
