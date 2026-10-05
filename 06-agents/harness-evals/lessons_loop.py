@@ -108,7 +108,10 @@ def main():
     ap.add_argument("--conc", type=int, default=5)
     ap.add_argument("--turns", type=int, default=60)
     ap.add_argument("--timeout", type=int, default=3600)
-    ap.add_argument("--lesson-tokens", type=int, default=12288)
+    ap.add_argument("--max-tokens", type=int, default=32768,
+                    help="per-call cap for the attempts (prime_agent's default 16K cuts long first thoughts, an empty "
+                         "length-capped reply ends the rollout as if done)")
+    ap.add_argument("--lesson-tokens", type=int, default=32768)
     a = ap.parse_args()
     held = set((HERE / "tasks.txt").read_text().split())
     tasks = Path(a.tasks).read_text().split()
@@ -133,7 +136,7 @@ def main():
              "--client.base-url", a.base_url, "--client.api-key-var", a.key_var,
              "--env.agent.harness.id", "prime_agent", "--env.agent.runtime.type", "prime",
              "--env.taskset.tasks", json.dumps(left), "--env.agent.max-turns", str(a.turns),
-             "--env.agent.timeout.rollout", str(a.timeout), "-n", str(len(left)), "-r", "1", "-c", str(a.conc),
+             "--env.agent.timeout.rollout", str(a.timeout), "--sampling.max-tokens", str(a.max_tokens), "-n", str(len(left)), "-r", "1", "-c", str(a.conc),
              "--no-push", "--no-rich", "-o", str(out)],
             cwd=HERE, stdout=log, stderr=subprocess.STDOUT, env={"LOCAL_KEY": "none", **os.environ,
                                                                   "LESSONS_FILE": str(lessons_f)})
