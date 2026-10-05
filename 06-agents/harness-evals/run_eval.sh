@@ -11,6 +11,8 @@
 # (20, seed 0 of the 52 single-container CPU tasks in Terminal-Bench 4.0.0), 100 turns, 90 min, also from deepswe-env/.
 # claude_code exists only in deepswe-env's verifiers, so tb2 and tb2full with it run there too, on the same taskset
 # (deepswe-env/terminal-bench-2).
+# tl: Terminal-Lego tasks laid out by 04-post-training/terminal-lego/make_taskset.py as set TL_SET (default pilot), task
+# list results/taskset_<set>.txt there; sandboxes in the local Docker (the images are built locally), 60 turns, 30 min.
 set -euo pipefail
 cd "$(dirname "$0")"
 SUITE=$1; HARNESS=$2; LABEL=$3; CONC=${4:-4}
@@ -21,17 +23,20 @@ case $SUITE in
   deepswe) ENV=deep-swe-upstream; FILE=deepswe_tasks.txt; TURNS=${TURNS:-100}; TIMEOUT=${TIMEOUT:-5400}
     PROJECT=deepswe-env ;;
   tb4) ENV=terminal-bench-4; FILE=tb4_tasks.txt; TURNS=${TURNS:-100}; TIMEOUT=${TIMEOUT:-5400}; PROJECT=deepswe-env ;;
-  *) echo "suite: tb2, tb2full, deepswe or tb4"; exit 1 ;;
+  tl) ENV=terminal-lego; TL_SET=${TL_SET:-pilot}; FILE=../../04-post-training/terminal-lego/results/taskset_$TL_SET.txt
+    TURNS=${TURNS:-60}; TIMEOUT=${TIMEOUT:-1800}; PROJECT=.; RUNTIME=docker
+    export PYTHONPATH=$PWD/envs${PYTHONPATH:+:$PYTHONPATH}; EXTRA="--env.taskset.dataset terminal-lego/$TL_SET ${EXTRA:-}" ;;
+  *) echo "suite: tb2, tb2full, deepswe, tb4 or tl"; exit 1 ;;
 esac
 if [ "$HARNESS" = claude_code ] && [ "$PROJECT" = . ]; then ENV=terminal-bench-2; PROJECT=deepswe-env; fi
 FILE=${TASKS_FILE:-$FILE}
-TASKS=$(python3 -c "import json; print(json.dumps(open('$FILE').read().split()))")
-N=$(python3 -c "print(len(open('$FILE').read().split()))")
+TASKS=$(python3 -c "import json; print(json.dumps([l.split()[0] for l in open('$FILE') if l.strip()]))")
+N=$(python3 -c "print(sum(1 for l in open('$FILE') if l.strip()))")
 export LOCAL_KEY=none
 mkdir -p logs
 uv run --project "$PROJECT" vf-eval "$ENV" -m "$LABEL" \
   --client.base-url ${BASE_URL:-http://127.0.0.1:${PORT:-8000}/v1} --client.api-key-var ${KEY_VAR:-LOCAL_KEY} \
-  --env.agent.harness.id "$HARNESS" --env.agent.runtime.type prime --env.taskset.tasks "$TASKS" \
+  --env.agent.harness.id "$HARNESS" --env.agent.runtime.type ${RUNTIME:-prime} --env.taskset.tasks "$TASKS" \
   --env.agent.max-turns "$TURNS" --env.agent.timeout.rollout "$TIMEOUT" \
   -n "$N" -r ${ROLLOUTS:-1} -c "$CONC" --no-push --no-rich ${EXTRA:-} > "logs/$SUITE-${LABEL//\//_}-$HARNESS.log" 2>&1
 grep -E "rollout done" "logs/$SUITE-${LABEL//\//_}-$HARNESS.log" | sed -E 's/.*task=([0-9]+) reward=([0-9.]+) turns=([0-9]+) stop=([A-Za-z_]+).*/\1 \2 \3 \4/'
