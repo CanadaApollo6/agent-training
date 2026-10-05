@@ -840,3 +840,43 @@ Chat, the agent-like case, is 6–14% faster. Raw-text greedy is 5% slower.
   `build_logits.py` reads logits in-process.
 - Next: agent throughput with `--parallel 4` against one stream plus swap, on a pod (the 3090 fits 4×16K, an A6000
   4×64K+).
+
+### Sampled drafts chained on the device (2026-10-05, port)
+
+Agents sample (temperature 1, top_k 20, top_p 0.95), and the sampled path still drafted step by step: each draft's
+keyed draw (`choose_rows`) ran on the host, three waits a draft. Greedy got the on-device chain on 2026-09-29, worth
++6.5% quiet and +29% loaded on the old build.
+
+**The change** (in [`tensorfold/port-060.patch`](tensorfold/port-060.patch)):
+- `DeviceSampling` (`cuda/sampling.py`): `choose`'s rule as torch ops a graph can capture. Candidates are ordered by
+  (-value, id) through pairwise ranks, the splitmix64 key runs in int64 words (wrapping multiplies, logical shifts),
+  then come the top_p and min_p cuts and the Gumbel argmax. The seed, first position, temperature, top_p and ln(min_p)
+  are staged per request, so one graph serves every request.
+- `Graphs.chain` takes a sampling: each step's top_k + 8 candidates are drawn on the device and fed to the next step,
+  the way greedy's argmax is. `decode.SAMPLED_CHAIN` turns it on for top_k-on requests.
+- Exactness:
+  - The draw matches the host's bit for bit on 1,500 random rows (ties, top_p, min_p, other temperatures). The
+    device's float64 exp and log could differ in the last bit at a near-tie, but that would only change a draft.
+  - The verify still samples on the host, so replies equal serial decoding either way.
+  - New test `test_sampled_chain_drafts_like_step_by_step`: chained and step-by-step rounds draft, keep and emit the
+    same.
+  - MoE engine tests 51/51.
+
+**Results** (`tensorfold/sampled_ab.py`, R1s on the 3090, in-process and interleaved, 6 prompts × 1,024 tokens × 2 reps,
+T = 1; outputs identical in every variant):
+
+| Host | Step by step | Chained | + verify follows |
+|---|---|---|---|
+| Quiet | 459.6 tok/s | 448.2 (−2.5%) | 449.1 (−2.3%) |
+| 18 busy processes | 425.3 | 430.4 (+1.2%) | 434.1 (+2.0%) |
+
+- **Predictions:** Riel predicted +10% quiet and +40% loaded. Claude gave none. Both directions missed: quiet got
+  slower.
+- **Why so little to win:** on the port, host load costs the sampled step-by-step path only 7.5% (460 → 425). Greedy
+  on the old build lost 22%. A round is ~8 ms of GPU work, and the host's draws mostly hide behind it.
+- **Why quiet got slower:** the draw is ~30 small kernels. In a graph, top_k + the draw replay in 162 µs against
+  argmax's 24 µs, so each draft costs ~0.14 ms more, ~0.2 ms a round. That's more than the host waits it removes.
+- So `SAMPLED_CHAIN` stays off. One fused kernel for top_k + the draw (~10-15 µs) would turn it into roughly +2% quiet
+  and +5% loaded: real, but small. GPU-side work (the 4-row verify, 75% of rounds) is the bigger lever.
+
+Results: `tensorfold/results/sampled-chain-3090-r1s-quiet.txt`, `sampled-chain-3090-r1s-burn18.txt`.

@@ -1,0 +1,13 @@
+[tensorfold] CUDA rank 0 startup estimate 17.81 GiB within 21.37 GiB; native 262144, allocated prompt/reply window 16384, cache slots 16388
+[tensorfold] CUDA extension tensorfold_experts_v14 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_experts_v14/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_qmm_v4 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_qmm_v4/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_gdn_v2 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_gdn_v2/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_prefill_attention_v1 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_prefill_attention_v1/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+burners 0; outputs identical: True
+prompt 0:  step by step  490.6 tok/s ( 7.79 ms/round)  chained  478.3 tok/s ( 7.99 ms/round)  + verify follows  482.4 tok/s ( 8.10 ms/round)
+prompt 1:  step by step  572.3 tok/s ( 8.48 ms/round)  chained  563.3 tok/s ( 8.61 ms/round)  + verify follows  562.0 tok/s ( 8.76 ms/round)
+prompt 2:  step by step  442.7 tok/s ( 7.37 ms/round)  chained  424.3 tok/s ( 7.69 ms/round)  + verify follows  418.9 tok/s ( 7.96 ms/round)
+prompt 3:  step by step  558.3 tok/s ( 8.01 ms/round)  chained  547.3 tok/s ( 8.17 ms/round)  + verify follows  558.5 tok/s ( 8.33 ms/round)
+prompt 4:  step by step  395.3 tok/s ( 7.75 ms/round)  chained  388.9 tok/s ( 7.88 ms/round)  + verify follows  387.7 tok/s ( 8.05 ms/round)
+prompt 5:  step by step  371.6 tok/s ( 7.72 ms/round)  chained  361.5 tok/s ( 7.93 ms/round)  + verify follows  363.8 tok/s ( 8.13 ms/round)
+all: step by step 459.6 tok/s (+0.0%), chained 448.2 tok/s (-2.5%), + verify follows 449.1 tok/s (-2.3%)

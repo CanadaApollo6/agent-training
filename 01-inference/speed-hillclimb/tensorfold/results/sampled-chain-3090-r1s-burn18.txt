@@ -1,0 +1,9 @@
+[tensorfold] CUDA rank 0 startup estimate 17.81 GiB within 21.42 GiB; native 262144, allocated prompt/reply window 16384, cache slots 16388
+burners 18; outputs identical: True
+prompt 0:  step by step  445.6 tok/s ( 8.57 ms/round)  chained  469.5 tok/s ( 8.14 ms/round)  + verify follows  470.9 tok/s ( 8.30 ms/round)
+prompt 1:  step by step  530.8 tok/s ( 9.14 ms/round)  chained  530.5 tok/s ( 9.15 ms/round)  + verify follows  546.7 tok/s ( 9.00 ms/round)
+prompt 2:  step by step  409.3 tok/s ( 7.97 ms/round)  chained  408.1 tok/s ( 7.99 ms/round)  + verify follows  413.4 tok/s ( 8.07 ms/round)
+prompt 3:  step by step  521.0 tok/s ( 8.58 ms/round)  chained  534.5 tok/s ( 8.37 ms/round)  + verify follows  543.3 tok/s ( 8.57 ms/round)
+prompt 4:  step by step  367.8 tok/s ( 8.34 ms/round)  chained  372.3 tok/s ( 8.23 ms/round)  + verify follows  371.9 tok/s ( 8.39 ms/round)
+prompt 5:  step by step  345.2 tok/s ( 8.31 ms/round)  chained  342.6 tok/s ( 8.37 ms/round)  + verify follows  342.2 tok/s ( 8.65 ms/round)
+all: step by step 425.3 tok/s (+0.0%), chained 430.4 tok/s (+1.2%), + verify follows 434.1 tok/s (+2.0%)

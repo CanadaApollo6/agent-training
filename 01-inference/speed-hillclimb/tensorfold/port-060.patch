@@ -2066,6 +2066,96 @@ index 6fa1026..516707a 100644
          if not name or str(name).lower() not in known:
              if max_calls is None:
                  residue.append(match.group(0))
+diff --git a/src/tensorfold/cuda/sampling.py b/src/tensorfold/cuda/sampling.py
+index bf058e8..d0f605d 100644
+--- a/src/tensorfold/cuda/sampling.py
++++ b/src/tensorfold/cuda/sampling.py
+@@ -36,6 +36,85 @@ def sample_rows(logits: torch.Tensor, positions: Sequence[int], sampling: Sampli
+     return choose_rows(values_np, ids_np, positions, sampling)
+ 
+ 
++def _signed(c: int) -> int:
++    """A uint64 constant as the int64 with the same bits (torch's int64 arithmetic wraps like uint64)."""
++
++    return c - (1 << 64) if c >= 1 << 63 else c
++
++
++_GOLDEN, _MIX1, _MIX2, _POS = (_signed(c) for c in (0x9E3779B97F4A7C15, 0xBF58476D1CE4E5B9, 0x94D049BB133111EB,
++                                                     0xD1B54A32D192ED03))
++
++
++def _shr(x: torch.Tensor, s: int) -> torch.Tensor:
++    """The logical right shift of int64 words holding uint64 bits."""
++
++    return (x >> s) & ((1 << (64 - s)) - 1)
++
++
++def _mix_words(x: torch.Tensor) -> torch.Tensor:
++    x = x ^ _shr(x, 30)
++    x = x * _MIX1
++    x = x ^ _shr(x, 27)
++    x = x * _MIX2
++    return x ^ _shr(x, 31)
++
++
++def keyed_uniform(seed: torch.Tensor, position: torch.Tensor, ids: torch.Tensor) -> torch.Tensor:
++    """``exact_sampling.uniform`` on the device, same bits: ``seed`` and ``position`` int64 [1], ``ids`` int64."""
++
++    x = _mix_words(seed + _GOLDEN)
++    x = _mix_words(x ^ (position * _POS))
++    x = _mix_words(x ^ ids)
++    return _shr(x, 11).double() * 2.0 ** -53 + 2.0 ** -54
++
++
++class DeviceSampling:
++    """A request's keyed rule staged on the device, so a captured graph can draw by it: the seed and the first
++    position (int64), then 1 / max(temperature, 1e-6) as ``choose`` divides by it, top_p (2 when off: keeps every
++    candidate) and ln(min_p) (-inf when off). ``set`` copies a new request's values in without a wait."""
++
++    def __init__(self, device) -> None:
++        self.host_i = torch.zeros(2, dtype=torch.int64).pin_memory()
++        self.host_f = torch.zeros(3, dtype=torch.float64).pin_memory()
++        self.ints = self.host_i.to(device)
++        self.floats = self.host_f.to(device)
++
++    def set(self, s: Sampling, first: int) -> None:
++        seed = int(s.seed) & 0xFFFFFFFFFFFFFFFF
++        self.host_i[0], self.host_i[1] = _signed(seed), int(first)
++        self.host_f[0] = max(float(s.temperature), 1e-6)
++        self.host_f[1] = float(s.top_p) if 0.0 < s.top_p < 1.0 else 2.0
++        self.host_f[2] = s.min_log
++        self.ints.copy_(self.host_i, non_blocking=True)
++        self.floats.copy_(self.host_f, non_blocking=True)
++
++    def pick(self, values: torch.Tensor, tokens: torch.Tensor, step: int, top_k: int) -> torch.Tensor:
++        """``choose`` on the device for one row of candidates (``values`` float32 [k], ``tokens`` int64 [k]) at the
++        position ``first + step``: the index into the candidates of the drawn token, [1], no wait.
++
++        The order, cut and keyed Gumbel draw are ``choose``'s. The float64 exp, sum and log are the device's, which
++        can differ from numpy's in the last bit, so a near-tie can draw another token. That only changes a draft:
++        the verify still samples on the host."""
++
++        count = values.shape[0]
++        higher = (values[None, :] > values[:, None]) | ((values[None, :] == values[:, None])
++                                                        & (tokens[None, :] < tokens[:, None]))
++        rank = higher.sum(dim=1)                                    # (-value, id) order: np.lexsort((ids, -values))
++        order = torch.empty_like(rank).scatter_(0, rank, torch.arange(count, device=rank.device))
++        k = max(1, min(int(top_k) if top_k else count, count))
++        order = order[:k]
++        scaled = values.index_select(0, order).double() / self.floats[0]
++        u = keyed_uniform(self.ints[:1], self.ints[1:2] + step, tokens.index_select(0, order))
++        score = scaled - torch.log(-torch.log(u))
++        probs = torch.exp(scaled - scaled[:1])
++        probs = probs / probs.sum()
++        keep = (torch.cumsum(probs, 0) < self.floats[1]).sum() + 1
++        cut = (torch.arange(k, device=score.device) >= keep) | (scaled < scaled[:1] + self.floats[2])
++        score = score.masked_fill(cut, float("-inf"))
++        return order.index_select(0, score.argmax().view(1))
++
++
+ def sample_streams(logits: torch.Tensor, starts: Sequence[int], positions: Sequence[Sequence[int]],
+                    samplings: Sequence[Sampling | None]) -> list[list[int]]:
+     """``sample_rows`` for several streams, grouped by candidate count so each row gets its own stream's call."""
 diff --git a/src/tensorfold/families/qwen3_5/cuda/forward.py b/src/tensorfold/families/qwen3_5/cuda/forward.py
 index e83c649..22ac2ed 100644
 --- a/src/tensorfold/families/qwen3_5/cuda/forward.py
@@ -2229,7 +2319,7 @@ index 7e635a9..f665314 100644
 -                        streams=streams)
 +                        streams=streams, swap_gib=float(options.get("swap_gib") or 0.0))
 diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/decode.py b/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
-index dccbaed..00b00a9 100644
+index dccbaed..c7e07c9 100644
 --- a/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
 +++ b/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
 @@ -18,6 +18,8 @@ from tensorfold.families.qwen3_5.cuda.prefill import chunks, prefill_chunk
@@ -2256,17 +2346,20 @@ index dccbaed..00b00a9 100644
                  mc.pos = b - 1
              held = rows[-1:]
          if keep is not None and keep_at is not None and a < keep_at <= b:
-@@ -153,6 +159,9 @@ def extend(w, head: Head | None, prompt: Sequence[int], st: State, mc: Cache | N
+@@ -153,6 +159,12 @@ def extend(w, head: Head | None, prompt: Sequence[int], st: State, mc: Cache | N
  
  
  COPY_ROWS = 16       # a copied continuation's verify window
 +COMMIT_GRAPH = True  # the accepted path committed by one replay (``Graphs.commit``)
 +FOLLOW = True        # chained drafts verified in full by a replay launched straight after (no confidence cut)
 +CHAIN = True         # greedy drafts chained on the device in one graph (``Graphs.chain``), not a host wait a step
++SAMPLED_CHAIN = False  # sampled (top_k on) drafts chained too, the keyed draw on the device (``DeviceSampling``): exact,
++                      # but its ~30 small kernels a draft cost more than the host waits they save (R1s on the 3090:
++                      # -2.5% quiet, +2% with 18 busy processes); off until the draw is one kernel
  
  
  @torch.no_grad()
-@@ -182,7 +191,8 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
+@@ -182,7 +194,8 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
          tokens, path, new, carry = mtp_round(st, mc, carry, out[-1], count - len(out), sampling, context, copies,
                                               depth=depth, confidence=confidence, ids=head.ids, verify=verify,
                                               step=step, eos=w.config.eos if stop_eos else (),
@@ -2276,7 +2369,7 @@ index dccbaed..00b00a9 100644
          out.extend(new)
          context.extend(new)
          rounds, drafted, kept = rounds + 1, drafted + len(tokens) - 1, kept + len(path) - 1
-@@ -195,13 +205,30 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
+@@ -195,13 +208,32 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
  def mtp_round(st: State, mc: Cache, carry: Carry, pending: int, room: int, sampling: Sampling | None,
                context: Sequence[int], copies: CopyIndex, *, depth: int, confidence: float, ids, verify, step,
                eos: Sequence[int] = (), in_place: bool = False,
@@ -2290,17 +2383,19 @@ index dccbaed..00b00a9 100644
 -    normed, logits = step(carry.states, carry.tokens, mc.pos)
 -    mc.pos += len(carry.tokens)
      guesses = copies.propose(context, COPY_ROWS - 1)      # an exact repeat of the context first: a long, likely window
++    greedy = sampling is None or sampling.temperature <= 0
 +    chained = CHAIN and runner is not None and constraint is None and not guesses and \
-+        (sampling is None or sampling.temperature <= 0)
-+    if chained and FOLLOW:      # greedy: drafts, then all of them verified, no wait between
-+        picks, host = runner.chain(carry.states, carry.tokens, mc.pos, depth, wait=False)
++        (greedy or (SAMPLED_CHAIN and bool(sampling.top_k)))
++    if chained and FOLLOW:      # drafts, then all of them verified, no wait between
++        picks, host = runner.chain(carry.states, carry.tokens, mc.pos, depth, wait=False, sampling=sampling,
++                                   first=n + 1)
 +        mc.pos += len(carry.tokens)
 +        logits, record, states = runner.verify([pending] + [0] * depth, picks)
 +        sampled = sample_rows(logits, [n + 1 + i for i in range(depth + 1)], sampling)     # waits: host landed
 +        tokens = [pending] + [int(t) for t in host[:depth].tolist()]
 +        return _keep(st, runner, tokens, record, states, sampled, room, eos, in_place, constraint)
-+    if chained:                 # greedy: the whole draft chain in one replay, one wait
-+        picks, probs = runner.chain(carry.states, carry.tokens, mc.pos, depth)
++    if chained:                 # the whole draft chain in one replay, one wait
++        picks, probs = runner.chain(carry.states, carry.tokens, mc.pos, depth, sampling=sampling, first=n + 1)
 +        mc.pos += len(carry.tokens)
 +        guesses = picks[:1]
 +        while len(guesses) < depth and probs[len(guesses) - 1] >= confidence:
@@ -2311,7 +2406,7 @@ index dccbaed..00b00a9 100644
      while not guesses:
          token, prob = draft(logits, n + 1, sampling, ids)
          guesses.append(token)
-@@ -217,8 +244,17 @@ def mtp_round(st: State, mc: Cache, carry: Carry, pending: int, room: int, sampl
+@@ -217,8 +249,17 @@ def mtp_round(st: State, mc: Cache, carry: Carry, pending: int, room: int, sampl
      if window is not None:
          logits = constraint.mask(logits, window)
      sampled = sample_rows(logits, [n + 1 + i for i in range(len(tokens))], sampling)
@@ -2453,24 +2548,27 @@ index 81a1271..390b57f 100644
              return stats
          res = mtp_decode(self.w, self.head, st, mc, carry, first, max_tokens, sampling, depth=self.depth,
 diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py b/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
-index 0f769c3..321d66b 100644
+index 0f769c3..7dffff1 100644
 --- a/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
 +++ b/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
-@@ -7,7 +7,8 @@ from typing import Callable, Sequence
+@@ -7,7 +7,10 @@ from typing import Callable, Sequence
  
  import torch
  
 -from tensorfold.families.qwen3_5.cuda.forward import State, reserve, stage, tree_forward
 +from tensorfold.cuda.kernels import gdn as deltanet
++from tensorfold.cuda.sampling import DeviceSampling
++from tensorfold.engine.exact_sampling import MARGIN, Sampling
 +from tensorfold.families.qwen3_5.cuda.forward import GDNRecord, State, commit, reserve, stage, tree_forward
  
  from .mtp import Cache, Head, Staged as HeadStaged
  
-@@ -23,17 +24,22 @@ class Graphs:
+@@ -23,17 +26,23 @@ class Graphs:
          self.pool = None                                # a new pool each time the buffers grow (``load``)
          self.target: dict[tuple[int, int], tuple] = {}
          self.mtp: dict[tuple[int, int], tuple] = {}
-+        self.chains: dict[tuple[int, int, int], tuple] = {}
++        self.chains: dict[tuple[int, int, int, int], tuple] = {}
++        self.keyed = None                               # sampled chains' staged rule (``DeviceSampling``)
 +        self.commits: dict[tuple[int, int], tuple] = {}
 +        self.last = None                                # the key of the last verify replayed
  
@@ -2492,7 +2590,7 @@ index 0f769c3..321d66b 100644
              self.st = self.mc = None
              gc.collect()
              # torch refuses a capture into a pool left registered without a graph: capture into a new one
-@@ -41,17 +47,36 @@ class Graphs:
+@@ -41,17 +50,36 @@ class Graphs:
              self.st = State(self.w)
              reserve(self.st, self.rows)
              self.mc = Cache(self.w, self.rows)
@@ -2532,7 +2630,7 @@ index 0f769c3..321d66b 100644
          self.mc.pos = mc.pos
          return dst, self.mc
  
-@@ -69,8 +94,9 @@ class Graphs:
+@@ -69,8 +97,9 @@ class Graphs:
          return g, out
  
      @torch.no_grad()
@@ -2544,7 +2642,7 @@ index 0f769c3..321d66b 100644
  
          width, st = len(tokens), self.st
          key = (width, self._bucket(st.pos + width))
-@@ -84,7 +110,10 @@ class Graphs:
+@@ -84,7 +113,10 @@ class Graphs:
              entry = self.target[key] = (g, staged, out)
          g, staged, out = entry
          staged.refresh(tokens, st.pos)
@@ -2555,21 +2653,29 @@ index 0f769c3..321d66b 100644
          return out
  
      @torch.no_grad()
-@@ -110,3 +139,119 @@ class Graphs:
+@@ -110,3 +142,132 @@ class Graphs:
          staged.refresh(states, tokens, p0)
          g.replay()
          return out
 +
 +    @torch.no_grad()
-+    def chain(self, states: torch.Tensor, tokens: Sequence[int], p0: int, depth: int, *, wait: bool = True):
-+        """Greedy drafting in one replay: ``Head.forward`` for these rows at ``p0``, then ``depth - 1`` one-row steps,
-+        each fed the previous step's argmax on the device. The same calls and picks as ``draft`` then ``decode.draft``
++    def chain(self, states: torch.Tensor, tokens: Sequence[int], p0: int, depth: int, *, wait: bool = True,
++              sampling: Sampling | None = None, first: int = 0):
++        """Drafting in one replay: ``Head.forward`` for these rows at ``p0``, then ``depth - 1`` one-row steps,
++        each fed the previous step's pick on the device. The same calls and picks as ``draft`` then ``decode.draft``
 +        step by step, with one wait for the host: (the ``depth`` draft tokens, each one's probability).
++        ``sampling`` (top_k on): each pick is ``choose``'s keyed draw at ``first + step``, drawn on the device
++        (``DeviceSampling.pick``); the rule's values are staged per call, so one graph serves every request.
 +        ``wait=False``: no wait; returns (the picks and probabilities on the device, their pinned host copy in flight),
 +        for a verify launched straight after and a host that reads them once it next waits."""
 +
 +        width = states.shape[0]
-+        key = (width, depth, self._bucket(p0 + width + depth - 1))
++        top_k = int(sampling.top_k) if sampling is not None and sampling.temperature > 0 else 0
++        key = (width, depth, self._bucket(p0 + width + depth - 1), top_k)
++        if top_k:
++            if self.keyed is None:
++                self.keyed = DeviceSampling(states.device)
++            self.keyed.set(sampling, first)
 +        entry = self.chains.get(key)
 +        c = self.w.config
 +        at = [p0] + [p0 + width + i for i in range(depth - 1)]
@@ -2586,7 +2692,12 @@ index 0f769c3..321d66b 100644
 +                for i, s in enumerate(staged):
 +                    normed = self.head.forward(self.mc, s.states, (), at[i], staged=s)
 +                    row = self.head.logits(normed[-1:]).float()[0]
-+                    pick = row.argmax().view(1)                 # indexed by index_select: [pick] would wait on the host
++                    if top_k:
++                        values, cols = torch.topk(row, min(row.shape[0], top_k + MARGIN))
++                        cand = ids.index_select(0, cols) if ids is not None else cols
++                        pick = cols.index_select(0, self.keyed.pick(values, cand, i, top_k))
++                    else:
++                        pick = row.argmax().view(1)             # indexed by index_select: [pick] would wait on the host
 +                    token = ids.index_select(0, pick) if ids is not None else pick
 +                    picks.append(token)
 +                    probs.append(torch.softmax(row, -1).index_select(0, pick))
@@ -3343,7 +3454,7 @@ index 0000000..f9327d5
 +        for f32 in (False, True):
 +            assert _same(qmm.matmul(x, q, xs, f32=f32), _old(x, q, xs, f32)), (m, f32)
 diff --git a/tests/cuda/test_qwen36_moe.py b/tests/cuda/test_qwen36_moe.py
-index d69a0d6..5115b85 100644
+index d69a0d6..4053ea2 100644
 --- a/tests/cuda/test_qwen36_moe.py
 +++ b/tests/cuda/test_qwen36_moe.py
 @@ -114,7 +114,9 @@ def test_prefill_chunks_give_the_same_state_and_head_cache(monkeypatch, fp8):
@@ -3357,10 +3468,14 @@ index d69a0d6..5115b85 100644
      prompt = list(range(20, 43))
      st, mc, first, carry = decode.prefill(w, head, prompt, None)
      monkeypatch.setattr(prefill_mod, "CHUNK", 5)
-@@ -163,6 +165,28 @@ def test_graph_replays_equal_eager_rounds(sampling):
-     assert runner.target and runner.mtp                  # captured once, replayed by the later requests
- 
- 
+@@ -160,7 +162,52 @@ def test_graph_replays_equal_eager_rounds(sampling):
+                                    runner=runner)
+         assert eager.tokens == want and graphs.tokens == want
+         assert graphs.widths == eager.widths and graphs.accepted == eager.accepted
+-    assert runner.target and runner.mtp                  # captured once, replayed by the later requests
++    assert runner.target and (runner.mtp or runner.chains)     # captured once, replayed by the later requests
++
++
 +@pytest.mark.parametrize("chain,commit_graph,follow", [(False, False, False), (True, False, False),
 +                                                       (True, True, False), (True, True, True)])
 +@pytest.mark.parametrize("sampling", [None, Sampling(1234, 1.0, 20, 0.95)])
@@ -3380,13 +3495,34 @@ index d69a0d6..5115b85 100644
 +        res = decode.mtp_decode(w, head, st, mc, carry, first, 40, sampling, depth=3, confidence=0.3, runner=runner)
 +        assert res.tokens == _serial(w, prompt, sampling, 40)
 +    assert bool(runner.commits) == commit_graph
-+    assert bool(runner.chains) == (chain and sampling is None)
++    assert bool(runner.chains) == (chain and (sampling is None or decode.SAMPLED_CHAIN))
 +
 +
++@pytest.mark.parametrize("sampling", [Sampling(1234, 1.0, 20, 0.95), Sampling(99, 0.6, 40, 0.8, 0.05)])
++def test_sampled_chain_drafts_like_step_by_step(monkeypatch, sampling):
++    """The keyed draw on the device picks the drafts the host's ``choose`` picks: with the confidence cut (no
++    follow), chained and step-by-step sampled rounds draft, keep and emit the same, request after request."""
++
++    from tensorfold.families.qwen3_5_moe.cuda.graphs import Graphs
++
++    monkeypatch.setattr(decode, "FOLLOW", False)
++    w, head = _model()
++    runs = {}
++    for chained in (False, True):
++        monkeypatch.setattr(decode, "SAMPLED_CHAIN", chained)
++        runner = Graphs(w, head, 128)
++        runs[chained] = []
++        for prompt in (PROMPTS[1], PROMPTS[0], PROMPTS[2]):
++            st, mc, first, carry = decode.prefill(w, head, prompt, sampling)
++            res = decode.mtp_decode(w, head, st, mc, carry, first, 40, sampling, depth=3, confidence=0.3,
++                                    runner=runner)
++            runs[chained].append((res.tokens, res.widths, res.accepted))
++        assert bool(runner.chains) == chained
++    assert runs[True] == runs[False]
+ 
+ 
  @pytest.mark.parametrize("expandable", [False, True])
- @pytest.mark.parametrize("sampling", [None, Sampling(1234, 1.0, 20, 0.95)])
- def test_graphs_recapture_after_the_buffers_grow(expandable, sampling):
-@@ -252,10 +276,10 @@ def _segments(expandable: bool):
+@@ -252,10 +299,10 @@ def _segments(expandable: bool):
          torch.cuda.memory._set_allocator_settings(f"expandable_segments:{default}")
  
  
@@ -3399,21 +3535,22 @@ index d69a0d6..5115b85 100644
  
  
  def _drain(dec):
-@@ -583,10 +607,11 @@ def test_a_stream_alone_replays_the_one_stream_graphs(sampling):
+@@ -583,10 +630,11 @@ def test_a_stream_alone_replays_the_one_stream_graphs(sampling):
      a = Stream(PROMPTS[1], 24, sampling)
      dec.admit(a)
      _drain(dec)
 -    solo = _solo(w, head, PROMPTS[1], sampling, 24)
 +    solo = _solo(w, head, PROMPTS[1], sampling, 24, runner=Graphs(w, head, 1024))     # the solo engine's graphs
      assert a.out == _serial(w, PROMPTS[1], sampling, 24) == solo.tokens and a.rounds == solo.rounds
-     assert runner.target and runner.mtp and dec.resident is None
+-    assert runner.target and runner.mtp and dec.resident is None
 -    first, second = Stream(list(range(20, 60)), 64, sampling), Stream(PROMPTS[0], 12, SAMPLED[1])
++    assert runner.target and (runner.mtp or runner.chains) and dec.resident is None    # sampled: chains only
 +    # long enough that greedy chained rounds (``decode.CHAIN``) leave it decoding when the second joins
 +    first, second = Stream(list(range(20, 60)), 160, sampling), Stream(PROMPTS[0], 12, SAMPLED[1])
      dec.admit(first)
      for _ in range(4):
          dec.finish(dec.round())
-@@ -598,7 +623,7 @@ def test_a_stream_alone_replays_the_one_stream_graphs(sampling):
+@@ -598,7 +646,7 @@ def test_a_stream_alone_replays_the_one_stream_graphs(sampling):
          rounds += 1
      assert rounds > 2 and not first.done and dec.resident is first    # decoded together, first still resident
      _drain(dec)
