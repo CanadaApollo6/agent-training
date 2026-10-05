@@ -1,7 +1,8 @@
 """Where a decode step's GPU time goes: TensorFold's Qwen3.5-MoE engine in-process, a greedy generation under the torch
 profiler (CUPTI sees the kernels inside CUDA graphs), kernel time grouped by kind.
 
-Usage: python profile_step.py MODEL_DIR [--tokens 256] [--no-drafts] [--top 25]
+Usage: python profile_step.py MODEL_DIR [--tokens 256] [--no-drafts] [--top 25] [--temperature 1.0]
+``--temperature``: sampled as agents run it (top_k 20, top_p 0.95, seed 0); 0 (default) is greedy.
 Sizes its context by GPU memory alone like serve_kernels.py (TF_GPU_ONLY_BUDGET); run it under a memory cap.
 """
 
@@ -18,7 +19,7 @@ PROMPT = "Write a Python function that parses ISO 8601 durations like P3DT4H5M, 
 
 # kernel name fragments -> kind (first match wins)
 KINDS = [
-    ("swap_kernel", "experts (grouped, decode)"), ("expert_kernel", "experts (grouped, decode)"),
+    ("keyed_draw", "draft sampling (keyed draw)"), ("swap_kernel", "experts (grouped, decode)"), ("expert_kernel", "experts (grouped, decode)"),
     ("select_kernel", "routing (top-k + plan)"), ("_router", "routing (router GEMV)"), ("_topk", "routing (top-k)"),
     ("plan", "routing (plan)"), ("combine", "moe combine"),
     ("gdn", "linear attention (GDN)"), ("delta", "linear attention (GDN)"), ("conv", "linear attention (GDN)"),
@@ -43,6 +44,7 @@ def main() -> None:
     ap.add_argument("--no-drafts", action="store_true")
     ap.add_argument("--top", type=int, default=25)
     ap.add_argument("--context", type=int, default=8192)
+    ap.add_argument("--temperature", type=float, default=0.0)
     a = ap.parse_args()
 
     reserve = float(os.environ.get("TENSORFOLD_CUDA_RESERVE_GIB", "0.3"))
@@ -59,11 +61,14 @@ def main() -> None:
     ids = list(tok.apply_chat_template([{"role": "user", "content": PROMPT}], add_generation_prompt=True,
                                        enable_thinking=False))
     e = Qwen36Engine(a.model, context=a.context, context_explicit=True)
+    from tensorfold.engine.exact_sampling import Sampling
+
+    sampling = Sampling(seed=0, temperature=a.temperature, top_k=20, top_p=0.95) if a.temperature > 0 else None
     out = []
 
     def run():
         out.clear()
-        return e.generate(ids, a.tokens, None, lambda t: out.extend(t) and False, draft=not a.no_drafts,
+        return e.generate(ids, a.tokens, sampling, lambda t: out.extend(t) and False, draft=not a.no_drafts,
                           stop_eos=False)
 
     run()                                                        # warm: graphs captured, kernels built

@@ -876,7 +876,43 @@ T = 1; outputs identical in every variant):
   on the old build lost 22%. A round is ~8 ms of GPU work, and the host's draws mostly hide behind it.
 - **Why quiet got slower:** the draw is ~30 small kernels. In a graph, top_k + the draw replay in 162 µs against
   argmax's 24 µs, so each draft costs ~0.14 ms more, ~0.2 ms a round. That's more than the host waits it removes.
-- So `SAMPLED_CHAIN` stays off. One fused kernel for top_k + the draw (~10-15 µs) would turn it into roughly +2% quiet
+- So `SAMPLED_CHAIN` stayed off. One fused kernel for top_k + the draw (~10-15 µs) would turn it into roughly +2% quiet
   and +5% loaded: real, but small. GPU-side work (the 4-row verify, 75% of rounds) is the bigger lever.
 
 Results: `tensorfold/results/sampled-chain-3090-r1s-quiet.txt`, `sampled-chain-3090-r1s-burn18.txt`.
+
+**The fused kernel** (`cuda/kernels/keyed.cu` in the port, same day): the whole draw, top_k included, in one launch.
+- **How it works.** It finds the row's exact top_k by (value, token id) with a radix select over the float bits, byte
+  by byte. The first byte uses every SM (82 blocks, with a grid barrier). Only the few hundred values in the winning
+  top bins can still make the top 20, so they go to one block, which finishes the select in shared memory. Then it
+  applies `choose`'s top_p and min_p cuts and the keyed Gumbel argmax there, in the host's operation order. A flat row
+  (over 2,048 values in the top bins) or a very wide tie falls back to running every byte over the grid.
+- **Exact:** 0 mismatches against the host rule on 1,200 random rows (bf16 ties, 40-way and 5,000-way ties at the
+  top, mapped token ids, every cut), plus a graph-replay test (`tests/cuda/test_keyed_draw.py`). It's also more exact
+  than the torch version: that took topk(k + 8) first, while the kernel ranks the whole row.
+- **Getting it fast** (µs a draw, 80K-wide row; timestamps inside the kernel found each step):
+
+| Version | µs | What changed |
+|---|---|---|
+| torch ops (topk + `DeviceSampling.pick`) | 160 | ~30 small kernels |
+| one block of 1,024 threads | 69-111 | the row re-read 5-6 times by one SM |
+| whole grid, every byte | 116-183 | one thread read 256 counts from global memory one at a time, ~0.2 µs each |
+| bin picked by a block scan | 21 | each byte still re-read the whole row |
+| top bins to one block after byte 1 | 18 | the row read twice in all |
+| warp-shuffle scan | **17** | (torch's own argmax of the row: 27) |
+
+- **Results** (`sampled_ab.py`, R1s on the 3090, same setup as above; outputs identical in every variant):
+
+| Host | Step by step | Chained | + verify follows |
+|---|---|---|---|
+| Quiet | 452.9 tok/s | 463.3 (+2.3%) | 466.3 (+3.0%) |
+| 18 busy processes | 440.8 | 466.2 (+5.8%) | 466.3 (+5.8%) |
+
+- **Predictions:**
+  - Riel: +10% quiet, +40% busy (for the device-side draw in general). Too high by about 3x and 7x.
+  - Claude: +2% quiet, +5% busy (for the fused kernel). Close on both.
+- **The chained path barely notices a busy host** (466 tok/s either way), so the host-side waits are gone. What's
+  left is GPU time.
+- `SAMPLED_CHAIN` is now on.
+
+Results: `tensorfold/results/sampled-chain-kernel-3090-r1s-quiet.txt`, `sampled-chain-kernel-3090-r1s-burn18.txt`.

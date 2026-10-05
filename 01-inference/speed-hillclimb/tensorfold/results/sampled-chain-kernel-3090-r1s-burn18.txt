@@ -1,0 +1,14 @@
+[tensorfold] CUDA rank 0 startup estimate 17.81 GiB within 21.56 GiB; native 262144, allocated prompt/reply window 16384, cache slots 16388
+[tensorfold] CUDA extension tensorfold_experts_v14 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_experts_v14/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_qmm_v4 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_qmm_v4/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_gdn_v2 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_gdn_v2/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_prefill_attention_v1 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_prefill_attention_v1/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_keyed_v6 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_keyed_v6/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+burners 18; outputs identical: True
+prompt 0:  step by step  472.6 tok/s ( 8.09 ms/round)  chained  500.9 tok/s ( 7.63 ms/round)  + verify follows  503.6 tok/s ( 7.76 ms/round)
+prompt 1:  step by step  555.1 tok/s ( 8.74 ms/round)  chained  582.9 tok/s ( 8.33 ms/round)  + verify follows  582.1 tok/s ( 8.46 ms/round)
+prompt 2:  step by step  431.6 tok/s ( 7.56 ms/round)  chained  442.0 tok/s ( 7.38 ms/round)  + verify follows  436.2 tok/s ( 7.65 ms/round)
+prompt 3:  step by step  520.6 tok/s ( 8.59 ms/round)  chained  568.2 tok/s ( 7.87 ms/round)  + verify follows  574.5 tok/s ( 8.10 ms/round)
+prompt 4:  step by step  376.9 tok/s ( 8.13 ms/round)  chained  402.3 tok/s ( 7.62 ms/round)  + verify follows  398.4 tok/s ( 7.84 ms/round)
+prompt 5:  step by step  356.7 tok/s ( 8.04 ms/round)  chained  377.4 tok/s ( 7.60 ms/round)  + verify follows  381.6 tok/s ( 7.76 ms/round)
+all: step by step 440.8 tok/s (+0.0%), chained 466.2 tok/s (+5.8%), + verify follows 466.3 tok/s (+5.8%)

@@ -1420,6 +1420,458 @@ index cbc9a2b..3e13d2b 100644
              logical = key + t * 64
              committed = logical < p
              path_slot = logical - p
+diff --git a/src/tensorfold/cuda/kernels/keyed.cpp b/src/tensorfold/cuda/kernels/keyed.cpp
+new file mode 100644
+index 0000000..60442a7
+--- /dev/null
++++ b/src/tensorfold/cuda/kernels/keyed.cpp
+@@ -0,0 +1,31 @@
++#include <torch/extension.h>
++
++int64_t keyed_scratch_bytes();
++void keyed_draw_cuda(const at::Tensor&, const c10::optional<at::Tensor>&, const at::Tensor&, const at::Tensor&,
++                     int64_t, int64_t, at::Tensor&, at::Tensor&);
++
++// One row's keyed draw into ``out`` (int64 [1], the column drawn); no host wait, so a graph can capture it.
++// ``scratch``: ``scratch_bytes()`` zeroed bytes on the device, left zero by each launch.
++void draw(const at::Tensor& row, const c10::optional<at::Tensor>& ids, const at::Tensor& ints,
++          const at::Tensor& floats, int64_t step, int64_t top_k, at::Tensor scratch, at::Tensor out) {
++    TORCH_CHECK(row.is_cuda() && row.is_contiguous() && row.dim() == 1 &&
++                (row.scalar_type() == at::kBFloat16 || row.scalar_type() == at::kFloat),
++                "row: one contiguous bf16 or fp32 row on the device");
++    TORCH_CHECK(row.numel() < (1 << 24), "rows of under 16M columns");
++    if (ids.has_value())
++        TORCH_CHECK(ids->is_cuda() && ids->is_contiguous() && ids->scalar_type() == at::kLong &&
++                    ids->numel() == row.numel(), "ids: int64, one per column");
++    TORCH_CHECK(ints.is_cuda() && ints.scalar_type() == at::kLong && ints.numel() == 2, "ints: (seed, first)");
++    TORCH_CHECK(floats.is_cuda() && floats.scalar_type() == at::kDouble && floats.numel() == 3,
++                "floats: (temperature, top_p, ln min_p)");
++    TORCH_CHECK(top_k >= 1 && top_k <= 256, "top_k in 1..256");
++    TORCH_CHECK(scratch.is_cuda() && scratch.nbytes() >= static_cast<size_t>(keyed_scratch_bytes()),
++                "scratch: scratch_bytes() on the device");
++    TORCH_CHECK(out.is_cuda() && out.scalar_type() == at::kLong && out.numel() == 1, "out: int64 [1]");
++    keyed_draw_cuda(row, ids, ints, floats, step, top_k, scratch, out);
++}
++
++PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
++    m.def("draw", &draw, "the keyed top_k/top_p/min_p draw of one row");
++    m.def("scratch_bytes", &keyed_scratch_bytes, "the bytes of scratch a draw needs");
++}
+diff --git a/src/tensorfold/cuda/kernels/keyed.cu b/src/tensorfold/cuda/kernels/keyed.cu
+new file mode 100644
+index 0000000..0e413a3
+--- /dev/null
++++ b/src/tensorfold/cuda/kernels/keyed.cu
+@@ -0,0 +1,369 @@
++// The keyed draw (``exact_sampling.choose``) for one row of logits in one cooperative launch, with no host wait (a
++// graph captures it):
++//   1. the top_k by (value, then token id) through a radix select over order-preserving keys. The first pass (the
++//      top byte) runs over the whole grid; the keys in the chosen bin and above (a few hundred for a row of logits)
++//      then go to one block, which finishes the select in shared memory. Should more than POOL keys share the top
++//      bytes (a flat row, a wide tie), the grid runs every pass instead.
++//   2. the splitmix64-keyed Gumbel argmax with the top_p and min_p cuts on that block, in choose_rows' order.
++#include <torch/extension.h>
++#include <ATen/cuda/CUDAContext.h>
++#include <c10/cuda/CUDAGuard.h>
++#include <cooperative_groups.h>
++#include <cuda_bf16.h>
++#include <algorithm>
++#include <cstdint>
++
++namespace cg = cooperative_groups;
++
++namespace {
++
++constexpr int THREADS = 256;         // one thread a bin
++constexpr int MAX_K = 256;
++constexpr uint32_t POOL = 2048;      // keys finished on one block
++constexpr uint32_t TIE_CAP = 2048;   // equals at the threshold ranked by id at once; past it, a pass over the row each
++
++// The draws' scratch in global memory: zero before the first draw, and each draw leaves it zero again.
++struct Scratch {
++    uint32_t hist[4][256];
++    uint32_t count, ties;
++    unsigned long long min_packed;
++    uint32_t pool_key[POOL];
++    int32_t pool_col[POOL];
++    float cand_v[MAX_K];
++    int64_t cand_col[MAX_K], cand_id[MAX_K];
++    long long tie_id[TIE_CAP];
++    int32_t tie_col[TIE_CAP];
++};
++
++// The select so far: the key bits fixed (prefix under mask), how many more keys of that prefix the top k needs,
++// and the chosen bin's count (count) and the count of its bin and above (total).
++struct Select {
++    uint32_t prefix, mask, need, count, total;
++    int bin;
++};
++
++__device__ __forceinline__ float value_of(const float* row, int64_t i) { return row[i]; }
++__device__ __forceinline__ float value_of(const __nv_bfloat16* row, int64_t i) { return __bfloat162float(row[i]); }
++
++// larger float -> larger key (NaNs aside; -0.0 as 0.0, as numpy's sort has them)
++__device__ __forceinline__ uint32_t key_of(float v) {
++    const uint32_t u = __float_as_uint(v + 0.0f);
++    return (u & 0x80000000u) ? ~u : (u | 0x80000000u);
++}
++
++__device__ __forceinline__ float value_of_key(uint32_t key) {
++    return __uint_as_float((key & 0x80000000u) ? (key & 0x7FFFFFFFu) : ~key);
++}
++
++__device__ __forceinline__ uint64_t mix(uint64_t x) {
++    x ^= x >> 30;
++    x *= 0xBF58476D1CE4E5B9ull;
++    x ^= x >> 27;
++    x *= 0x94D049BB133111EBull;
++    return x ^ (x >> 31);
++}
++
++// exact_sampling.uniform: (seed, position, token id) -> (0, 1)
++__device__ __forceinline__ double keyed_uniform(uint64_t seed, uint64_t position, uint64_t id) {
++    uint64_t x = mix(seed + 0x9E3779B97F4A7C15ull);
++    x = mix(x ^ (position * 0xD1B54A32D192ED03ull));
++    x = mix(x ^ id);
++    return static_cast<double>(x >> 11) * 0x1.0p-53 + 0x1.0p-54;
++}
++
++// numpy's float64 sum of a short contiguous array (pairwise_sum, n <= 128): eight strided partial sums, folded
++// pairwise, then the tail; under 8 elements, in order
++__device__ double numpy_sum(const double* a, int n) {
++    if (n < 8) {
++        double s = 0.0;   // numpy starts from -0.0 here; the same for any nonzero sum
++        for (int i = 0; i < n; ++i) s += a[i];
++        return s;
++    }
++    double r[8];
++    for (int j = 0; j < 8; ++j) r[j] = a[j];
++    int i = 8;
++    for (; i < n - (n % 8); i += 8)
++        for (int j = 0; j < 8; ++j) r[j] += a[i + j];
++    double s = ((r[0] + r[1]) + (r[2] + r[3])) + ((r[4] + r[5]) + (r[6] + r[7]));
++    for (; i < n; ++i) s += a[i];
++    return s;
++}
++
++// One digit of the select, block-wide, thread t holding bin t's count: the highest bin whose keys and those of
++// the bins above reach need. ``suffix``: 257 sums and a total for each warp.
++__device__ void select_bin(uint32_t own, int shift, uint32_t* suffix, Select& sel) {
++    const int t = threadIdx.x, lane = t & 31, warp = t >> 5;
++    uint32_t v = own;                   // the warp's suffix sums by shuffles, then the warps above added
++    for (int o = 1; o < 32; o <<= 1) {
++        const uint32_t other = __shfl_down_sync(0xffffffffu, v, o);
++        if (lane + o < 32) v += other;
++    }
++    if (lane == 0) suffix[256 + 1 + warp] = v;
++    if (t == 0) { suffix[256] = 0; sel.bin = 0; }
++    __syncthreads();
++    for (int w = warp + 1; w < THREADS / 32; ++w) v += suffix[256 + 1 + w];
++    suffix[t] = v;
++    __syncthreads();
++    const uint32_t need = sel.need;
++    if (suffix[t] >= need && suffix[t + 1] < need) sel.bin = t;
++    __syncthreads();
++    if (t == sel.bin) {
++        sel.need = need - suffix[t + 1];
++        sel.prefix |= static_cast<uint32_t>(t) << shift;
++        sel.mask |= 255u << shift;
++        sel.count = own;
++        sel.total = suffix[t];
++    }
++    __syncthreads();
++}
++
++// The needed equals of the threshold by lowest token id, from the tie list, after the above candidates.
++__device__ void take_ties(const Scratch* g, uint32_t ties, uint32_t needed, uint32_t above, float v, float* cand_v,
++                          int64_t* cand_col, int64_t* cand_id) {
++    for (uint32_t j = threadIdx.x; j < ties; j += THREADS) {
++        const long long id = __ldcg(&g->tie_id[j]);
++        uint32_t rank = 0;
++        for (uint32_t m = 0; m < ties; ++m) rank += __ldcg(&g->tie_id[m]) < id;
++        if (rank < needed) {
++            cand_v[above + rank] = v;
++            cand_col[above + rank] = __ldcg(&g->tie_col[j]);
++            cand_id[above + rank] = id;
++        }
++    }
++}
++
++template <typename T>
++__global__ void __launch_bounds__(THREADS) keyed_draw_kernel(
++        const T* __restrict__ row, const int64_t* __restrict__ ids, int64_t width,
++        const int64_t* __restrict__ ints, const double* __restrict__ floats, int step, int top_k,
++        Scratch* __restrict__ g, int64_t* __restrict__ out) {
++    cg::grid_group grid = cg::this_grid();
++    __shared__ uint32_t hist[256], suffix[257 + THREADS / 32];
++    __shared__ Select sel;
++    __shared__ uint32_t pool_key[POOL];
++    __shared__ int32_t pool_col[POOL];
++    __shared__ uint32_t s_above, s_ties;
++    __shared__ float cand_v[MAX_K];
++    __shared__ int64_t cand_col[MAX_K], cand_id[MAX_K], sorted_col[MAX_K];
++    __shared__ double scaled[MAX_K], score[MAX_K], probs[MAX_K];
++    __shared__ double s_total;
++    const int t = threadIdx.x;
++    const int64_t stride = static_cast<int64_t>(gridDim.x) * THREADS;
++    const int64_t first = static_cast<int64_t>(blockIdx.x) * THREADS + t;
++    const int k = static_cast<int>(width < top_k ? width : static_cast<int64_t>(top_k));
++
++    // 1. the top byte over the grid: each block's histogram adds into the global one; after the barrier every
++    //    block reads it and picks the same bin
++    if (t == 0) { sel.prefix = 0; sel.mask = 0; sel.need = k; }
++    hist[t] = 0;
++    __syncthreads();
++    for (int64_t i = first; i < width; i += stride) atomicAdd(&hist[key_of(value_of(row, i)) >> 24], 1u);
++    __syncthreads();
++    if (hist[t]) atomicAdd(&g->hist[0][t], hist[t]);
++    grid.sync();
++    select_bin(__ldcg(&g->hist[0][t]), 24, suffix, sel);
++
++    uint32_t threshold, ties_needed, ties, above;
++    if (sel.total <= POOL) {
++        // 2a. the keys in the bin and above to block 0, which finishes the select and takes the candidates
++        const uint32_t low = sel.prefix;
++        for (int64_t i = first; i < width; i += stride) {
++            const uint32_t key = key_of(value_of(row, i));
++            if (key >= low) {
++                const uint32_t at = atomicAdd(&g->count, 1u);
++                g->pool_key[at] = key;
++                g->pool_col[at] = static_cast<int32_t>(i);
++            }
++        }
++        grid.sync();
++        if (blockIdx.x != 0) return;
++        const uint32_t n = sel.total;
++        for (uint32_t j = t; j < n; j += THREADS) {
++            pool_key[j] = __ldcg(&g->pool_key[j]);
++            pool_col[j] = __ldcg(&g->pool_col[j]);
++        }
++        for (int shift = 16; shift >= 0; shift -= 8) {
++            hist[t] = 0;
++            __syncthreads();
++            const uint32_t prefix = sel.prefix, mask = sel.mask;
++            for (uint32_t j = t; j < n; j += THREADS)
++                if ((pool_key[j] & mask) == prefix) atomicAdd(&hist[(pool_key[j] >> shift) & 255u], 1u);
++            __syncthreads();
++            select_bin(hist[t], shift, suffix, sel);
++        }
++        threshold = sel.prefix, ties_needed = sel.need, ties = sel.count;
++        const bool some_ties = ties_needed != ties;
++        if (t == 0) { s_above = 0; s_ties = 0; }
++        __syncthreads();
++        for (uint32_t j = t; j < n; j += THREADS) {
++            const uint32_t key = pool_key[j];
++            const int32_t col = pool_col[j];
++            if (key > threshold || (key == threshold && !some_ties)) {
++                const uint32_t at = atomicAdd(&s_above, 1u);
++                cand_v[at] = value_of_key(key);
++                cand_col[at] = col;
++                cand_id[at] = ids ? ids[col] : col;
++            } else if (key == threshold) {
++                const uint32_t at = atomicAdd(&s_ties, 1u);
++                g->tie_col[at] = col;
++                g->tie_id[at] = ids ? ids[col] : col;
++            }
++        }
++        __syncthreads();
++        above = s_above;
++        if (some_ties) take_ties(g, ties, ties_needed, above, value_of_key(threshold), cand_v, cand_col, cand_id);
++    } else {
++        // 2b. a flat top: the other three bytes over the grid too, then the candidates over the grid
++        for (int shift = 16, pass = 1; shift >= 0; shift -= 8, ++pass) {
++            hist[t] = 0;
++            __syncthreads();
++            const uint32_t prefix = sel.prefix, mask = sel.mask;
++            for (int64_t i = first; i < width; i += stride) {
++                const uint32_t key = key_of(value_of(row, i));
++                if ((key & mask) == prefix) atomicAdd(&hist[(key >> shift) & 255u], 1u);
++            }
++            __syncthreads();
++            if (hist[t]) atomicAdd(&g->hist[pass][t], hist[t]);
++            grid.sync();
++            select_bin(__ldcg(&g->hist[pass][t]), shift, suffix, sel);
++        }
++        threshold = sel.prefix, ties_needed = sel.need, ties = sel.count;
++        const bool some_ties = ties_needed != ties;
++        for (int64_t i = first; i < width; i += stride) {
++            const uint32_t key = key_of(value_of(row, i));
++            if (key > threshold || (key == threshold && !some_ties)) {
++                const uint32_t at = atomicAdd(&g->count, 1u);
++                g->cand_v[at] = value_of_key(key);
++                g->cand_col[at] = i;
++                g->cand_id[at] = ids ? ids[i] : i;
++            } else if (key == threshold && ties <= TIE_CAP) {
++                const uint32_t at = atomicAdd(&g->ties, 1u);
++                g->tie_col[at] = static_cast<int32_t>(i);
++                g->tie_id[at] = ids ? ids[i] : i;
++            }
++        }
++        grid.sync();
++        if (blockIdx.x != 0) return;
++        above = __ldcg(&g->count);
++        for (uint32_t j = t; j < above; j += THREADS) {
++            cand_v[j] = __ldcg(&g->cand_v[j]);
++            cand_col[j] = __ldcg(reinterpret_cast<const long long*>(&g->cand_col[j]));
++            cand_id[j] = __ldcg(reinterpret_cast<const long long*>(&g->cand_id[j]));
++        }
++        if (some_ties && ties <= TIE_CAP)
++            take_ties(g, ties, ties_needed, above, value_of_key(threshold), cand_v, cand_col, cand_id);
++        if (some_ties && ties > TIE_CAP) {  // a very wide tie: one pass over the row for each equal taken
++            __syncthreads();
++            if (t == 0) s_above = above;
++            int64_t last = -1;
++            for (uint32_t r = 0; r < ties_needed; ++r) {
++                if (t == 0) g->min_packed = ~0ull;
++                __syncthreads();
++                unsigned long long best = ~0ull;
++                for (int64_t i = t; i < width; i += THREADS) {
++                    if (key_of(value_of(row, i)) != threshold) continue;
++                    const int64_t id = ids ? ids[i] : i;
++                    if (id > last) {    // the low 24 bits hold the column for the lookup back (rows of up to 16M)
++                        const unsigned long long packed = (static_cast<unsigned long long>(id) << 24) |
++                                                          static_cast<unsigned long long>(i);
++                        best = packed < best ? packed : best;
++                    }
++                }
++                for (int o = 16; o > 0; o >>= 1) {
++                    const unsigned long long other = __shfl_down_sync(0xffffffffu, best, o);
++                    best = other < best ? other : best;
++                }
++                if ((t & 31) == 0) atomicMin(&g->min_packed, best);
++                __syncthreads();
++                if (t == 0) {
++                    const uint32_t at = s_above++;
++                    const unsigned long long packed = __ldcg(&g->min_packed);
++                    cand_v[at] = value_of_key(threshold);
++                    cand_col[at] = static_cast<int64_t>(packed & 0xFFFFFFull);
++                    cand_id[at] = static_cast<int64_t>(packed >> 24);
++                }
++                __syncthreads();
++                last = cand_id[s_above - 1];
++                __syncthreads();
++            }
++        }
++    }
++    __syncthreads();
++
++    // 3. (-value, id) order, then each candidate's scaled logit and keyed Gumbel score
++    const double temperature = floats[0], top_p = floats[1], min_log = floats[2];
++    const uint64_t seed = static_cast<uint64_t>(ints[0]);
++    const uint64_t position = static_cast<uint64_t>(ints[1] + step);
++    if (t < k) {
++        int rank = 0;
++        for (int j = 0; j < k; ++j)
++            rank += cand_v[j] > cand_v[t] || (cand_v[j] == cand_v[t] && cand_id[j] < cand_id[t]);
++        const double s = static_cast<double>(cand_v[t]) / temperature;
++        scaled[rank] = s;
++        score[rank] = s - log(-log(keyed_uniform(seed, position, static_cast<uint64_t>(cand_id[t]))));
++        sorted_col[rank] = cand_col[t];
++    }
++    // the scratch back to zero for the next draw (every block's reads of it came before the last barrier)
++    for (int j = t; j < 4 * 256; j += THREADS) (&g->hist[0][0])[j] = 0;
++    if (t == 0) { g->count = 0; g->ties = 0; }
++    __syncthreads();
++
++    // 4. choose_rows' cuts and argmax, in its operation order; the float64 exps and divisions (slow on GeForce
++    //    parts) side by side, only the sums in order
++    if (t < k) probs[t] = exp(scaled[t] - scaled[0]);
++    __syncthreads();
++    if (t == 0) s_total = numpy_sum(probs, k);
++    __syncthreads();
++    if (t < k) probs[t] = probs[t] / s_total;
++    __syncthreads();
++    if (t == 0) {
++        double running = 0.0;
++        int keep = 1;
++        for (int i = 0; i < k; ++i) {
++            running += probs[i];
++            keep += running < top_p;
++        }
++        int best = 0;
++        double best_score = -INFINITY;
++        for (int i = 0; i < k; ++i) {
++            const bool cut = i >= keep || scaled[i] < scaled[0] + min_log;
++            const double s = cut ? -INFINITY : score[i];
++            if (s > best_score) { best_score = s; best = i; }
++        }
++        out[0] = sorted_col[best];
++    }
++}
++
++template <typename T>
++void launch(const T* row, const int64_t* ids, int64_t width, const int64_t* ints, const double* floats, int step,
++            int top_k, Scratch* scratch, int64_t* out, cudaStream_t stream) {
++    int device = 0, sms = 0, per_sm = 0;
++    C10_CUDA_CHECK(cudaGetDevice(&device));
++    C10_CUDA_CHECK(cudaDeviceGetAttribute(&sms, cudaDevAttrMultiProcessorCount, device));
++    C10_CUDA_CHECK(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&per_sm, keyed_draw_kernel<T>, THREADS, 0));
++    const int64_t wanted = (width + THREADS - 1) / THREADS;
++    const int blocks = static_cast<int>(std::max<int64_t>(1, std::min<int64_t>(wanted, int64_t(sms) * per_sm)));
++    void* args[] = {(void*)&row, (void*)&ids, (void*)&width, (void*)&ints, (void*)&floats, (void*)&step,
++                    (void*)&top_k, (void*)&scratch, (void*)&out};
++    C10_CUDA_CHECK(cudaLaunchCooperativeKernel((const void*)keyed_draw_kernel<T>, dim3(blocks), dim3(THREADS), args, 0,
++                                               stream));
++}
++
++}  // namespace
++
++int64_t keyed_scratch_bytes() { return sizeof(Scratch); }
++
++void keyed_draw_cuda(const at::Tensor& row, const c10::optional<at::Tensor>& ids, const at::Tensor& ints,
++                     const at::Tensor& floats, int64_t step, int64_t top_k, at::Tensor& scratch, at::Tensor& out) {
++    const at::cuda::CUDAGuard guard(row.device());
++    const cudaStream_t stream = at::cuda::getCurrentCUDAStream();
++    const int64_t* id_ptr = ids.has_value() ? ids->data_ptr<int64_t>() : nullptr;
++    auto* g = reinterpret_cast<Scratch*>(scratch.data_ptr());
++    if (row.scalar_type() == at::kBFloat16)
++        launch(reinterpret_cast<const __nv_bfloat16*>(row.data_ptr<at::BFloat16>()), id_ptr, row.numel(),
++               ints.data_ptr<int64_t>(), floats.data_ptr<double>(), static_cast<int>(step), static_cast<int>(top_k), g,
++               out.data_ptr<int64_t>(), stream);
++    else
++        launch(row.data_ptr<float>(), id_ptr, row.numel(), ints.data_ptr<int64_t>(), floats.data_ptr<double>(),
++               static_cast<int>(step), static_cast<int>(top_k), g, out.data_ptr<int64_t>(), stream);
++}
+diff --git a/src/tensorfold/cuda/kernels/keyed.py b/src/tensorfold/cuda/kernels/keyed.py
+new file mode 100644
+index 0000000..6a2a66d
+--- /dev/null
++++ b/src/tensorfold/cuda/kernels/keyed.py
+@@ -0,0 +1,34 @@
++"""The keyed draw of one row in one cooperative launch (``keyed.cu``): ``exact_sampling.choose`` over the whole row,
++spread over the SMs, no host wait."""
++
++from __future__ import annotations
++
++from functools import lru_cache
++from pathlib import Path
++
++import torch
++
++MAX_K = 256     # the largest top_k a draw takes
++
++
++@lru_cache(maxsize=1)
++def _ext():
++    from tensorfold.cuda.build import load
++
++    here = Path(__file__).parent
++    return load(name="tensorfold_keyed_v6", sources=[str(here / "keyed.cpp"), str(here / "keyed.cu")],
++                extra_cuda_cflags=["-O3", "--fmad=false"], verbose=False)
++
++
++def scratch(device) -> torch.Tensor:
++    """The zeroed device scratch a ``draw`` needs (each draw leaves it zero); one per stream of draws."""
++
++    return torch.zeros(_ext().scratch_bytes(), dtype=torch.uint8, device=device)
++
++
++def draw(row: torch.Tensor, ids: torch.Tensor | None, ints: torch.Tensor, floats: torch.Tensor, step: int,
++         top_k: int, work: torch.Tensor, out: torch.Tensor) -> torch.Tensor:
++    """The column of ``row`` drawn at position ``ints[1] + step`` (``DeviceSampling``'s staged rule), into ``out``."""
++
++    _ext().draw(row.contiguous(), ids, ints, floats, int(step), int(top_k), work, out)
++    return out
 diff --git a/src/tensorfold/cuda/kernels/qmm.cpp b/src/tensorfold/cuda/kernels/qmm.cpp
 index 81c10c7..612de34 100644
 --- a/src/tensorfold/cuda/kernels/qmm.cpp
@@ -2319,10 +2771,18 @@ index 7e635a9..f665314 100644
 -                        streams=streams)
 +                        streams=streams, swap_gib=float(options.get("swap_gib") or 0.0))
 diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/decode.py b/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
-index dccbaed..c7e07c9 100644
+index dccbaed..d8767ae 100644
 --- a/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
 +++ b/src/tensorfold/families/qwen3_5_moe/cuda/decode.py
-@@ -18,6 +18,8 @@ from tensorfold.families.qwen3_5.cuda.prefill import chunks, prefill_chunk
+@@ -9,6 +9,7 @@ from typing import Callable, Sequence
+ import numpy as np
+ import torch
+ 
++from tensorfold.cuda.kernels import keyed
+ from tensorfold.cuda.sampling import sample_rows
+ from tensorfold.cuda.streams import accept
+ from tensorfold.engine.exact_sampling import MARGIN, Sampling, choose_rows
+@@ -18,6 +19,8 @@ from tensorfold.families.qwen3_5.cuda.prefill import chunks, prefill_chunk
  
  from .mtp import Cache, Head
  
@@ -2331,7 +2791,7 @@ index dccbaed..c7e07c9 100644
  
  @dataclass
  class Carry:
-@@ -137,8 +139,12 @@ def extend(w, head: Head | None, prompt: Sequence[int], st: State, mc: Cache | N
+@@ -137,8 +140,12 @@ def extend(w, head: Head | None, prompt: Sequence[int], st: State, mc: Cache | N
          if head is not None:
              rows = normed if held is None else torch.cat([held, normed])
              start = a - (0 if held is None else 1)
@@ -2346,20 +2806,18 @@ index dccbaed..c7e07c9 100644
                  mc.pos = b - 1
              held = rows[-1:]
          if keep is not None and keep_at is not None and a < keep_at <= b:
-@@ -153,6 +159,12 @@ def extend(w, head: Head | None, prompt: Sequence[int], st: State, mc: Cache | N
+@@ -153,6 +160,10 @@ def extend(w, head: Head | None, prompt: Sequence[int], st: State, mc: Cache | N
  
  
  COPY_ROWS = 16       # a copied continuation's verify window
 +COMMIT_GRAPH = True  # the accepted path committed by one replay (``Graphs.commit``)
 +FOLLOW = True        # chained drafts verified in full by a replay launched straight after (no confidence cut)
 +CHAIN = True         # greedy drafts chained on the device in one graph (``Graphs.chain``), not a host wait a step
-+SAMPLED_CHAIN = False  # sampled (top_k on) drafts chained too, the keyed draw on the device (``DeviceSampling``): exact,
-+                      # but its ~30 small kernels a draft cost more than the host waits they save (R1s on the 3090:
-+                      # -2.5% quiet, +2% with 18 busy processes); off until the draw is one kernel
++SAMPLED_CHAIN = True  # sampled (top_k on) drafts chained too, each draw one launch on the device (``keyed.draw``)
  
  
  @torch.no_grad()
-@@ -182,7 +194,8 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
+@@ -182,7 +193,8 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
          tokens, path, new, carry = mtp_round(st, mc, carry, out[-1], count - len(out), sampling, context, copies,
                                               depth=depth, confidence=confidence, ids=head.ids, verify=verify,
                                               step=step, eos=w.config.eos if stop_eos else (),
@@ -2369,7 +2827,7 @@ index dccbaed..c7e07c9 100644
          out.extend(new)
          context.extend(new)
          rounds, drafted, kept = rounds + 1, drafted + len(tokens) - 1, kept + len(path) - 1
-@@ -195,13 +208,32 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
+@@ -195,13 +207,32 @@ def mtp_decode(w, head: Head, st: State, mc: Cache, carry: Carry, pending: int,
  def mtp_round(st: State, mc: Cache, carry: Carry, pending: int, room: int, sampling: Sampling | None,
                context: Sequence[int], copies: CopyIndex, *, depth: int, confidence: float, ids, verify, step,
                eos: Sequence[int] = (), in_place: bool = False,
@@ -2385,7 +2843,7 @@ index dccbaed..c7e07c9 100644
      guesses = copies.propose(context, COPY_ROWS - 1)      # an exact repeat of the context first: a long, likely window
 +    greedy = sampling is None or sampling.temperature <= 0
 +    chained = CHAIN and runner is not None and constraint is None and not guesses and \
-+        (greedy or (SAMPLED_CHAIN and bool(sampling.top_k)))
++        (greedy or (SAMPLED_CHAIN and 0 < sampling.top_k <= keyed.MAX_K))
 +    if chained and FOLLOW:      # drafts, then all of them verified, no wait between
 +        picks, host = runner.chain(carry.states, carry.tokens, mc.pos, depth, wait=False, sampling=sampling,
 +                                   first=n + 1)
@@ -2406,7 +2864,7 @@ index dccbaed..c7e07c9 100644
      while not guesses:
          token, prob = draft(logits, n + 1, sampling, ids)
          guesses.append(token)
-@@ -217,8 +249,17 @@ def mtp_round(st: State, mc: Cache, carry: Carry, pending: int, room: int, sampl
+@@ -217,8 +248,17 @@ def mtp_round(st: State, mc: Cache, carry: Carry, pending: int, room: int, sampl
      if window is not None:
          logits = constraint.mask(logits, window)
      sampled = sample_rows(logits, [n + 1 + i for i in range(len(tokens))], sampling)
@@ -2548,27 +3006,29 @@ index 81a1271..390b57f 100644
              return stats
          res = mtp_decode(self.w, self.head, st, mc, carry, first, max_tokens, sampling, depth=self.depth,
 diff --git a/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py b/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
-index 0f769c3..7dffff1 100644
+index 0f769c3..9b8731d 100644
 --- a/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
 +++ b/src/tensorfold/families/qwen3_5_moe/cuda/graphs.py
-@@ -7,7 +7,10 @@ from typing import Callable, Sequence
+@@ -7,7 +7,11 @@ from typing import Callable, Sequence
  
  import torch
  
 -from tensorfold.families.qwen3_5.cuda.forward import State, reserve, stage, tree_forward
 +from tensorfold.cuda.kernels import gdn as deltanet
 +from tensorfold.cuda.sampling import DeviceSampling
-+from tensorfold.engine.exact_sampling import MARGIN, Sampling
++from tensorfold.cuda.kernels import keyed
++from tensorfold.engine.exact_sampling import Sampling
 +from tensorfold.families.qwen3_5.cuda.forward import GDNRecord, State, commit, reserve, stage, tree_forward
  
  from .mtp import Cache, Head, Staged as HeadStaged
  
-@@ -23,17 +26,23 @@ class Graphs:
+@@ -23,17 +27,24 @@ class Graphs:
          self.pool = None                                # a new pool each time the buffers grow (``load``)
          self.target: dict[tuple[int, int], tuple] = {}
          self.mtp: dict[tuple[int, int], tuple] = {}
 +        self.chains: dict[tuple[int, int, int, int], tuple] = {}
 +        self.keyed = None                               # sampled chains' staged rule (``DeviceSampling``)
++        self.keyed_work = None                          # and the keyed draw's scratch
 +        self.commits: dict[tuple[int, int], tuple] = {}
 +        self.last = None                                # the key of the last verify replayed
  
@@ -2590,7 +3050,7 @@ index 0f769c3..7dffff1 100644
              self.st = self.mc = None
              gc.collect()
              # torch refuses a capture into a pool left registered without a graph: capture into a new one
-@@ -41,17 +50,36 @@ class Graphs:
+@@ -41,17 +52,36 @@ class Graphs:
              self.st = State(self.w)
              reserve(self.st, self.rows)
              self.mc = Cache(self.w, self.rows)
@@ -2630,7 +3090,7 @@ index 0f769c3..7dffff1 100644
          self.mc.pos = mc.pos
          return dst, self.mc
  
-@@ -69,8 +97,9 @@ class Graphs:
+@@ -69,8 +99,9 @@ class Graphs:
          return g, out
  
      @torch.no_grad()
@@ -2642,7 +3102,7 @@ index 0f769c3..7dffff1 100644
  
          width, st = len(tokens), self.st
          key = (width, self._bucket(st.pos + width))
-@@ -84,7 +113,10 @@ class Graphs:
+@@ -84,7 +115,10 @@ class Graphs:
              entry = self.target[key] = (g, staged, out)
          g, staged, out = entry
          staged.refresh(tokens, st.pos)
@@ -2653,7 +3113,7 @@ index 0f769c3..7dffff1 100644
          return out
  
      @torch.no_grad()
-@@ -110,3 +142,132 @@ class Graphs:
+@@ -110,3 +144,132 @@ class Graphs:
          staged.refresh(states, tokens, p0)
          g.replay()
          return out
@@ -2665,7 +3125,7 @@ index 0f769c3..7dffff1 100644
 +        each fed the previous step's pick on the device. The same calls and picks as ``draft`` then ``decode.draft``
 +        step by step, with one wait for the host: (the ``depth`` draft tokens, each one's probability).
 +        ``sampling`` (top_k on): each pick is ``choose``'s keyed draw at ``first + step``, drawn on the device
-+        (``DeviceSampling.pick``); the rule's values are staged per call, so one graph serves every request.
++        (``keyed.draw``, one launch over the row); the rule's values are staged per call, so one graph serves every request.
 +        ``wait=False``: no wait; returns (the picks and probabilities on the device, their pinned host copy in flight),
 +        for a verify launched straight after and a host that reads them once it next waits."""
 +
@@ -2675,6 +3135,7 @@ index 0f769c3..7dffff1 100644
 +        if top_k:
 +            if self.keyed is None:
 +                self.keyed = DeviceSampling(states.device)
++                self.keyed_work = keyed.scratch(states.device)
 +            self.keyed.set(sampling, first)
 +        entry = self.chains.get(key)
 +        c = self.w.config
@@ -2693,9 +3154,8 @@ index 0f769c3..7dffff1 100644
 +                    normed = self.head.forward(self.mc, s.states, (), at[i], staged=s)
 +                    row = self.head.logits(normed[-1:]).float()[0]
 +                    if top_k:
-+                        values, cols = torch.topk(row, min(row.shape[0], top_k + MARGIN))
-+                        cand = ids.index_select(0, cols) if ids is not None else cols
-+                        pick = cols.index_select(0, self.keyed.pick(values, cand, i, top_k))
++                        pick = keyed.draw(row, ids, self.keyed.ints, self.keyed.floats, i, top_k, self.keyed_work,
++                                          torch.empty(1, dtype=torch.int64, device=row.device))
 +                    else:
 +                        pick = row.argmax().view(1)             # indexed by index_select: [pick] would wait on the host
 +                    token = ids.index_select(0, pick) if ids is not None else pick
@@ -3183,6 +3643,80 @@ index 0000000..c28ce0d
 +        monkeypatch.setattr(experts, "SPLIT", split)
 +        got = run(ex, x, picks)
 +        assert torch.equal(got[0], want[0]) and torch.equal(got[1], want[1]), split
+diff --git a/tests/cuda/test_keyed_draw.py b/tests/cuda/test_keyed_draw.py
+new file mode 100644
+index 0000000..5a3302e
+--- /dev/null
++++ b/tests/cuda/test_keyed_draw.py
+@@ -0,0 +1,68 @@
++"""The keyed draw kernel (``kernels/keyed.cu``) picks what ``choose_rows`` picks over the row's exact top_k by
++(value, token id): bf16 ties, wide ties at the top and past the tie list, token ids mapped or not, each rule's cut."""
++
++import numpy as np
++import pytest
++import torch
++
++if not torch.cuda.is_available():
++    pytest.skip("CUDA only", allow_module_level=True)
++
++from tensorfold.cuda.kernels import keyed  # noqa: E402
++from tensorfold.cuda.sampling import DeviceSampling  # noqa: E402
++from tensorfold.engine.exact_sampling import Sampling, choose_rows  # noqa: E402
++
++
++def _host(row: torch.Tensor, ids, s: Sampling, position: int) -> int:
++    vals = row.float().cpu().numpy()
++    tok = ids.cpu().numpy() if ids is not None else np.arange(row.shape[0])
++    order = np.lexsort((tok, -vals))[:max(1, min(s.top_k, row.shape[0]))]
++    return int(choose_rows(vals[order][None], tok[order][None].astype(np.int64), [position], s)[0])
++
++
++@pytest.mark.parametrize("width", [79600, 256, 7])
++def test_draw_equals_choose_rows(width):
++    rng = np.random.default_rng(width)
++    dev = "cuda"
++    ds, out, work = DeviceSampling(dev), torch.zeros(1, dtype=torch.int64, device=dev), keyed.scratch(dev)
++    mapped = torch.tensor(np.sort(rng.choice(248000, width, replace=False)), device=dev)
++    rules = [dict(), dict(top_p=1.0), dict(min_p=0.05), dict(temperature=0.6), dict(top_k=40, top_p=0.8),
++             dict(top_k=1), dict(top_k=256)]
++    for cfg in rules:
++        for t in range(30):
++            s = Sampling(seed=int(rng.integers(0, 2**63)), **cfg)
++            row = torch.randn(width, device=dev) * 3
++            if t % 2 == 0:
++                row = row.bfloat16()                                    # bf16: ties are common
++            if t % 5 == 0:
++                row[torch.randperm(width, device=dev)[:40]] = row.max()  # a tie across the top
++            if t % 11 == 0:
++                row[torch.randperm(width, device=dev)[:5000]] = row.max()  # past the pool and the tie list
++            ids = mapped if t % 3 else None
++            pos, step = int(rng.integers(0, 100000)), int(rng.integers(0, 3))
++            ds.set(s, pos)
++            keyed.draw(row, ids, ds.ints, ds.floats, step, s.top_k, work, out)
++            tok = int(out.item()) if ids is None else int(ids[int(out.item())].item())
++            assert tok == _host(row, ids, s, pos + step), (cfg, t)
++
++
++def test_draw_replays_in_a_graph():
++    dev = "cuda"
++    row = torch.randn(79600, device=dev)
++    ds, work = DeviceSampling(dev), keyed.scratch(dev)
++    s = Sampling(seed=7)
++    ds.set(s, 100)
++    stream = torch.cuda.Stream()
++    with torch.cuda.stream(stream):
++        out = keyed.draw(row, None, ds.ints, ds.floats, 0, s.top_k, work,
++                         torch.empty(1, dtype=torch.int64, device=dev))
++    torch.cuda.synchronize()
++    g = torch.cuda.CUDAGraph()
++    with torch.cuda.graph(g):
++        keyed.draw(row, None, ds.ints, ds.floats, 0, s.top_k, work, out)
++    for pos in (100, 5000, 123456):
++        ds.set(s, pos)
++        row.copy_(torch.randn_like(row))
++        g.replay()
++        torch.cuda.synchronize()
++        assert int(out.item()) == _host(row, None, s, pos)
 diff --git a/tests/cuda/test_moe_decode_path.py b/tests/cuda/test_moe_decode_path.py
 new file mode 100644
 index 0000000..0476ecd
