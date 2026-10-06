@@ -342,6 +342,31 @@ R1s-SD on the held-out 20, 3 attempts per cap, 4 at a time, servers with the con
   runs it is ~20% at both caps.
 - The lever is a thinking budget per reply, or turning a cut reply into "continue, and act" instead of an ending.
 
+## Plan first, then execute (2026-10-05)
+
+Can R1s-SD do better when "work out what to do" is split from "do it"? `plan_eval.py`: each attempt, a fresh plan per
+task from one tools-free call, then a normal prime_agent run with the plan in the task prompt. Held-out 20, 3 attempts,
+same settings as the 32K baseline above.
+
+- **blind:** the plan comes from the task text alone ("imagine an IPython REPL: what actions would you take"), and the
+  run is told to carry it out.
+- **look:** a 10-turn read-only inspection run first. Its transcript goes into the planning call, and the run follows
+  the plan but rewrites the remaining steps when a step fails.
+
+| | Attempts | Solved | Sandbox or server failures (qemu-startup not counted) |
+|---|---|---|---|
+| 32K baseline | 11, 9, 11 | 31/60 | 3 |
+| blind | 10, 10, 10 | 30/60 | 8 |
+| look | 12, 8, 5 | 25/60 | 8 |
+
+- No gain. Counting only runs that weren't killed by the sandbox or server: baseline 31/57, blind 30/52, look 25/52.
+- Most failures in the plan arms were Prime terminating sandboxes mid-run (`The sandbox has been terminated`) while
+  the agent was doing something harmless. That was the evening's infrastructure, not the plans.
+- The one task that moved: sqlite-db-truncate, which needs a look at the damaged file before any plan makes sense.
+  look 2/3, baseline 1/3, blind 1/3.
+- With the lessons loop (root README, RLTL;DR) this closes the in-context tricks. Text in the prompt, whether a lesson
+  or a plan, doesn't change what R1s-SD does once it is working.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
