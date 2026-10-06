@@ -20,6 +20,10 @@ The harness never sees the notes, so each later request of that run gets them pu
 injection is remembered by its position and by the reply that followed it (tool call ids, else the text), and matched
 on the run's first user message. --fixes "" passes everything through, so a baseline runs through the same proxy.
 Every fix that fires is logged to --log (time, fix, turn, what came back).
+
+cutoff and check touch only the agent's own turns: requests whose system prompt starts with --main (prime_agent's
+"You are a general purpose agent"). prime_agent also calls the model for its /refine review gate, its continual-harness
+subsystem and context summaries; those end with plain text by design, and the first smoke test checked them.
 """
 import argparse
 import hashlib
@@ -114,10 +118,18 @@ class Proxy:
         with self.lock:
             self.injections.setdefault(key, []).append((pos, notes, sig(reply)))
 
+    def is_main(self, messages: list) -> bool:
+        system = next((m for m in messages if m.get("role") == "system"), {})
+        c = system.get("content")
+        if isinstance(c, list):
+            c = "".join(p.get("text", "") for p in c if isinstance(p, dict))
+        return (c or "").lstrip().startswith(self.a.main)
+
     def complete(self, body: dict) -> dict:
         harness_msgs = body["messages"]
         key = run_key(harness_msgs)
-        msgs = self.restore(key, harness_msgs) if self.fixes else harness_msgs
+        main = self.is_main(harness_msgs)
+        msgs = self.restore(key, harness_msgs) if self.fixes and main else harness_msgs
         if "image" in self.fixes:
             msgs, n = no_images(msgs)
             if n:
@@ -125,7 +137,7 @@ class Proxy:
         res = self.post({**body, "messages": msgs})
         pos, notes = len(harness_msgs), []
         msg, fin = res["choices"][0]["message"], res["choices"][0].get("finish_reason")
-        if "cutoff" in self.fixes:
+        if "cutoff" in self.fixes and main:
             for i in range(self.a.cutoff_retries):
                 if fin != "length" or msg.get("tool_calls"):
                     break
@@ -135,7 +147,7 @@ class Proxy:
                 res = self.post({**body, "messages": msgs + notes, "chat_template_kwargs": kw})
                 msg, fin = res["choices"][0]["message"], res["choices"][0].get("finish_reason")
                 self.note(fix="cutoff", turn=pos, retry=i + 1, finish=fin, acted=bool(msg.get("tool_calls")))
-        if "check" in self.fixes and not msg.get("tool_calls") and fin == "stop":
+        if "check" in self.fixes and main and not msg.get("tool_calls") and fin == "stop":
             first_reply = next((m for m in harness_msgs if m.get("role") == "assistant"), None)
             ck = key + (sig(first_reply) if first_reply else "")
             with self.lock:
@@ -221,6 +233,8 @@ def main():
     ap.add_argument("--port", type=int, default=8101)
     ap.add_argument("--fixes", default="cutoff,check,image", help='comma list of cutoff, check, image ("" = none)')
     ap.add_argument("--cutoff-retries", type=int, default=2)
+    ap.add_argument("--main", default="You are a general purpose agent",
+                    help="start of the system prompt of the agent's own turns (other model calls pass through)")
     ap.add_argument("--carry", type=int, default=6000, help="characters of the cut thinking kept in the cutoff note")
     ap.add_argument("--log", default=None)
     a = ap.parse_args()
