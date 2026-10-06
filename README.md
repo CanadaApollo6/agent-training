@@ -590,3 +590,23 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
       of reward, and neither touches weights.
     - The "own local checks" part matters: the improver verifies its edits with tests it writes, the way our lessons
       writer reads test output. No benchmark leaks into the search.
+- [Leviathan](https://github.com/elstongun/leviathan) (elstongun; Apache 2.0; one commit, 2026-10-05): "deep memory
+  for agents over large datasets". One Rust binary indexes records (JSONL, CSV, SQLite, or any database CLI's output)
+  into one SQLite file with full-text search. The agent asks in plain words, scoped to one customer or machine, and
+  gets back about 450 tokens of short, cited result cards, whatever the dataset size. It works from the shell with
+  a skill file, or as a read-only MCP server.
+  - It is keyword search (SQLite FTS5 with BM25 ranking), not embeddings. A question that shares no words with the
+    right record can miss it. Lay versus clinical wording ("can't breathe" versus "dyspnea") is the case to test
+    before relying on it.
+  - The evidence is the author's own benchmark on synthetic data from the author's own generator: one maintenance
+    log, single-entity lookups. At 1M records the right record is in the top 5 for 99% of questions, at a median
+    436 tokens. The baselines are grep dumps, not an agent querying SQL or a vector index, so "245× fewer tokens"
+    is the gap to a strawman. The benchmark does make the questions use different words from the records.
+  - Built it here (about a minute, no GPU) and searched its sample tickets: it works as described. The sample has
+    24 records, too few to test ranking.
+  - **For us:** a tool for small models more than a research result. Ornith works inside a 32K reply cap, and short,
+    capped tool output is what keeps a small model from drowning in raw history. That fits Riel's harness thesis:
+    give the small model compact tools. For Smart Data client agents it suits PHI: offline, read-only, holds no
+    credentials. The index file is itself PHI, though, and needs the same handling as the source data. For a
+    Songbird agent or a Module 4 environment, it is a ready-made "look up this customer's history" tool. Before
+    using it on client data, benchmark it on a real export against SQL plus an embedding search.
