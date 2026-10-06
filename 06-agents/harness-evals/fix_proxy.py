@@ -6,8 +6,10 @@
 Three fixes, each aimed at a measured way R1s-SD loses prime_agent runs (README, "Reply cap under prime_agent"):
 
 - cutoff: a reply that hits the length cap before any tool call ends the run as agent_completed (the model thought for
-  the whole 32K). The reply is dropped and the request sent again with a note after the last message: you ran out of
-  room while thinking, act now with code. Up to --cutoff-retries times a turn.
+  the whole 32K). The reply is dropped and the request sent again with thinking off and a note after the last message:
+  the end of the cut thinking (--carry characters), then "act now with a tool call". A note alone wasn't enough: the
+  first real retry thought for another 32K. TensorFold's CUDA server ignores a request's thinking_budget, but honours
+  enable_thinking. Up to --cutoff-retries times a turn.
 - check: the first time a run's reply has no tool call (the model says it's done), its reply is kept and a note asks
   it to re-read the task, list every output the tests will look for, and check each with code. Its next reply goes
   back to the harness instead. Once per run.
@@ -29,9 +31,9 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-CUTOFF_NOTE = ("Your last reply hit the length limit while you were still thinking, before you did anything, so it was "
-               "thrown away. Don't work it all out in your head: take the next concrete step now with a tool call, and "
-               "let code do the decoding, searching and checking.")
+CUTOFF_NOTE = ("Your last reply hit the length limit while you were still thinking, before you did anything. This is "
+               "where your thinking had got to:\n\n<<<\n{carry}\n>>>\n\nStop deliberating. Take the next concrete step "
+               "now with a tool call, and let code do the decoding, searching and checking.")
 CHECK_NOTE = ("Before you finish: this task is graded by hidden tests that run after you stop, on the files and state "
               "you leave behind. Re-read the task and list every output it asks for (files, paths, names, formats, "
               "running services). Check each one now with code, and fix anything missing or wrong. If everything checks "
@@ -127,8 +129,10 @@ class Proxy:
             for i in range(self.a.cutoff_retries):
                 if fin != "length" or msg.get("tool_calls"):
                     break
-                notes.append({"role": "user", "content": CUTOFF_NOTE})
-                res = self.post({**body, "messages": msgs + notes})
+                thought = msg.get("reasoning_content") or msg.get("reasoning") or text_of(msg)
+                notes.append({"role": "user", "content": CUTOFF_NOTE.format(carry=thought[-self.a.carry:].strip())})
+                kw = {**(body.get("chat_template_kwargs") or {}), "enable_thinking": False}
+                res = self.post({**body, "messages": msgs + notes, "chat_template_kwargs": kw})
                 msg, fin = res["choices"][0]["message"], res["choices"][0].get("finish_reason")
                 self.note(fix="cutoff", turn=pos, retry=i + 1, finish=fin, acted=bool(msg.get("tool_calls")))
         if "check" in self.fixes and not msg.get("tool_calls") and fin == "stop":
@@ -217,6 +221,7 @@ def main():
     ap.add_argument("--port", type=int, default=8101)
     ap.add_argument("--fixes", default="cutoff,check,image", help='comma list of cutoff, check, image ("" = none)')
     ap.add_argument("--cutoff-retries", type=int, default=2)
+    ap.add_argument("--carry", type=int, default=6000, help="characters of the cut thinking kept in the cutoff note")
     ap.add_argument("--log", default=None)
     a = ap.parse_args()
     ThreadingHTTPServer(("127.0.0.1", a.port), handler(Proxy(a))).serve_forever()
