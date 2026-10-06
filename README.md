@@ -438,6 +438,18 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     - Keep this off the held-out 20, since their test outputs would leak into the insights.
     - The Smart Data version is a per-client insight bank of short rules learned from failures, a natural fit for
       prime_agent's editable context.
+  - **Our in-context test (2026-10-05, `06-agents/harness-evals/lessons_loop.py`):** R1s-SD under prime_agent on 16
+    TB2 tasks it had never solved, 6 rounds, with all earlier TL;DRs in the task prompt. Rounds 1-3 ran on servers
+    without the context clamp, and 19 attempts died on context overflow before their tests ran; rounds 4-6 had 1.
+    - **3/16 solved, and only 1 with a lesson in context.** prove-plus-comm (round 2, lesson "the tests look in /app,
+      not /workspace"). dna-insert (round 2) and write-compressor (round 5) had no lessons in their prompts: plain
+      retries.
+    - 44 of 77 failed attempts left no lesson: 29 crashed before the tests ran (no failing tests to read), 4 replies
+      went back to solving instead of writing a TL;DR.
+    - One lesson leaked the answer (mteb-leaderboard: "write GritLM/GritLM-7B to /app/result.txt"), and the next
+      attempt still spent 60 turns without writing the file. Lessons that state a plan are not followed reliably.
+    - The useful kind is an environment fact the tests check (paths, file names), the paper's "API fact". On
+      every-task-its-own-world TB2 that is rare, as expected.
 - [Mid-Harness](https://arxiv.org/abs/2609.39982) (Kang et al., NVIDIA/KAIST, 2026-09; no code mentioned): best-of-N
   per action instead of per trajectory.
   - **Loop:**

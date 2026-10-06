@@ -6,7 +6,9 @@ points --env.taskset.dataset terminal-lego/<name> at it; run with --env.agent.ru
 Eligible: medium or hard, not dropped for TB2 contamination (results/exclude_tasks.txt) or by Prime's quality filter
 (oracle failures, no-op passes, build timeouts: data/prime-data-excluded-tasks.jsonl).
 
-Usage: python make_taskset.py NAME [--medium 36] [--hard 12] [--seed 0] [--parallel 8]
+Usage: python make_taskset.py NAME [--medium 36] [--hard 12] [--seed 0] [--parallel 8] [--skip NAME ...]
+
+--skip leaves out the tasks of earlier tasksets (results/taskset_<NAME>.txt).
 """
 
 import argparse
@@ -67,8 +69,10 @@ def main() -> None:
     ap.add_argument("--hard", type=int, default=12)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--parallel", type=int, default=8)
+    ap.add_argument("--skip", nargs="*", default=[], help="earlier tasksets whose tasks to leave out")
     a = ap.parse_args()
-    rows, rng = eligible(), random.Random(a.seed)
+    skip = {l.split()[0] for n in a.skip for l in open(HERE / "results" / f"taskset_{n}.txt") if l.strip()}
+    rows, rng = [r for r in eligible() if r["task"] not in skip], random.Random(a.seed)
     chosen = pick([r for r in rows if r["difficulty"] == "medium"], a.medium, rng) + \
         pick([r for r in rows if r["difficulty"] == "hard"], a.hard, rng)
     print(f"{len(rows)} eligible; picked {len(chosen)}:", dict(collections.Counter(r["category"] for r in chosen)))
