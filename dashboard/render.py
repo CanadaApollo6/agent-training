@@ -52,6 +52,12 @@ def main():
     legend = "".join(f'<span><i style="background:{ending_colour[x["id"]]}"></i>{e(x["label"])}</span>'
                      for x in arms["off"]["endings"] if x["id"] in ending_colour)
 
+    rerun_rows = "".join(
+        f'<div class="srow" style="grid-template-columns:70px 1fr 130px"><span>{e(r["label"])}</span>'
+        + bar([(r["done"], "var(--primary)", "done"), (r["expected"] - r["done"], "var(--border)", "left")], 6)
+        + f'<span class="num">{r["done"]}/{r["expected"]} · {r["solved"]} solved</span></div>'
+        for r in live.get("reruns", []))
+
     # Tasks where the two sides differ (only tasks both sides have finished, failures from infra left out)
     diffs = []
     for t in live["tasks"]:
@@ -128,6 +134,12 @@ expected to finish around <b>{e(live["eta"])}</b>.</div>
 <div class="note">{e(live["noise"])} Runs lost to failures outside the model (sandboxes shut down mid-run on Prime's side,
 server errors, a wifi drop here at 4:45 p.m.): {arms["off"]["errors"]} with fixes off, {arms["on"]["errors"]} with fixes on.
 The second figure leaves those out.</div>
+
+<h2>Rerunning the lost runs</h2>
+<div class="muted" style="margin-bottom:8px">Every run lost to a failure outside the model gets one more try, on four more
+servers, so both sides end with about the same number of usable runs. Started 5:10 p.m.; these are not in the
+figures above yet.</div>
+{rerun_rows}
 
 <h2>How often each fix fired</h2>
 <table><tr><th>Fix</th><th>Fired</th><th>Then</th></tr>{fixes}</table>

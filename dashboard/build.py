@@ -700,6 +700,21 @@ def stop_breakdown(runs):
     return out
 
 
+def rerun_view(day, tz):
+    """The top-up: rollouts lost to infrastructure, rerun on two servers per side (fixes_rerun.sh, lost_runs.py)."""
+    rows = []
+    for arm, label in (("off", "Fixes off"), ("on", "Fixes on")):
+        runs, expected = [], 0
+        for s in (1, 2):
+            tasks = EVAL / f"tb2_lost_{arm}_s{s}.txt"
+            expected += len(read_text(tasks).split())
+            runs += parse_rollouts(EVAL / "logs" / f"tb2full-ornith35b-r1s-sd-fixes-{arm}-r{s}-prime_agent.log", day, tz, None)
+        rows.append({"id": arm, "label": label, "done": len(runs), "expected": expected,
+                     "solved": sum(1 for r in runs if r["solved"]),
+                     "errors": sum(1 for r in runs if stop_is_error(r["stop"]))})
+    return rows
+
+
 def arm_view(name, label, servers, now, pace_from):
     runs = [run for server in servers for run in server["runs"]]
     done = len(runs)
@@ -945,6 +960,7 @@ def build():
                 else "Every scheduled run has a result in the logs."
             ),
             "arms": [off, on],
+            "reruns": rerun_view(day, tz),
             "fixes": fixes,
             "trace_runs": {"off": trace_counts["off"], "on": trace_counts["on"]},
             "tasks": tasks,
