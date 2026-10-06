@@ -125,8 +125,9 @@ th{{font-size:12px;font-weight:500;color:var(--muted-foreground)}}
 expected to finish around <b>{e(live["eta"])}</b>.</div>
 <div class="arms" style="margin-top:10px">{"".join(arm_html)}</div>
 <div class="legend">{legend}</div>
-<div class="note">{e(live["noise"])} Both sides lose about the same number of runs to sandboxes shut down mid-run on
-Prime's side; the second figure leaves those out.</div>
+<div class="note">{e(live["noise"])} Runs lost to failures outside the model (sandboxes shut down mid-run on Prime's side,
+server errors, a wifi drop here at 4:45 p.m.): {arms["off"]["errors"]} with fixes off, {arms["on"]["errors"]} with fixes on.
+The second figure leaves those out.</div>
 
 <h2>How often each fix fired</h2>
 <table><tr><th>Fix</th><th>Fired</th><th>Then</th></tr>{fixes}</table>

@@ -23,6 +23,9 @@ OUT = DASH / "data.json"
 
 # Fixes-on server 1 keeps its tasks 0..P1_SPLIT; a helper server (on-p1b) runs the rest of its list.
 P1_SPLIT = 25
+# Rollouts that never logged "rollout done" because the driver was stopped by hand: {server: {id: (task, clock)}}.
+# Counted as lost to errors. off-p2's task 21 hung after its 13:27 agent timeout; stopped at 16:50.
+HUNG = {"off-p2": {"f580321e19134711af2b6e275cc97a27": (21, "13:27:08")}}
 ERROR_STOPS = {"providererror", "harnesserror", "sandboxerror"}
 STOP_PLAIN = {
     "agentcompleted": "finished on its own",
@@ -800,6 +803,9 @@ def build():
         path = EVAL / "logs" / f"tb2full-ornith35b-r1s-sd-fixes-{arm}-p{half}-prime_agent.log"
         start = spend_start.get(key)
         runs = parse_rollouts(path, day, tz, start)
+        for run_id, (task, clock) in HUNG.get(key, {}).items():
+            runs.append({"id": run_id, "task": task, "when": clock_on(day, clock, tz), "reward": 0.0,
+                         "solved": False, "turns": 0, "stop": "HarnessError"})
         if key == "on-p1":
             dropped_ids.update(run["id"] for run in runs if run["task"] > P1_SPLIT)
             runs = [run for run in runs if run["task"] <= P1_SPLIT]
