@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ornith — where things stand</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f3f0e8;
+    --paper: #fbf9f4;
+    --ink: #1d1a16;
+    --muted: #5f584e;
+    --line: #e3dcd0;
+    --chip: #efeae1;
+    --accent: #1d6b58;
+    --accent-soft: #e4f1eb;
+    --good: #1d6b58;
+    --on-good: #f7fffb;
+    --sometimes: #9a6410;
+    --sometimes-soft: #f8efd6;
+    --never: #8a847a;
+    --warn: #8a4e28;
+    --warn-soft: #f8ecdf;
+    --shadow: 0 1px 0 rgba(40, 30, 10, 0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12110f;
+      --paper: #1c1b18;
+      --ink: #f3efe6;
+      --muted: #b7b0a3;
+      --line: #322f29;
+      --chip: #26241f;
+      --accent: #8fd0b8;
+      --accent-soft: #173028;
+      --good: #8fd0b8;
+      --on-good: #10241c;
+      --sometimes: #e6c27a;
+      --sometimes-soft: #2c2618;
+      --never: #9a948a;
+      --warn: #f0b089;
+      --warn-soft: #2c221b;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.5 ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  main {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 36px 22px 72px;
+  }
+  header.top { margin-bottom: 28px; }
+  .kicker {
+    margin: 0 0 6px;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 2.7rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-weight: 640;
+  }
+  .blurb { margin: 12px 0 0; max-width: 68ch; color: var(--muted); }
+  .asof { margin: 10px 0 0; color: var(--muted); font-size: 0.92rem; }
+  section { margin-top: 28px; }
+  h2 {
+    margin: 0 0 6px;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    font-weight: 640;
+  }
+  .lead { margin: 0 0 16px; max-width: 72ch; }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .stat {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 16px 14px;
+  }
+  .stat b {
+    display: block;
+    font-size: clamp(1.6rem, 3vw, 2.15rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-weight: 640;
+  }
+  .stat span { display: block; margin-top: 8px; color: var(--muted); font-size: 0.92rem; }
+  .note {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--chip);
+    color: var(--muted);
+    font-style: normal;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .note.interim { background: var(--sometimes-soft); color: var(--sometimes); }
+  .arms { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .arm h3 { margin: 0 0 4px; font-size: 1.05rem; }
+  .meta { color: var(--muted); font-size: 0.92rem; margin: 0 0 10px; }
+  .track {
+    height: 12px;
+    background: var(--chip);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .fill { height: 100%; background: var(--accent); border-radius: 99px; }
+  .halves { margin-top: 12px; display: grid; gap: 8px; }
+  .half { display: grid; grid-template-columns: 7.2rem 1fr auto; gap: 8px; align-items: center; font-size: 0.88rem; color: var(--muted); }
+  .half .track { height: 7px; }
+  .solve {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .solve strong { font-size: 1.35rem; letter-spacing: -0.02em; }
+  .callout {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--sometimes-soft);
+    color: var(--ink);
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.98rem; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-size: 0.78rem; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  .fix-name { font-weight: 650; }
+  .fix-detail { color: var(--muted); font-size: 0.92rem; }
+  .ends { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .end-row { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 0.92rem; }
+  .grid-wrap { max-height: 540px; overflow: auto; border: 1px solid var(--line); border-radius: 12px; }
+  .task-table { font-size: 0.92rem; }
+  .task-table th { position: sticky; top: 0; background: var(--paper); }
+  .task-table td { border-bottom: 1px solid var(--line); }
+  .tries { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 52px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 650;
+  }
+  .chip.yes { background: var(--good); color: var(--on-good); }
+  .chip.no { border: 1px solid var(--line); color: var(--muted); }
+  .chip.err { background: var(--warn-soft); color: var(--warn); }
+  .chip.wait { color: var(--muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 0 0 12px; color: var(--muted); font-size: 0.88rem; }
+  .timeline { display: grid; gap: 0; }
+  .trow {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .trow time { color: var(--muted); font-size: 0.92rem; }
+  .trow h3 { margin: 0 0 4px; font-size: 1.02rem; }
+  .trow p { margin: 0; }
+  .bars { display: grid; gap: 14px; margin-top: 8px; }
+  .bar-row { display: grid; grid-template-columns: 11.5rem 1fr auto; gap: 12px; align-items: center; }
+  .bar-row span { color: var(--muted); font-size: 0.92rem; }
+  .stack { display: flex; height: 18px; border-radius: 6px; overflow: hidden; background: var(--chip); }
+  .stack i { display: block; height: 100%; flex: none; }
+  .stack .always { background: var(--good); }
+  .stack .sometimes { background: var(--sometimes); }
+  .stack .never { background: var(--never); }
+  .swatches { display: flex; flex-wrap: wrap; gap: 14px; margin: 4px 0 16px; color: var(--muted); font-size: 0.88rem; }
+  .swatches b { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .price { margin: 6px 0; font-size: 1.6rem; letter-spacing: -0.03em; font-weight: 640; }
+  .spend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .spend-grid p { margin: 6px 0 0; }
+  footer {
+    margin-top: 36px;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+  footer ul { padding-left: 1.1rem; margin: 8px 0 0; }
+  .misses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .misses div { padding: 12px; border-radius: 12px; background: var(--chip); }
+  .misses b { display: block; font-size: 1.4rem; }
+  .misses span { color: var(--muted); font-size: 0.88rem; }
+  @media (max-width: 800px) {
+    .stats, .arms, .ends, .choices, .spend-grid, .misses { grid-template-columns: 1fr; }
+    .bar-row, .trow { grid-template-columns: 1fr; gap: 4px; }
+    .half { grid-template-columns: 6.2rem 1fr auto; }
+  }
+</style>
+</head>
+<body>
+<main id="app">
+  <p class="blurb">Loading the latest numbers…</p>
+</main>
+<script>
+const app = document.getElementById("app");
+
+function h(tag, props, kids) {
+  const node = document.createElement(tag);
+  if (props) {
+    for (const [key, value] of Object.entries(props)) {
+      if (value == null) continue;
+      if (key === "class") node.className = value;
+      else node.setAttribute(key, value);
+    }
+  }
+  for (const kid of kids || []) {
+    if (kid == null) continue;
+    node.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return node;
+}
+
+function pct(n, d) {
+  if (!d) return 0;
+  return Math.max(0, Math.min(100, (100 * n) / d));
+}
+
+function pctLabel(n, d) {
+  if (!d) return "—";
+  return Math.round((100 * n) / d) + "%";
+}
+
+function track(done, expected) {
+  const width = expected ? pct(done, expected).toFixed(1) + "%" : "0%";
+  return h("div", { class: "track" }, [
+    h("div", { class: "fill", style: "width:" + width })
+  ]);
+}
+
+function note(text) {
+  if (!text) return null;
+  return h("i", { class: text === "Interim" ? "note interim" : "note" }, [text]);
+}
+
+function renderStats(numbers) {
+  return h("div", { class: "stats" }, numbers.map((item) =>
+    h("div", { class: "stat" }, [
+      h("b", null, [item.value]),
+      h("span", null, [item.label]),
+      note(item.note)
+    ])
+  ));
+}
+
+function renderArm(arm) {
+  const solve = arm.done
+    ? arm.solved + " of " + arm.done + " solved (" + pctLabel(arm.solved, arm.done) + ")"
+    : "No finished runs yet";
+  return h("article", { class: "card arm" }, [
+    h("h3", null, [arm.label]),
+    h("p", { class: "meta" }, [arm.done + " of " + arm.expected + " runs"]),
+    track(arm.done, arm.expected),
+    h("div", { class: "halves" }, arm.servers.map((server) =>
+      h("div", { class: "half" }, [
+        h("span", null, [server.label]),
+        track(server.done, server.expected),
+        h("span", null, [server.done + " / " + server.expected])
+      ])
+    )),
+    h("div", { class: "solve" }, [
+      h("strong", null, [solve]),
+      arm.errors
+        ? h("p", { class: "meta" }, [
+            arm.errors + (arm.errors === 1 ? " run stopped" : " runs stopped") +
+            " on a server, sandbox, or harness error. " +
+            (arm.errors === 1 ? "It is counted" : "They are counted") + " as not solved."
+          ])
+        : null,
+      arm.image_stops
+        ? h("p", { class: "meta" }, [
+            arm.image_stops + (arm.image_stops === 1 ? " run ended" : " runs ended") +
+            " when the model tried to view an image, which it can't. This is what the image fix prevents. " +
+            "Counted as not solved."
+          ])
+        : null
+    ])
+  ]);
+}
+
+function renderFixes(fixes) {
+  return h("table", null, [
+    h("thead", null, [h("tr", null, [
+      h("th", null, ["Fix"]),
+      h("th", { class: "num" }, ["Times it fired"]),
+      h("th", { class: "num" }, ["Then the model acted"])
+    ])]),
+    h("tbody", null, fixes.map((fix) =>
+      h("tr", null, [
+        h("td", null, [
+          h("div", { class: "fix-name" }, [fix.label]),
+          h("div", { class: "fix-detail" }, [fix.detail])
+        ]),
+        h("td", { class: "num" }, [String(fix.fired)]),
+        h("td", { class: "num" }, [fix.acted_known ? String(fix.acted) : "Not recorded"])
+      ])
+    ))
+  ]);
+}
+
+function renderEndings(arms) {
+  return h("div", { class: "ends" }, arms.map((arm) =>
+    h("div", { class: "card" }, [
+      h("h3", null, [arm.label]),
+      ...arm.endings.filter((row) => row.count).map((row) =>
+        h("div", { class: "end-row" }, [
+          h("span", null, [row.label]),
+          h("b", null, [String(row.count)])
+        ])
+      )
+    ])
+  ));
+}
+
+function chip(try_) {
+  if (!try_) return h("span", { class: "chip wait", title: "Not finished yet" }, ["—"]);
+  const kind = try_.error ? "err" : try_.solved ? "yes" : "no";
+  const word = try_.error ? "error" : try_.solved ? "pass" : "fail";
+  const title = (try_.solved ? "Passed" : "Did not pass") + ", " + try_.plain;
+  return h("span", { class: "chip " + kind, title: title }, [word]);
+}
+
+function renderTasks(tasks, traceRuns, arms) {
+  const offDone = arms[0].done;
+  const onDone = arms[1].done;
+  const mismatch = traceRuns.off !== offDone || traceRuns.on !== onDone;
+  const rows = tasks.map((task) => {
+    const off = task.off.slice(0, 4);
+    const on = task.on.slice(0, 4);
+    while (off.length < 2) off.push(null);
+    while (on.length < 2) on.push(null);
+    return h("tr", null, [
+      h("td", null, [task.name]),
+      h("td", null, [h("div", { class: "tries" }, off.map(chip))]),
+      h("td", null, [h("div", { class: "tries" }, on.map(chip))])
+    ]);
+  });
+  return h("div", null, [
+    h("p", { class: "legend" }, [
+      h("span", null, [h("span", { class: "chip yes" }, ["pass"]), " tests passed"]),
+      h("span", null, [h("span", { class: "chip no" }, ["fail"]), " tests failed"]),
+      h("span", null, [h("span", { class: "chip err" }, ["error"]), " stopped on an error"]),
+      h("span", null, [h("span", { class: "chip wait" }, ["—"]), " not finished"])
+    ]),
+    mismatch
+      ? h("p", { class: "meta" }, [
+          "The run log and the task records are a few lines apart, which happens while a file is still being written. The bars use the run log. This grid uses the task records (" +
+          traceRuns.off + " off, " + traceRuns.on + " on)."
+        ])
+      : null,
+    h("div", { class: "grid-wrap" }, [
+      h("table", { class: "task-table" }, [
+        h("thead", null, [h("tr", null, [
+          h("th", null, ["Task"]),
+          h("th", null, ["Fixes off"]),
+          h("th", null, ["Fixes on"])
+        ])]),
+        h("tbody", null, rows)
+      ])
+    ])
+  ]);
+}
+
+function renderHistory(rows) {
+  return h("div", { class: "timeline" }, rows.map((row) =>
+    h("div", { class: "trow" }, [
+      h("time", null, [row.when]),
+      h("div", null, [
+        h("h3", null, [row.title]),
+        h("p", null, [row.outcome])
+      ])
+    ])
+  ));
+}
+
+function renderLego(lego) {
+  const max = Math.max(...lego.sets.map((set) => set.tasks), 1);
+  const bars = h("div", { class: "bars" }, lego.sets.map((set) => {
+    const scale = set.tasks / max;
+    const parts = ["always", "sometimes", "never"].map((key) => {
+      const share = set.tasks ? (set[key] / set.tasks) * 100 * scale : 0;
+      return h("i", { class: key, style: "width:" + share.toFixed(2) + "%" });
+    });
+    const caption = set.solved + " of " + set.tries + " tries passed";
+    return h("div", null, [
+      h("div", { class: "bar-row" }, [
+        h("span", null, [set.label]),
+        h("div", { class: "stack", title: caption }, parts),
+        h("span", null, [set.always + " / " + set.sometimes + " / " + set.never])
+      ])
+    ]);
+  }));
+  const misses = lego.misses
+    ? h("div", { class: "misses" }, [
+        h("div", null, [h("b", null, [String(lego.misses.time_limit)]), h("span", null, ["hit the one-hour limit"])]),
+        h("div", null, [h("b", null, [String(lego.misses.turn_limit)]), h("span", null, ["ran out of 60 turns"])]),
+        h("div", null, [h("b", null, [String(lego.misses.wrong)]), h("span", null, ["finished with a wrong answer"])])
+      ])
+    : null;
+  const pool = (lego.pool_tried && lego.pool_eligible)
+    ? h("p", { class: "meta" }, [
+        "The hard set is used up: " + lego.pool_tried + " of " + lego.pool_eligible +
+        " eligible tasks were tried. One never started, because its setup failed."
+      ])
+    : null;
+  const turns = lego.average_solve_turns
+    ? h("p", { class: "meta" }, ["Solved runs on the hard tasks averaged " + lego.average_solve_turns + " turns. That is the length a training run has to pay for."])
+    : null;
+  return h("div", { class: "card" }, [
+    h("div", { class: "swatches" }, [
+      h("span", null, [h("b", { style: "background:var(--good)" }), "Always solved"]),
+      h("span", null, [h("b", { style: "background:var(--sometimes)" }), "Sometimes"]),
+      h("span", null, [h("b", { style: "background:var(--never)" }), "Never"])
+    ]),
+    h("p", { class: "meta" }, ["Each bar is one set of tasks. Length shows how many tasks are in the set. The three counts are always, sometimes, and never."]),
+    bars,
+    h("div", { class: "callout" }, [
+      h("strong", null, [lego.candidates + " tasks are worth training on. "]),
+      "They were solved once in two tries: " +
+      (lego.hard_sometimes == null ? "" : lego.hard_sometimes + " from the hard round") +
+      (lego.pilot_sometimes ? " and " + lego.pilot_sometimes + " from the pilot" : "") +
+      ". Two tries is a rough cut. A task solved about half the time lands in “sometimes” only about half the time, so the useful set is wider than this."
+    ]),
+    misses,
+    turns,
+    pool
+  ]);
+}
+
+function renderNext(next) {
+  const price = next.thirty_five_b ? next.thirty_five_b.replace("-", "–") : "Not in the notes";
+  const nightly = next.nightly
+    ? "The usual nightly limit is about " + next.nightly + ", so this spend waits for a decision."
+    : "This spend waits for a decision.";
+  return h("div", { class: "choices" }, [
+    h("article", { class: "card" }, [
+      h("h3", null, ["Train this 35B model"]),
+      h("p", { class: "price" }, [price]),
+      h("p", null, ["A first training run, from the project notes. " + nightly])
+    ]),
+    h("article", { class: "card" }, [
+      h("h3", null, ["Check the pipeline on the 9B model first"]),
+      h("p", { class: "price" }, [next.nine_b_price || "Price not in the notes"]),
+      h("p", null, ["A smaller run to prove that training works, before spending more on the 35B model."])
+    ])
+  ]);
+}
+
+function renderSpend(spend) {
+  function block(title, row, extra) {
+    const dollars = row.dollars == null ? "dollar figure unknown" : "about $" + row.dollars;
+    return h("article", { class: "card" }, [
+      h("h3", null, [title]),
+      h("p", { class: "price" }, [dollars]),
+      h("p", null, [row.hours + " server-hours, " + row.label + "."]),
+      extra || null
+    ]);
+  }
+  const dup = spend.today.duplicate_hours
+    ? h("p", { class: "meta" }, [
+        "About " + spend.today.duplicate_hours + " of today’s hours, " +
+        (spend.today.duplicate_dollars == null ? "" : "about $" + spend.today.duplicate_dollars + ", ") +
+        "were four extra servers from an accidental second launch. They were stopped at 9:03 a.m. Their runs are not in the scores above."
+      ])
+    : null;
+  return h("div", null, [
+    h("div", { class: "spend-grid" }, [
+      block("Last night", spend.last_night),
+      block("Today", spend.today, dup)
+    ]),
+    h("p", { class: "meta" }, [
+      (spend.rate_note || "An hourly price was not in the notes, so this section is server-hours only.") +
+      " " + spend.running_servers + " servers are still running. Sandbox fees are not in this log." +
+      (spend.missing_start ? " " + spend.missing_start + " stop lines have no start time, so those servers are left out." : "") +
+      (spend.omitted_last_night ? " " + spend.omitted_last_night + " of them stopped during last night’s window, so that stretch is a little short." : "")
+    ])
+  ]);
+}
+
+function render(data) {
+  const live = data.live;
+  app.replaceChildren(
+    h("header", { class: "top" }, [
+      h("p", { class: "kicker" }, ["Research status"]),
+      h("h1", null, ["Where things stand"]),
+      h("p", { class: "blurb" }, [data.model.name + ". " + data.model.blurb]),
+      h("p", { class: "asof" }, ["Updated " + data.generated_label + ". This page refreshes every two minutes."])
+    ]),
+    h("section", null, [
+      h("p", { class: "lead" }, [data.headline.paragraph]),
+      renderStats(data.headline.numbers)
+    ]),
+    h("section", null, [
+      h("p", { class: "kicker" }, ["Running now"]),
+      h("h2", null, ["The fix test"]),
+      h("p", { class: "lead" }, [
+        "87 tasks, two tries each, with the fixes off and with them on. Four servers started at " +
+        (live.started || "an unknown time") + " Each side is " +
+        (live.arms[0].expected || "?") + " runs, split across two servers. A small program between the harness and the model applies the fixes on one side only."
+      ]),
+      h("div", { class: "arms" }, live.arms.map(renderArm)),
+      h("p", { class: "callout" }, [live.noise]),
+      live.eta
+        ? h("p", { class: "lead" }, ["Estimated finish: about " + live.eta + " " + (live.eta_note || "")])
+        : (live.interim ? h("p", { class: "lead" }, ["A finish time is not estimated yet. There are not enough recent runs to read the pace."]) : h("p", { class: "lead" }, ["The scheduled runs are in."]))
+    ]),
+    h("section", null, [
+      h("h2", null, ["How often the fixes fired"]),
+      h("p", { class: "lead" }, ["Counted only on the fixes-on servers. “Acted” means the model took an action after the fix. The image fix does not record that."]),
+      h("div", { class: "card" }, [renderFixes(live.fixes)])
+    ]),
+    h("section", null, [
+      h("h2", null, ["How finished runs ended"]),
+      renderEndings(live.arms)
+    ]),
+    h("section", null, [
+      h("h2", null, ["Task by task"]),
+      h("p", { class: "lead" }, ["The same task, two tries, fixes off beside fixes on."]),
+      h("div", { class: "card" }, [renderTasks(live.tasks, live.trace_runs, live.arms)])
+    ]),
+    h("section", null, [
+      h("h2", null, ["What has been tried"]),
+      h("p", { class: "lead" }, [
+        "pi and prime_agent are two harnesses: the program wrapped around the model. Claude Code is a third. prime_agent is the one in use now. None of the prompt changes below beat simply letting the model work."
+      ]),
+      h("div", { class: "card" }, [renderHistory(data.history)])
+    ]),
+    h("section", { id: "training" }, [
+      h("h2", null, ["Hard tasks for training"]),
+      h("p", { class: "lead" }, [
+        "Terminal-Lego is a large set of terminal tasks, separate from the test above. Each task was tried twice. A task solved every time, or never, teaches nothing. A task solved sometimes is useful."
+      ]),
+      renderLego(data.lego)
+    ]),
+    h("section", null, [
+      h("h2", null, ["What happens next"]),
+      h("p", { class: "lead" }, [
+        "Training. The model would practice on tasks it solves only sometimes, and keep the tries that pass. That decision is about budget."
+      ]),
+      renderNext(data.next)
+    ]),
+    h("section", null, [
+      h("h2", null, ["Spend"]),
+      h("p", { class: "lead" }, ["Paid GPU servers only, from the start and stop log. Each one is an A10-class machine."]),
+      renderSpend(data.spend)
+    ]),
+    h("footer", null, [
+      h("p", null, ["Sources. Read on each refresh. The page does not send anything out."]),
+      h("ul", null, [
+        h("li", null, ["Harness notes, the project readme, and the training notes"]),
+        h("li", null, ["Terminal-Lego solve rates"]),
+        h("li", null, ["Live run logs, task records, and fix logs under the harness evals"]),
+        h("li", null, ["Server start and stop log"])
+      ])
+    ])
+  );
+}
+
+async function load() {
+  try {
+    const response = await fetch("data.json?t=" + Date.now(), { cache: "no-store" });
+    if (!response.ok) throw new Error(String(response.status));
+    render(await response.json());
+  } catch (err) {
+    app.replaceChildren(h("p", { class: "blurb" }, ["The latest numbers could not be loaded."]));
+  }
+}
+
+load();
+setInterval(load, 120000);
+</script>
+</body>
+</html>
