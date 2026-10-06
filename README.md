@@ -547,6 +547,10 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
       and round 2's teacher data covered just 13 of them. RL or own-solve harvesting needs hundreds of tasks Ornith
       solves sometimes, not never. With 15K tasks graded by difficulty we can pick that band and keep all of TB2
       as a clean eval. That works only once we've checked it against the held-out 20 (its card is silent there).
+    - Our measured bands (2026-10-05, 2 tries per task, `04-post-training/terminal-lego/results/solve_rates.md`):
+      - 140 hard tasks: 43 always solved, 31 solved once, 66 never (117/280).
+      - The 48-task pilot: 30 always, 6 once, 12 never.
+      - 37 RL candidates so far. The hard pool is used up; medium is mostly too easy, but large.
     - SmolDataEnvs is the closest public match to Smart Data work: sandboxed code over tabular files, verifiable
       answers. Being public, it's CareSource-safe to train on. It would make a second eval axis next to TB2.
     - HF Sandboxes could replace Prime sandboxes if verifiers gains a runtime for them. Our verifiers 0.3.2.dev153
