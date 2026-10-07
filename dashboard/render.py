@@ -28,6 +28,7 @@ def bar(parts, height=10) -> str:
 
 def main():
     d = json.loads((HERE / "data.json").read_text())
+    now = json.loads((HERE / "now.json").read_text()) if (HERE / "now.json").exists() else {}
     live, lego, spend = d["live"], d["lego"], d["spend"]
     arms = {a["id"]: a for a in live["arms"]}
     ending_colour = {"finished": "var(--muted-foreground)", "time": "var(--warning)", "turns": "#a78bfa",
@@ -173,6 +174,22 @@ fixes off on <b class="bad">{worse}</b>.</div>
     stats = "".join(f'<div class="stat"><div class="sv">{e(n["value"])}</div><div class="muted small">{e(n["label"])}</div></div>'
                     for n in d["headline"]["numbers"])
 
+    now_html = ""
+    if now.get("rl"):
+        r = now["rl"]
+        rows = "".join(f'<tr><td class="num">{e(x["step"])}</td><td>{e(x["time"])}</td><td class="num">{e(x["reward"])}</td>'
+                       f'<td class="num">{e(x["cut"])}</td></tr>' for x in r["steps"])
+        now_html += f"""<h2>{e(r["title"])}</h2><div class="muted">{e(r["intro"])}</div>
+<table style="margin-top:8px"><tr><th>Step</th><th>Time</th><th>Average reward</th><th>Attempts cut off by length</th></tr>{rows}</table>
+<div class="note">{e(r["note"])}</div>"""
+    if now.get("qwen"):
+        q = now["qwen"]
+        rows = "".join(f'<tr><td>{e(a)}</td><td class="num">{e(b)}</td><td class="num"><b>{e(c)}</b></td><td class="num">{e(x)}</td></tr>'
+                       for a, b, c, x in q["rows"])
+        now_html += f"""<h2>{e(q["title"])}</h2><div class="muted">{e(q["intro"])}</div>
+<table style="margin-top:8px"><tr><th>Words per second</th><th>No draft</th><th>With draft model</th><th>Old best (EXL3)</th></tr>{rows}</table>
+<div class="note">{e(q["context"])}</div><div class="muted" style="margin-top:6px">{e(q["next"])}</div>"""
+
     page = f"""<!doctype html><html><head><meta charset="utf-8"><style>
 body{{margin:0;background:var(--background);color:var(--foreground);font:14px/1.5 system-ui,sans-serif}}
 h2{{font-size:15px;margin:26px 0 8px}} .muted{{color:var(--muted-foreground)}} .small{{font-size:12px}}
@@ -200,6 +217,8 @@ th{{font-size:12px;font-weight:500;color:var(--muted-foreground)}}
 <div class="muted small">{e(d["model"]["name"])} · updated {e(d["generated_label"])}</div>
 <div style="margin-top:6px">{e(d["headline"]["paragraph"])}</div>
 <div class="stats">{stats}</div>
+
+{now_html}
 
 {test_html}
 

@@ -1,0 +1,47 @@
+{
+ "rl": {
+  "title": "RL short test on Ornith 9B: all 3 steps done",
+  "intro": "Three training steps of 16 attempts each, on Terminal-Bench 2 training tasks in Prime sandboxes. 4 H200 GPUs on Hugging Face ($20/h); started 12:14 p.m., steps done 12:52 p.m.; saving the final weights now.",
+  "steps": [
+   {
+    "step": "1",
+    "time": "14m 25s",
+    "reward": "0.50",
+    "cut": "50%"
+   },
+   {
+    "step": "2",
+    "time": "9m 50s",
+    "reward": "0.75",
+    "cut": "25%"
+   },
+   {
+    "step": "3",
+    "time": "8m 44s",
+    "reward": "0.44",
+    "cut": "44%"
+   }
+  ],
+  "note": "The whole pipeline works: the model runs, the agent works in sandboxes, rewards come back, and the trainer updates the weights. Prime still shuts some sandboxes down mid-run; those attempts are retried. Getting here took three failed starts (~$5): two missing packages and a GPU-count setting. This run: about $14 so far."
+ },
+ "qwen": {
+  "title": "Qwen3.8-27B on your 3090: speed",
+  "intro": "New engine (TensorFold) with a small draft model that guesses several words ahead; the big model checks every guess, so its answers don't change.",
+  "rows": [
+   [
+    "Chat",
+    "36",
+    "102",
+    "61.6"
+   ],
+   [
+    "Code",
+    "33\u201335",
+    "143\u2013192",
+    "\u2013"
+   ]
+  ],
+  "context": "Longest prompt that fits: about 42K tokens (24.0 of 24.5 GB). The old EXL3 setup fits 262K, so context is now the thing to win back.",
+  "next": "Next: cut the memory each token of context costs (an extra copy, then 8-bit storage), then a 3-bit/4-bit mix of the weights, each checked against the full model for lost intelligence."
+ }
+}
