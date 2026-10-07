@@ -455,8 +455,24 @@ sampling, 262K window (`probe_tf.sh tf-kv4-262k`, `results/reasoning/tf-kv4-262k
 - This doesn't yet say the 4-bit cache costs anything. Three misses, all one way, from one sample each at
   temperature 1.0 is weak evidence (p = 0.25). Two things also changed besides the cache: the weights (MLX 4-bit
   group-64 vs EXL3 4.0) and the engine's sampler.
-- To separate them: the same probe on TensorFold with the 16-bit cache (80K window is plenty: no answer goes past
-  17K tokens). If that also scores ~15, the cost is the weights or the engine, not the cache.
+- **Separated (same day): the cache is not the cause.** The same probe on TensorFold with the 16-bit cache (80K
+  window, `tf-kv16-80k`, 15.4 min) also scored **15/20**, 5 run-outs, 0 wrong, median 1,761 tokens. The two
+  TensorFold runs miss 4 of the same 5 problems; each solved one the other didn't (precalculus/902 for 4-bit,
+  intermediate_algebra/582 for 16-bit), which is sampling noise.
+
+| Problem | EXL3 4.0 | TF, 4-bit cache | TF, 16-bit cache |
+|---|---|---|---|
+| intermediate_algebra/2015 | 9,176 ✓ | run-out | run-out |
+| intermediate_algebra/558 | 11,443 ✓ | run-out | run-out |
+| geometry/686 | 1,489 ✓ | run-out | run-out |
+| precalculus/902 | 8,359 ✓ | 12,588 ✓ | run-out |
+| intermediate_algebra/582 | run-out | run-out | 10,133 ✓ |
+| geometry/880 | run-out | run-out | run-out |
+
+  So the 4-bit cache is free on this test; the gap to EXL3 (18 vs 15) is the weights (MLX 4-bit, group 64, vs EXL3
+  4.0) or TensorFold's sampler, and both TensorFold runs think longer (mean ~6,000 tokens vs 4,162). With one
+  sample per problem, 3 problems is still within luck (p = 0.25 each way). Telling weights from sampler apart would
+  mean EXL3-format weights in TensorFold (not supported) or more samples per problem.
 
 ### Next: where more room comes from
 
