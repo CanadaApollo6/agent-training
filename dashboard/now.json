@@ -1,28 +1,28 @@
 {
  "rl": {
-  "title": "RL short test on Ornith 9B: done, it works",
-  "intro": "Three training steps of 16 attempts each, on Terminal-Bench 2 training tasks in Prime sandboxes. 4 H200 GPUs on Hugging Face ($20/h); 12:14 to 12:56 p.m.",
+  "title": "RL fit check on R1s-SD (35B): it fits, with little room",
+  "intro": "Three training steps of 32 attempts each on the real model, same Terminal-Bench 2 tasks in Prime sandboxes. 8 H200 GPUs on Hugging Face ($40/h): 4 run the model, 4 train it.",
   "steps": [
    {
     "step": "1",
-    "time": "14m 25s",
-    "reward": "0.50",
-    "cut": "50%"
+    "time": "26m 16s",
+    "reward": "0.61",
+    "cut": "48%"
    },
    {
     "step": "2",
-    "time": "9m 50s",
-    "reward": "0.75",
-    "cut": "25%"
+    "time": "10m 20s",
+    "reward": "0.60",
+    "cut": "20%"
    },
    {
     "step": "3",
-    "time": "8m 44s",
-    "reward": "0.44",
-    "cut": "44%"
+    "time": "4m 40s",
+    "reward": "0.20",
+    "cut": "53%"
    }
   ],
-  "note": "The whole loop works: the model runs, the agent works in sandboxes, rewards come back, the trainer updates the weights and the model server picks them up. Three steps can't teach anything, so the rewards just reflect which tasks came up. About $3 per step once warm; ~$18 in all, including three failed starts. Prime still shuts some sandboxes down mid-run (retried)."
+  "note": "Training memory peaks at ~134 of 140 GB per GPU and stays flat from step to step. Copying expert choices from the model server to the trainer works: the mismatch is ~0.001, half the 9B test's. The trainer does 10K tokens/s; collecting attempts is the slow part. 66 min, ~$44. A 50-step run would be ~$360-450, over the nightly budget: your call."
  },
  "qwen": {
   "title": "Qwen3.8-27B on your 3090: speed",
@@ -44,7 +44,7 @@
   "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
   "next": "Not yet run: the 20-problem math test with 4-bit context (13\u201320 min of GPU, waiting on your OK) and a recall check near 250K. After that: a 3/4-bit mix of the weights for faster decoding."
  },
- "extra_today_dollars": 18,
- "extra_today_note": " (including ~$18 for the RL test on Hugging Face)",
- "next_text": "RL: the short test on the 9B worked. A real run is about $3 per step of 16 attempts on 4 H200s, so its size is your call. Local: the 27B now runs its full 262K context on the 3090; math test pending."
+ "extra_today_dollars": 62,
+ "extra_today_note": " (including ~$18 for the 9B RL test and ~$44 for the 35B fit check on Hugging Face)",
+ "next_text": "RL: the 35B fit check passed; a 50-step run is ~$360-450, so its size is your call. Local: the 27B runs its full 262K context on the 3090; math test running."
 }
