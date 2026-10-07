@@ -329,13 +329,48 @@ Long prompts (with drafts, 64K window; a list of records, then "what is the code
     itself, so something during prompt processing holds a second copy. EXL3 fit 262K by caching keys and values in
     4 bits and keeping the embedding table in system RAM; this engine does neither yet.
 
-### Next: where the room comes from
+### The missing memory: kept prompt states pin old buffers
+
+A first guess was the cache's growth rule: it doubles when full, so a 42K prompt sits in a 64K-row buffer. Growing in
+2K-row steps instead (`TENSORFOLD_KV_STEP=2048`) changed nothing: the 41.7K prompt still peaked at 24.05 GB.
+
+The real cause: the engine keeps up to 4 prompt states (at message starts and the prompt's end) so a follow-up
+request can resume instead of reprocessing. A kept state holds the cache buffer that existed when it was taken. When
+the cache outgrows that buffer, or a new unrelated prompt starts, the old buffer can't be freed. (`--prompt-cache-gib`
+doesn't limit this: it is the MLX path's setting.)
+
+`TENSORFOLD_ONE_BUFFER=1` (in `tensorfold-27b-context.patch`, against TensorFold 0.3.6.3; the forward.py hunks include
+the sm86 patch's lines) does two things:
+- A fresh prompt allocates its whole window at once, so the buffer never moves and every kept state shares it.
+- A prompt that doesn't resume a kept state drops the kept states of earlier prompts first.
+
+One conversation at a time keeps its resume points; that's the agent case.
+
+```bash
+TENSORFOLD_ONE_BUFFER=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TF_DRAFT_PACKED=1 TF_BUDGET_GIB=200 \
+  LONG="32000 48000" ./bench_tf.sh onebuf-80k --context 81920
+```
+
+| | Before | One buffer |
+|---|---|---|
+| Window | 64K | **80K** |
+| Longest prompt run | 41,741 tokens | **63,045 tokens** (recall right, 95 s prefill at 666 tok/s) |
+| Peak card memory | 24.0 GB at 41.7K, rising | 24.07 GB at both 41.7K and 63K: set at load |
+| Decode, chat / code | 102 / 143–192 | 92–105 / 132–153 (same within noise) |
+
+The 80K window leaves ~0.5 GB spare, so this is about the bf16 ceiling for this build.
+
+### Next: where more room comes from
 
 | Change | Frees | Then |
 |---|---|---|
-| Find and remove the second per-token copy | ~64 KB/token | ~2× the context |
-| 8-bit cache (4-bit like EXL3 later) | half (¾) of the cache | 2× (4×) again |
+| 8-bit cache: int8 + a scale per 32 values (ExLlamaV3's scheme, already in TensorFold's qwen4_exp family) | ~47% of the cache | ~150K window |
+| 4-bit cache with the 32-wide rotation (what EXL3 ran at 262K) | ~72% | 262K |
 | Embedding table to system RAM | ~0.7 GB | +~10K tokens |
 | Mixed 3/4-bit weights (EXL3 3.0 held 19/20 on the math probe) | ~3–4 GB | more context and faster plain decoding |
 
-Each needs an intelligence check against bf16 (KL on a pod, plus the 20-problem math probe) before it counts.
+The quantized cache is kernel work: the 27B's two attention kernels (`cuda/kernels/attention.py`, decode and draft
+verification) and the prompt kernel (`prefill_attention.py`) read bf16 keys and values, and the cache writes copy
+bf16 rows. With the rotation, a kernel can rotate the query once instead of un-rotating every key, and un-rotate the
+output once instead of every value, so reading the cache costs one multiply per value. Each step needs an
+intelligence check against bf16 (KL on a pod, plus the 20-problem math probe) before it counts.

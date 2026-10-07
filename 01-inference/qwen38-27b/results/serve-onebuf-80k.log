@@ -1,0 +1,49 @@
+[serve_kernels] GPU-only budget: 21.1 GiB
+[serve_kernels] planner budget forced to 200.0 GiB: measure the real peak
+[serve_kernels] drafter counted at its packed 4-bit size
+[serve_kernels] new: SPLIT 0 SELECT True COMBINE 1
+[tensorfold] loading qwen27: Qwen3.8 dense (qwen3_5) on CUDA
+[tensorfold] CUDA rank 0 startup estimate 51.85 GiB within 200.00 GiB; native 262144, allocated prompt/reply window 81920, cache slots 81932
+[tensorfold] serving qwen27 at http://127.0.0.1:8091/v1 on CUDA (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 81920; loaded in 20.3s)
+[tensorfold] building CUDA extension tensorfold_qmm_v4 (first start after an install or update; later starts reuse it)
+[tensorfold] building CUDA extension tensorfold_gdn_v2 (first start after an install or update; later starts reuse it)
+[W1007 13:06:54.062199756 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 110952448, total: 25327763456).
+[W1007 13:06:55.427018136 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 105512960, total: 25327763456).
+[W1007 13:06:55.649572435 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 105512960, total: 25327763456).
+[W1007 13:06:55.732259324 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 103415808, total: 25327763456).
+[W1007 13:06:55.970282422 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 103153664, total: 25327763456).
+[W1007 13:06:56.495639441 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 100532224, total: 25327763456).
+[W1007 13:06:56.867708277 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 100532224, total: 25327763456).
+[W1007 13:06:57.307171491 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 102825984, total: 25327763456).
+[W1007 13:06:57.608212590 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 102957056, total: 25327763456).
+[W1007 13:06:57.923537386 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 102760448, total: 25327763456).
+[W1007 13:06:58.153832822 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 81133568, total: 25327763456).
+[W1007 13:06:58.676596892 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 90570752, total: 25327763456).
+[W1007 13:06:58.830566577 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 90570752, total: 25327763456).
+[W1007 13:06:59.208325108 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 94437376, total: 25327763456).
+[W1007 13:06:59.585529763 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 92405760, total: 25327763456).
+[W1007 13:06:59.687655558 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 92405760, total: 25327763456).
+[W1007 13:07:00.153327406 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86114304, total: 25327763456).
+[W1007 13:07:00.228302332 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86900736, total: 25327763456).
+[W1007 13:07:00.534987801 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86900736, total: 25327763456).
+[W1007 13:07:00.762522011 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86900736, total: 25327763456).
+[W1007 13:07:00.925275275 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86900736, total: 25327763456).
+[W1007 13:07:00.009470652 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 95879168, total: 25327763456).
+[W1007 13:07:01.246277638 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 95879168, total: 25327763456).
+[W1007 13:07:01.333149154 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 95879168, total: 25327763456).
+[W1007 13:07:01.797720434 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 94699520, total: 25327763456).
+[W1007 13:07:01.952853268 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 95289344, total: 25327763456).
+[W1007 13:07:01.039456338 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 95289344, total: 25327763456).
+[W1007 13:07:04.287400218 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 103022592, total: 25327763456).
+[W1007 13:07:06.027751195 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 103546880, total: 25327763456).
+[W1007 13:07:07.278400651 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 103546880, total: 25327763456).
+[W1007 13:07:07.447841632 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 103546880, total: 25327763456).
+[W1007 13:07:18.294926203 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 89587712, total: 25327763456).
+[W1007 13:07:49.597880642 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 108003328, total: 25327763456).
+[W1007 13:07:52.981952319 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 101711872, total: 25327763456).
+[W1007 13:08:31.857891604 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 93061120, total: 25327763456).
+[W1007 13:09:22.758814131 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 110559232, total: 25327763456).
+[W1007 13:09:26.736964792 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 112656384, total: 25327763456).
+[W1007 13:09:27.195601161 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 112656384, total: 25327763456).
+[W1007 13:09:27.802727753 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 112656384, total: 25327763456).
+[W1007 13:09:28.627887966 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 112656384, total: 25327763456).

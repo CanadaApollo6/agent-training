@@ -1,0 +1,225 @@
+diff --git i/src/tensorfold/families/qwen3_5/cuda/decode.py w/src/tensorfold/families/qwen3_5/cuda/decode.py
+index 624f6ad..c357da7 100644
+--- i/src/tensorfold/families/qwen3_5/cuda/decode.py
++++ w/src/tensorfold/families/qwen3_5/cuda/decode.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ from dataclasses import dataclass, field
++import os
+ import time
+ from typing import Callable, Sequence
+ 
+@@ -15,6 +16,12 @@ from tensorfold.cuda.sampling import sample_rows
+ from .weights import Weights
+ 
+ 
++# TENSORFOLD_ONE_BUFFER=1 (one conversation at a time, for a 24 GB card): a fresh prompt allocates its whole window
++# at once and drops the kept states of earlier prompts. Kept states hold the attention buffers they were taken
++# with, so a cache that grows (or a new prompt) otherwise leaves outgrown and old buffers pinned beside the live one.
++ONE_BUFFER = os.environ.get("TENSORFOLD_ONE_BUFFER") == "1"
++
++
+ def clone_state(st: State) -> State:
+     """The committed tensors are immutable; commits replace their list entries."""
+ 
+@@ -59,6 +66,10 @@ def prefill(w: Weights, prompt: Sequence[int], sampling: Sampling | None,
+     st = clone_state(state) if state is not None else State(w)
+     if state is None:
+         st.limit = limit                    # a fresh state's attention caches stop here; a resumed one keeps its own
++        if ONE_BUFFER and limit:
++            from .forward import reserve
++
++            reserve(st, limit)              # the whole window now: the buffer never moves, so kept states share it
+     if st.pos >= len(prompt):
+         raise ValueError("a reused state must leave at least one prompt token to process")
+     out = prefill_stops(w, prompt, st, draft, stops=stops, keep=keep, keep_at=keep_at, vision=vision)
+diff --git i/src/tensorfold/families/qwen3_5/cuda/engine.py w/src/tensorfold/families/qwen3_5/cuda/engine.py
+index 6029ae1..3371de7 100644
+--- i/src/tensorfold/families/qwen3_5/cuda/engine.py
++++ w/src/tensorfold/families/qwen3_5/cuda/engine.py
+@@ -6,6 +6,8 @@ import time
+ from pathlib import Path
+ from typing import Callable, Sequence
+ 
++from .decode import ONE_BUFFER
++
+ 
+ KEEP = 3             # prompt states a concurrent decoder keeps to resume from (each holds a DeltaNet copy)
+ KEEP_ONE = 4         # prompt states one stream keeps (they share its attention buffers)
+@@ -189,6 +191,8 @@ class Qwen27Engine:
+                                          vision=vision)
+         t0 = time.perf_counter()
+         hit = self._resume(prompt) if draft and vision is None else None
++        if hit is None and ONE_BUFFER:
++            self.cache.entries = []         # their buffers go before this prompt allocates its window
+         encoded = self.vision.encode(vision, prompt) if vision is not None else None
+         if self.tp == 2:
+             return self._generate_tp(prompt, max_tokens, sampling, on_tokens, hit, t0, draft, stop_eos, vision=encoded)
+diff --git i/src/tensorfold/families/qwen3_5/cuda/forward.py w/src/tensorfold/families/qwen3_5/cuda/forward.py
+index 97003b6..b346847 100644
+--- i/src/tensorfold/families/qwen3_5/cuda/forward.py
++++ w/src/tensorfold/families/qwen3_5/cuda/forward.py
+@@ -2,6 +2,7 @@
+ 
+ from __future__ import annotations
+ 
++import os
+ from dataclasses import dataclass
+ from typing import Sequence
+ 
+@@ -13,7 +14,7 @@ from tensorfold.cuda.kernels import attention as tree_attention
+ from tensorfold.cuda.kernels import gdn as deltanet
+ 
+ from . import glue
+-from .qmm_fast import matmul
++from .qmm_fast import matmul, matmul_many
+ from .weights import QLinear, Weights
+ 
+ 
+@@ -23,6 +24,14 @@ def _mm(x: torch.Tensor, w: QLinear, xs: torch.Tensor | None = None) -> torch.Te
+     return matmul(x, w, xs)
+ 
+ 
++def _mm_many(x: torch.Tensor, ws: list, xs: torch.Tensor | None = None) -> list[torch.Tensor]:
++    """Several projections of the same rows, one launch where the kernels allow (the same bits as one at a time)."""
++
++    if all(isinstance(w, QLinear) for w in ws):
++        return matmul_many(x, ws, xs)
++    return [_mm(x, w, xs) for w in ws]
++
++
+ def _row_mm(x: torch.Tensor, w: QLinear, tp: bool,
+             xs: torch.Tensor | None = None) -> torch.Tensor:
+     if not tp:
+@@ -162,6 +171,16 @@ def stage(w: Weights, st: State, width: int, context: int) -> Staged:
+                   _cache_offsets([st], softmax, device), _conv_windows(parents, c.conv_kernel - 1).to(device), host, dev)
+ 
+ 
++# TENSORFOLD_KV_STEP=N: grow attention caches to the next multiple of N rows instead of doubling. Doubling holds up
++# to twice the rows in use, and the allocator keeps the outgrown buffers: on a 24 GB card that halves the context.
++KV_STEP = int(os.environ.get("TENSORFOLD_KV_STEP", "0"))
++
++
++def grown_rows(have: int, need: int, limit: int) -> int:
++    cap = -(-need // KV_STEP) * KV_STEP if KV_STEP else max(need, 2 * have, 1024)
++    return max(need, min(cap, limit)) if limit else cap
++
++
+ def reserve(st: State, rows: int) -> None:
+     """Grow every attention cache to ``rows`` now, so later commits never move a buffer (graphs keep addresses)."""
+ 
+@@ -214,17 +233,15 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+         x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
+         if layer.linear:
+             gdn = layer.gdn
+-            qkv = _mm(h, gdn.qkv, xs)
+             if gdn.zba is not None:
+-                zba = _mm(h, gdn.zba, xs)
++                qkv, zba = _mm_many(h, [gdn.qkv, gdn.zba], xs)
+                 vd = c.v_heads * c.dv
+                 z = zba[:, :vd].contiguous().reshape(W, c.v_heads, c.dv)
+                 b = zba[:, vd:vd + c.v_heads].contiguous()
+                 a = zba[:, vd + c.v_heads:].contiguous()
+             else:
+-                z = _mm(h, gdn.z, xs).reshape(W, c.v_heads, c.dv)
+-                b = _mm(h, gdn.b, xs)
+-                a = _mm(h, gdn.a, xs)
++                qkv, z, b, a = _mm_many(h, [gdn.qkv, gdn.z, gdn.b, gdn.a], xs)
++                z = z.reshape(W, c.v_heads, c.dv)
+             q, k, v, g, beta = glue.gdn_pre(qkv, st.conv[i], gdn.conv, windows, a, b,
+                                               gdn.A_log, gdn.dt_bias, kh=c.k_heads,
+                                               vh=c.v_heads, dk=c.dk)
+@@ -234,15 +251,14 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+             record.append(GDNRecord(q, k, v, g, beta, qkv))
+         else:
+             attn = layer.attn
+-            qg = _mm(h, attn.q, xs)
+             if attn.kv is not None:
+-                kv = _mm(h, attn.kv, xs)
++                qg, kv = _mm_many(h, [attn.q, attn.kv], xs)
+                 kd = c.kv_heads * c.head_dim
+                 key = kv[:, :kd].contiguous()
+                 value = kv[:, kd:].contiguous().reshape(W, c.kv_heads, c.head_dim)
+             else:
+-                key = _mm(h, attn.k, xs)
+-                value = _mm(h, attn.v, xs).reshape(W, c.kv_heads, c.head_dim)
++                qg, key, value = _mm_many(h, [attn.q, attn.k, attn.v], xs)
++                value = value.reshape(W, c.kv_heads, c.head_dim)
+             q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
+                                     w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
+                                     head_dim=c.head_dim)
+@@ -322,17 +338,15 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+         x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
+         if layer.linear:
+             gdn = layer.gdn
+-            qkv = _mm(h, gdn.qkv, xs)
+             if gdn.zba is not None:
+-                zba = _mm(h, gdn.zba, xs)
++                qkv, zba = _mm_many(h, [gdn.qkv, gdn.zba], xs)
+                 vd = c.v_heads * c.dv
+                 z = zba[:, :vd].contiguous().reshape(W, c.v_heads, c.dv)
+                 b = zba[:, vd:vd + c.v_heads].contiguous()
+                 a = zba[:, vd + c.v_heads:].contiguous()
+             else:
+-                z = _mm(h, gdn.z, xs).reshape(W, c.v_heads, c.dv)
+-                b = _mm(h, gdn.b, xs)
+-                a = _mm(h, gdn.a, xs)
++                qkv, z, b, a = _mm_many(h, [gdn.qkv, gdn.z, gdn.b, gdn.a], xs)
++                z = z.reshape(W, c.v_heads, c.dv)
+             conv = states[0].conv[i] if S == 1 else torch.cat([st.conv[i] for st in states])
+             q, k, v, g, beta = glue.gdn_pre(qkv, conv, gdn.conv, windows_t, a, b, gdn.A_log, gdn.dt_bias,
+                                             kh=c.k_heads, vh=c.v_heads, dk=c.dk, stream_ids=sid_t, nkeep=keep)
+@@ -342,15 +356,14 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+             record.append(GDNRecord(q, k, v, g, beta, qkv))
+         else:
+             attn = layer.attn
+-            qg = _mm(h, attn.q, xs)
+             if attn.kv is not None:
+-                kv = _mm(h, attn.kv, xs)
++                qg, kv = _mm_many(h, [attn.q, attn.kv], xs)
+                 kd = c.kv_heads * c.head_dim
+                 key = kv[:, :kd].contiguous()
+                 value = kv[:, kd:].contiguous().reshape(W, c.kv_heads, c.head_dim)
+             else:
+-                key = _mm(h, attn.k, xs)
+-                value = _mm(h, attn.v, xs).reshape(W, c.kv_heads, c.head_dim)
++                qg, key, value = _mm_many(h, [attn.q, attn.k, attn.v], xs)
++                value = value.reshape(W, c.kv_heads, c.head_dim)
+             q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
+                                     w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
+                                     head_dim=c.head_dim)
+@@ -451,9 +464,7 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
+             for i, _ in att:
+                 kbuf, vbuf = st.kv[i]
+                 if kbuf.shape[0] < need:
+-                    cap = max(need, 2 * kbuf.shape[0], 1024)
+-                    if st.limit:
+-                        cap = max(need, min(cap, st.limit))
++                    cap = grown_rows(kbuf.shape[0], need, st.limit)
+                     grown_k = kbuf.new_empty((cap, *kbuf.shape[1:]))
+                     grown_v = vbuf.new_empty((cap, *vbuf.shape[1:]))
+                     grown_k[:st.pos] = kbuf[:st.pos]
+diff --git i/src/tensorfold/families/qwen3_5/cuda/prefill.py w/src/tensorfold/families/qwen3_5/cuda/prefill.py
+index 9aca8c2..6b657a7 100644
+--- i/src/tensorfold/families/qwen3_5/cuda/prefill.py
++++ w/src/tensorfold/families/qwen3_5/cuda/prefill.py
+@@ -14,6 +14,7 @@ from tensorfold.cuda.kernels.prefill_attention import attention
+ from . import glue
+ from . import prefill_bf16, prefill_glue
+ from .decode import clone_state
++from .forward import grown_rows
+ from .forward import State
+ from .qmm_fast import matmul, matmul_partial, tile
+ from .weights import QLinear, Weights
+@@ -44,9 +45,7 @@ def _row_mm(x, w: QLinear, tp: bool) -> torch.Tensor:
+ def _grow(st: State, i: int, need: int) -> tuple[torch.Tensor, torch.Tensor]:
+     kbuf, vbuf = st.kv[i]
+     if kbuf.shape[0] < need:
+-        cap = max(need, 2 * kbuf.shape[0], 1024)
+-        if st.limit:
+-            cap = max(need, min(cap, st.limit))
++        cap = grown_rows(kbuf.shape[0], need, st.limit)
+         grown_k, grown_v = kbuf.new_empty((cap, *kbuf.shape[1:])), vbuf.new_empty((cap, *vbuf.shape[1:]))
+         grown_k[:st.pos] = kbuf[:st.pos]
+         grown_v[:st.pos] = vbuf[:st.pos]
