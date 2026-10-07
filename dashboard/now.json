@@ -42,9 +42,9 @@
    ]
   ],
   "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
-  "next": "Running now: the 20-problem math test with 4-bit context, to compare with the old best of 18/20. Still to do: a recall check near 250K, then a 3/4-bit mix of the weights for faster decoding."
+  "next": "Math test with 4-bit context: 15 of 20 (it never answered wrong; 5 ran out of room) vs 18 of 20 for the old best. One sample per problem, and the weights and engine also changed, so the cache isn't proven to be the cause. Next: the same test with the 16-bit cache to separate them (~18 min of GPU, your OK)."
  },
  "extra_today_dollars": 62,
  "extra_today_note": " (including ~$18 for the 9B RL test and ~$44 for the 35B fit check on Hugging Face)",
- "next_text": "RL: the 35B fit check passed; a 50-step run is ~$360-450, so its size is your call. Local: the 27B runs its full 262K context on the 3090; math test running."
+ "next_text": "RL: the 35B fit check passed; a 50-step run is ~$360-450, so its size is your call. Local: math test with 4-bit context scored 15/20 vs 18/20; a 16-bit-cache rerun would tell whether the cache is to blame."
 }
