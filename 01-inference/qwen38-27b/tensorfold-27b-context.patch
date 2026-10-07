@@ -120,15 +120,19 @@ index 798958b..9544e94 100644
      return out
 diff --git i/src/tensorfold/cuda/kernels/kvq.py w/src/tensorfold/cuda/kernels/kvq.py
 new file mode 100644
-index 0000000..4efb2e0
+index 0000000..2cc23c4
 --- /dev/null
 +++ w/src/tensorfold/cuda/kernels/kvq.py
-@@ -0,0 +1,80 @@
-+"""An 8-bit attention cache: each (row, key head) packs D int8 codes, then D / 32 fp16 scales (absmax / 127).
+@@ -0,0 +1,142 @@
++"""A quantized attention cache, packed per (row, key head) into int8 elements.
 +
-+``TENSORFOLD_KV_BITS=8`` turns it on (default 16: bf16 rows). A packed cache keeps the bf16 cache's (rows, kv heads,
++``TENSORFOLD_KV_BITS``: 16 (default, bf16 rows), 8 or 4. A packed cache keeps the bf16 cache's (rows, kv heads,
 +width) shape with int8 elements, so growing, slicing and copying it are unchanged; only the writes (``store``) and the
-+attention kernels' reads (``load_rows``) know the layout. 8.5 bits a value: 272 bytes a 256-wide head row, not 512.
++attention kernels' reads (``load_rows``) know the layout.
++- 8: D int8 codes, then D / 32 fp16 scales (absmax / 127). 8.5 bits a value: 272 bytes a 256-wide head row, not 512.
++- 4: each 32 values rotated by H32 (ExLlamaV3's scheme, ``qwen4_exp/cuda/kvquant.py``), then D / 2 bytes of 4-bit
++  codes on the midpoint grid (low nibble first), then D / 32 fp16 scales (the rotated absmax). 4.5 bits a value:
++  144 bytes. ``load_rows`` un-rotates as it reads, so the kernels see plain values.
 +"""
 +
 +from __future__ import annotations
@@ -141,19 +145,38 @@ index 0000000..4efb2e0
 +from triton.language.extra import libdevice
 +
 +BITS = int(os.environ.get("TENSORFOLD_KV_BITS", "16"))
-+if BITS not in (8, 16):
-+    raise ValueError("TENSORFOLD_KV_BITS takes 8 or 16")
++if BITS not in (4, 8, 16):
++    raise ValueError("TENSORFOLD_KV_BITS takes 4, 8 or 16")
 +GROUP = 32
 +
 +
 +def width(d: int) -> int:
 +    """A cache row's last-axis length in its own elements: bf16 values, or int8 codes plus fp16 scales as bytes."""
 +
-+    return d if BITS == 16 else d + 2 * (d // GROUP)
++    return d if BITS == 16 else d * BITS // 8 + 2 * (d // GROUP)
 +
 +
 +def dtype() -> torch.dtype:
 +    return torch.bfloat16 if BITS == 16 else torch.int8
++
++
++@triton.jit
++def _h32_stage(x, M: tl.constexpr, HI: tl.constexpr, LO: tl.constexpr):
++    t = tl.trans(tl.reshape(x, (M, HI, 2, LO)), 0, 1, 3, 2)
++    a, b = tl.split(t)
++    return tl.reshape(tl.trans(tl.join(a + b, a - b), 0, 1, 3, 2), (M, 32))
++
++
++@triton.jit
++def h32(x, M: tl.constexpr):
++    """H32 over the last axis of an (M, 32) fp32 block, scaled so H32 H32 = I (qwen4_exp's transform)."""
++
++    x = _h32_stage(x, M, 16, 1)
++    x = _h32_stage(x, M, 8, 2)
++    x = _h32_stage(x, M, 4, 4)
++    x = _h32_stage(x, M, 2, 8)
++    x = _h32_stage(x, M, 1, 16)
++    return x * 0.17677669529663688110
 +
 +
 +@triton.jit
@@ -162,6 +185,17 @@ index 0000000..4efb2e0
 +
 +    if QBITS == 16:
 +        x = tl.load(C + row[:, None] + d[None, :], mask=mask[:, None], other=0.0).to(tl.bfloat16)
++    elif QBITS == 4:
++        N: tl.constexpr = row.shape[0]
++        half = tl.arange(0, D // 2)
++        raw = tl.load(C + row[:, None] + half[None, :], mask=mask[:, None], other=0).to(tl.int32)
++        q = tl.reshape(tl.join((raw & 15).to(tl.float32), ((raw >> 4) & 15).to(tl.float32)), (N, D))
++        g = tl.arange(0, D // 32)
++        scales = tl.load((C + row[:, None] + D // 2).to(tl.pointer_type(tl.float16)) + g[None, :],
++                         mask=mask[:, None], other=0.0).to(tl.float32)
++        x = tl.reshape(q, (N, D // 32, 32)) - 7.5
++        x = x * (scales * 0.125)[:, :, None]
++        x = tl.reshape(h32(tl.reshape(x, (N * (D // 32), 32)), N * (D // 32)), (N, D)).to(tl.bfloat16)
 +    else:
 +        codes = tl.load(C + row[:, None] + d[None, :], mask=mask[:, None], other=0)
 +        scales = tl.load((C + row[:, None] + D).to(tl.pointer_type(tl.float16)) + d[None, :] // 32,
@@ -183,6 +217,21 @@ index 0000000..4efb2e0
 +    tl.store((OUT + rh * R + D).to(tl.pointer_type(tl.float16)) + g, scale)
 +
 +
++@triton.jit
++def _quant4(X, OUT, D: tl.constexpr, R: tl.constexpr):
++    rh = tl.program_id(0)
++    G: tl.constexpr = D // 32
++    g = tl.arange(0, G)
++    j = tl.arange(0, 32)
++    x = h32(tl.load(X + rh * D + g[:, None] * 32 + j[None, :]).to(tl.float32), G)
++    s = tl.max(tl.abs(x), axis=1) + 1e-10
++    q = tl.floor(x * tl.math.div_rn(1.0, s)[:, None] * 8.0) + 8.0
++    q = tl.minimum(tl.maximum(q, 0.0), 15.0).to(tl.int32)
++    lo, hi = tl.split(tl.reshape(q, (D // 2, 2)))
++    tl.store(OUT + rh * R + tl.arange(0, D // 2), (lo | (hi << 4)).to(tl.uint8).to(tl.int8, bitcast=True))
++    tl.store((OUT + rh * R + D // 2).to(tl.pointer_type(tl.float16)) + g, s.to(tl.float16))
++
++
 +def store(dst: torch.Tensor, x: torch.Tensor) -> None:
 +    """Write bf16 rows ``x`` (n, kv heads, D) into cache rows ``dst`` (n, kv heads, ``width(D)``)."""
 +
@@ -191,9 +240,9 @@ index 0000000..4efb2e0
 +        return
 +    n, hk, d = x.shape
 +    if dst.shape != (n, hk, width(d)) or dst.dtype != torch.int8 or not dst.is_contiguous():
-+        raise ValueError("an 8-bit cache store takes contiguous int8 rows of the packed width")
++        raise ValueError("a quantized cache store takes contiguous int8 rows of the packed width")
 +    if n:
-+        _quant[(n * hk,)](x.contiguous(), dst, D=d, R=width(d), num_warps=2)
++        (_quant if BITS == 8 else _quant4)[(n * hk,)](x.contiguous(), dst, D=d, R=width(d), num_warps=2)
 +
 +
 +def unpack(rows: torch.Tensor, d: int) -> torch.Tensor:
@@ -201,9 +250,22 @@ index 0000000..4efb2e0
 +
 +    if BITS == 16:
 +        return rows
++    if BITS == 4:
++        raw = rows[..., :d // 2].view(torch.uint8).int()
++        q = torch.stack([raw & 15, raw >> 4], -1).flatten(-2).float()
++        scales = rows[..., d // 2:].contiguous().view(torch.float16).float()
++        x = (q.unflatten(-1, (d // GROUP, GROUP)) - 7.5) * (scales * 0.125)[..., None]
++        return (x @ _hadamard32(x.device)).flatten(-2).to(torch.bfloat16)
 +    codes = rows[..., :d].float()
 +    scales = rows[..., d:].contiguous().view(torch.float16).float()
 +    return (codes.view(*codes.shape[:-1], d // GROUP, GROUP) * scales[..., None]).view(*codes.shape).to(torch.bfloat16)
++
++
++def _hadamard32(device) -> torch.Tensor:
++    h = torch.ones(1, 1)
++    while h.shape[0] < 32:
++        h = torch.cat([torch.cat([h, h], 1), torch.cat([h, -h], 1)])
++    return (h / 32 ** 0.5).to(device)
 diff --git i/src/tensorfold/cuda/kernels/prefill_attention.py w/src/tensorfold/cuda/kernels/prefill_attention.py
 index fa14f6a..4be4bf1 100644
 --- i/src/tensorfold/cuda/kernels/prefill_attention.py

@@ -33,8 +33,12 @@ def run(out: str) -> None:
     from tensorfold.families.qwen3_5.cuda.weights import load
 
     d = Path(snapshot_download("Vontra/Qwen3.8-27B-MLX-4bit", local_files_only=True))
-    ids = Tokenizer.from_file(str(d / "tokenizer.json")).encode(document()).ids
     need = DEPTHS[-1] + SCORE + 1
+    frozen = Path(__file__).resolve().parent / "results/kv_kl_tokens.pt"
+    if not frozen.exists():
+        ids = Tokenizer.from_file(str(d / "tokenizer.json")).encode(document()).ids[:need]
+        torch.save(torch.tensor(ids, dtype=torch.int32), frozen)
+    ids = torch.load(frozen).tolist()
     assert len(ids) >= need, f"document has {len(ids)} tokens, need {need}"
     w = load(d, tiled=True)
     rows, st = {}, None
@@ -54,6 +58,8 @@ def run(out: str) -> None:
 
 def compare(a: str, b: str) -> None:
     A, B = torch.load(a), torch.load(b)
+    if any(not torch.equal(A["targets"][k], B["targets"][k]) for k in A["targets"]):
+        raise SystemExit("the two runs read different documents")
     print(f"KL({A['bits']}-bit cache || {B['bits']}-bit cache), log-probs over the full vocabulary")
     print("| Depth | KL mean | KL max | Top-1 agree | Perplexity A | Perplexity B |")
     print("|---|---|---|---|---|---|")
