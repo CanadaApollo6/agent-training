@@ -1,7 +1,7 @@
 {
  "rl": {
-  "title": "RL short test on Ornith 9B: all 3 steps done",
-  "intro": "Three training steps of 16 attempts each, on Terminal-Bench 2 training tasks in Prime sandboxes. 4 H200 GPUs on Hugging Face ($20/h); started 12:14 p.m., steps done 12:52 p.m.; saving the final weights now.",
+  "title": "RL short test on Ornith 9B: done, it works",
+  "intro": "Three training steps of 16 attempts each, on Terminal-Bench 2 training tasks in Prime sandboxes. 4 H200 GPUs on Hugging Face ($20/h); 12:14 to 12:56 p.m.",
   "steps": [
    {
     "step": "1",
@@ -22,7 +22,7 @@
     "cut": "44%"
    }
   ],
-  "note": "The whole pipeline works: the model runs, the agent works in sandboxes, rewards come back, and the trainer updates the weights. Prime still shuts some sandboxes down mid-run; those attempts are retried. Getting here took three failed starts (~$5): two missing packages and a GPU-count setting. This run: about $14 so far."
+  "note": "The whole loop works: the model runs, the agent works in sandboxes, rewards come back, the trainer updates the weights and the model server picks them up. Three steps can't teach anything, so the rewards just reflect which tasks came up. About $3 per step once warm; ~$18 in all, including three failed starts. Prime still shuts some sandboxes down mid-run (retried)."
  },
  "qwen": {
   "title": "Qwen3.8-27B on your 3090: speed",
