@@ -367,6 +367,50 @@ same settings as the 32K baseline above.
 - With the lessons loop (root README, RLTL;DR) this closes the in-context tricks. Text in the prompt, whether a lesson
   or a plan, doesn't change what R1s-SD does once it is working.
 
+## Three harness fixes through a proxy: 87 tasks, off vs on (2026-10-06)
+
+`fix_proxy.py` sits between prime_agent and the R1s-SD server and applies three fixes, each aimed at a measured way
+R1s-SD loses runs. **cutoff:** a reply that hits the 32K cap before any tool call is retried with thinking off.
+**check:** the first time the model says it's done, it is asked to re-check every output the tests will look at.
+**image:** a picture in the conversation becomes a text note instead of the server's error. Test (`fixes_full.sh`):
+TB2 without the two qemu tasks (87), 2 tries per task, fixes off (the same proxy passing everything through) vs on, two
+HF a10g-large servers per side, 60 turns, 1-hour runs. Runs lost to infrastructure were rerun once
+(`lost_runs.py`, `fixes_rerun.sh`). Analysis: `fixes_analysis.py` → `results/fixes_test.json`.
+
+| | Fixes off | Fixes on |
+|---|---|---|
+| Usable runs (of 174) | 161 | 150 |
+| Solved | 61 (37.9%) | 67 (44.7%) |
+| Mean per-task solve rate, 82 tasks with usable runs on both sides | 39.0% | 43.9% |
+| Same, without the 7 heavy tasks (77 tasks) | 40.9% | 46.8% |
+
+- **Probably a small gain, not proven.** Paired by task: +4.9 points (95% CI −3.7 to +13.4, p = 0.34); without
+  the heavy tasks +5.8 (−3.2 to +14.9, p = 0.27). Fixes on did better on 15 tasks, off on 11–12, and 51–55 tied. Two
+  tries per task can't resolve a 5-point effect.
+- **The image fix carries all of it.** On the 24 tasks where the model looked at a picture: off 13/44 usable runs
+  (30%), on 17/36 (47%). Without fixes, 11 runs ended on an image request and none was solved. On the other 59 tasks
+  (no pictures, not heavy, usable runs on both sides) the per-task rate is the same: 43.2% vs 43.2%.
+- **check: maybe a little.** With fixes off, runs where the model said it was done were solved 52/78 (67%). With fixes
+  on, runs where check fired were solved 56/74 (76%). The model always acted on the check.
+- **cutoff rescues runs, not solves.** It fired in 25 usable runs (66 times); 2 of those were solved. Without fixes,
+  10 runs ended on a cut-off reply. A model that thinks itself into the cap is usually on a task it was going to fail.
+- **Prime sandbox terminations are now the main noise.** Of 174 runs per side, 31 (off) and 47 (on) were lost the
+  first time, mostly "The sandbox has been terminated". The one rerun of each recovered 41 of the 78; 37 (47%) were
+  lost again. Lost runs aren't random (heavy tasks lose more), so the usable runs lean toward lighter tasks.
+  - Seven tasks (compile-compcert, gpt2-codegolf, path-tracing, mteb-retrieve, portfolio-optimization,
+    torch-pipeline-parallelism, train-fasttext) lose their sandbox in most runs on both sides. They compile, train
+    or render inside 2–4 GB.
+  - The sandboxes do get each task's requested CPUs and memory, and the account balance was fine. Prime records
+    no reason for a termination.
+  - For RL on Prime sandboxes this loss rate needs fixing or routing around first.
+- Incidents, none affecting the comparison:
+  - A fixes-off run hung after its 13:27 timeout, holding its server until it was stopped at 16:50; it counts as
+    lost.
+  - A 16:45 wifi drop and a 17:33 network blip ended 9 runs; they were rerun.
+  - A duplicate launch (`fixes_big.sh`, removed in 097331fb) doubled the load on all four servers from 07:05 to 09:03.
+- Spend: GPU servers about $91 (61 server-hours), including the duplicate launch (about $12) and the reruns (about
+  $16). Prime sandboxes are extra.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
@@ -376,6 +420,9 @@ same settings as the 32K baseline above.
 - **Local build:** R1s (all experts 3-bit, imatrix-searched 4-bit always-on path, 15 GB) is the local build. It is
   within noise of Q8 on solves (10.0 vs 10.3 of 19). It writes 1.28× Q8's tokens on the same solved tasks, down from
   R1's 1.67×; the engine was ruled out, and fidelity closed most of the gap.
+- **Proxy fixes:** keep the image fix; it is the clear win (30% → 47% on picture tasks). check is cheap and maybe
+  helps; cutoff mostly turns cut-off failures into ordinary failures. Together about +5 points per task, not proven at
+  2 tries. Prime sandbox terminations (half the reruns lost again) must be dealt with before RL on Prime sandboxes.
 
 ## Next
 

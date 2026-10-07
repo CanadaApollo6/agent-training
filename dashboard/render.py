@@ -81,10 +81,85 @@ def main():
         f'<td class="num">{f["fired"]}</td>'
         f'<td class="num">{(str(f["acted"]) + " acted") if f["acted_known"] else "–"}</td></tr>' for f in live["fixes"])
 
+    final = live.get("final") if not live["interim"] else None
+    if final:
+        pa, pn, pt, po = final["paired_all"], final["paired_no_heavy"], final["picture_tasks"], final["paired_other"]
+        ci = lambda p: f'{100 * p["ci95"][0]:+.0f} to {100 * p["ci95"][1]:+.0f}'
+        fx = {k: final[f"fix_{k}"] for k in ("cutoff", "check", "image")}
+        lost = {a: final[a]["runs"] - final[a]["reruns"] - (final[a]["usable"] - final[a]["rerun_usable"]) for a in ("off", "on")}
+        reruns = final["off"]["reruns"] + final["on"]["reruns"]
+        recovered = final["off"]["rerun_usable"] + final["on"]["rerun_usable"]
+        row = lambda label, off, on, note="": (f'<tr><td>{label}<div class="muted small">{note}</div></td>'
+                                               f'<td class="num">{off}</td><td class="num">{on}</td></tr>')
+        test_html = f"""
+<h2>The fix test: result</h2>
+<div class="muted">87 Terminal-Bench 2 tasks, two tries each, with three small fixes off and on. Every run lost to a
+failure outside the model got one more try.</div>
+<table style="margin-top:8px"><tr><th></th><th>Fixes off</th><th>Fixes on</th></tr>
+{row("Usable runs (of 174)", final["off"]["usable"], final["on"]["usable"], "Lost to sandbox, server or network failures: left out")}
+{row("Solved", f'{final["off"]["solved"]} ({pct(final["off"]["solved"], final["off"]["usable"])})', f'{final["on"]["solved"]} ({pct(final["on"]["solved"], final["on"]["usable"])})')}
+{row("Average solve rate per task", f'{100 * pa["off_rate"]:.0f}%', f'{100 * pa["on_rate"]:.0f}%', f'{pa["tasks"]} tasks with usable runs on both sides')}
+{row("Same, without the 7 heaviest tasks", f'{100 * pn["off_rate"]:.0f}%', f'{100 * pn["on_rate"]:.0f}%', "Prime shuts their sandboxes down in most runs")}
+{row("Tasks that involve a picture", f'{pt["off"]["solved"]} of {pt["off"]["usable"]} ({pct(pt["off"]["solved"], pt["off"]["usable"])})', f'{pt["on"]["solved"]} of {pt["on"]["usable"]} ({pct(pt["on"]["solved"], pt["on"]["usable"])})', f'{pt["tasks"]} tasks')}
+{row("All other tasks, per task", f'{100 * po["off_rate"]:.0f}%', f'{100 * po["on_rate"]:.0f}%', f'{po["tasks"]} tasks, no pictures, not heavy')}
+</table>
+<div class="note"><b>Probably a small gain, not proven.</b> Fixes on is ahead by {100 * pa["mean_diff"]:.0f} points per task,
+but the likely range runs from {ci(pa)} points, so it could be nothing (p = {pa["p_two_sided"]:.2f}). Fixes on did better on
+{pa["on_better"]} tasks, fixes off on {pa["off_better"]}, and {pa["same"]} came out the same. The whole gain is on tasks
+with pictures.</div>
+
+<h2>What each fix did</h2>
+<table><tr><th>Fix</th><th>What happened</th></tr>
+<tr><td><b>Image</b><div class="muted small">A picture becomes a text note instead of an error</div></td>
+<td>The clear win. Without it, {final["off_image_endings"]} runs ended when the model asked to see a picture, and none of
+them was solved. Picture tasks went from {pct(pt["off"]["solved"], pt["off"]["usable"])} to {pct(pt["on"]["solved"], pt["on"]["usable"])} solved.</td></tr>
+<tr><td><b>Check</b><div class="muted small">Re-check the outputs before saying done</div></td>
+<td>Maybe a small help. When the model said it was done, {pct(final["off_said_done"]["solved"], final["off_said_done"]["runs"])}
+of those runs were solved without the check and {pct(fx["check"]["solved"], fx["check"]["runs"])} with it.</td></tr>
+<tr><td><b>Cut-off</b><div class="muted small">Retry a reply that ran out of room, with thinking off</div></td>
+<td>Keeps runs going but rarely saves them: {fx["cutoff"]["solved"]} of {fx["cutoff"]["runs"]} runs where it fired were solved.
+A model that thinks itself into the limit is usually on a task it was going to fail.</td></tr>
+</table>
+
+<h2>The main problem now: Prime shutting sandboxes down</h2>
+<div>{lost["off"]} runs with fixes off and {lost["on"]} with fixes on were lost the first time, mostly to "the sandbox has
+been terminated". The retry recovered {recovered} of {reruns}; the rest were lost again. Seven heavy tasks (compiling,
+training, rendering) lose their sandbox in most runs on both sides. RL on Prime sandboxes needs this fixed or worked
+around first.</div>"""
+    else:
+        test_html = f"""<h2>The fix test, running now</h2>
+<div class="muted">87 Terminal-Bench 2 tasks, two tries each, with three small fixes off and on. Started {e(live["started"])};
+expected to finish around <b>{e(live["eta"])}</b>.</div>
+<div class="arms" style="margin-top:10px">{"".join(arm_html)}</div>
+<div class="legend">{legend}</div>
+<div class="note">{e(live["noise"])} Runs lost to failures outside the model (sandboxes shut down mid-run on Prime's side,
+server errors, a wifi drop here at 4:45 p.m.): {arms["off"]["errors"]} with fixes off, {arms["on"]["errors"]} with fixes on.
+The second figure leaves those out.</div>
+
+<h2>Rerunning the lost runs</h2>
+<div class="muted" style="margin-bottom:8px">Every run lost to a failure outside the model gets one more try, on four more
+servers, so both sides end with about the same number of usable runs. Started 5:10 p.m.; these are not in the
+figures above yet.</div>
+{rerun_rows}
+
+<h2>How often each fix fired</h2>
+<table><tr><th>Fix</th><th>Fired</th><th>Then</th></tr>{fixes}</table>
+<div class="muted small" style="margin-top:4px">The image fix fires on every request that carries a picture, so its count is requests, not runs.</div>
+
+<h2>Tasks where the two sides differ so far</h2>
+<div class="muted">Tasks both sides have finished, runs lost to failures left out: fixes on did better on <b class="good">{better}</b>,
+fixes off on <b class="bad">{worse}</b>.</div>
+<table style="margin-top:6px"><tr><th>Task</th><th>Off</th><th>On</th><th></th></tr>{diff_rows}</table>
+
+"""
     history = list(d["history"]) + [{
         "when": "6 Oct", "title": "Hard Terminal-Lego round (overnight)",
         "outcome": f"140 hard tasks, two tries each: 117 of 280 solved. 31 tasks solved exactly once, the kind worth "
                    f"training on; {lego['candidates']} with the pilot's."}]
+    if final:
+        history.append({"when": "6 Oct", "title": "The three fixes, 87 tasks, off vs on",
+                        "outcome": f"About {100 * final['paired_all']['mean_diff']:.0f} points better per task with the fixes, "
+                                   "not proven at two tries. The image fix is the real win; keep it."})
     hist = "".join(f'<div class="ev"><div class="when">{e(h["when"])}</div><div><b>{e(h["title"])}</b>'
                    f'<div class="muted">{e(h["outcome"])}</div></div></div>' for h in history)
 
@@ -126,29 +201,7 @@ th{{font-size:12px;font-weight:500;color:var(--muted-foreground)}}
 <div style="margin-top:6px">{e(d["headline"]["paragraph"])}</div>
 <div class="stats">{stats}</div>
 
-<h2>The fix test, running now</h2>
-<div class="muted">87 Terminal-Bench 2 tasks, two tries each, with three small fixes off and on. Started {e(live["started"])};
-expected to finish around <b>{e(live["eta"])}</b>.</div>
-<div class="arms" style="margin-top:10px">{"".join(arm_html)}</div>
-<div class="legend">{legend}</div>
-<div class="note">{e(live["noise"])} Runs lost to failures outside the model (sandboxes shut down mid-run on Prime's side,
-server errors, a wifi drop here at 4:45 p.m.): {arms["off"]["errors"]} with fixes off, {arms["on"]["errors"]} with fixes on.
-The second figure leaves those out.</div>
-
-<h2>Rerunning the lost runs</h2>
-<div class="muted" style="margin-bottom:8px">Every run lost to a failure outside the model gets one more try, on four more
-servers, so both sides end with about the same number of usable runs. Started 5:10 p.m.; these are not in the
-figures above yet.</div>
-{rerun_rows}
-
-<h2>How often each fix fired</h2>
-<table><tr><th>Fix</th><th>Fired</th><th>Then</th></tr>{fixes}</table>
-<div class="muted small" style="margin-top:4px">The image fix fires on every request that carries a picture, so its count is requests, not runs.</div>
-
-<h2>Tasks where the two sides differ so far</h2>
-<div class="muted">Tasks both sides have finished, runs lost to failures left out: fixes on did better on <b class="good">{better}</b>,
-fixes off on <b class="bad">{worse}</b>.</div>
-<table style="margin-top:6px"><tr><th>Task</th><th>Off</th><th>On</th><th></th></tr>{diff_rows}</table>
+{test_html}
 
 <h2>What has been tried</h2>{hist}
 

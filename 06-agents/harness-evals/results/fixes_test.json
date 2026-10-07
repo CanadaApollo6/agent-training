@@ -1,0 +1,167 @@
+{
+ "off": {
+  "runs": 205,
+  "usable": 161,
+  "solved": 61,
+  "reruns": 31,
+  "rerun_usable": 18,
+  "endings_usable": {
+   "agent_completed": 88,
+   "agent_timeout": 22,
+   "image_request": 11,
+   "max_turns": 40
+  },
+  "lost_by_task": {
+   "compile-compcert": 3,
+   "db-wal-recovery": 2,
+   "gpt2-codegolf": 4,
+   "fix-ocaml-gc": 2,
+   "model-extraction-relu-logits": 1,
+   "path-tracing-reverse": 1,
+   "pytorch-model-recovery": 2,
+   "rstan-to-pystan": 2,
+   "sanitize-git-repo": 1,
+   "torch-tensor-parallelism": 2,
+   "build-cython-ext": 2,
+   "count-dataset-tokens": 3,
+   "make-mips-interpreter": 2,
+   "mteb-retrieve": 1,
+   "path-tracing": 2,
+   "portfolio-optimization": 2,
+   "prove-plus-comm": 1,
+   "pytorch-model-cli": 1,
+   "reshard-c4-data": 2,
+   "sam-cell-seg": 1,
+   "torch-pipeline-parallelism": 3,
+   "train-fasttext": 2,
+   "mailman": 2
+  }
+ },
+ "on": {
+  "runs": 221,
+  "usable": 150,
+  "solved": 67,
+  "reruns": 47,
+  "rerun_usable": 23,
+  "endings_usable": {
+   "agent_timeout": 34,
+   "agent_completed": 71,
+   "max_turns": 45
+  },
+  "lost_by_task": {
+   "caffe-cifar-10": 4,
+   "compile-compcert": 3,
+   "db-wal-recovery": 2,
+   "feal-differential-cryptanalysis": 2,
+   "gpt2-codegolf": 2,
+   "fix-ocaml-gc": 3,
+   "hf-model-inference": 1,
+   "mteb-leaderboard": 1,
+   "path-tracing-reverse": 1,
+   "pytorch-model-recovery": 1,
+   "torch-tensor-parallelism": 4,
+   "sanitize-git-repo": 1,
+   "tune-mjcf": 3,
+   "vulnerable-secret": 3,
+   "write-compressor": 3,
+   "bn-fit-modify": 1,
+   "circuit-fibsqrt": 1,
+   "code-from-image": 2,
+   "extract-moves-from-video": 2,
+   "feal-linear-cryptanalysis": 1,
+   "gcode-to-text": 3,
+   "large-scale-text-editing": 2,
+   "mteb-retrieve": 3,
+   "path-tracing": 3,
+   "portfolio-optimization": 3,
+   "pytorch-model-cli": 1,
+   "reshard-c4-data": 4,
+   "train-fasttext": 4,
+   "torch-pipeline-parallelism": 3,
+   "video-processing": 3,
+   "winning-avg-corewars": 1
+  }
+ },
+ "paired_all": {
+  "tasks": 82,
+  "off_rate": 0.3902439024390244,
+  "on_rate": 0.43902439024390244,
+  "mean_diff": 0.04878048780487805,
+  "ci95": [
+   -0.036585365853658534,
+   0.13414634146341464
+  ],
+  "p_two_sided": 0.34405,
+  "on_better": 15,
+  "off_better": 12,
+  "same": 55
+ },
+ "paired_no_heavy": {
+  "tasks": 77,
+  "off_rate": 0.4090909090909091,
+  "on_rate": 0.4675324675324675,
+  "mean_diff": 0.05844155844155844,
+  "ci95": [
+   -0.032467532467532464,
+   0.14935064935064934
+  ],
+  "p_two_sided": 0.273,
+  "on_better": 15,
+  "off_better": 11,
+  "same": 51
+ },
+ "fix_cutoff": {
+  "runs": 25,
+  "solved": 2,
+  "firings": 66
+ },
+ "fix_check": {
+  "runs": 74,
+  "solved": 56,
+  "firings": 74
+ },
+ "fix_image": {
+  "runs": 18,
+  "solved": 8,
+  "firings": 276
+ },
+ "off_said_done": {
+  "runs": 78,
+  "solved": 52
+ },
+ "picture_tasks": {
+  "tasks": 24,
+  "off": {
+   "usable": 44,
+   "solved": 13
+  },
+  "on": {
+   "usable": 36,
+   "solved": 17
+  }
+ },
+ "paired_other": {
+  "tasks": 59,
+  "off_rate": 0.4322033898305085,
+  "on_rate": 0.4322033898305085,
+  "mean_diff": 0.0,
+  "ci95": [
+   -0.09322033898305085,
+   0.09322033898305085
+  ],
+  "p_two_sided": 1.0,
+  "on_better": 8,
+  "off_better": 9,
+  "same": 42
+ },
+ "off_cutoff_endings": 10,
+ "off_image_endings": 11,
+ "unmatched_fix_lines": {
+  "cutoff/none": 9,
+  "image/several": 59,
+  "image/none": 48,
+  "check/none": 8,
+  "check/several": 1,
+  "cutoff/several": 3
+ }
+}

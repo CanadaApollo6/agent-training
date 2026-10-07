@@ -162,6 +162,18 @@ def main():
           f"{res['off_said_done']['solved']} solved (check fires at that moment with fixes on)")
     print(f"  fixes off, for comparison: {len(cut_off)} runs ended on a cut-off reply (what cutoff targets), "
           f"{len(img_off)} on an image request (what image targets)")
+    # tasks where the model asked to look at a picture, on either side
+    pics = {r["task"] for r in runs if r["stop"] == "image_request" or r["fixes"]["image"]}
+    res["picture_tasks"] = {"tasks": len(pics)}
+    for arm in ("off", "on"):
+        u = [r for r in runs if r["arm"] == arm and r["usable"] and r["task"] in pics]
+        res["picture_tasks"][arm] = {"usable": len(u), "solved": sum(r["solved"] for r in u)}
+    other = paired(runs, HEAVY | pics)
+    res["paired_other"] = other
+    pt = res["picture_tasks"]
+    print(f"  picture tasks ({len(pics)}): off {pt['off']['solved']}/{pt['off']['usable']}, "
+          f"on {pt['on']['solved']}/{pt['on']['usable']}; other {other['tasks']} tasks (no pictures, not heavy): "
+          f"off {other['off_rate']:.1%}, on {other['on_rate']:.1%} per task")
     if unmatched:
         print(f"  fix log lines not tied to one run: {dict(unmatched)}")
     res["off_cutoff_endings"], res["off_image_endings"] = len(cut_off), len(img_off)

@@ -700,6 +700,12 @@ def stop_breakdown(runs):
     return out
 
 
+def final_results():
+    """The finished test's numbers, from fixes_analysis.py (originals plus reruns, paired by task)."""
+    path = EVAL / "results" / "fixes_test.json"
+    return json.loads(path.read_text()) if path.exists() else None
+
+
 def rerun_view(day, tz):
     """The top-up: rollouts lost to infrastructure, rerun on two servers per side (fixes_rerun.sh, lost_runs.py)."""
     rows = []
@@ -961,6 +967,7 @@ def build():
             ),
             "arms": [off, on],
             "reruns": rerun_view(day, tz),
+            "final": final_results(),
             "fixes": fixes,
             "trace_runs": {"off": trace_counts["off"], "on": trace_counts["on"]},
             "tasks": tasks,
@@ -992,6 +999,20 @@ def build():
             },
         },
     }
+    final = payload["live"]["final"]
+    if final and all_in:
+        p = final["paired_all"]
+        payload["headline"]["paragraph"] = (
+            f"The fix test has finished. With all three fixes on, the model solved about "
+            f"{100 * p['mean_diff']:.0f} points more per task ({100 * p['off_rate']:.0f}% to {100 * p['on_rate']:.0f}%), "
+            "but two tries per task can't prove a gain that size. The image fix is the clear win. "
+            "The hard-task round found tasks the model solves only sometimes, the ones worth training on."
+        )
+        payload["headline"]["numbers"][:3] = [
+            {"value": f"{final[a]['solved']} / {final[a]['usable']}", "label": f"Solved, fixes {a}",
+             "note": "Usable runs, reruns included"} for a in ("off", "on")
+        ] + [{"value": f"{100 * p['mean_diff']:+.0f} pts", "label": "Fixes on vs off, per task",
+              "note": f"Not significant (p = {p['p_two_sided']:.2f})"}]
     # eta_dt is useful internally but noisy on the page; drop it from the public arms.
     for arm in payload["live"]["arms"]:
         arm.pop("eta_dt", None)
