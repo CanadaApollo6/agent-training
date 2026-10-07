@@ -1,0 +1,11 @@
+up after 20 s
+16993 MiB, 57
+[serve_kernels] GPU-only budget: 20.9 GiB
+[tensorfold] CUDA rank 0 startup estimate 20.25 GiB within 20.94 GiB; native 262144, allocated prompt/reply window 8192, cache slots 8204
+[tensorfold] serving qwen27 at http://127.0.0.1:8091/v1 on CUDA (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: off; context: 8192; loaded in 15.6s)
+{"label": "mlx4-nodraft", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 35.20080879507302, "decode_tps_all": [35.95, 34.08, 35.2], "ttft_s_median": 0.04086520100827329}
+{"label": "mlx4-nodraft", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 35.38337658045238, "decode_tps_all": [37.34, 34.16, 35.38], "ttft_s_median": 0.03382710198638961}
+{"label": "mlx4-nodraft", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 33.1079720675557, "decode_tps_all": [35.36, 33.11, 30.63], "ttft_s_median": 0.03278803898137994}
+{"label": "mlx4-nodraft", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 36.22249979037662, "decode_tps_all": [39.39, 35.7, 36.22], "ttft_s_median": 0.045217828010208905}
+17265 MiB, 73
+1432 MiB

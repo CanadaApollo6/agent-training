@@ -267,3 +267,75 @@ marked step up from 2.0. **The cliff for rounding without training is between 3 
 holds; KL 0.35 breaks). One sample per problem at temperature 1.0 means 18 vs 19 is luck, not 3.0 beating 4.0.
 Its one sign of strain: two answers came in just under the cap (15,670 and 16,317 tokens), where 4.0 took 4,296 and
 ran out.
+
+## Third engine: TensorFold with the DFlash2 draft model (2026-10-07)
+
+Goal (Riel, 2026-10-07): as fast as possible on the 3090, with context you can actually work in, without losing
+intelligence.
+
+[TensorFold](../tools/TensorFold) (0.3.6.3, our sm86 patch) runs the MLX 4-bit build
+([`Vontra/Qwen3.8-27B-MLX-4bit`](https://huggingface.co/Vontra/Qwen3.8-27B-MLX-4bit), 4-bit in groups of 64, 15 GB)
+with [`z-lab/Qwen3.8-27B-DFlash2`](https://huggingface.co/z-lab/Qwen3.8-27B-DFlash2), a 5-layer draft model. The
+draft model guesses a block of upcoming tokens in one go, and the big model checks all of them in one pass. The big
+model keeps or rejects every guess, so the output is the big model's own; drafting doesn't change what it says.
+
+```bash
+./bench_tf.sh mlx4-nodraft --no-drafts
+TF_DRAFT_PACKED=1 TF_BUDGET_GIB=40 LONG="16000 32000 56000" ./bench_tf.sh mlx4-dflash2-64k --context 65536
+```
+
+### Getting it to start on 24 GB
+
+Out of the box it refuses: its memory planner says zero tokens of context fit. The planner is written for
+128 GB machines and over-counts in three places:
+
+| What it counts | Planner | Real |
+|---|---|---|
+| Draft model | 7.2 GiB (4 bytes a weight) | ~1 GiB: it is packed to 4-bit as it loads |
+| Fixed scratch space | 3.7 GiB | not visible in use |
+| Context cache per token | 256 KB (4 copies at 4 bytes) | 64 KB held (bf16, one copy) |
+
+With drafts off it allows only an 8K window, and then the card has ~6 GB unused. `serve_kernels.py` gained two
+switches: `TF_DRAFT_PACKED=1` counts the draft model at its packed size, and `TF_BUDGET_GIB` overrides the planner
+outright, so the window is set by `--context` and checked by measuring real memory with long prompts.
+
+### Measured
+
+Decode speed, median of 3 (TensorFold's public bench: a code prompt and a chat prompt, 256 tokens):
+
+| | No drafts | With DFlash2 | EXL3 4.0 + MTP×4 (before) |
+|---|---|---|---|
+| Chat, greedy | 36.2 tok/s | **102** tok/s | 61.6 |
+| Chat, sampled (temp 1) | 35.4 | **81–104** | – |
+| Code, greedy | 33.1 | **143–148** | – |
+| Code, sampled | 35.2 | **159–192** | – |
+
+(Two runs each for the drafted cells; ranges are run-to-run. The host was busy, load average ~15.)
+
+Long prompts (with drafts, 64K window; a list of records, then "what is the code for record N?"):
+
+| Prompt | Prefill | Recall | Peak card memory (desktop's 1.4 GB included) |
+|---|---|---|---|
+| 20,707 tokens | 27 s (758 tok/s) | right | 21.3 GB |
+| 41,741 tokens | 59 s (704 tok/s) | right | **24.0 GB of 24.5** |
+| ~73K tokens | – | – | refused: longer than the 64K window |
+
+### What it shows
+
+11. **The draft model is the speed lever, and it's big.** 3× on chat and 4–5× on code over plain decoding, and
+    1.7× over EXL3's MTP drafting. Plain decoding is 35 tok/s, 64% of this build's ~55 tok/s byte ceiling. Drafting
+    goes past the ceiling because one read of the weights checks many tokens.
+12. **Context is now the limit.** ~42K tokens fills the card. Memory grows ~128 KB per prompt token, twice the cache
+    itself, so something during prompt processing holds a second copy. EXL3 fit 262K by caching keys and values in
+    4 bits and keeping the embedding table in system RAM; this engine does neither yet.
+
+### Next: where the room comes from
+
+| Change | Frees | Then |
+|---|---|---|
+| Find and remove the second per-token copy | ~64 KB/token | ~2× the context |
+| 8-bit cache (4-bit like EXL3 later) | half (¾) of the cache | 2× (4×) again |
+| Embedding table to system RAM | ~0.7 GB | +~10K tokens |
+| Mixed 3/4-bit weights (EXL3 3.0 held 19/20 on the math probe) | ~3–4 GB | more context and faster plain decoding |
+
+Each needs an intelligence check against bf16 (KL on a pod, plus the 20-problem math probe) before it counts.

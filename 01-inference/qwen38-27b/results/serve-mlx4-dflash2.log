@@ -1,0 +1,5 @@
+[serve_kernels] GPU-only budget: 20.9 GiB
+[serve_kernels] drafter counted at its packed 4-bit size
+[serve_kernels] new: SPLIT 0 SELECT True COMBINE 1
+[tensorfold] loading qwen27: Qwen3.8 dense (qwen3_5) on CUDA
+tensorfold: CUDA startup memory budget cannot fit the 262144-token native window or any smaller one; estimated largest fitting prompt-plus-reply window: 0 tokens across the ranks. Please free memory or use smaller/quantized weights; no model weights or KV caches have been loaded. KV precision is unchanged.

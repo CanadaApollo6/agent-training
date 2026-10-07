@@ -1,0 +1,19 @@
+up after 32 s
+17891 MiB, 55
+[serve_kernels] GPU-only budget: 21.0 GiB
+[serve_kernels] planner budget forced to 40.0 GiB: measure the real peak
+[serve_kernels] drafter counted at its packed 4-bit size
+[tensorfold] CUDA rank 0 startup estimate 35.76 GiB within 40.00 GiB; native 262144, allocated prompt/reply window 65536, cache slots 65548
+[tensorfold] serving qwen27 at http://127.0.0.1:8091/v1 on CUDA (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 65536; loaded in 25.6s)
+{"label": "mlx4-dflash2-64k-long", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 158.6987113906017, "decode_tps_all": [147.62, 166.53, 158.7], "ttft_s_median": 0.04223919898504391}
+{"label": "mlx4-dflash2-64k-long", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 80.8695309651091, "decode_tps_all": [80.87, 69.63, 99.09], "ttft_s_median": 0.07623808301286772}
+{"label": "mlx4-dflash2-64k-long", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 143.44404565687793, "decode_tps_all": [145.85, 129.04, 143.44], "ttft_s_median": 0.04724694901960902}
+{"label": "mlx4-dflash2-64k-long", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 102.18131117231867, "decode_tps_all": [102.18, 107.37, 102.04], "ttft_s_median": 0.03219696501037106}
+18273 MiB, 72
+{"prompt_tokens": 41741, "prefill_s": 59.26, "prefill_tps": 704, "answer": "3313", "expected": 3313}
+  peak VRAM at ~32000 tokens: 23997 MiB
+  File "/home/riels/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+  peak VRAM at ~56000 tokens:  MiB
+1361 MiB

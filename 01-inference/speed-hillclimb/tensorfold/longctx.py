@@ -1,5 +1,5 @@
 """Send a long prompt: python3 longctx.py <port> <approx tokens>. Prints prefill time, decode rate and a recall check."""
-import json, sys, time, urllib.request, random
+import json, os, sys, time, urllib.request, random
 random.seed(0)
 n = int(sys.argv[2])
 words = "alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo lima mike november oscar papa".split()
@@ -11,7 +11,7 @@ while len(" ".join(lines)) / 4.2 < n:
     lines.append(f"Record {k}: {' '.join(random.choice(words) for _ in range(12))}; code {v}.")
 probe = random.choice(list(facts))
 text = "\n".join(lines) + f"\n\nWhat is the code for record {probe}? Answer with the number only."
-body = {"model": "ornith", "max_tokens": 64, "temperature": 0, "stream": True, "stream_options": {"include_usage": True},
+body = {"model": os.environ.get("MODEL_NAME", "ornith"), "max_tokens": 64, "temperature": 0, "stream": True, "stream_options": {"include_usage": True},
         "messages": [{"role": "user", "content": text}], "chat_template_kwargs": {"enable_thinking": False}}
 req = urllib.request.Request(f"http://127.0.0.1:{sys.argv[1]}/v1/chat/completions", json.dumps(body).encode(), {"Content-Type": "application/json"})
 t0 = time.perf_counter(); first = None; out = ""; usage = None; times = []

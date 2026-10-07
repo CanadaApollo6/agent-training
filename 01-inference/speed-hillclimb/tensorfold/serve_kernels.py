@@ -25,6 +25,11 @@ if os.environ.get("TF_GPU_ONLY_BUDGET") == "1":
     capacity.available_bytes = gpu_only
     print(f"[serve_kernels] GPU-only budget: {gpu_only(torch) / capacity.GIB:.1f} GiB", flush=True)
 
+if os.environ.get("TF_BUDGET_GIB"):                     # overrides the planner's budget: its bounds overcount a 24 GB
+    budget = int(float(os.environ["TF_BUDGET_GIB"]) * capacity.GIB)   # card (Qwen3.8-27B: 3.7 GiB of fixed scratch and
+    capacity.available_bytes = lambda torch_mod: budget                # 4x the bf16 KV a token holds), so pass --context
+    print(f"[serve_kernels] planner budget forced to {budget / capacity.GIB:.1f} GiB: measure the real peak", flush=True)
+
 if os.environ.get("TF_RANDOM_SEED") == "1":             # requests without a seed get a fresh one, as llama-server
     import secrets                                       # does; TensorFold's default draws it from the prompt, so
                                                          # repeated attempts of an eval would replay each other
@@ -32,6 +37,22 @@ if os.environ.get("TF_RANDOM_SEED") == "1":             # requests without a see
 
     exact_sampling.seed_for = lambda *a, **k: secrets.randbits(62)
     print("[serve_kernels] a fresh sampling seed per request", flush=True)
+
+if os.environ.get("TF_DRAFT_PACKED") == "1":            # the planner counts a DFlash2 drafter at 4 bytes a weight,
+    import dataclasses, json, math                       # but dflash2.py packs it to 4-bit (groups of 64, bf16 scale
+    from pathlib import Path                             # and bias: 4.5 bits) one tensor at a time from the host;
+    whole = capacity.estimate_weights                    # 7.2 GiB counted for Qwen3.8-27B's drafter, about 1 GiB held
+
+    def packed(model_dir, transform, **kw):
+        if "dflash_config" not in json.loads((Path(model_dir) / "config.json").read_text()):
+            return whole(model_dir, transform, **kw)
+        w = whole(model_dir, lambda name, info: (math.prod(info["shape"]) * (4.5 / 8 if len(info["shape"]) == 2
+                                                 else 4), 0), **kw)
+        # packing one weight on the device: bf16 copy, fp32 groups, int32 codes, words (~14 bytes a weight)
+        return dataclasses.replace(w, staging=int(w.staging / 3 / (4.5 / 8) * 14))
+
+    capacity.estimate_weights = packed
+    print("[serve_kernels] drafter counted at its packed 4-bit size", flush=True)
 
 STEPS = {"old": (-1, False, 0), "swap": (0, False, 0), "select": (0, True, 0), "new": None}
 

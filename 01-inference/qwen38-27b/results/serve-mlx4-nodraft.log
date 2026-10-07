@@ -1,0 +1,5 @@
+[serve_kernels] GPU-only budget: 20.9 GiB
+[serve_kernels] new: SPLIT 0 SELECT True COMBINE 1
+[tensorfold] loading qwen27: Qwen3.8 dense (qwen3_5) on CUDA
+[tensorfold] CUDA rank 0 startup estimate 20.25 GiB within 20.94 GiB; native 262144, allocated prompt/reply window 8192, cache slots 8204
+[tensorfold] serving qwen27 at http://127.0.0.1:8091/v1 on CUDA (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: off; context: 8192; loaded in 15.6s)
