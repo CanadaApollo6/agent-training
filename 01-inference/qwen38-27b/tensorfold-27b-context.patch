@@ -1,3 +1,270 @@
+diff --git i/src/tensorfold/cuda/kernels/attention.py w/src/tensorfold/cuda/kernels/attention.py
+index 798958b..9544e94 100644
+--- i/src/tensorfold/cuda/kernels/attention.py
++++ w/src/tensorfold/cuda/kernels/attention.py
+@@ -11,6 +11,9 @@ import torch
+ import triton
+ import triton.language as tl
+ 
++from . import kvq
++from .kvq import load_rows
++
+ TILE = 64
+ CHUNK = 512
+ MAX_NODES = 128
+@@ -52,7 +55,7 @@ def _tile(q, k, v, m, l, o, valid, scale: tl.constexpr):
+ 
+ @triton.jit
+ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: tl.constexpr, D: tl.constexpr,
+-            G: tl.constexpr, CH: tl.constexpr, SCALE: tl.constexpr):
++            G: tl.constexpr, CH: tl.constexpr, SCALE: tl.constexpr, R: tl.constexpr, QBITS: tl.constexpr):
+     """Item (stream, first pair, chunk): 16 (row, head) pairs of one stream against one chunk of committed keys."""
+ 
+     item = tl.program_id(0)
+@@ -79,8 +82,9 @@ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: t
+         o = tl.zeros((16, D), tl.float32)
+         for t in range(CH // 64):
+             ki = key + t * 64
+-            kk = tl.load(KC + koff + (ki[:, None] * HK + hk) * D + d[None, :]).to(tl.bfloat16)
+-            vv = tl.load(VC + voff + (ki[:, None] * HK + hk) * D + d[None, :]).to(tl.bfloat16)
++            every = ki >= 0
++            kk = load_rows(KC, koff + (ki * HK + hk) * R, d, every, D, QBITS)
++            vv = load_rows(VC, voff + (ki * HK + hk) * R, d, every, D, QBITS)
+             m, l, o = _tile(q, kk, vv, m, l, o, ki < p, SCALE)
+         base = (chunk * W + node) * H + head
+         tl.store(PO + base[:, None] * D + d[None, :], o, mask=ok[:, None])
+@@ -90,7 +94,8 @@ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: t
+ 
+ @triton.jit
+ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H: tl.constexpr, HK: tl.constexpr,
+-          D: tl.constexpr, G: tl.constexpr, CH: tl.constexpr, MAXD: tl.constexpr, SCALE: tl.constexpr):
++          D: tl.constexpr, G: tl.constexpr, CH: tl.constexpr, MAXD: tl.constexpr, SCALE: tl.constexpr,
++          R: tl.constexpr, QBITS: tl.constexpr):
+     """Row, head group, tail chunk: the last committed keys and the row's own path."""
+ 
+     node = tl.program_id(0)
+@@ -110,18 +115,19 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
+         l = tl.zeros((16,), tl.float32)
+         o = tl.zeros((16, D), tl.float32)
+         key = chunk * CH + tl.arange(0, 64)
+-        for t in range(CH // 64):
++        last = tl.minimum(p + depth - chunk * CH, CH)        # past it every key is masked: tiles there are no-ops
++        for t in range(0, (last + 63) // 64):
+             logical = key + t * 64
+             committed = logical < p
+             path_slot = logical - p
+             on_path = (path_slot >= 0) & (path_slot < depth)
+             path_node = tl.load(PATHS + node * MAXD + path_slot, mask=on_path, other=0)
+-            kc = tl.load(KC + koff + (logical[:, None] * HK + hk) * D + d[None, :], mask=committed[:, None], other=0)
+-            vc = tl.load(VC + voff + (logical[:, None] * HK + hk) * D + d[None, :], mask=committed[:, None], other=0)
++            kc = load_rows(KC, koff + (logical * HK + hk) * R, d, committed, D, QBITS)
++            vc = load_rows(VC, voff + (logical * HK + hk) * R, d, committed, D, QBITS)
+             kn = tl.load(KN + (path_node[:, None] * HK + hk) * D + d[None, :], mask=on_path[:, None], other=0)
+             vn = tl.load(VN + (path_node[:, None] * HK + hk) * D + d[None, :], mask=on_path[:, None], other=0)
+-            kk = tl.where(committed[:, None], kc, kn).to(tl.bfloat16)
+-            vv = tl.where(committed[:, None], vc, vn).to(tl.bfloat16)
++            kk = tl.where(committed[:, None], kc, kn.to(tl.bfloat16))
++            vv = tl.where(committed[:, None], vc, vn.to(tl.bfloat16))
+             m, l, o = _tile(q, kk, vv, m, l, o, committed | on_path, SCALE)
+         base = (chunk * W + node) * H + hk * G + gg
+         tl.store(PO + base[:, None] * D + d[None, :], o, mask=gg[:, None] < G)
+@@ -233,18 +239,20 @@ def _base(index: int) -> torch.Tensor:
+ 
+ 
+ def offsets(caches: Sequence[tuple[torch.Tensor, torch.Tensor]], device) -> list[int]:
+-    """Each stream's key and value cache as bf16 element offsets from ``base(device)``, in stream order."""
++    """Each stream's key and value cache as element offsets from ``base(device)`` (bf16, or bytes for an 8-bit
++    cache), in stream order."""
+ 
+     origin = base(device).data_ptr()
++    size = torch.tensor([], dtype=kvq.dtype()).element_size()
+     out = []
+     for k, v in caches:
+         for t in (k, v):
+-            if t.dtype != torch.bfloat16 or not t.is_contiguous():
+-                raise ValueError("caches: contiguous bf16 tensors")
++            if t.dtype != kvq.dtype() or not t.is_contiguous():
++                raise ValueError(f"caches: contiguous {kvq.dtype()} tensors")
+             delta = t.data_ptr() - origin
+             if delta % 16:
+                 raise ValueError("caches must be 16-byte aligned")
+-            out.append(delta // 2)
++            out.append(delta // size)
+     return out
+ 
+ 
+@@ -259,7 +267,8 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+         raise ValueError("unsupported attention shape")
+     if any(x.dtype != torch.bfloat16 or not x.is_cuda or not x.is_contiguous() for x in (q, k_nodes, v_nodes)):
+         raise ValueError("q and node keys and values must be contiguous CUDA bf16 tensors")
+-    origin = base(q.device)
++    origin = base(q.device) if kvq.BITS == 16 else base(q.device).view(torch.int8)
++    r = kvq.width(d)
+     if not math.isfinite(scale) or scale <= 0:
+         raise ValueError("scale must be positive and finite")
+     g = h // hk
+@@ -268,11 +277,12 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+     partial_l = torch.empty_like(partial_m)
+     if p.items.shape[0]:
+         _shared[(p.items.shape[0], hk)](q, origin, origin, offs, p.streams, p.items, partial_o, partial_m, partial_l, w,
+-                                        H=h, HK=hk, D=d, G=g, CH=CHUNK, SCALE=scale, num_warps=4, num_stages=1)
++                                        H=h, HK=hk, D=d, G=g, CH=CHUNK, SCALE=scale, R=r, QBITS=kvq.BITS,
++                                        num_warps=4, num_stages=1)
+     tails = 1 + -(-MAX_NODES // CHUNK)
+     _tail[(w, hk, tails)](q, k_nodes, v_nodes, origin, origin, offs, p.streams, p.rows, p.paths, p.depths,
+                           partial_o, partial_m, partial_l, w, H=h, HK=hk, D=d, G=g, CH=CHUNK, MAXD=MAX_NODES,
+-                          SCALE=scale, num_warps=4, num_stages=1)
++                          SCALE=scale, R=r, QBITS=kvq.BITS, num_warps=4, num_stages=1)
+     out = torch.empty_like(q)
+     _merge[(w, hk)](partial_o, partial_m, partial_l, out, p.streams, p.rows, w, H=h, D=d, G=g, num_warps=4)
+     return out
+diff --git i/src/tensorfold/cuda/kernels/kvq.py w/src/tensorfold/cuda/kernels/kvq.py
+new file mode 100644
+index 0000000..4efb2e0
+--- /dev/null
++++ w/src/tensorfold/cuda/kernels/kvq.py
+@@ -0,0 +1,80 @@
++"""An 8-bit attention cache: each (row, key head) packs D int8 codes, then D / 32 fp16 scales (absmax / 127).
++
++``TENSORFOLD_KV_BITS=8`` turns it on (default 16: bf16 rows). A packed cache keeps the bf16 cache's (rows, kv heads,
++width) shape with int8 elements, so growing, slicing and copying it are unchanged; only the writes (``store``) and the
++attention kernels' reads (``load_rows``) know the layout. 8.5 bits a value: 272 bytes a 256-wide head row, not 512.
++"""
++
++from __future__ import annotations
++
++import os
++
++import torch
++import triton
++import triton.language as tl
++from triton.language.extra import libdevice
++
++BITS = int(os.environ.get("TENSORFOLD_KV_BITS", "16"))
++if BITS not in (8, 16):
++    raise ValueError("TENSORFOLD_KV_BITS takes 8 or 16")
++GROUP = 32
++
++
++def width(d: int) -> int:
++    """A cache row's last-axis length in its own elements: bf16 values, or int8 codes plus fp16 scales as bytes."""
++
++    return d if BITS == 16 else d + 2 * (d // GROUP)
++
++
++def dtype() -> torch.dtype:
++    return torch.bfloat16 if BITS == 16 else torch.int8
++
++
++@triton.jit
++def load_rows(C, row, d, mask, D: tl.constexpr, QBITS: tl.constexpr):
++    """bf16 (len(row), D) values of cache rows starting at element ``row`` (a row-head's first element)."""
++
++    if QBITS == 16:
++        x = tl.load(C + row[:, None] + d[None, :], mask=mask[:, None], other=0.0).to(tl.bfloat16)
++    else:
++        codes = tl.load(C + row[:, None] + d[None, :], mask=mask[:, None], other=0)
++        scales = tl.load((C + row[:, None] + D).to(tl.pointer_type(tl.float16)) + d[None, :] // 32,
++                         mask=mask[:, None], other=0.0)
++        x = (codes.to(tl.float32) * scales.to(tl.float32)).to(tl.bfloat16)
++    return x
++
++
++@triton.jit
++def _quant(X, OUT, D: tl.constexpr, R: tl.constexpr):
++    rh = tl.program_id(0)
++    g = tl.arange(0, D // 32)
++    j = tl.arange(0, 32)
++    x = tl.load(X + rh * D + g[:, None] * 32 + j[None, :]).to(tl.float32)
++    scale = tl.maximum(tl.max(tl.abs(x), axis=1) / 127.0, 1e-7).to(tl.float16)
++    codes = libdevice.rint(x / scale.to(tl.float32)[:, None])
++    codes = tl.minimum(tl.maximum(codes, -127.0), 127.0).to(tl.int8)
++    tl.store(OUT + rh * R + g[:, None] * 32 + j[None, :], codes)
++    tl.store((OUT + rh * R + D).to(tl.pointer_type(tl.float16)) + g, scale)
++
++
++def store(dst: torch.Tensor, x: torch.Tensor) -> None:
++    """Write bf16 rows ``x`` (n, kv heads, D) into cache rows ``dst`` (n, kv heads, ``width(D)``)."""
++
++    if BITS == 16:
++        dst.copy_(x)
++        return
++    n, hk, d = x.shape
++    if dst.shape != (n, hk, width(d)) or dst.dtype != torch.int8 or not dst.is_contiguous():
++        raise ValueError("an 8-bit cache store takes contiguous int8 rows of the packed width")
++    if n:
++        _quant[(n * hk,)](x.contiguous(), dst, D=d, R=width(d), num_warps=2)
++
++
++def unpack(rows: torch.Tensor, d: int) -> torch.Tensor:
++    """bf16 (n, kv heads, D) values of cache rows (tests and reference paths)."""
++
++    if BITS == 16:
++        return rows
++    codes = rows[..., :d].float()
++    scales = rows[..., d:].contiguous().view(torch.float16).float()
++    return (codes.view(*codes.shape[:-1], d // GROUP, GROUP) * scales[..., None]).view(*codes.shape).to(torch.bfloat16)
+diff --git i/src/tensorfold/cuda/kernels/prefill_attention.py w/src/tensorfold/cuda/kernels/prefill_attention.py
+index fa14f6a..4be4bf1 100644
+--- i/src/tensorfold/cuda/kernels/prefill_attention.py
++++ w/src/tensorfold/cuda/kernels/prefill_attention.py
+@@ -6,6 +6,9 @@ import torch
+ import triton
+ import triton.language as tl
+ 
++from . import kvq
++from .kvq import load_rows
++
+ BM = 64
+ BN = 64
+ 
+@@ -26,7 +29,7 @@ def _tile(q, k, v, m, l, o, valid, SCALE: tl.constexpr):
+ 
+ @triton.jit
+ def _attend(Q, K, V, OUT, p0, W, H: tl.constexpr, HK: tl.constexpr, D: tl.constexpr, BM: tl.constexpr,
+-            BN: tl.constexpr, SCALE: tl.constexpr):
++            BN: tl.constexpr, SCALE: tl.constexpr, R: tl.constexpr, QBITS: tl.constexpr):
+     block = tl.program_id(0)
+     head = tl.program_id(1)
+     hk = head // (H // HK)
+@@ -43,21 +46,22 @@ def _attend(Q, K, V, OUT, p0, W, H: tl.constexpr, HK: tl.constexpr, D: tl.conste
+     full = (first_pos + 1) // BN                  # tiles every row of the block sees whole
+     for t in range(0, full):
+         keys = t * BN + tl.arange(0, BN)
+-        k = tl.load(K + (keys[:, None] * HK + hk) * D + d[None, :])
+-        v = tl.load(V + (keys[:, None] * HK + hk) * D + d[None, :])
++        k = load_rows(K, (keys * HK + hk) * R, d, keys >= 0, D, QBITS)
++        v = load_rows(V, (keys * HK + hk) * R, d, keys >= 0, D, QBITS)
+         m, l, o = _tile(q, k, v, m, l, o, keys[None, :] <= pos[:, None], SCALE)
+     for t in range(full, last_pos // BN + 1):
+         keys = t * BN + tl.arange(0, BN)
+         seen = keys <= last_pos
+-        k = tl.load(K + (keys[:, None] * HK + hk) * D + d[None, :], mask=seen[:, None], other=0.0)
+-        v = tl.load(V + (keys[:, None] * HK + hk) * D + d[None, :], mask=seen[:, None], other=0.0)
++        k = load_rows(K, (keys * HK + hk) * R, d, seen, D, QBITS)
++        v = load_rows(V, (keys * HK + hk) * R, d, seen, D, QBITS)
+         m, l, o = _tile(q, k, v, m, l, o, keys[None, :] <= pos[:, None], SCALE)
+     out = o / l[:, None]
+     tl.store(OUT + (rows[:, None] * H + head) * D + d[None, :], out.to(tl.bfloat16), mask=ok[:, None])
+ 
+ 
+ def attention(q: torch.Tensor, k_cache: torch.Tensor, v_cache: torch.Tensor, p0: int, *, scale: float) -> torch.Tensor:
+-    """q (W, H, D) bf16 at positions [p0, p0 + W); the caches must already hold every key through p0 + W - 1."""
++    """q (W, H, D) bf16 at positions [p0, p0 + W); the caches (bf16, or ``kvq``'s 8-bit rows) must already hold every
++    key through p0 + W - 1."""
+ 
+     w, h, d = q.shape
+     hk = k_cache.shape[1]
+@@ -66,6 +70,8 @@ def attention(q: torch.Tensor, k_cache: torch.Tensor, v_cache: torch.Tensor, p0:
+     if not (q.is_contiguous() and k_cache.is_contiguous() and v_cache.is_contiguous()):
+         raise ValueError("prefill attention takes contiguous tensors")
+     out = torch.empty_like(q)
++    if k_cache.shape[2] != kvq.width(d) or k_cache.dtype != kvq.dtype():
++        raise ValueError("prefill attention: the caches' rows must be the cache's dtype and width")
+     _attend[(triton.cdiv(w, BM), h)](q, k_cache, v_cache, out, p0, w, H=h, HK=hk, D=d, BM=BM, BN=BN, SCALE=scale,
+-                                     num_warps=8, num_stages=1 if d > 128 else 2)
++                                     R=kvq.width(d), QBITS=kvq.BITS, num_warps=8, num_stages=1 if d > 128 else 2)
+     return out
 diff --git i/src/tensorfold/families/qwen3_5/cuda/decode.py w/src/tensorfold/families/qwen3_5/cuda/decode.py
 index 624f6ad..c357da7 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/decode.py
@@ -57,7 +324,7 @@ index 6029ae1..3371de7 100644
          if self.tp == 2:
              return self._generate_tp(prompt, max_tokens, sampling, on_tokens, hit, t0, draft, stop_eos, vision=encoded)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/forward.py w/src/tensorfold/families/qwen3_5/cuda/forward.py
-index 97003b6..b346847 100644
+index 97003b6..aac69ea 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/forward.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/forward.py
 @@ -2,6 +2,7 @@
@@ -68,8 +335,11 @@ index 97003b6..b346847 100644
  from dataclasses import dataclass
  from typing import Sequence
  
-@@ -13,7 +14,7 @@ from tensorfold.cuda.kernels import attention as tree_attention
+@@ -11,9 +12,10 @@ import torch
+ from tensorfold.cuda import moe
+ from tensorfold.cuda.kernels import attention as tree_attention
  from tensorfold.cuda.kernels import gdn as deltanet
++from tensorfold.cuda.kernels import kvq
  
  from . import glue
 -from .qmm_fast import matmul
@@ -77,7 +347,7 @@ index 97003b6..b346847 100644
  from .weights import QLinear, Weights
  
  
-@@ -23,6 +24,14 @@ def _mm(x: torch.Tensor, w: QLinear, xs: torch.Tensor | None = None) -> torch.Te
+@@ -23,6 +25,14 @@ def _mm(x: torch.Tensor, w: QLinear, xs: torch.Tensor | None = None) -> torch.Te
      return matmul(x, w, xs)
  
  
@@ -92,7 +362,19 @@ index 97003b6..b346847 100644
  def _row_mm(x: torch.Tensor, w: QLinear, tp: bool,
              xs: torch.Tensor | None = None) -> torch.Tensor:
      if not tp:
-@@ -162,6 +171,16 @@ def stage(w: Weights, st: State, width: int, context: int) -> Staged:
+@@ -119,8 +129,9 @@ class State:
+             else:
+                 self.conv.append(None)
+                 self.rec.append(None)
+-                self.kv.append((torch.empty((0, c.kv_heads, c.head_dim), device=device, dtype=torch.bfloat16),
+-                                torch.empty((0, c.kv_heads, c.head_dim), device=device, dtype=torch.bfloat16)))
++                row = (0, c.kv_heads, kvq.width(c.head_dim))      # bf16 values, or kvq's 8-bit rows
++                self.kv.append((torch.empty(row, device=device, dtype=kvq.dtype()),
++                                torch.empty(row, device=device, dtype=kvq.dtype())))
+ 
+ 
+ @dataclass
+@@ -162,6 +173,16 @@ def stage(w: Weights, st: State, width: int, context: int) -> Staged:
                    _cache_offsets([st], softmax, device), _conv_windows(parents, c.conv_kernel - 1).to(device), host, dev)
  
  
@@ -109,7 +391,7 @@ index 97003b6..b346847 100644
  def reserve(st: State, rows: int) -> None:
      """Grow every attention cache to ``rows`` now, so later commits never move a buffer (graphs keep addresses)."""
  
-@@ -214,17 +233,15 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+@@ -214,17 +235,15 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
          x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
          if layer.linear:
              gdn = layer.gdn
@@ -130,7 +412,7 @@ index 97003b6..b346847 100644
              q, k, v, g, beta = glue.gdn_pre(qkv, st.conv[i], gdn.conv, windows, a, b,
                                                gdn.A_log, gdn.dt_bias, kh=c.k_heads,
                                                vh=c.v_heads, dk=c.dk)
-@@ -234,15 +251,14 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+@@ -234,15 +253,14 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
              record.append(GDNRecord(q, k, v, g, beta, qkv))
          else:
              attn = layer.attn
@@ -149,7 +431,7 @@ index 97003b6..b346847 100644
              q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
                                      w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
                                      head_dim=c.head_dim)
-@@ -322,17 +338,15 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+@@ -322,17 +340,15 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
          x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
          if layer.linear:
              gdn = layer.gdn
@@ -170,7 +452,7 @@ index 97003b6..b346847 100644
              conv = states[0].conv[i] if S == 1 else torch.cat([st.conv[i] for st in states])
              q, k, v, g, beta = glue.gdn_pre(qkv, conv, gdn.conv, windows_t, a, b, gdn.A_log, gdn.dt_bias,
                                              kh=c.k_heads, vh=c.v_heads, dk=c.dk, stream_ids=sid_t, nkeep=keep)
-@@ -342,15 +356,14 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+@@ -342,15 +358,14 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
              record.append(GDNRecord(q, k, v, g, beta, qkv))
          else:
              attn = layer.attn
@@ -189,7 +471,7 @@ index 97003b6..b346847 100644
              q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
                                      w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
                                      head_dim=c.head_dim)
-@@ -451,9 +464,7 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
+@@ -451,9 +466,7 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
              for i, _ in att:
                  kbuf, vbuf = st.kv[i]
                  if kbuf.shape[0] < need:
@@ -200,11 +482,30 @@ index 97003b6..b346847 100644
                      grown_k = kbuf.new_empty((cap, *kbuf.shape[1:]))
                      grown_v = vbuf.new_empty((cap, *vbuf.shape[1:]))
                      grown_k[:st.pos] = kbuf[:st.pos]
+@@ -470,6 +483,10 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
+                 dst += [st.kv[i][0][st.pos:st.pos + n], st.kv[i][1][st.pos:st.pos + n]]
+                 src += [keys[a0:a0 + n], values[a0:a0 + n]]
+                 a0 += n
+-        torch._foreach_copy_(dst, src)
++        if kvq.BITS == 16:
++            torch._foreach_copy_(dst, src)
++        else:
++            for d_rows, s_rows in zip(dst, src):
++                kvq.store(d_rows, s_rows)
+     for st, path in zip(states, paths):
+         st.pos += len(path)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/prefill.py w/src/tensorfold/families/qwen3_5/cuda/prefill.py
-index 9aca8c2..6b657a7 100644
+index 9aca8c2..b5f6ac7 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/prefill.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/prefill.py
-@@ -14,6 +14,7 @@ from tensorfold.cuda.kernels.prefill_attention import attention
+@@ -8,12 +8,14 @@ import torch
+ 
+ from tensorfold.cuda import moe
+ from tensorfold.cuda.kernels import gdn as deltanet
++from tensorfold.cuda.kernels import kvq
+ from tensorfold.cuda.kernels import qmm as shared
+ from tensorfold.cuda.kernels.prefill_attention import attention
+ 
  from . import glue
  from . import prefill_bf16, prefill_glue
  from .decode import clone_state
@@ -212,7 +513,7 @@ index 9aca8c2..6b657a7 100644
  from .forward import State
  from .qmm_fast import matmul, matmul_partial, tile
  from .weights import QLinear, Weights
-@@ -44,9 +45,7 @@ def _row_mm(x, w: QLinear, tp: bool) -> torch.Tensor:
+@@ -44,9 +46,7 @@ def _row_mm(x, w: QLinear, tp: bool) -> torch.Tensor:
  def _grow(st: State, i: int, need: int) -> tuple[torch.Tensor, torch.Tensor]:
      kbuf, vbuf = st.kv[i]
      if kbuf.shape[0] < need:
@@ -223,3 +524,14 @@ index 9aca8c2..6b657a7 100644
          grown_k, grown_v = kbuf.new_empty((cap, *kbuf.shape[1:])), vbuf.new_empty((cap, *vbuf.shape[1:]))
          grown_k[:st.pos] = kbuf[:st.pos]
          grown_v[:st.pos] = vbuf[:st.pos]
+@@ -123,8 +123,8 @@ def prefill_chunk(w: Weights, tokens: torch.Tensor, st: State, *, tp: bool = Fal
+             q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos, w.inv_freq, c.eps, heads=c.heads,
+                                     kv_heads=c.kv_heads, head_dim=c.head_dim, mrope_section=c.mrope_section)
+             kbuf, vbuf = _grow(st, i, p0 + W)
+-            kbuf[p0:p0 + W] = key.view(W, c.kv_heads, c.head_dim)
+-            vbuf[p0:p0 + W] = value
++            kvq.store(kbuf[p0:p0 + W], key.view(W, c.kv_heads, c.head_dim))
++            kvq.store(vbuf[p0:p0 + W], value)
+             out = attention(q.view(W, c.heads, c.head_dim), kbuf, vbuf, p0, scale=c.head_dim ** -0.5)
+             r = _row_mm(pg.gate_mul(out, qg, heads=c.heads, head_dim=c.head_dim), attn.o, tp)
+         if layer.moe is not None:                          # routed experts read bf16 rows (their prefill form)

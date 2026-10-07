@@ -360,17 +360,51 @@ TENSORFOLD_ONE_BUFFER=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TF_DRAF
 
 The 80K window leaves ~0.5 GB spare, so this is about the bf16 ceiling for this build.
 
+### 8-bit context storage: 144K window, no measurable loss
+
+The cache now stores each key and value as an 8-bit whole number plus one 16-bit scale per 32 values (8.5 bits a value
+instead of 16), the scheme ExLlamaV3 uses. `TENSORFOLD_KV_BITS=8` turns it on (`cuda/kernels/kvq.py` in the patch).
+The writes quantize rows as they go in. The three attention kernels (prompt, decode, draft check) turn them back into
+16-bit as they read them, inside the kernel, so no 16-bit copy of the cache ever exists.
+
+```bash
+TENSORFOLD_KV_BITS=8 TENSORFOLD_ONE_BUFFER=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TF_DRAFT_PACKED=1 \
+  TF_BUDGET_GIB=200 LONG="48000 100000" ./bench_tf.sh kv8-144k --context 147456
+```
+
+| | 16-bit cache | 8-bit cache |
+|---|---|---|
+| Window | 80K | **144K** |
+| Longest prompt run | 63,045 tokens | **132,209 tokens** (recall right) |
+| Peak card memory | 24.07 GB | 24.06 GB |
+| Prompt reading | 666 tok/s at 63K | 642 tok/s at 63K, 501 tok/s at 132K (264 s) |
+| Decode, chat / code | 92–105 / 132–153 | 98–117 / 124–157 (same within noise) |
+
+**The intelligence check** (`kv_kl.py`): the same model reads one long real document (this repo's READMEs, then
+TensorFold's source) with each cache. At three depths it scores the next 256 tokens through the decode path. The
+table compares the full next-token probabilities of the two runs (`results/kv-kl-8bit.md`):
+
+| Depth into the document | KL, mean | KL, worst token | Same top choice | Perplexity, 16-bit / 8-bit |
+|---|---|---|---|---|
+| 1,024 | 0.0007 | 0.004 | 99.2% | 8.91 / 8.87 |
+| 16,384 | 0.0008 | 0.018 | 96.9% | 3.12 / 3.10 |
+| 49,152 | 0.0003 | 0.005 | 99.6% | 1.81 / 1.81 |
+
+That is well under what 4-bit weights cost (KL in the hundredths), and perplexity doesn't move. The top-choice
+differences are near-ties, where the worst token's KL is still under 0.02. The check stops at 49K because the 16-bit
+cache can't go much deeper on this card. `tests/test_kvq.py` checks the kernels themselves: they match a plain
+PyTorch calculation on the same 8-bit cache to 0.2%.
+
 ### Next: where more room comes from
 
 | Change | Frees | Then |
 |---|---|---|
-| 8-bit cache: int8 + a scale per 32 values (ExLlamaV3's scheme, already in TensorFold's qwen4_exp family) | ~47% of the cache | ~150K window |
+| ~~8-bit cache~~ | done: 144K window, see above | |
 | 4-bit cache with the 32-wide rotation (what EXL3 ran at 262K) | ~72% | 262K |
 | Embedding table to system RAM | ~0.7 GB | +~10K tokens |
 | Mixed 3/4-bit weights (EXL3 3.0 held 19/20 on the math probe) | ~3–4 GB | more context and faster plain decoding |
 
-The quantized cache is kernel work: the 27B's two attention kernels (`cuda/kernels/attention.py`, decode and draft
-verification) and the prompt kernel (`prefill_attention.py`) read bf16 keys and values, and the cache writes copy
-bf16 rows. With the rotation, a kernel can rotate the query once instead of un-rotating every key, and un-rotate the
-output once instead of every value, so reading the cache costs one multiply per value. Each step needs an
-intelligence check against bf16 (KL on a pod, plus the 20-problem math probe) before it counts.
+4-bit context reuses the 8-bit plumbing: the cache rows, the writes, and the kernels' row loader. The new part is the
+rotation. Values are rotated before being stored at 4 bits, which spreads outliers out. A kernel can rotate the query
+once instead of un-rotating every key, and un-rotate the output once instead of every value, so reading the cache still
+costs one multiply per value. It gets the same check as 8-bit: `kv_kl.py` plus the 20-problem math probe.
