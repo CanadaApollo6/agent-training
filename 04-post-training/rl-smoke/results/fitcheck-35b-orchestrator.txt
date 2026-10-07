@@ -1,0 +1,11 @@
+20:30:30 WARNING Trace failed in group edda1884-17e8-4e22-9d5a-38ddae3a21ce (tb2-train) — HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:40:31 WARNING Trace failed in group b87ce69c-9ae6-45bb-9f67-af5387aaefec (tb2-train) — HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:42:02 WARNING Trace failed in group 9b8bc775-6b95-49cc-8ecb-967e2a31324f (tb2-train) — HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:42:32 WARNING Trace failed in group 9b8bc775-6b95-49cc-8ecb-967e2a31324f (tb2-train) — HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:49:00 WARNING Trace failed in group e9fc123c-b8a1-41c2-bd54-0226f590f064 (tb2-train) — HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:49:02 SUCCESS Step 1 | 26m 16s | Reward 0.6129 | Trainable 31/31 (100.0%) | Turns 38.1 | Branches 2.0 | Max Off-Policy 0 | Error 5.0% | Cancelled 0.0% | Truncation 48.4% | Timeout 0.0%
+20:50:32 WARNING Trace failed in group 9b8bc775-6b95-49cc-8ecb-967e2a31324f (tb2-train) — HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:54:58 WARNING Trace failed in group eeaeab1d-e000-476e-9164-490bb48fb74e (tb2-train) — HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:59:22 SUCCESS Step 2 | 10m 20s | Reward 0.6000 | Trainable 15/15 (100.0%) | Turns 25.6 | Branches 1.6 | Max Off-Policy 1 | Error 3.1% | Cancelled 0.0% | Truncation 20.0% | Timeout 0.0%
+20:59:30 WARNING Trace failed in group a8363e38-c69c-4558-904c-b447a02f0dd7 (tb2-train) — HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+21:04:03 SUCCESS Step 3 |  4m 40s | Reward 0.2000 | Trainable 15/15 (100.0%) | Turns 35.9 | Branches 2.4 | Max Off-Policy 2 | Error 3.1% | Cancelled 0.0% | Truncation 53.3% | Timeout 0.0%

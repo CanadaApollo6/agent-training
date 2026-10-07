@@ -1,0 +1,6 @@
+[trainer0]:[rank0]:[W1007 20:56:16.510499238 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 3145728, total: 150109880320).
+[trainer0]:20:56:44 SUCCESS Step 1 |  34m 5s | Loss -0.0007 | Entropy 0.3628 | Mismatch KL 0.0010 | Grad. Norm 0.1954 | LR 1.00e-06 | Throughput 5124 tokens/s | MFU 34.7% | Peak Mem. 134.1 GiB | Max Vio 3.0074 | Routing Conf. 0.1292
+[trainer0]:[rank0]:[W1007 21:00:49.881828430 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 13631488, total: 150109880320).
+[trainer0]:21:00:58 SUCCESS Step 2 |  4m 13s | Loss -0.0035 | Entropy 0.3243 | Mismatch KL 0.0009 | Grad. Norm 0.2661 | LR 1.00e-06 | Throughput 9830 tokens/s | MFU 66.5% | Peak Mem. 133.9 GiB | Max Vio 2.9212 | Routing Conf. 0.1340
+[trainer0]:[rank0]:[W1007 21:06:07.941674218 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 9437184, total: 150109880320).
+[trainer0]:21:06:17 SUCCESS Step 3 |  5m 18s | Loss 0.0010 | Entropy 0.3993 | Mismatch KL 0.0010 | Grad. Norm 0.2339 | LR 1.00e-06 | Throughput 10333 tokens/s | MFU 69.9% | Peak Mem. 133.8 GiB | Max Vio 2.9824 | Routing Conf. 0.1315

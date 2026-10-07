@@ -59,3 +59,36 @@ bottleneck: the trainer finishes its part in a fraction of that.
 3. `rl` sizes the NCCL weight broadcast before `[deployment]` sets vLLM's data parallelism. Set
    `[inference.vllm] data_parallel_size` explicitly, or vLLM's workers have no broadcast receiver.
 4. HF Jobs reject a timeout written as `4h30m` (use `270m`) and single-letter env names.
+
+## The 35B fit check: R1s-SD on h200x8 (2026-10-07)
+
+Can the real model, R1s-SD (Ornith 1.5 35B-A3B after self-distillation, bf16), run RL on one 8×H200 node? Same
+tasks and harness as the 9B smoke test; 32 attempts per step in groups of 8; 3 steps
+(`ornith35b-sd-rl-fitcheck-h200x8.toml`). 4 GPUs run vLLM (one 67 GB copy each), 4 train (experts split 4 ways,
+each 128K row split 4 ways). The trainer keeps fp32 master weights, keeps the expert routing frozen, and replays the
+expert choices vLLM made (router replay).
+
+```bash
+CONFIG=ornith35b-sd-rl-fitcheck-h200x8.toml FLAVOR=h200x8 TIMEOUT=120m MODEL_SRC=ornith-sd-bf16 ./hf_rl_job.sh submit
+```
+
+| Step | Attempts collected in | Reward | Cut off by the length cap | Trainer update | Trainer peak memory | vLLM-trainer KL |
+|---|---|---|---|---|---|---|
+| 1 | 26m 16s (includes warm-up) | 0.61 | 48% | ~7.5 min | 134.1 GiB | 0.0010 |
+| 2 | 10m 20s | 0.60 | 20% | 4m 13s | 133.9 GiB | 0.0009 |
+| 3 | 4m 40s | 0.20 | 53% | 5m 18s | 133.8 GiB | 0.0010 |
+
+- **It fits, with little room.** The trainer peaks at ~134 of 140 GiB per GPU. Each step logged one allocator warning
+  (a 20 MB mapping failed, then succeeded after the cache was freed). The peak is the same every step, because
+  rollouts are packed into fixed 128K rows: longer attempts add rows, not memory per row.
+- **Router replay works.** The vLLM-trainer mismatch is ~0.001, half the 9B smoke test's without it.
+- **Speed:** the trainer reaches 10K tokens/s (MFU ~70%) once warm. Collecting attempts is the bottleneck. Steps 2
+  and 3 were fast partly because attempts finished during step 1 were already waiting.
+- **Prime sandboxes still drop out:** 13 attempts lost to "The sandbox has been terminated" in ~47 minutes (retried).
+- **Setup:** ~10 min to install, 7 min to copy the 67 GB checkpoint from the bucket, ~3 min to load the trainer.
+- **Cost:** 66 minutes, ~$44. Stopped while it was saving the final checkpoint (fp32 weights plus optimizer state,
+  ~420 GB), which a fit check doesn't need.
+
+**For the real run:** steady state is roughly 10–13 minutes per step of 32 attempts, so 50 steps is about 9–11 hours,
+**~$360–450** on h200x8 plus sandbox fees. Raising the number of attempts in flight above 64 should shorten steps
+while vLLM's GPUs still have spare capacity. The rewards above mean nothing yet: 3 steps at lr 1e-6.
