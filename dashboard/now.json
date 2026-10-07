@@ -41,7 +41,7 @@
     "\u2013"
    ]
   ],
-  "context": "Longest prompt that fits: about 42K tokens (24.0 of 24.5 GB). The old EXL3 setup fits 262K, so context is now the thing to win back.",
-  "next": "Next: cut the memory each token of context costs (an extra copy, then 8-bit storage), then a 3-bit/4-bit mix of the weights, each checked against the full model for lost intelligence."
+  "context": "Context: fixed a memory leak-like problem (old copies of the context kept alive), which took the window from 64K to 80K tokens. A 63K-token prompt now runs, recall right, speed unchanged. That's the limit at 16-bit storage; the old EXL3 setup fits 262K by storing context in 4 bits.",
+  "next": "Next: teach the engine's three attention kernels to read 8-bit, then 4-bit context (~150K, then 262K), each checked against the full model for lost intelligence. Then a 3/4-bit mix of the weights."
  }
 }
