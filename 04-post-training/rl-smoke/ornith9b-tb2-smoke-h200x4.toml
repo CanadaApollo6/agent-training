@@ -64,3 +64,5 @@ env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]   # Prime-t
 
 [inference.vllm]
 max_model_len = 131072
+data_parallel_size = 2               # explicit: rl sizes the NCCL weight broadcast before [deployment] sets dp, so it
+                                     # otherwise counts 1 engine and the second never gets weights (seen 2026-10-07)

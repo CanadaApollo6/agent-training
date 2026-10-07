@@ -42,9 +42,9 @@ entry)
         git submodule update --init deps/verifiers deps/renderers deps/pydantic-config deps/prime-envs > /tmp/sub.log 2>&1 \
         || { say "submodules failed"; tail -20 /tmp/sub.log >> $OUT/job.log; exit 1; }
     say "cloned prime-rl $(git rev-parse --short HEAD)"
-    uv sync --extra gpu --extra flash-attn --package prime-rl --package terminal-bench-2 > /tmp/sync.log 2>&1 \
+    uv sync --extra gpu --extra flash-attn --extra kernels --extra disagg --package prime-rl --package terminal-bench-2 > /tmp/sync.log 2>&1 \
         || { say "uv sync failed"; tail -40 /tmp/sync.log >> $OUT/job.log; exit 1; }
-    say "uv sync done"
+    say "uv sync done; vllm-router: $(ls .venv/bin/vllm-router 2>/dev/null || echo MISSING)"
     ( while sleep 120; do
         rsync -a --exclude checkpoints --exclude weights --exclude broadcasts --exclude '*.safetensors' --exclude '*.pt' \
             --exclude '*.distcp' outputs/ $OUT/outputs/ 2>/dev/null

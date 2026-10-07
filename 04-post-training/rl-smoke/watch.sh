@@ -5,7 +5,8 @@ J=$1 RUN=$2 D=/tmp/rl-out/$RUN; HF="uvx -q --from huggingface_hub hf"; mkdir -p 
 while true; do
   $HF buckets sync "hf://buckets/CanadaApollo6/rl-out/$RUN" $D > /dev/null 2>&1 || true
   if [ -f $D/job.log ]; then n=$(wc -l < $D/job.log); [ $n -gt $seen ] && tail -n +$((seen+1)) $D/job.log; seen=$n; fi
-  steps=$(grep -rhE 'Step [0-9]+ \|' $D/outputs 2>/dev/null | grep -i orchestr -m 50 | wc -l)
+  O=$(ls $D/outputs/*/logs/attempt_*/orchestrator.log 2>/dev/null | tail -1)
+  if [ -n "$O" ]; then n=$(grep -ciE 'step [0-9]+' $O); [ $n -gt $seen_step ] && grep -iE 'step [0-9]+' $O | tail -n $((n-seen_step)) | sed 's/\x1b\[[0-9;]*m//g' | cut -c1-220; seen_step=$n; fi
   errs=$(cat $D/rl.stdout $(find $D/outputs -name '*.log' 2>/dev/null) 2>/dev/null | grep -cE 'Traceback|CUDA out of memory|OutOfMemory|FAILED|Error:')
   [ $errs -gt $seen_err ] && echo "new error lines: $errs (was $seen_err)" && seen_err=$errs
   st=$($HF jobs inspect $J 2>/dev/null | grep -oE "'stage': '[A-Z_]+'" | cut -d"'" -f4)
