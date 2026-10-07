@@ -1,5 +1,5 @@
 diff --git i/src/tensorfold/cuda/kernels/attention.py w/src/tensorfold/cuda/kernels/attention.py
-index 798958b..9544e94 100644
+index 798958b..2f775bb 100644
 --- i/src/tensorfold/cuda/kernels/attention.py
 +++ w/src/tensorfold/cuda/kernels/attention.py
 @@ -11,6 +11,9 @@ import torch
@@ -93,17 +93,18 @@ index 798958b..9544e94 100644
      return out
  
  
-@@ -259,7 +267,8 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+@@ -259,7 +267,9 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
          raise ValueError("unsupported attention shape")
      if any(x.dtype != torch.bfloat16 or not x.is_cuda or not x.is_contiguous() for x in (q, k_nodes, v_nodes)):
          raise ValueError("q and node keys and values must be contiguous CUDA bf16 tensors")
 -    origin = base(q.device)
 +    origin = base(q.device) if kvq.BITS == 16 else base(q.device).view(torch.int8)
++    q, k_nodes, v_nodes = kvq.rotate(q), kvq.rotate(k_nodes), kvq.rotate(v_nodes)   # into a 4-bit cache's rotated space
 +    r = kvq.width(d)
      if not math.isfinite(scale) or scale <= 0:
          raise ValueError("scale must be positive and finite")
      g = h // hk
-@@ -268,11 +277,12 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+@@ -268,11 +278,12 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
      partial_l = torch.empty_like(partial_m)
      if p.items.shape[0]:
          _shared[(p.items.shape[0], hk)](q, origin, origin, offs, p.streams, p.items, partial_o, partial_m, partial_l, w,
@@ -117,13 +118,14 @@ index 798958b..9544e94 100644
 +                          SCALE=scale, R=r, QBITS=kvq.BITS, num_warps=4, num_stages=1)
      out = torch.empty_like(q)
      _merge[(w, hk)](partial_o, partial_m, partial_l, out, p.streams, p.rows, w, H=h, D=d, G=g, num_warps=4)
-     return out
+-    return out
++    return kvq.rotate(out)
 diff --git i/src/tensorfold/cuda/kernels/kvq.py w/src/tensorfold/cuda/kernels/kvq.py
 new file mode 100644
-index 0000000..2cc23c4
+index 0000000..6599612
 --- /dev/null
 +++ w/src/tensorfold/cuda/kernels/kvq.py
-@@ -0,0 +1,142 @@
+@@ -0,0 +1,155 @@
 +"""A quantized attention cache, packed per (row, key head) into int8 elements.
 +
 +``TENSORFOLD_KV_BITS``: 16 (default, bf16 rows), 8 or 4. A packed cache keeps the bf16 cache's (rows, kv heads,
@@ -132,11 +134,13 @@ index 0000000..2cc23c4
 +- 8: D int8 codes, then D / 32 fp16 scales (absmax / 127). 8.5 bits a value: 272 bytes a 256-wide head row, not 512.
 +- 4: each 32 values rotated by H32 (ExLlamaV3's scheme, ``qwen4_exp/cuda/kvquant.py``), then D / 2 bytes of 4-bit
 +  codes on the midpoint grid (low nibble first), then D / 32 fp16 scales (the rotated absmax). 4.5 bits a value:
-+  144 bytes. ``load_rows`` un-rotates as it reads, so the kernels see plain values.
++  144 bytes. ``load_rows`` returns rotated values: the attention wrappers ``rotate`` the queries (and any keys and values
++  not from the cache) once, which keeps q.k, and rotate the output back once (H32 is its own inverse).
 +"""
 +
 +from __future__ import annotations
 +
++import functools
 +import os
 +
 +import torch
@@ -195,7 +199,7 @@ index 0000000..2cc23c4
 +                         mask=mask[:, None], other=0.0).to(tl.float32)
 +        x = tl.reshape(q, (N, D // 32, 32)) - 7.5
 +        x = x * (scales * 0.125)[:, :, None]
-+        x = tl.reshape(h32(tl.reshape(x, (N * (D // 32), 32)), N * (D // 32)), (N, D)).to(tl.bfloat16)
++        x = tl.reshape(x, (N, D)).to(tl.bfloat16)
 +    else:
 +        codes = tl.load(C + row[:, None] + d[None, :], mask=mask[:, None], other=0)
 +        scales = tl.load((C + row[:, None] + D).to(tl.pointer_type(tl.float16)) + d[None, :] // 32,
@@ -245,6 +249,15 @@ index 0000000..2cc23c4
 +        (_quant if BITS == 8 else _quant4)[(n * hk,)](x.contiguous(), dst, D=d, R=width(d), num_warps=2)
 +
 +
++def rotate(x: torch.Tensor) -> torch.Tensor:
++    """H32 over each 32 values of the last axis for a 4-bit cache (its own inverse); unchanged otherwise."""
++
++    if BITS != 4:
++        return x
++    y = x.float().unflatten(-1, (x.shape[-1] // GROUP, GROUP)) @ _hadamard32(x.device)
++    return y.flatten(-2).to(x.dtype).contiguous()
++
++
 +def unpack(rows: torch.Tensor, d: int) -> torch.Tensor:
 +    """bf16 (n, kv heads, D) values of cache rows (tests and reference paths)."""
 +
@@ -261,13 +274,15 @@ index 0000000..2cc23c4
 +    return (codes.view(*codes.shape[:-1], d // GROUP, GROUP) * scales[..., None]).view(*codes.shape).to(torch.bfloat16)
 +
 +
++@functools.lru_cache(maxsize=None)
 +def _hadamard32(device) -> torch.Tensor:
-+    h = torch.ones(1, 1)
-+    while h.shape[0] < 32:
-+        h = torch.cat([torch.cat([h, h], 1), torch.cat([h, -h], 1)])
-+    return (h / 32 ** 0.5).to(device)
++    """H32 in natural order, built on the device (no host copy, so safe inside a CUDA graph capture)."""
++
++    i = torch.arange(32, device=device)
++    bits = ((i[:, None] & i[None, :])[None] >> torch.arange(5, device=device)[:, None, None]) & 1
++    return (1 - 2 * (bits.sum(0) % 2)).float() / 32 ** 0.5
 diff --git i/src/tensorfold/cuda/kernels/prefill_attention.py w/src/tensorfold/cuda/kernels/prefill_attention.py
-index fa14f6a..4be4bf1 100644
+index fa14f6a..5feb7e3 100644
 --- i/src/tensorfold/cuda/kernels/prefill_attention.py
 +++ w/src/tensorfold/cuda/kernels/prefill_attention.py
 @@ -6,6 +6,9 @@ import torch
@@ -317,16 +332,18 @@ index fa14f6a..4be4bf1 100644
  
      w, h, d = q.shape
      hk = k_cache.shape[1]
-@@ -66,6 +70,8 @@ def attention(q: torch.Tensor, k_cache: torch.Tensor, v_cache: torch.Tensor, p0:
+@@ -66,6 +70,9 @@ def attention(q: torch.Tensor, k_cache: torch.Tensor, v_cache: torch.Tensor, p0:
      if not (q.is_contiguous() and k_cache.is_contiguous() and v_cache.is_contiguous()):
          raise ValueError("prefill attention takes contiguous tensors")
      out = torch.empty_like(q)
 +    if k_cache.shape[2] != kvq.width(d) or k_cache.dtype != kvq.dtype():
 +        raise ValueError("prefill attention: the caches' rows must be the cache's dtype and width")
++    q = kvq.rotate(q)                       # a 4-bit cache holds rotated rows: rotate q once, the output back once
      _attend[(triton.cdiv(w, BM), h)](q, k_cache, v_cache, out, p0, w, H=h, HK=hk, D=d, BM=BM, BN=BN, SCALE=scale,
 -                                     num_warps=8, num_stages=1 if d > 128 else 2)
+-    return out
 +                                     R=kvq.width(d), QBITS=kvq.BITS, num_warps=8, num_stages=1 if d > 128 else 2)
-     return out
++    return kvq.rotate(out)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/decode.py w/src/tensorfold/families/qwen3_5/cuda/decode.py
 index 624f6ad..c357da7 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/decode.py

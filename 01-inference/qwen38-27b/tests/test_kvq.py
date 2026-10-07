@@ -8,7 +8,7 @@ from tensorfold.cuda.kernels.prefill_attention import attention
 
 torch.manual_seed(0)
 dev = "cuda"
-LIMIT = {8: (0.02, 0.05), 4: (0.12, 0.25)}[kvq.BITS]      # round trip, attention vs the bf16 cache
+LIMIT = {8: (0.02, 0.05, 0.01), 4: (0.12, 0.25, 0.02)}[kvq.BITS]   # round trip, vs the bf16 cache, kernel vs ref (4: bf16 rotated q and output)
 H, HK, D = 24, 4, 256
 for n, outlier in ((1, 1), (7, 40), (4096, 1), (4096, 40)):
     x = torch.randn(n, HK, D, device=dev, dtype=torch.bfloat16) * 3
@@ -41,5 +41,5 @@ for p0, W in ((0, 100), (300, 64), (5000, 777)):
     kern = ((out8 - want8).norm() / want8.norm()).item()
     quant = ((out8 - want16).norm() / want16.norm()).item()
     print(f"prefill p0={p0} W={W}: kernel vs dequant ref {kern:.4f}, {kvq.BITS}-bit vs bf16 cache {quant:.4f}")
-    assert kern < 0.01 and quant < LIMIT[1]      # quant: random data with a x20 key channel; real text is gated by KL
+    assert kern < LIMIT[2] and quant < LIMIT[1]      # quant: random data with a x20 key channel; real text is gated by KL
 print("ok")

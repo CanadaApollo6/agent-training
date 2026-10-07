@@ -395,16 +395,58 @@ differences are near-ties, where the worst token's KL is still under 0.02. The c
 cache can't go much deeper on this card. `tests/test_kvq.py` checks the kernels themselves: they match a plain
 PyTorch calculation on the same 8-bit cache to 0.2%.
 
+### 4-bit context storage: the full 262K window
+
+`TENSORFOLD_KV_BITS=4` stores each group of 32 values in 4 bits plus one scale (4.5 bits a value, 144 bytes a head
+row). Before rounding, each group is mixed by a 32-wide Hadamard rotation (ExLlamaV3's scheme), which spreads the
+odd very large value across the group so it doesn't wreck the group's precision.
+
+The cache keeps values in their rotated form. The rotation preserves dot products and is its own inverse, so the
+kernels never un-rotate the cache. The wrappers rotate the queries (and the new tokens' keys and values) once on the
+way in, and rotate the output back once on the way out. A first version un-rotated every block as it was read and
+lost a third of the decode speed (76 chat, 84 code).
+
+```bash
+TENSORFOLD_KV_BITS=4 TENSORFOLD_ONE_BUFFER=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TF_DRAFT_PACKED=1 \
+  TF_BUDGET_GIB=200 LONG="100000" ./bench_tf.sh kv4r-262k --context 262144
+```
+
+| | 16-bit | 8-bit | 4-bit |
+|---|---|---|---|
+| Window | 80K | 144K | **262K** (the model's native maximum) |
+| Longest prompt run, recall right | 63K | 132K | 132K |
+| Peak card memory | 24.07 GB | 24.06 GB | 23.82 GB |
+| Prompt reading at 132K | – | 501 tok/s | 515 tok/s |
+| Decode, chat / code (tok/s) | 92–105 / 132–153 | 98–117 / 124–157 | 103–114 / 144–147 |
+
+**Intelligence check** (`kv_kl.py`, `results/kv-kl-4bit.md`):
+
+| Depth | KL mean | KL, worst token | Same top choice | Perplexity, 16-bit / 4-bit |
+|---|---|---|---|---|
+| 1,024 | 0.0034 | 0.030 | 96.9% | 8.91 / 8.92 |
+| 16,384 | 0.0055 | 0.045 | 96.9% | 5.71 / 5.74 |
+| 49,152 | 0.0018 | 0.029 | 99.2% | 2.12 / 2.12 |
+
+That is 3–7× the 8-bit cache's drift, but still a tenth or less of what 4-bit weights cost, and perplexity moves by
+under 0.5%.
+
+Notes:
+- The first 4-bit comparison looked catastrophic (KL 14 from 16K on). The cause was the test, not the cache: the
+  document is this repo's READMEs, and this README had changed between the 16-bit run and the 4-bit run.
+  `kv_kl.py` now reads a frozen token file (`results/kv_kl_tokens.pt`), and refuses to compare runs that read
+  different tokens. The 8-bit numbers above come from a matched pair of runs on the earlier document.
+- The first 4-bit version also got the recall check wrong on a 159K-token prompt (2784 for 4950). That test is
+  thousands of near-identical records with one exact lookup and no thinking. No 16-bit or 8-bit window fits
+  159K, so nothing yet says whether 4-bit storage or the length itself caused it.
+- Not yet run: the 20-problem math probe with the 4-bit cache, and a recall check near 250K.
+
 ### Next: where more room comes from
 
 | Change | Frees | Then |
 |---|---|---|
 | ~~8-bit cache~~ | done: 144K window, see above | |
-| 4-bit cache with the 32-wide rotation (what EXL3 ran at 262K) | ~72% | 262K |
-| Embedding table to system RAM | ~0.7 GB | +~10K tokens |
-| Mixed 3/4-bit weights (EXL3 3.0 held 19/20 on the math probe) | ~3–4 GB | more context and faster plain decoding |
+| ~~4-bit cache with the 32-wide rotation~~ | done: 262K window, see above | |
+| Embedding table to system RAM | ~0.7 GB | not needed now: 262K is the model's maximum |
+| Mixed 3/4-bit weights (EXL3 3.0 held 19/20 on the math probe) | ~3–4 GB | faster decoding: every token reads all the weights |
 
-4-bit context reuses the 8-bit plumbing: the cache rows, the writes, and the kernels' row loader. The new part is the
-rotation. Values are rotated before being stored at 4 bits, which spreads outliers out. A kernel can rotate the query
-once instead of un-rotating every key, and un-rotate the output once instead of every value, so reading the cache still
-costs one multiply per value. It gets the same check as 8-bit: `kv_kl.py` plus the 20-problem math probe.
+Each further step gets the same checks: `kv_kl.py` plus the 20-problem math probe.

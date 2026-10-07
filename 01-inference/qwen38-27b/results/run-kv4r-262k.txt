@@ -1,0 +1,15 @@
+up after 20 s
+17244 MiB, 58
+[serve_kernels] GPU-only budget: 21.1 GiB
+[serve_kernels] planner budget forced to 200.0 GiB: measure the real peak
+[serve_kernels] drafter counted at its packed 4-bit size
+[tensorfold] CUDA rank 0 startup estimate 84.89 GiB within 200.00 GiB; native 262144, allocated prompt/reply window 262144, cache slots 262156
+[tensorfold] serving qwen27 at http://127.0.0.1:8091/v1 on CUDA (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 262144; loaded in 15.9s)
+{"label": "kv4r-262k", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 146.6479615268122, "decode_tps_all": [146.29, 220.89, 146.65], "ttft_s_median": 0.036906474007992074}
+{"label": "kv4r-262k", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 103.06199124094952, "decode_tps_all": [105.54, 92.96, 103.06], "ttft_s_median": 0.04074417901574634}
+{"label": "kv4r-262k", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 144.21756565591804, "decode_tps_all": [144.22, 147.21, 143.88], "ttft_s_median": 0.033288197009824216}
+{"label": "kv4r-262k", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 114.36552781571147, "decode_tps_all": [111.23, 114.37, 114.53], "ttft_s_median": 0.03402941799140535}
+22498 MiB, 75
+{"prompt_tokens": 132209, "prefill_s": 256.91, "prefill_tps": 515, "answer": "8210", "expected": 8210}
+  peak VRAM at ~100000 tokens: 23820 MiB
+1172 MiB
