@@ -1,0 +1,11 @@
+Sandboxes terminated mid-run during Terminal-Bench 2 evals (no reason recorded).
+
+On 2026-10-06 we ran a 2-arm TB2 eval (verifiers + prime_agent harness, primeintellect/terminal-bench-2, 87 tasks x 2 tries per arm, 348 rollouts, plus a rerun of the lost ones, ~426 rollouts total), several sandboxes in parallel. 81 rollouts died with:
+  HarnessError: harness 'prime_agent': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+
+- Rate: ~20% of rollouts on the first pass, and 37 of the 78 reruns (47%) were terminated again.
+- Timing (UTC): spread 11:00-23:59, worst around 17:00 (15 terminations that hour) and 22:00 (22 that hour).
+- Concentrated on heavy tasks: compile-compcert, gpt2-codegolf, path-tracing, mteb-retrieve, portfolio-optimization, torch-pipeline-parallelism and train-fasttext lose their sandbox in most runs. These compile, train or render inside the task's 2-4 GB.
+- We checked: the sandboxes had the task's requested CPU/memory (e.g. 2 CPU / 4 GB for compile-compcert), the idle timeout was 60 min and runs were active (terminations came mid-command, often 10-40 turns in), and the wallet balance was positive throughout. `prime sandbox get` on terminated sandboxes showed no termination reason.
+
+Questions: are these OOM kills or node preemptions? Could the termination reason be exposed on the sandbox (status/exit reason), and is there a way to request more memory headroom for heavy tasks? We plan RL on these sandboxes, where a ~20-50% loss rate is costly. Happy to share more detail.
