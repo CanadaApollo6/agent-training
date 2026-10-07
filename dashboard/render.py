@@ -230,10 +230,9 @@ tasks are what RL learns from: <b>{lego["candidates"]}</b> so far. {lego["pool_t
 {lego_rows}
 
 <h2>Next, and spend</h2>
-<div>RL is next. A first run on the 35B model costs about <b>{e(d["next"]["thirty_five_b"])}</b>, over the usual
-{e(d["next"]["nightly"])} a night, so it waits for your call; proving the pipeline on the 9B first is cheaper.</div>
+<div>{e(now["next_text"]) if now.get("next_text") else f'RL is next. A first run on the 35B model costs about <b>{e(d["next"]["thirty_five_b"])}</b>, over the usual {e(d["next"]["nightly"])} a night, so it waits for your call; proving the pipeline on the 9B first is cheaper.'}</div>
 <div class="muted" style="margin-top:6px">GPU servers: about ${spend["last_night"]["dollars"]} last night, about
-${spend["today"]["dollars"]} today (${spend["today"]["duplicate_dollars"]} of it the duplicate launch). Sandbox fees not included.</div>
+${spend["today"]["dollars"] + now.get("extra_today_dollars", 0)} today{e(now.get("extra_today_note", ""))}. Sandbox fees not included.</div>
 </body></html>"""
     (HERE / "inline.html").write_text(page)
     print(f"wrote inline.html ({len(page)} chars); differing tasks {len(diffs)}: on better {better}, off better {worse}")

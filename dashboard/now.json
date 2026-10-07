@@ -43,5 +43,8 @@
   ],
   "context": "Context: stored in 8 bits instead of 16 now. The window grows from 80K to 144K tokens; a 132K-token prompt ran with recall right, in the same 24 GB, at the same speed. Intelligence check: its next-word predictions match the 16-bit version almost exactly (KL 0.0003\u20130.0008, perplexity unchanged), far smaller than what 4-bit weights cost.",
   "next": "Next: 4-bit context with a rotation (what the old EXL3 setup uses for 262K), same check; then a 3/4-bit mix of the weights for more room and speed."
- }
+ },
+ "extra_today_dollars": 18,
+ "extra_today_note": " (including ~$18 for the RL test on Hugging Face)",
+ "next_text": "RL: the short test on the 9B worked. A real run is about $3 per step of 16 attempts on 4 H200s, so its size is your call. Local: 4-bit context for the 27B is in progress."
 }
