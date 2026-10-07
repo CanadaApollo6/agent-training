@@ -4,6 +4,8 @@
 # showed HF Jobs can open one). This dir goes up to a private bucket mounted read-only at /inputs; logs come back
 # every 2 minutes through the rl-out bucket mounted at /out. Checkpoints stay on the job (smoke test: not uploaded).
 # Secrets (HF token, Prime key) go over stdin, never on a command line.
+# MODEL_SRC=<dir in the sd-out bucket> (e.g. ornith-sd-bf16) mounts sd-out read-only and copies that checkpoint to
+# /workspace/<dir> before training; the config's [model] name points there.
 #
 #   ./hf_rl_job.sh submit          # prints the job id
 #   (inside the job) bash /inputs/hf_rl_job.sh entry
@@ -18,10 +20,12 @@ submit)
     $HF buckets create "$NS/rl-in" --private --exist-ok > /dev/null
     $HF buckets create "$NS/rl-out" --private --exist-ok > /dev/null
     $HF buckets sync . "hf://buckets/$NS/rl-in/$RUN" > /dev/null
+    MOUNT=(); [ -n "${MODEL_SRC:-}" ] && MOUNT=(-v "hf://buckets/$NS/sd-out:/sd:ro")
     { echo "HF_TOKEN=$(cat ${HF_HOME:-$HOME/.cache/huggingface}/token)"
       echo "PRIME_API_KEY=$(python3 -c "import json,os; print(json.load(open(os.path.expanduser('~/.prime/config.json')))['api_key'])")"; } |
     $HF jobs run --detach -q --secrets-file - --flavor ${FLAVOR:-a100x8} --timeout ${TIMEOUT:-270m} --name "rl-$RUN" \
         -e RUN=$RUN -e NS=$NS -e CONFIG=${CONFIG:-ornith9b-tb2-smoke.toml} -e PRIME_RL_COMMIT=$PRIME_RL_COMMIT \
+        -e MODEL_SRC=${MODEL_SRC:-} "${MOUNT[@]}" \
         -v "hf://buckets/$NS/rl-in/$RUN:/inputs:ro" -v "hf://buckets/$NS/rl-out:/out" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /inputs/hf_rl_job.sh entry
     echo "run $RUN"
@@ -45,6 +49,10 @@ entry)
     uv sync --extra gpu --extra flash-attn --extra kernels --extra disagg --package prime-rl --package terminal-bench-2 > /tmp/sync.log 2>&1 \
         || { say "uv sync failed"; tail -40 /tmp/sync.log >> $OUT/job.log; exit 1; }
     say "uv sync done; vllm-router: $(ls .venv/bin/vllm-router 2>/dev/null || echo MISSING)"
+    if [ -n "${MODEL_SRC:-}" ]; then
+        cp -r /sd/$MODEL_SRC /workspace/$MODEL_SRC || { say "model copy failed"; exit 1; }
+        say "model copied: $(du -sh /workspace/$MODEL_SRC | cut -f1)"
+    fi
     ( while sleep 120; do
         rsync -a --exclude checkpoints --exclude weights --exclude broadcasts --exclude '*.safetensors' --exclude '*.pt' \
             --exclude '*.distcp' outputs/ $OUT/outputs/ 2>/dev/null
