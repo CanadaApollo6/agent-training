@@ -438,7 +438,25 @@ Notes:
 - The first 4-bit version also got the recall check wrong on a 159K-token prompt (2784 for 4950). That test is
   thousands of near-identical records with one exact lookup and no thinking. No 16-bit or 8-bit window fits
   159K, so nothing yet says whether 4-bit storage or the length itself caused it.
-- Not yet run: the 20-problem math probe with the 4-bit cache, and a recall check near 250K.
+- Not yet run: a recall check near 250K.
+
+**Math probe with the 4-bit cache (2026-10-07): 15/20, against 18/20 for EXL3 4.0.** Same 20 problems, same
+sampling, 262K window (`probe_tf.sh tf-kv4-262k`, `results/reasoning/tf-kv4-262k.json`, 17.7 min).
+
+| | EXL3 4.0 bpw | TensorFold, MLX 4-bit weights + 4-bit cache |
+|---|---|---|
+| Correct | 18/20 | 15/20 |
+| Wrong answer | 0 | 0 |
+| Ran out of room (16K tokens) | 2 | 5 |
+| Median / mean tokens | 985 / 4,162 | 1,881 / 6,094 |
+
+- The 3 extra misses are all run-outs on problems EXL3 solved (intermediate_algebra/2015 and 558, geometry/686);
+  it never gave a wrong answer. Thinking ran longer on most hard problems.
+- This doesn't yet say the 4-bit cache costs anything. Three misses, all one way, from one sample each at
+  temperature 1.0 is weak evidence (p = 0.25). Two things also changed besides the cache: the weights (MLX 4-bit
+  group-64 vs EXL3 4.0) and the engine's sampler.
+- To separate them: the same probe on TensorFold with the 16-bit cache (80K window is plenty: no answer goes past
+  17K tokens). If that also scores ~15, the cost is the weights or the engine, not the cache.
 
 ### Next: where more room comes from
 
