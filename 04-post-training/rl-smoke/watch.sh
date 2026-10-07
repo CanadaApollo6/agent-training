@@ -9,6 +9,7 @@ while true; do
   errs=$(cat $D/rl.stdout $(find $D/outputs -name '*.log' 2>/dev/null) 2>/dev/null | grep -cE 'Traceback|CUDA out of memory|OutOfMemory|FAILED|Error:')
   [ $errs -gt $seen_err ] && echo "new error lines: $errs (was $seen_err)" && seen_err=$errs
   st=$($HF jobs inspect $J 2>/dev/null | grep -oE "'stage': '[A-Z_]+'" | cut -d"'" -f4)
+  [ "$st" != "$last_st" ] && echo "job stage: $st" && last_st=$st
   case $st in COMPLETED|ERROR|CANCELED|DELETED) echo "job $st"; exit 0;; esac
   sleep 60
 done

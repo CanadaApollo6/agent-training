@@ -21,7 +21,7 @@ submit)
     { echo "HF_TOKEN=$(cat ${HF_HOME:-$HOME/.cache/huggingface}/token)"
       echo "PRIME_API_KEY=$(python3 -c "import json,os; print(json.load(open(os.path.expanduser('~/.prime/config.json')))['api_key'])")"; } |
     $HF jobs run --detach -q --secrets-file - --flavor ${FLAVOR:-a100x8} --timeout ${TIMEOUT:-270m} --name "rl-$RUN" \
-        -e RUN=$RUN -e NS=$NS -e PRIME_RL_COMMIT=$PRIME_RL_COMMIT \
+        -e RUN=$RUN -e NS=$NS -e CONFIG=${CONFIG:-ornith9b-tb2-smoke.toml} -e PRIME_RL_COMMIT=$PRIME_RL_COMMIT \
         -v "hf://buckets/$NS/rl-in/$RUN:/inputs:ro" -v "hf://buckets/$NS/rl-out:/out" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /inputs/hf_rl_job.sh entry
     echo "run $RUN"
@@ -51,7 +51,7 @@ entry)
         nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader > $OUT/gpu.txt 2>/dev/null
       done ) &
     say "rl start"
-    uv run rl @ /inputs/ornith9b-tb2-smoke.toml --run.name $RUN --output-dir outputs > $OUT/rl.stdout 2>&1
+    uv run rl @ /inputs/$CONFIG --run.name $RUN --output-dir outputs > $OUT/rl.stdout 2>&1
     rc=$?
     say "rl exit $rc"
     rsync -a --exclude checkpoints --exclude weights --exclude broadcasts --exclude '*.safetensors' --exclude '*.pt' \

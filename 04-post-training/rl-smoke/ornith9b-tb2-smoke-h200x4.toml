@@ -1,0 +1,66 @@
+# Ornith-1.5-9B RL smoke test: GRPO, prime_agent harness, TB2's 69 non-held-out tasks minus 6 (4 whose Prime
+# sandbox is terminated most runs, 2 qemu tasks that never start): 63 tasks in Prime sandboxes.
+# h200x4 variant: 2 GPUs vLLM (dp=2), 2 GPUs trainer (FSDP); FA2 because the job installs no flash_attn_3.
+# One 8x A100-80GB node: 4 GPUs vLLM (dp=4), 4 GPUs trainer (FSDP). Validated with: uv run rl @ <this> --dry-run
+max_steps = 3
+seq_len = 131072                      # one packed row = one full rollout branch (41% of TL rollouts pass 64K)
+
+[env_vars]
+FLA_DISABLE_TENSOR_CACHE = "1"           # prime-rl#3882: FLA tensor cache breaks Qwen3.5 checkpointed backward
+
+[model]
+name = "ornith-ai/Ornith-1.5-9B"      # qwen3_5 composite (vision tower present)
+
+[model.vlm]                           # prime_agent can send images; text-only trainer raises on any image sample
+vision_encoder_attr = "model.visual"
+language_model_attr = "model.language_model"
+
+[deployment]
+num_train_gpus = 2
+num_infer_gpus = 2
+
+[ckpt]                                # final checkpoint only
+
+[trainer.model]
+attn = "flash_attention_2"           # auto picks FA3 on Hopper, which needs a package we don't install
+optimization_dtype = "bfloat16"       # required for VLM mode
+reduce_dtype = "bfloat16"
+# OOM at 128K? cp = 2 + cp_style = "ulysses" (the only CP style for hybrid GDN models)
+
+[trainer.optim]
+lr = 1e-6
+
+[orchestrator]
+batch_size = 16                       # rollouts per step (must be divisible by group_size)
+constant_trainer_batch_size = false   # smoke test: step even when most groups have zero advantage
+max_off_policy_steps = 8
+
+[orchestrator.train]
+group_size = 4
+
+[orchestrator.train.sampling]
+max_completion_tokens = 32768         # same per-call reply cap as the evals
+
+[orchestrator.concurrency]
+initial_inflight = 16
+max_inflight = 32                     # also caps live Prime sandboxes
+
+[orchestrator.renderer]               # Ornith isn't in MODEL_RENDERER_MAP; 'auto' is rejected at config time
+name = "qwen3.5"
+enable_thinking = true
+thinking_retention = "all"            # Ornith's template keeps all past <think> blocks
+
+[[orchestrator.train.source]]
+name = "tb2-train"
+env.taskset.id = "terminal-bench-2"
+env.taskset.tasks = ["adaptive-rejection-sampler", "bn-fit-modify", "break-filter-js-from-html", "build-cython-ext", "build-pmars", "caffe-cifar-10", "cancel-async-tasks", "chess-best-move", "circuit-fibsqrt", "cobol-modernization", "code-from-image", "configure-git-webserver", "constraints-scheduling", "count-dataset-tokens", "crack-7z-hash", "db-wal-recovery", "distribution-search", "dna-assembly", "dna-insert", "extract-elf", "extract-moves-from-video", "feal-differential-cryptanalysis", "feal-linear-cryptanalysis", "filter-js-from-html", "fix-code-vulnerability", "fix-git", "fix-ocaml-gc", "gcode-to-text", "headless-terminal", "large-scale-text-editing", "largest-eigenval", "llm-inference-batching-scheduler", "log-summary-date-ranges", "mailman", "make-doom-for-mips", "mcmc-sampling-stan", "merge-diff-arc-agi-task", "model-extraction-relu-logits", "mteb-leaderboard", "multi-source-data-merger", "openssl-selfsigned-cert", "overfull-hbox", "password-recovery", "path-tracing-reverse", "polyglot-c-py", "polyglot-rust-c", "prove-plus-comm", "pytorch-model-recovery", "query-optimize", "raman-fitting", "regex-chess", "regex-log", "reshard-c4-data", "sam-cell-seg", "sanitize-git-repo", "sparql-university", "sqlite-with-gcov", "torch-tensor-parallelism", "tune-mjcf", "video-processing", "vulnerable-secret", "winning-avg-corewars", "write-compressor"]
+env.agent.harness.id = "prime_agent"
+env.agent.runtime.type = "prime"
+env.agent.runtime.labels = ["ornith9b-rl-smoke"]
+env.agent.max_turns = 60
+env.agent.max_total_tokens = 90000    # soft by one turn: + tool output + a 32K reply stays under max_model_len (an overlong prompt is a 400 ProviderError)
+env.agent.timeout.rollout = 5400      # backstop only: a timed-out rollout is DROPPED from training
+env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]   # Prime-terminated sandboxes rerun; else dropped
+
+[inference.vllm]
+max_model_len = 131072
