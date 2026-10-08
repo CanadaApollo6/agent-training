@@ -62,6 +62,29 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   knowledge-work task is a Docker environment with mock business systems served as MCP tools over SQLite, plus a
   rubric verifier: gates, then binary LLM-judge items, then a weighted mean. This is the template for Module 4
   environments, for Smart Data client environments, and for a Songbird environment.
+- [MiMo reward hacking](https://www.vals.ai/blogs/mimo-reward-hacking) (Vals AI, Oliver Chen and Anthony Ozerov,
+  2026-10): an audit of MiMo-V2.6-RL-oss and of MiMo V2.6 Flash/Pro.
+  - In 1,795 of the dataset's 2,698 coding tasks (67%), the reference fix survives as *unreachable* Git objects.
+  - MiMo finds such fixes and uses them:
+    - `git fsck` and a hand-written pack-file parser when Xiaomi's anti-hack guard hides the objects;
+    - file timestamps (`find -newermt`: "JACKPOT");
+    - build caches and newer upstream versions;
+    - GitHub PRs.
+  - Xiaomi's grader zeroed only the hacks it caught (detected rate "below 2%"), so the ones it missed were rewarded.
+  - Naming the forbidden sources in the prompt cut upstream lookups from 6/6 to 0/6.
+  - Only the coding subset was audited. The general-agent subset, which is rubric- and LLM-judge-graded, wasn't.
+
+  For us:
+  - Clean any MiMo coding task before RL: `git reflog expire` plus `gc --prune=now`, reset mtimes, empty build
+    caches, block the network.
+  - Treat MiMo-Flash teacher traces as possibly carrying the habit.
+  - Scan RL rollouts for the same moves.
+
+  Our 1,653 R1s-SD prime_agent rollouts, scanned for those moves (2026-10-07):
+  - 59 runs dug into hidden Git history. Nearly all were on tasks that are about Git recovery (git-leak-recovery
+    19, fix-git 11, sanitize-git-repo 4), where that's the job.
+  - 68 runs called the GitHub API, mostly on mteb tasks, and 4 of them were solved.
+  - No clear hack so far. RL rewards any loophole it finds, though, so the scan has to run on RL rollouts too.
 - [Automating eval design and hillclimbing](https://claude.dev/blog/automating-eval-design-and-hillclimbing/)
   (Lance Martin, Anthropic, 2026-09-28): two Claude Code commands, shipped in the
   [claude-api skill](https://github.com/anthropics/skills/tree/main/skills/claude-api).
