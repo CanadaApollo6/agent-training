@@ -113,6 +113,14 @@ RL moves R1s-SD.
   - Compaction, if the coaching test shows R1s-SD uses it when told: context stays small, so the cap rarely bites.
   - A 262K window: the trainer's 128K rows would need more splitting, so memory must be rechecked.
   - A 16K reply cap, which lets attempts run to ~110K. It cost 1.7 solves per attempt in the evals.
+- **Update (2026-10-08): the coaching test sends RL to pi, and pi compacts by itself.** R1s-SD never compacts in
+  prime_agent, even when told to (06-agents/harness-evals). pi's harness does it without the model:
+  - It runs a separate "context summarization assistant" call and restarts from the summary.
+  - In our 600 R1s-SD pi rollouts, 34 runs show it, e.g. one went from 64.9K to 21.6K prompt tokens.
+  - For the pilot, give pi's model entry an explicit `contextWindow`. The verifiers harness writes `models.json`
+    without one, so the threshold is pi's default. Compaction must fire below the 90K attempt cap, not above it.
+  - Also decide whether the summarization calls are trained on or masked.
+  - The fit check ran prime_agent. Switching to `env.agent.harness.id = "pi"` needs a short check run.
 - Lost sandboxes are already handled: the config reruns a Prime-killed attempt up to twice and drops it from training
   after that, and drops timed-out attempts too.
 
