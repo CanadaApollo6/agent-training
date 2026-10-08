@@ -1,0 +1,15 @@
+# large-scale-text-editing  alexgshaw/large-scale-text-editing:20251031  0.3 GB
+## whoami: root  workdir: /app
+## git repos (outside /usr, /proc, /sys)
+## test / solution / answer-like files
+/app/expected.csv
+## caches
+/tmp 0 0 files
+/var/tmp 0 0 files
+## /app listing (full times)
+total 87048
+drwxr-xr-x 1 root root       74 2025-09-13 17:50:59.000000000 +0000 .
+drwxr-xr-x 1 root root        0 2026-10-08 22:55:39.932144925 +0000 ..
+-rw-r--r-- 1 root root 38066688 2025-09-13 17:50:59.000000000 +0000 expected.csv
+-rw-r--r-- 1 root root 51066691 2025-09-13 17:50:59.000000000 +0000 input.csv
+app files: 2

@@ -1,0 +1,19 @@
+# feal-linear-cryptanalysis  alexgshaw/feal-linear-cryptanalysis:20251031  0.6 GB
+## whoami: root  workdir: /app
+## git repos (outside /usr, /proc, /sys)
+## test / solution / answer-like files
+## caches
+/root/.cache 1.4M 9 files
+/tmp 0 0 files
+/var/tmp 0 0 files
+## /app listing (full times)
+total 56
+drwxr-xr-x 1 root root    12 2025-09-13 17:52:05.000000000 +0000 .
+drwxr-xr-x 1 root root     0 2026-10-08 22:56:04.993095926 +0000 ..
+-rw-r--r-- 1 root root  2045 2025-09-13 17:52:03.000000000 +0000 ciphertexts.txt
+-rwxr-xr-x 1 root root 16592 2025-09-13 17:52:01.000000000 +0000 decrypt
+-rw-r--r-- 1 root root  3982 2025-09-13 17:49:25.000000000 +0000 decrypt.c
+-rwxr-xr-x 1 root root 16432 2025-09-13 17:52:00.000000000 +0000 feal
+-rw-r--r-- 1 root root  3472 2025-09-13 17:49:25.000000000 +0000 feal.c
+-rw-r--r-- 1 root root  1307 2025-09-13 17:52:03.000000000 +0000 pairs.txt
+app files: 6

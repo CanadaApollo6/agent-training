@@ -151,23 +151,56 @@ RL moves R1s-SD.
 - Summary calls are trained on like any other turn: their reward is the attempt's. Masking them would need code and
   there's no reason yet.
 
-**The pilot: a go/no-go run that isn't wasted.**
-- **Tasks:** a fixed pool of 16 tasks R1s-SD solves sometimes. Each step trains on 4 of them in groups of 8 attempts.
-  Over 12 steps, every task comes up 3 times, so its solve rate can be watched rising (or not).
-- **Held-out check:** the held-out 20 at step 0 and step 12, on the run's own model server (prime-rl's eval setting).
-  The before and after are then the same engine and settings.
-- **Learning rate:** probably 2e-6 rather than the smoke tests' 1e-6, so 12 steps can show a trend.
-- **Go:** the pool's solve rate clearly up (about +10 points or more from its first pass to its third) and held-out not
-  down. The full run then resumes from the pilot's checkpoint, so the pilot's spend counts toward it.
-- **Also required for go: no reward hacks.** Vals AI's MiMo audit (root README, reading spine) showed RL learning
-  to dig hidden answers out of Git objects, file timestamps, build caches and upstream repos.
-  - Before the pilot, check each of the 16 tasks' images for a reachable answer: Git history, leftover build output,
-    network access to the upstream project.
-  - After it, run the same scan used on our 1,653 rollouts over the pilot's rollouts.
-  - A rising solve rate that comes from a loophole is a no-go.
-- **Weights moving:** log the share of bf16 weights that change each step. NeMo-DCR measured 0.6–1.2% per GRPO step
-  across six models. Near zero means the updates round away, and the run can't be learning.
+**The pilot: a go/no-go run that isn't wasted.** Ready to launch (2026-10-08), waiting on Riel's OK.
+Config: `ornith35b-sd-rl-pilot-h200x8.toml`; prime-rl's own config check passes. Everything else is the pi check's setup.
+- **Tasks:** a fixed pool of 16 tasks R1s-SD solves sometimes (`pilot/pool.txt`). Each step trains on 4 of them, 8
+  attempts each. Over 12 steps every task comes up 3 times, so its solve rate can be watched rising (or not).
+  - Picked from the 63 TB2 train tasks by R1s-SD's earlier solve rates: from cancel-async-tasks (about half) down to
+    polyglot-c-py and query-optimize (1 in 10).
+  - Dropped: sanitize-git-repo, chess-best-move and reshard-c4-data, which lost a third or more of their attempts to
+    sandbox failures.
+- **Held-out check:** the held-out 20, 2 attempts each, before step 1 and after step 12, on the run's own model server
+  with the same sampling. 40 attempts catch a collapse, not a few-point drift.
+- **Settings changed from the pi check:** learning rate 2e-6 (was 1e-6) so 12 steps can show a trend; turn cap 100
+  (60 cut 7 of the pi check's 32 attempts).
+- **Saving the result:** checkpoints at steps 4, 8 and 12 (only the latest kept). After training the job:
+  - turns the last checkpoint back into normal model files;
+  - checks that the frozen parts (vision tower, routers) are unchanged;
+  - measures how much of the model changed;
+  - uploads the weights (~67 GB) to the sd-out bucket.
+  - A time limit on training (7 h) leaves room for this even if steps run slow.
+- **Leak checks done before the pilot (all clean):**
+  - Images (`pilot/image_check.sh`, reports in `pilot/image_check/`): each of the 16 images opened with the network
+    off. No Git repos, no test or solution files.
+    - large-scale-text-editing ships its expected output by design: its grader rebuilds both the input and the
+      expected file before checking.
+    - The caches found are pip download caches.
+  - Earlier rollouts (`pilot/hack_scan.py`, `pilot/hack_scan_before.json`): all 215 earlier R1s-SD attempts at the 16
+    pool tasks (evals plus the pi check). Every hit is ordinary work.
+    - configure-git-webserver clones its own local server repo, which is the task.
+    - count-dataset-tokens downloads its dataset; mcmc-sampling-stan checks CRAN.
+    - fix-ocaml-gc reads OCaml's own test suite; sqlite-with-gcov looks at gcov files.
+  - Vals AI's MiMo audit (root README, reading spine) is why: it showed RL learning to dig hidden answers out of Git
+    objects, file times, build caches and upstream repos.
+- **Go (all four):**
+  - the pool's solve rate clearly up (about +10 points or more from its first pass to its third);
+  - held-out not down;
+  - no reward hacks: rerun `hack_scan.py` on the pilot's rollouts, and read every solved attempt it flags;
+  - weights moving: `pilot/weights_moved.py`, start vs end. NeMo-DCR measured 0.6–1.2% of bf16 weights changing per
+    GRPO step across six models. Near zero over 12 steps means the updates rounded away and the run can't have learned.
 - **No-go:** the pool is flat (the recipe doesn't teach; fix it before spending more), or the pool is up but held-out
   is down (memorising; needs a bigger pool).
-- **Cost:** ~$8–9 a step on h200x8, plus setup and load (~$15) and the checkpoint save: **about $120–140**, plus
-  sandbox fees.
+- **On go:** the full run starts from the pilot's uploaded weights, so the pilot's training counts toward it. Its
+  optimizer state is not kept (~0.4 TB); that only costs the first few steps' warm-up.
+- **Cost, re-estimated from the pi check's real step times (17 and 23 min at $40/h).** The pilot's tasks are harder
+  and attempts may run longer (turn cap 100), so I budget 20–30 min a step.
+
+  | Part | Time | Cost |
+  |---|---|---|
+  | Setup, model load, server start | ~20 min | ~$13 |
+  | 12 training steps (the first overlaps the "before" eval) | 4–6 h | $160–240 |
+  | "After" eval on the held-out 20 | 30–45 min | $20–30 |
+  | Export, checks, upload | ~30 min | ~$20 |
+  | **Total** | **5–7.5 h** | **about $215–300**, hard cap $320 (8 h job limit) |
+
+  Prime sandbox fees come on top. The earlier $120–140 quote assumed ~$9 a step; the pi check measured $11–15.

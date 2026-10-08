@@ -1,0 +1,14 @@
+# model-extraction-relu-logits  alexgshaw/model-extraction-relu-logits:20251031  0.3 GB
+## whoami: root  workdir: /app
+## git repos (outside /usr, /proc, /sys)
+## test / solution / answer-like files
+## caches
+/root/.cache 16M 9 files
+/tmp 0 0 files
+/var/tmp 0 0 files
+## /app listing (full times)
+total 4
+drwxr-xr-x 1 root root  20 2025-09-13 18:43:51.000000000 +0000 .
+drwxr-xr-x 1 root root   0 2026-10-08 22:56:17.847083366 +0000 ..
+-rw-r--r-- 1 root root 922 2025-09-13 17:49:25.000000000 +0000 forward.py
+app files: 1

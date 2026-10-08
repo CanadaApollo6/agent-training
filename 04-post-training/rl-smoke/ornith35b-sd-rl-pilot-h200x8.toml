@@ -1,0 +1,98 @@
+# R1s-SD RL pilot (go/no-go before the full run): the pi check's setup, 12 steps on a 16-task pool, with the held-out
+# 20 TB2 tasks scored before step 1 and after the last step, and the final weights exported and uploaded.
+# Pool (pilot/pool.txt): TB2 train tasks R1s-SD solves sometimes but not always, minus three with heavy sandbox loss;
+# their images and earlier rollouts were checked for leaks (pilot/image_check, pilot/hack_scan.py).
+# Changes from the pi check: 12 steps, lr 2e-6, max_turns 100 (60 cut 7 of 32 pi-check attempts), 4 tasks x 8 per
+# step, [ckpt] (final step only), [orchestrator.eval]. Submit with PI_CONTEXT_WINDOW=98304 EXPORT=1 RL_TIMEOUT=7h TIMEOUT=8h (hf_rl_job.sh).
+max_steps = 12
+seq_len = 131072                      # one packed row = one full rollout branch
+
+[env_vars]
+FLA_DISABLE_TENSOR_CACHE = "1"        # prime-rl#3882: FLA tensor cache breaks Qwen3.5 checkpointed backward
+
+[model]
+name = "/workspace/ornith-sd-bf16"    # Qwen3_5MoeForConditionalGeneration (vision tower present)
+
+[model.vlm]                           # the harness can send images; a text-only trainer raises on any image sample
+vision_encoder_attr = "model.visual"
+language_model_attr = "model.language_model"
+
+[deployment]
+num_train_gpus = 4
+num_infer_gpus = 4
+
+[trainer]
+enable_router_replay = true           # vLLM returns its expert routes and the trainer replays them (custom impl, picked automatically for qwen3_5_moe)
+
+[trainer.model]
+attn = "flash_attention_2"            # auto picks FA3 on Hopper, which the job doesn't install
+ep = 4
+cp = 4
+cp_style = "ulysses"                  # the only CP style for Gated DeltaNet layers and for VLMs
+# fp32 master weights, as in the SD run: at lr 1e-6 most bf16 updates would round away
+optimization_dtype = "float32"
+reduce_dtype = "float32"
+freeze_moe_router = true              # R1s's 3-bit experts were searched against these routes
+
+[trainer.optim]
+lr = 2e-6                             # x2 the check's: 12 steps must move the weights measurably
+
+[orchestrator]
+batch_size = 32                       # rollouts per step: the planned real-run size
+constant_trainer_batch_size = false
+max_off_policy_steps = 8
+
+[orchestrator.train]
+group_size = 8
+
+[orchestrator.train.sampling]
+max_completion_tokens = 32768         # same per-call reply cap as the evals
+
+[orchestrator.concurrency]
+initial_inflight = 32
+max_inflight = 64                     # also caps live Prime sandboxes
+
+[orchestrator.renderer]               # Ornith isn't in MODEL_RENDERER_MAP; 'auto' is rejected at config time
+name = "qwen3.5"
+enable_thinking = true
+thinking_retention = "all"            # Ornith's template keeps all past <think> blocks
+
+[[orchestrator.train.source]]
+name = "tb2-pool"
+env.taskset.id = "terminal-bench-2"
+env.taskset.tasks = ["cancel-async-tasks", "configure-git-webserver", "count-dataset-tokens", "fix-ocaml-gc", "password-recovery", "mcmc-sampling-stan", "regex-log", "large-scale-text-editing", "llm-inference-batching-scheduler", "mailman", "sqlite-with-gcov", "db-wal-recovery", "feal-linear-cryptanalysis", "polyglot-c-py", "query-optimize", "model-extraction-relu-logits"]
+env.agent.harness.id = "pi"
+env.agent.runtime.type = "prime"
+env.agent.runtime.labels = ["ornith35b-rl-pilot"]
+env.agent.max_turns = 100
+env.agent.max_total_tokens = 400000   # cumulative over the attempt; pi's compaction keeps each call under max_model_len
+env.agent.timeout.rollout = 3600      # a timed-out rollout is DROPPED from training; 1 h as in the evals
+env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]   # Prime-terminated sandboxes rerun; else dropped
+
+[ckpt]                                # exported by hf_rl_job.sh (EXPORT=1) after training
+interval = 4                          # also at steps 4 and 8, so a run stopped by RL_TIMEOUT still has weights to export
+keep_last = 1                         # each holds fp32 weights + optimizer (~0.4 TB); the job disk is 24 TB
+
+[orchestrator.eval]
+interval = 100                        # > max_steps: only the startup eval (step 0) and the forced one at the last step
+
+[orchestrator.eval.sampling]
+temperature = 1.0                     # as in training, so before/after compare like with like
+max_completion_tokens = 32768
+
+[[orchestrator.eval.source]]
+name = "tb2-heldout"
+group_size = 2                        # 40 attempts per eval: catches a collapse, not a few-point drift
+env.taskset.id = "terminal-bench-2"
+env.taskset.tasks = ["build-pov-ray", "compile-compcert", "custom-memory-heap-crash", "financial-document-processor", "git-leak-recovery", "git-multibranch", "hf-model-inference", "kv-store-grpc", "make-mips-interpreter", "modernize-scientific-stack", "mteb-retrieve", "nginx-request-logging", "portfolio-optimization", "protein-assembly", "pypi-server", "pytorch-model-cli", "qemu-startup", "rstan-to-pystan", "schemelike-metacircular-eval", "sqlite-db-truncate"]
+env.agent.harness.id = "pi"
+env.agent.runtime.type = "prime"
+env.agent.runtime.labels = ["ornith35b-rl-pilot"]
+env.agent.max_turns = 100
+env.agent.max_total_tokens = 400000
+env.agent.timeout.rollout = 3600
+env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]
+
+[inference.vllm]
+max_model_len = 131072
+data_parallel_size = 4               # explicit: rl sizes the NCCL weight broadcast before [deployment] sets dp

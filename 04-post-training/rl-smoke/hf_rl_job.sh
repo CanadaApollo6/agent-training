@@ -8,6 +8,10 @@
 # /workspace/<dir> before training; the config's [model] name points there.
 # PI_CONTEXT_WINDOW=<tokens> patches that contextWindow into the pi harness's models.json (verifiers writes none, and
 # pi then assumes 128000): pi compacts once its context passes contextWindow - 16384.
+# EXPORT=1 (needs MODEL_SRC and a [ckpt] in the config) turns the run's last checkpoint into bf16 weights after training,
+# measures how many weights changed (pilot/weights_moved.py) and uploads them to the sd-out bucket as <run>-bf16.
+# RL_TIMEOUT=<duration> (e.g. 7h) stops training cleanly after that long, so a long run still leaves the job time to
+# export its latest checkpoint before TIMEOUT kills the job.
 #
 #   ./hf_rl_job.sh submit          # prints the job id
 #   (inside the job) bash /inputs/hf_rl_job.sh entry
@@ -22,12 +26,13 @@ submit)
     $HF buckets create "$NS/rl-in" --private --exist-ok > /dev/null
     $HF buckets create "$NS/rl-out" --private --exist-ok > /dev/null
     $HF buckets sync . "hf://buckets/$NS/rl-in/$RUN" > /dev/null
+    [ -n "${EXPORT:-}" ] && $HF buckets cp ../self-distill/finish_export.py "hf://buckets/$NS/rl-in/$RUN/finish_export.py" > /dev/null
     MOUNT=(); [ -n "${MODEL_SRC:-}" ] && MOUNT=(-v "hf://buckets/$NS/sd-out:/sd:ro")
     { echo "HF_TOKEN=$(cat ${HF_HOME:-$HOME/.cache/huggingface}/token)"
       echo "PRIME_API_KEY=$(python3 -c "import json,os; print(json.load(open(os.path.expanduser('~/.prime/config.json')))['api_key'])")"; } |
     $HF jobs run --detach -q --secrets-file - --flavor ${FLAVOR:-a100x8} --timeout ${TIMEOUT:-270m} --name "rl-$RUN" \
         -e RUN=$RUN -e NS=$NS -e CONFIG=${CONFIG:-ornith9b-tb2-smoke.toml} -e PRIME_RL_COMMIT=$PRIME_RL_COMMIT \
-        -e MODEL_SRC=${MODEL_SRC:-} -e PI_CONTEXT_WINDOW=${PI_CONTEXT_WINDOW:-} "${MOUNT[@]}" \
+        -e MODEL_SRC=${MODEL_SRC:-} -e PI_CONTEXT_WINDOW=${PI_CONTEXT_WINDOW:-} -e EXPORT=${EXPORT:-} -e RL_TIMEOUT=${RL_TIMEOUT:-} "${MOUNT[@]}" \
         -v "hf://buckets/$NS/rl-in/$RUN:/inputs:ro" -v "hf://buckets/$NS/rl-out:/out" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /inputs/hf_rl_job.sh entry
     echo "run $RUN"
@@ -67,11 +72,30 @@ entry)
         nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv,noheader > $OUT/gpu.txt 2>/dev/null
       done ) &
     say "rl start"
-    uv run rl @ /inputs/$CONFIG --run.name $RUN --output-dir outputs > $OUT/rl.stdout 2>&1
+    RLT=(); [ -n "${RL_TIMEOUT:-}" ] && RLT=(timeout -k 300 $RL_TIMEOUT)   # SIGTERM: rl stops all its processes
+    "${RLT[@]}" uv run rl @ /inputs/$CONFIG --run.name $RUN --output-dir outputs > $OUT/rl.stdout 2>&1
     rc=$?
     say "rl exit $rc"
     rsync -a --exclude checkpoints --exclude weights --exclude broadcasts --exclude '*.safetensors' --exclude '*.pt' \
         --exclude '*.distcp' outputs/ $OUT/outputs/
+    # newest complete checkpoint (DCP writes .metadata last; a save cut off by RL_TIMEOUT has none)
+    ckpt=$(ls -d outputs/$RUN/checkpoints/step_* 2>/dev/null | sort -t_ -k2 -n | while read d; do
+        [ -f $d/trainer/.metadata ] && echo $d; done | tail -1)
+    if [ -n "${EXPORT:-}" ] && [ -n "$ckpt" ]; then
+        # the run's last checkpoint -> bf16 HF weights, MTP head and assets put back from the starting model (checks
+        # the frozen vision tower and routers), share of weights changed, then up to sd-out/<run>-bf16
+        EXP=/workspace/$RUN-bf16
+        say "exporting $ckpt"
+        uv run torchrun --nproc-per-node 8 tools/convert_dcp_to_bf16.py $ckpt $EXP > $OUT/export.log 2>&1 \
+            || [ -f $EXP/model.safetensors.index.json ] || { say "export failed"; exit 1; }
+        uv run python /inputs/finish_export.py --orig /workspace/$MODEL_SRC --export $EXP > $OUT/finish_export.log 2>&1 \
+            || { say "finish_export failed"; exit 1; }
+        uv run python /inputs/pilot/weights_moved.py /workspace/$MODEL_SRC $EXP --out $OUT/weights_moved.json \
+            > $OUT/weights_moved.txt 2>&1
+        say "weights changed: $(grep '^all' $OUT/weights_moved.txt)"
+        $HF buckets sync $EXP "hf://buckets/$NS/sd-out/$RUN-bf16" > $OUT/upload.log 2>&1 \
+            && say "uploaded $(du -sh $EXP | cut -f1) to sd-out/$RUN-bf16" || say "upload failed"
+    fi
     say "checkpoints on the job (not uploaded): $(du -sh outputs 2>/dev/null | cut -f1)"
     say "job end"
     exit $rc

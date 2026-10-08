@@ -1,0 +1,14 @@
+# query-optimize  alexgshaw/query-optimize:20251031  0.4 GB
+## whoami: root  workdir: /app
+## git repos (outside /usr, /proc, /sys)
+## test / solution / answer-like files
+## caches
+/tmp 0 0 files
+/var/tmp 0 0 files
+## /app listing (full times)
+total 49424
+drwxr-xr-x 1 root root       32 2025-10-28 22:15:02.000000000 +0000 .
+drwxr-xr-x 1 root root        0 2026-10-08 22:56:14.112087061 +0000 ..
+-rw-r--r-- 1 root root     1158 2025-10-24 05:18:47.000000000 +0000 my-sql-query.sql
+-r--r--r-- 1 root root 50606080 2025-10-28 22:15:00.000000000 +0000 oewn.sqlite
+app files: 2

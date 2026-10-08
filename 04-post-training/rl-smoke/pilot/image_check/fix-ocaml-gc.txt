@@ -1,0 +1,15 @@
+# fix-ocaml-gc  alexgshaw/fix-ocaml-gc:20251031  2.0 GB
+## whoami: root  workdir: /app
+## git repos (outside /usr, /proc, /sys)
+## test / solution / answer-like files
+/app/ocaml/testsuite/tests/typing-core-bugs/type_expected_explanation.ml
+/app/ocaml/testsuite/tests/typing-gadts/unexpected_existentials.ml
+## caches
+/tmp 0 0 files
+/var/tmp 0 0 files
+## /app listing (full times)
+total 0
+drwxr-xr-x 1 root root 10 2025-10-28 22:06:31.000000000 +0000 .
+drwxr-xr-x 1 root root  0 2026-10-08 22:55:23.090187361 +0000 ..
+drwxr-xr-x 1 root root  8 2025-10-28 22:07:07.000000000 +0000 ocaml
+app files: 4623

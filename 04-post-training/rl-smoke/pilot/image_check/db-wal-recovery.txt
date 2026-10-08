@@ -1,0 +1,14 @@
+# db-wal-recovery  alexgshaw/db-wal-recovery:20251031  0.7 GB
+## whoami: root  workdir: /app
+## git repos (outside /usr, /proc, /sys)
+## test / solution / answer-like files
+## caches
+/tmp 0 0 files
+/var/tmp 0 0 files
+## /app listing (full times)
+total 28
+drwxr-xr-x 1 root root    22 2025-10-31 02:51:44.000000000 +0000 .
+drwxr-xr-x 1 root root     0 2026-10-08 22:55:58.252102335 +0000 ..
+-rw-r--r-- 1 root root  8192 2025-10-24 05:18:47.000000000 +0000 main.db
+-rw-r--r-- 1 root root 16512 2025-10-24 05:18:47.000000000 +0000 main.db-wal
+app files: 2

@@ -1,0 +1,13 @@
+# mailman  alexgshaw/mailman:20251031  0.6 GB
+## whoami: root  workdir: /app
+## git repos (outside /usr, /proc, /sys)
+## test / solution / answer-like files
+## caches
+/tmp 0 0 files
+/var/tmp 0 0 files
+## /app listing (full times)
+total 8
+drwxr-xr-x 1 root root   14 2025-10-28 22:15:54.000000000 +0000 .
+drwxr-xr-x 1 root root    0 2026-10-08 22:55:49.007122058 +0000 ..
+-rw-r--r-- 1 root root 6099 2025-10-24 18:22:39.000000000 +0000 eval.py
+app files: 1
