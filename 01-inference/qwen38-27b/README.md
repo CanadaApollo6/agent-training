@@ -572,6 +572,23 @@ tokens, 55 min at ~27 tok/s.
 - A score-level answer needs several tries per hard problem, hours of 3090 time. The cheaper next step is to read the
   draft accept rule and the base sampler for a distribution bug. That needs no GPU.
 
+**Found it: the two engines got different prompts, not different samplers.** A code read of TensorFold (no GPU)
+found the sampler and the draft accept rule exact.
+- **Sampler:** temperature, then top-k, then top-p over the renormalised set, in that order. It samples with float64
+  Gumbel noise keyed per position.
+- **Drafts:** a draft token is kept only when it equals the target's own sample, so every committed token comes from
+  the target.
+- **The real difference:** the model's chat template defaults to `reasoning_effort = xhigh`. It adds a system message:
+  "Reasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider
+  plausible alternatives...". TensorFold renders that template, and the probe sent no `reasoning_effort`. The
+  ExLlamaV3 probe builds its prompt by hand with no system block, which is what `medium` gives.
+- **So the comparison was xhigh (TensorFold, 15-17) against medium (ExLlamaV3, 18-19).** At a 16K cap, xhigh's
+  longer re-checking turns hard problems into run-outs.
+- TensorFold's CLI `--reasoning-effort` default reaches only its MLX app, not the CUDA server
+  (`cli.py:381-383, 561`).
+- The fair rerun: `PROBE_ARGS='--template-kwargs {"reasoning_effort":"medium"}'` with drafts on (~18 min).
+- For agent runs on this model, set `reasoning_effort` on purpose: xhigh is the default.
+
 ### Next: where more room comes from
 
 | Change | Frees | Then |
