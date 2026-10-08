@@ -1,0 +1,76 @@
+# R1s-SD RL check in the pi harness (2026-10-08): the 35B fit check's setup with env.agent.harness.id = "pi", 2 steps.
+# Questions: does prime-rl train through pi; does pi's own summarizing ("compaction") fire before attempts run out of
+# room; how many attempts still end on a length cap; how many branches per attempt (each branch is one trainer row).
+# pi compacts when its context passes contextWindow - 16384. verifiers writes pi's models.json without a
+# contextWindow (pi then assumes 128000, so it would compact at ~111.6K, too close to vLLM's 131072). hf_rl_job.sh
+# patches PI_CONTEXT_WINDOW=98304 in, so pi compacts at ~81.9K, leaving room for one more tool output + 32K reply.
+# max_total_tokens counts every new input token and every reply across the whole attempt, including after a
+# compaction, so it can't stay at 90K or it would still cut compacted attempts; it's now only a runaway backstop.
+max_steps = 2
+seq_len = 131072                      # one packed row = one full rollout branch
+
+[env_vars]
+FLA_DISABLE_TENSOR_CACHE = "1"        # prime-rl#3882: FLA tensor cache breaks Qwen3.5 checkpointed backward
+
+[model]
+name = "/workspace/ornith-sd-bf16"    # Qwen3_5MoeForConditionalGeneration (vision tower present)
+
+[model.vlm]                           # the harness can send images; a text-only trainer raises on any image sample
+vision_encoder_attr = "model.visual"
+language_model_attr = "model.language_model"
+
+[deployment]
+num_train_gpus = 4
+num_infer_gpus = 4
+
+[trainer]
+enable_router_replay = true           # vLLM returns its expert routes and the trainer replays them (custom impl, picked automatically for qwen3_5_moe)
+
+[trainer.model]
+attn = "flash_attention_2"            # auto picks FA3 on Hopper, which the job doesn't install
+ep = 4
+cp = 4
+cp_style = "ulysses"                  # the only CP style for Gated DeltaNet layers and for VLMs
+# fp32 master weights, as in the SD run: at lr 1e-6 most bf16 updates would round away
+optimization_dtype = "float32"
+reduce_dtype = "float32"
+freeze_moe_router = true              # R1s's 3-bit experts were searched against these routes
+
+[trainer.optim]
+lr = 1e-6
+
+[orchestrator]
+batch_size = 32                       # rollouts per step: the planned real-run size
+constant_trainer_batch_size = false
+max_off_policy_steps = 8
+
+[orchestrator.train]
+group_size = 8
+
+[orchestrator.train.sampling]
+max_completion_tokens = 32768         # same per-call reply cap as the evals
+
+[orchestrator.concurrency]
+initial_inflight = 32
+max_inflight = 64                     # also caps live Prime sandboxes
+
+[orchestrator.renderer]               # Ornith isn't in MODEL_RENDERER_MAP; 'auto' is rejected at config time
+name = "qwen3.5"
+enable_thinking = true
+thinking_retention = "all"            # Ornith's template keeps all past <think> blocks
+
+[[orchestrator.train.source]]
+name = "tb2-train"
+env.taskset.id = "terminal-bench-2"
+env.taskset.tasks = ["adaptive-rejection-sampler", "bn-fit-modify", "break-filter-js-from-html", "build-cython-ext", "build-pmars", "caffe-cifar-10", "cancel-async-tasks", "chess-best-move", "circuit-fibsqrt", "cobol-modernization", "code-from-image", "configure-git-webserver", "constraints-scheduling", "count-dataset-tokens", "crack-7z-hash", "db-wal-recovery", "distribution-search", "dna-assembly", "dna-insert", "extract-elf", "extract-moves-from-video", "feal-differential-cryptanalysis", "feal-linear-cryptanalysis", "filter-js-from-html", "fix-code-vulnerability", "fix-git", "fix-ocaml-gc", "gcode-to-text", "headless-terminal", "large-scale-text-editing", "largest-eigenval", "llm-inference-batching-scheduler", "log-summary-date-ranges", "mailman", "make-doom-for-mips", "mcmc-sampling-stan", "merge-diff-arc-agi-task", "model-extraction-relu-logits", "mteb-leaderboard", "multi-source-data-merger", "openssl-selfsigned-cert", "overfull-hbox", "password-recovery", "path-tracing-reverse", "polyglot-c-py", "polyglot-rust-c", "prove-plus-comm", "pytorch-model-recovery", "query-optimize", "raman-fitting", "regex-chess", "regex-log", "reshard-c4-data", "sam-cell-seg", "sanitize-git-repo", "sparql-university", "sqlite-with-gcov", "torch-tensor-parallelism", "tune-mjcf", "video-processing", "vulnerable-secret", "winning-avg-corewars", "write-compressor"]
+env.agent.harness.id = "pi"
+env.agent.runtime.type = "prime"
+env.agent.runtime.labels = ["ornith35b-rl-picheck"]
+env.agent.max_turns = 60
+env.agent.max_total_tokens = 400000   # cumulative over the attempt; pi's compaction keeps each call under max_model_len
+env.agent.timeout.rollout = 3600      # a timed-out rollout is DROPPED from training; 1 h as in the evals
+env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]   # Prime-terminated sandboxes rerun; else dropped
+
+[inference.vllm]
+max_model_len = 131072
+data_parallel_size = 4               # explicit: rl sizes the NCCL weight broadcast before [deployment] sets dp

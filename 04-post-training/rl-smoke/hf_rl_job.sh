@@ -6,6 +6,8 @@
 # Secrets (HF token, Prime key) go over stdin, never on a command line.
 # MODEL_SRC=<dir in the sd-out bucket> (e.g. ornith-sd-bf16) mounts sd-out read-only and copies that checkpoint to
 # /workspace/<dir> before training; the config's [model] name points there.
+# PI_CONTEXT_WINDOW=<tokens> patches that contextWindow into the pi harness's models.json (verifiers writes none, and
+# pi then assumes 128000): pi compacts once its context passes contextWindow - 16384.
 #
 #   ./hf_rl_job.sh submit          # prints the job id
 #   (inside the job) bash /inputs/hf_rl_job.sh entry
@@ -25,7 +27,7 @@ submit)
       echo "PRIME_API_KEY=$(python3 -c "import json,os; print(json.load(open(os.path.expanduser('~/.prime/config.json')))['api_key'])")"; } |
     $HF jobs run --detach -q --secrets-file - --flavor ${FLAVOR:-a100x8} --timeout ${TIMEOUT:-270m} --name "rl-$RUN" \
         -e RUN=$RUN -e NS=$NS -e CONFIG=${CONFIG:-ornith9b-tb2-smoke.toml} -e PRIME_RL_COMMIT=$PRIME_RL_COMMIT \
-        -e MODEL_SRC=${MODEL_SRC:-} "${MOUNT[@]}" \
+        -e MODEL_SRC=${MODEL_SRC:-} -e PI_CONTEXT_WINDOW=${PI_CONTEXT_WINDOW:-} "${MOUNT[@]}" \
         -v "hf://buckets/$NS/rl-in/$RUN:/inputs:ro" -v "hf://buckets/$NS/rl-out:/out" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /inputs/hf_rl_job.sh entry
     echo "run $RUN"
@@ -46,6 +48,12 @@ entry)
         git submodule update --init deps/verifiers deps/renderers deps/pydantic-config deps/prime-envs > /tmp/sub.log 2>&1 \
         || { say "submodules failed"; tail -20 /tmp/sub.log >> $OUT/job.log; exit 1; }
     say "cloned prime-rl $(git rev-parse --short HEAD)"
+    if [ -n "${PI_CONTEXT_WINDOW:-}" ]; then
+        PI_PY=deps/verifiers/verifiers/v1/harnesses/pi/harness.py
+        sed -i "s/^\( *\)\"input\": \[\"text\", \"image\"\],/&\n\1\"contextWindow\": $PI_CONTEXT_WINDOW,/" $PI_PY
+        grep -q "\"contextWindow\": $PI_CONTEXT_WINDOW," $PI_PY && say "pi contextWindow patched: $PI_CONTEXT_WINDOW" \
+            || { say "pi contextWindow patch failed"; exit 1; }
+    fi
     uv sync --extra gpu --extra flash-attn --extra kernels --extra disagg --package prime-rl --package terminal-bench-2 > /tmp/sync.log 2>&1 \
         || { say "uv sync failed"; tail -40 /tmp/sync.log >> $OUT/job.log; exit 1; }
     say "uv sync done; vllm-router: $(ls .venv/bin/vllm-router 2>/dev/null || echo MISSING)"
