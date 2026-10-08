@@ -457,6 +457,45 @@ example for the reward to reinforce. Those two features need a demonstration fir
 also need tasks that require them. The cheap wins fit RL as it is: stop calling missing tools (each one costs a turn and
 appears in most runs), use `edit`, and act before the length cap.
 
+## Planned: coaching R1s-SD to use prime_agent (drafted 2026-10-07)
+
+The feature audit above found that R1s-SD uses prime_agent as a plain Python sandbox. It calls missing tools, never
+compacts, never spawns a sub-agent and rarely uses `edit`. Before choosing a harness for RL, the question is
+whether the model *can* use those features when told to, and whether that helps.
+
+- **The coaching text:** `coaching/prime_agent_coach.md`. It has six rules, each with a short code example, and every
+  API name was checked against prime-agent 0.9.5:
+  1. `bash()` inside `ipython`, not a bash tool;
+  2. `edit` for changes;
+  3. `compact.status()` / `compact.run()` past half the window;
+  4. act every turn;
+  5. `rlm.spawn` for big independent work;
+  6. check before finishing.
+  
+  It goes in as an appended system prompt. The prime_agent harness passes `task.system_prompt` through
+  `--append-system-prompt`.
+- **The test:** R1s-SD, held-out 20, 3 attempts, 32K reply cap, 60 turns and 1 hour, the same as the reply-cap
+  test. Only the coached arm is new.
+- **Baselines already measured:**
+  - plain prime_agent 31/60 (32K arm, 2026-10-05);
+  - pi 10.3 per attempt (2026-10-05).
+- **What to measure:**
+  - the solve rate;
+  - `feature_audit.py` on the coached runs: missing-tool calls, `edit`, `compact`, `spawn`, peak context.
+- **How to read it:**
+  - Uses the features and solves more: prime_agent wins. Distill the coached runs without the coaching, then RL in
+    prime_agent.
+  - Uses them, no gain: RL in pi for now, and retest prime_agent on long tasks.
+  - Ignores the coaching: features need teacher demonstrations; pi for now.
+  - The 20-task yardstick sees ~3 solves per attempt at best, so a tie defaults to pi.
+- **Cost:** 60 rollouts. At the fix test's rate (about $91 of HF servers for ~350 rollouts), that's roughly $15-25,
+  plus sandbox fees.
+
+**Also planned: Qwen3.8-27B under prime_agent, untrained.** It's a much stronger model for its size. If it uses
+compaction and sub-agents without being told, the features are learnable by a mid-size model, and the gap is
+R1s-SD's training, not the harness. Run the same held-out 20 with `feature_audit.py`, served on the 3090
+(TensorFold, 262K) or on HF.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
