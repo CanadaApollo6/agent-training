@@ -589,6 +589,22 @@ found the sampler and the draft accept rule exact.
 - The fair rerun: `PROBE_ARGS='--template-kwargs {"reasoning_effort":"medium"}'` with drafts on (~18 min).
 - For agent runs on this model, set `reasoning_effort` on purpose: xhigh is the default.
 
+**The fair rerun (`probe_medium.sh`: drafts on, `reasoning_effort = medium`): 17/20.** 3 run-outs, 0 wrong, median
+1,445 tokens, 12.2 min.
+
+| TensorFold, EXL3 4.0 | xhigh (template default) | xhigh, drafts off | **medium** | ExLlamaV3 (= medium) |
+|---|---|---|---|---|
+| Correct | 15 | 17 | **17** | 18 |
+| Median tokens | 2,447 | 2,234 | **1,445** | 985 |
+| Minutes | 17.8 | 55.1 | **12.2** | 12.8 |
+
+- **Closed.** At the same prompt, TensorFold is one problem behind ExLlamaV3, inside one-try noise. Its thinking
+  length is back in ExLlamaV3's range: 1.0-1.7K tokens across the two ExLlamaV3 runs.
+- The three it misses (2015, 880, 558) are the hardest of the set. 880 runs out in every run on both engines, and
+  ExLlamaV3 at 3.0 bpw missed 2015.
+- **Use medium on this model unless a task needs xhigh.** It finishes the same 20 problems a third faster, with no
+  measurable loss here.
+
 ### Next: where more room comes from
 
 | Change | Frees | Then |
