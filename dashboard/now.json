@@ -42,9 +42,9 @@
    ]
   ],
   "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
-  "next": "Weights: EXL3 builds now run in TensorFold (after fixing a crash on the 3090), but fewer bits don't make them faster. A mixed 3/4-bit build would gain at most ~6% even with a new kernel: weight bits are no longer the speed limit. Open: math test on EXL3 4-bit and 3-bit in TensorFold (~18 min each, your OK)."
+  "next": "Weights: EXL3 builds now run in TensorFold (after fixing a crash on the 3090), but fewer bits don't make them faster. A mixed 3/4-bit build would gain at most ~6% even with a new kernel: weight bits are no longer the speed limit. Math test: the same EXL3 4-bit weights score 18/20 in ExLlamaV3 but 15/20 in TensorFold, so the engine loses the points, not the weights. It overthinks on hard problems. Suspect: how it samples with the draft model. Test with drafts off: ~50 min, your OK."
  },
  "extra_today_dollars": 62,
  "extra_today_note": " (including ~$18 for the 9B RL test and ~$44 for the 35B fit check on Hugging Face)",
- "next_text": "RL: 35B fit check passed (~$360-450 for 50 steps, your call). Audit: R1s-SD never uses prime_agent's context compaction or sub-agents, and 2 of 3 runs call a tool that doesn't exist. Local: 3/4-bit weights won't speed up the 27B; math tests on EXL3 in TensorFold wait on your OK."
+ "next_text": "RL: 35B fit check passed (~$360-450 for 50 steps, your call). Harness: coaching text drafted (6 rules). The test is 60 runs, about $15-25, and waits on your OK. Qwen3.8-27B under prime_agent is queued as a later test. Local: TensorFold loses ~3 math points to its engine, likely the draft sampler. A drafts-off check (~50 min GPU) waits on your OK."
 }

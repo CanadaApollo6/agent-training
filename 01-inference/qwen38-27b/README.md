@@ -522,8 +522,38 @@ A fast 3-bit kernel wouldn't buy much:
 **Verdict: on this engine, weight bits are no longer the decode bottleneck.**
 - Lower-bit weights buy memory (EXL3 3.0 saves 3 GB), not speed.
 - The open question is quality, not speed: the math probe gap (TensorFold 15/20 vs EXL3-in-ExLlamaV3 18/20).
-  - Running the EXL3 4.0 pack *in TensorFold* separates weights from engine.
-  - EXL3 3.0 in TensorFold shows what 3 bits cost on this engine.
+  It follows the engine, not the weights: see below.
+
+### Math probe: EXL3 weights in TensorFold (2026-10-07)
+
+`probe_exl3_pair.sh`: the same 20 problems, the same sampling (temperature 1.0, top-p 0.95, top-k 20, one try each,
+16K cap), on TensorFold with the 4-bit cache and the DFlash2 drafts. The request's sampling settings reach the server
+(`server/request_options.py`). ExLlamaV3 ran the same settings through its own sampler.
+
+| Run | Engine | Weights | Correct | Run-outs | Wrong | Median tokens |
+|---|---|---|---|---|---|---|
+| `exl3-4.00bpw` | ExLlamaV3 | EXL3 4.0 | 18 | 2 | 0 | 985 |
+| `exl3-3.00bpw` | ExLlamaV3 | EXL3 3.0 | 19 | 1 | 0 | 1,676 |
+| `tf-kv16-80k` | TensorFold | MLX 4-bit | 15 | 5 | 0 | 1,761 |
+| `tf-kv4-262k` | TensorFold | MLX 4-bit | 15 | 5 | 0 | 1,881 |
+| `tf-exl3-4.00` | TensorFold | EXL3 4.0 | 15 | 4 | 1 | 2,447 |
+| `tf-exl3-3.00` | TensorFold | EXL3 3.0 | 17 | 2 | 1 | 2,600 |
+
+- **The same EXL3 4.0 weights score 18 in ExLlamaV3 and 15 in TensorFold.** The MLX weight files are not the
+  cause. The gap follows the engine.
+- All six runs agree on the 14 easy problems. The difference is in six hard ones: 902, 2015, 582, 686, 880 and 558.
+  - ExLlamaV3 solved 9 of 12 of those (75%) and TensorFold 7 of 24 (29%), Fisher p ≈ 0.014.
+  - TensorFold loses mostly to run-outs: it thinks to the 16K cap.
+- TensorFold also thinks longer on the problems it does solve: median 1.8-2.6K tokens against 1.0-1.7K.
+- **Suspect: sampling with drafts.** At temperature 1.0, a draft-and-verify engine stays faithful only if it accepts
+  draft tokens with the exact rejection rule over the top-k/top-p distribution. A rule that leans greedy or skips the
+  truncation would shift what the model writes. Longer, looping thinking fits that.
+  - The test: the same probe with drafts off (the request's `draft` field, or no drafter). That's about 50 minutes
+    at 36 tok/s.
+  - If it returns to ~18, the draft sampler is the bug. If it stays at ~15, look at the base sampler or the
+    numerics.
+- 3 bits held up again (17 vs 15 at 4.0 on this engine; 19 vs 18 in ExLlamaV3). With one try per problem, that is
+  noise, not a 3-bit advantage.
 
 ### Next: where more room comes from
 
