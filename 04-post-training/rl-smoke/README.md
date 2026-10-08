@@ -124,6 +124,12 @@ RL moves R1s-SD.
 - **Learning rate:** probably 2e-6 rather than the smoke tests' 1e-6, so 12 steps can show a trend.
 - **Go:** the pool's solve rate clearly up (about +10 points or more from its first pass to its third) and held-out not
   down. The full run then resumes from the pilot's checkpoint, so the pilot's spend counts toward it.
+- **Also required for go: no reward hacks.** Vals AI's MiMo audit (root README, reading spine) showed RL learning
+  to dig hidden answers out of Git objects, file timestamps, build caches and upstream repos.
+  - Before the pilot, check each of the 16 tasks' images for a reachable answer: Git history, leftover build output,
+    network access to the upstream project.
+  - After it, run the same scan used on our 1,653 rollouts over the pilot's rollouts.
+  - A rising solve rate that comes from a loophole is a no-go.
 - **No-go:** the pool is flat (the recipe doesn't teach; fix it before spending more), or the pool is up but held-out
   is down (memorising; needs a bigger pool).
 - **Cost:** ~$8–9 a step on h200x8, plus setup and load (~$15) and the checkpoint save: **about $120–140**, plus
