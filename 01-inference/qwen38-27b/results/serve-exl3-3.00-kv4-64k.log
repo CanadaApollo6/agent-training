@@ -1,0 +1,12 @@
+[serve_kernels] GPU-only budget: 21.2 GiB
+[serve_kernels] planner budget forced to 200.0 GiB: measure the real peak
+[serve_kernels] drafter counted at its packed 4-bit size
+[serve_kernels] new: SPLIT 0 SELECT True COMBINE 1
+[tensorfold] loading qwen27: Qwen3.8 dense (qwen3_5) on CUDA
+[tensorfold] EXL3 packs are experimental: replies are exact; on a DGX Spark decode runs 0.8-1.2x the MLX checkpoint and prompts about half as fast (docs/recipes/qwen3.8-27b.md#exl3-checkpoints-experimental)
+[tensorfold] CUDA rank 0 startup estimate 33.46 GiB within 200.00 GiB; native 262144, allocated prompt/reply window 65536, cache slots 65548
+[tensorfold] serving qwen27 at http://127.0.0.1:8091/v1 on CUDA (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 65536; loaded in 9.7s)
+[tensorfold] CUDA extension tensorfold_exl3_linear_v3 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_exl3_linear_v3/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_qwen_b16_v1 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_qwen_b16_v1/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_gdn_v2 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_gdn_v2/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again
+[tensorfold] CUDA extension tensorfold_qmm_v4 waits on the build lock /home/riels/.cache/torch_extensions/py312_cu130/tensorfold_qmm_v4/lock; if no other build is running, a killed build left it: stop this start, delete the lock and start again

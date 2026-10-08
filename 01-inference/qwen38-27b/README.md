@@ -474,6 +474,57 @@ sampling, 262K window (`probe_tf.sh tf-kv4-262k`, `results/reasoning/tf-kv4-262k
   sample per problem, 3 problems is still within luck (p = 0.25 each way). Telling weights from sampler apart would
   mean EXL3-format weights in TensorFold (not supported) or more samples per problem.
 
+### EXL3 weights in TensorFold (2026-10-07)
+
+TensorFold 0.3.6.3 also reads turboderp's EXL3 packs of this model (`turboderp/Qwen3.8-27B-exl3`, branches 4.00/3.50/3.00bpw,
+6-bit head) with the same DFlash2 drafter. On the 3090, every request first crashed with an illegal memory access.
+`compute-sanitizer` showed a 2-byte read at address 0 inside `linear_kernel<8, 2, 4>`, which is the bias of a
+layer that has none. The source guards that load with `if (bias)`, but the 4-warp version of the kernel compiled for
+sm86 reads it anyway. Layers with 8 warps are fine. The fix (`tensorfold-exl3-sm86-bias.patch`) passes zeros
+instead of no bias. Adding zero changes no output. After the fix, every layer type passes at 1, 3, 8, 9 and 16 rows, and the model answers
+normally.
+
+Speed with the 4-bit cache, 64K window (`bench_tf.sh`, tokens/s, median of 3):
+
+| Build | Loaded | Code, sampled | Code, greedy | Chat, sampled | Chat, greedy |
+|---|---|---|---|---|---|
+| MLX 4-bit (262K window) | 17.2 GB | 147 | 144 | 103 | 114 |
+| EXL3 4.00bpw | 18.3 GB | 169 | 137 | 81 | 92 |
+| EXL3 3.50bpw | 16.5 GB | 170 | 133 | 90 | 94 |
+| EXL3 3.00bpw | 15.3 GB | 163 | 173 | 90 | 89 |
+
+- **Fewer bits doesn't make EXL3 faster here.** Its decode is limited by unpacking the trellis code, not by reading
+  memory, so 3.0 runs at the same speed as 4.0. EXL3 is a bit faster on code and about 15-20% slower on chat than the
+  MLX build.
+- What EXL3 3.0 offers is room and maybe quality: it scored 19/20 on the math probe under ExLlamaV3, and it loads 3 GB
+  smaller than EXL3 4.0.
+
+**A mixed 3/4-bit MLX build** (`rapid-mlx/Qwen3.8-27B-mixed-3.5bpw-MLX`):
+- Bits are allocated by activation-weighted error: 257 layers at 3-bit, 9 at 2-bit, the rest at 4-bit, group 64.
+- Its card shows it matching the 4-bit build on MMLU-Pro, GSM8K and HumanEval+.
+- It loads and answers correctly, but runs at **8-13 tok/s**.
+  - TensorFold's fast CUDA kernel takes only 4-bit/group-64 layers (`QLinear.fast`).
+  - Every 2- and 3-bit layer goes to the generic Triton reader (`cuda/kernels/affine.py`), which is built for
+    correctness, not speed.
+
+A fast 3-bit kernel wouldn't buy much:
+
+| | MLX 4-bit | Mixed 3.5 |
+|---|---|---|
+| Weights read per step (language model, no embedding) | 14.42 GB | 12.90 GB |
+| Time to read them at 936 GB/s | 15.4 ms | 13.8 ms |
+
+- Without drafts a token takes 27.6 ms (36.2 tok/s), so weight reading is ~56% of a step.
+- 10.5% fewer bytes is at most ~6% faster without drafts, and less with them: verify steps add compute that the
+  weight bits don't touch.
+- Uniform 3-bit would read ~22% fewer bytes, ~10% faster at best, and its card reports a 6.6-point MMLU-Pro loss.
+
+**Verdict: on this engine, weight bits are no longer the decode bottleneck.**
+- Lower-bit weights buy memory (EXL3 3.0 saves 3 GB), not speed.
+- The open question is quality, not speed: the math probe gap (TensorFold 15/20 vs EXL3-in-ExLlamaV3 18/20).
+  - Running the EXL3 4.0 pack *in TensorFold* separates weights from engine.
+  - EXL3 3.0 in TensorFold shows what 3 bits cost on this engine.
+
 ### Next: where more room comes from
 
 | Change | Frees | Then |

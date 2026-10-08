@@ -1,0 +1,58 @@
+[
+ {
+  "label": "exl3-4.00-kv4-64k",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 168.60708059255322,
+  "decode_tps_all": [
+   131.83,
+   173.53,
+   168.61
+  ],
+  "ttft_s_median": 0.2235473840009945,
+  "sample": "\n\n<think>\nThe user wants a short Python function that computes the Fibonacci sequence, plus an explanation. Let me think about what approach to take.\n\nOptions f"
+ },
+ {
+  "label": "exl3-4.00-kv4-64k",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 81.42624803390696,
+  "decode_tps_all": [
+   81.43,
+   84.08,
+   78.68
+  ],
+  "ttft_s_median": 0.22479909299909195,
+  "sample": "### How GPU Matrix Multiplication Works in Plain English\n\nTo understand how a GPU handles matrix multiplication, it helps to first understand why a traditional "
+ },
+ {
+  "label": "exl3-4.00-kv4-64k",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 137.0732921383873,
+  "decode_tps_all": [
+   137.7,
+   134.81,
+   137.07
+  ],
+  "ttft_s_median": 0.22589635999975144,
+  "sample": "\n\n<think>\nThe user wants a short Python function for the Fibonacci sequence plus an explanation. Let me think about what approach to take.\n\nOptions:\n1. Recursiv"
+ },
+ {
+  "label": "exl3-4.00-kv4-64k",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 91.96527786378492,
+  "decode_tps_all": [
+   91.97,
+   92.21,
+   91.54
+  ],
+  "ttft_s_median": 0.22639620100017055,
+  "sample": "### How Matrix Multiplication Uses a GPU (In Plain English)\n\nTo understand this, you first need to understand the difference between a **CPU** (Central Processi"
+ }
+]

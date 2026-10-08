@@ -1,0 +1,58 @@
+[
+ {
+  "label": "exl3-3.00-kv4-64k",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 163.21927261844476,
+  "decode_tps_all": [
+   138.29,
+   183.36,
+   163.22
+  ],
+  "ttft_s_median": 0.22427672300000268,
+  "sample": "\n\n<think>\nThe user wants a short Python function that computes the Fibonacci sequence, plus an explanation. Let me think about what approach to take:\n\nOptions:\n"
+ },
+ {
+  "label": "exl3-3.00-kv4-64k",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 89.58066407986661,
+  "decode_tps_all": [
+   89.58,
+   77.72,
+   92.25
+  ],
+  "ttft_s_median": 0.2247267130005639,
+  "sample": "### How GPU Matrix Multiplication Works in Plain English\n\nImagine you have a giant spreadsheet where you need to calculate the dot product of every row in the f"
+ },
+ {
+  "label": "exl3-3.00-kv4-64k",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 173.18960160319315,
+  "decode_tps_all": [
+   172.82,
+   173.42,
+   173.19
+  ],
+  "ttft_s_median": 0.22553958399839757,
+  "sample": "\n\n<think>\nThe user wants a short Python function that computes the Fibonacci sequence, plus an explanation. Let me think about what \"computes the Fibonacci sequ"
+ },
+ {
+  "label": "exl3-3.00-kv4-64k",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 88.95100222263886,
+  "decode_tps_all": [
+   88.79,
+   89.11,
+   88.95
+  ],
+  "ttft_s_median": 0.22613975800049957,
+  "sample": "### How Matrix Multiplication Uses a GPU (In Plain English)\n\nTo understand this, imagine you are trying to calculate a massive grid of numbers (a matrix) where "
+ }
+]
