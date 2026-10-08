@@ -1,0 +1,26 @@
+diff --git i/src/tensorfold/cuda/exl3/linear.py w/src/tensorfold/cuda/exl3/linear.py
+index 0a189e1..48ffe60 100644
+--- i/src/tensorfold/cuda/exl3/linear.py
++++ w/src/tensorfold/cuda/exl3/linear.py
+@@ -180,10 +180,20 @@ class Exl3Linear:
+         sk_stride, nb_stride = self.strides
+         ext = _ext()
+         ext.rot_in(x, self.suh, xh)
+-        ext.linear(xh, self.words, sk_stride, nb_stride, self.svh, self.bias, out, z if sk > 1 else None,
++        ext.linear(xh, self.words, sk_stride, nb_stride, self.svh, self._bias(), out, z if sk > 1 else None,
+                    self.counters, self.k2, CODEBOOK_IDS[self.codebook], sk, wk)
+         return out
+ 
++    def _bias(self) -> torch.Tensor:
++        """The bias, or zeros: on sm86 nvcc hoists linear_kernel<*, *, 4>'s guarded bias load above its null check."""
++
++        if self.bias is not None:
++            return self.bias
++        b = getattr(self, "_zero_bias", None)
++        if b is None:
++            b = self._zero_bias = torch.zeros((self.n,), dtype=torch.float16, device=self.words.device)
++        return b
++
+     def unpack(self, out: torch.Tensor | None = None) -> torch.Tensor:
+         """W_q [K, N] fp16 decoded on the GPU from either layout, into ``out`` when given."""
+ 

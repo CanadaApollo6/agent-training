@@ -411,6 +411,52 @@ HF a10g-large servers per side, 60 turns, 1-hour runs. Runs lost to infrastructu
 - Spend: GPU servers about $91 (61 server-hours), including the duplicate launch (about $12) and the reruns (about
   $16). Prime sandboxes are extra.
 
+## How R1s-SD uses prime_agent's features (2026-10-07)
+
+prime_agent gives the model one tool, `ipython`, a Python REPL. The rest of the harness lives inside the REPL as Python
+calls, described in a long system prompt:
+- `edit(...)` for file changes;
+- `compact` for trimming its own context;
+- `rlm.spawn(...)` for sub-agents;
+- `bash(...)` handles for background shell jobs;
+- `rlm.harness` and `refine` for memory, skills and self-refinement;
+- skills such as `websearch` and `attach_image`.
+
+`feature_audit.py` finds these calls in every saved R1s-SD prime_agent rollout: 1,653 rollouts, of which 1,439 are
+usable, over 441 tasks and 12 experiments. Full tables: `results/feature_audit.md`.
+
+| Feature | Runs that used it | Solved with / without, same tasks |
+|---|---|---|
+| Context compaction | **0** | – |
+| Sub-agents | **0** | – |
+| Memory, skills, refine | 1% | 69% / 46% (13 tasks) |
+| `edit` helper | 11% | 53% / 42% (104 tasks) |
+| `bash()` handles (the intended way to run commands) | 6% | about the same |
+| `subprocess` / `os.system` (the prompt says not to) | 82% | – |
+| Polling with `sleep` (the prompt says not to) | 20% | 33% / 34% |
+
+- **It calls tools that don't exist.** 67% of runs call a `bash` tool, or call `websearch` or `edit` as if they were tools, at
+  least once. Each call gets back "Tool bash not found": 1,864 turns, 4% of all turns. That's the pi / Claude Code
+  habit leaking through.
+- **It never manages its context.** 228 runs passed 100K tokens of prompt (the limit is 131K) and none compacted.
+  The bigger the context, the lower the solve rate. Harder tasks also run longer, so this is not cause and effect.
+
+| Peak prompt | Runs | Solved | Ended: done / turn cap / time limit |
+|---|---|---|---|
+| under 32K | 551 | 53% | 484 / 16 / 51 |
+| 32-64K | 367 | 47% | 264 / 50 / 53 |
+| 64-100K | 293 | 35% | 129 / 109 / 55 |
+| over 100K | 228 | 20% | 65 / 125 / 38 |
+
+- **How runs end:** done 942 (59% solved); 60-turn cap 300 (13%); time limit 197 (13%). 155 runs (11%) ended on a reply
+  cut off by the length cap, and none of those was solved.
+
+**What it means:** R1s-SD uses prime_agent as a plain Python sandbox and ignores the features that make prime_agent
+different from pi. RL can't teach a feature the model never tries: with 0 compactions and 0 sub-agents, there is no good
+example for the reward to reinforce. Those two features need a demonstration first, from coached runs or teacher runs. They
+also need tasks that require them. The cheap wins fit RL as it is: stop calling missing tools (each one costs a turn and
+appears in most runs), use `edit`, and act before the length cap.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
