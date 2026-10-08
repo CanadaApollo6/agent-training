@@ -42,9 +42,9 @@
    ]
   ],
   "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
-  "next": "Math test: 15 of 20 with the 4-bit context and also 15 of 20 with the 16-bit context, missing mostly the same problems, so the 4-bit context costs nothing here. The gap to the old best (18 of 20) comes from the weights or the engine; both TensorFold runs think longer. Still to do: a recall check near 250K, then a 3/4-bit mix of the weights."
+  "next": "Weights: EXL3 builds now run in TensorFold (after fixing a crash on the 3090), but fewer bits don't make them faster. A mixed 3/4-bit build would gain at most ~6% even with a new kernel: weight bits are no longer the speed limit. Open: math test on EXL3 4-bit and 3-bit in TensorFold (~18 min each, your OK)."
  },
  "extra_today_dollars": 62,
  "extra_today_note": " (including ~$18 for the 9B RL test and ~$44 for the 35B fit check on Hugging Face)",
- "next_text": "RL: the 35B fit check passed; a 50-step run is ~$360-450, so its size is your call. Local: the 4-bit context passed the math test (same 15/20 as 16-bit)."
+ "next_text": "RL: 35B fit check passed (~$360-450 for 50 steps, your call). Audit: R1s-SD never uses prime_agent's context compaction or sub-agents, and 2 of 3 runs call a tool that doesn't exist. Local: 3/4-bit weights won't speed up the 27B; math tests on EXL3 in TensorFold wait on your OK."
 }
