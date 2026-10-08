@@ -104,14 +104,17 @@ RL moves R1s-SD.
 - RL mostly turns "sometimes" into "usually", so the near-term prize on tasks like these is about +10 points.
 - 37 tasks are solved exactly once in two tries: those give the clearest training signal.
 
-**Two problems to fix before any paid step.**
-1. **The length cap ends half the attempts.**
-   - In the fit check, 20–53% of attempts per step were cut off at 90K tokens and scored 0, whether they were on track
-     or not. Most of the reward signal would then be "be shorter", not "solve it".
-   - Fix: raise the attempt cap toward the 131K window, use the coached prompt if the coaching test shows it compacts,
-     or both.
-2. **Lost sandboxes.** An attempt whose sandbox Prime kills must be dropped from its group, not scored 0. Otherwise
-   it teaches the model that harmless work fails. This needs checking in prime-rl's config before the pilot.
+**One problem to fix before any paid step: the length cap ends half the attempts.**
+- In the fit check, 20–53% of attempts per step reached the 90K-token attempt cap. It sits at 90K so that one more
+  32K reply still fits the 131K window.
+- Those attempts score whatever the tests give a half-finished sandbox, usually 0. Much of the signal would then be
+  "be shorter", not "solve it".
+- Options:
+  - Compaction, if the coaching test shows R1s-SD uses it when told: context stays small, so the cap rarely bites.
+  - A 262K window: the trainer's 128K rows would need more splitting, so memory must be rechecked.
+  - A 16K reply cap, which lets attempts run to ~110K. It cost 1.7 solves per attempt in the evals.
+- Lost sandboxes are already handled: the config reruns a Prime-killed attempt up to twice and drops it from training
+  after that, and drops timed-out attempts too.
 
 **The pilot: a go/no-go run that isn't wasted.**
 - **Tasks:** a fixed pool of 16 tasks R1s-SD solves sometimes. Each step trains on 4 of them in groups of 8 attempts.
