@@ -92,3 +92,36 @@ CONFIG=ornith35b-sd-rl-fitcheck-h200x8.toml FLAVOR=h200x8 TIMEOUT=120m MODEL_SRC
 **For the real run:** steady state is roughly 10–13 minutes per step of 32 attempts, so 50 steps is about 9–11 hours,
 **~$360–450** on h200x8 plus sandbox fees. Raising the number of attempts in flight above 64 should shorten steps
 while vLLM's GPUs still have spare capacity. The rewards above mean nothing yet: 3 steps at lr 1e-6.
+
+## Before the real run: does RL actually help R1s-SD? (plan, 2026-10-07)
+
+The fit check proves the loop runs on the 35B, not that it teaches anything. Riel's bar before ~$400: evidence that
+RL moves R1s-SD.
+
+**Room to learn (from existing rollouts, free).**
+- On Terminal-Lego (187 tasks, two tries each), R1s-SD's average solve rate is 48%, and 58% of tasks are solved at
+  least once.
+- RL mostly turns "sometimes" into "usually", so the near-term prize on tasks like these is about +10 points.
+- 37 tasks are solved exactly once in two tries: those give the clearest training signal.
+
+**Two problems to fix before any paid step.**
+1. **The length cap ends half the attempts.**
+   - In the fit check, 20–53% of attempts per step were cut off at 90K tokens and scored 0, whether they were on track
+     or not. Most of the reward signal would then be "be shorter", not "solve it".
+   - Fix: raise the attempt cap toward the 131K window, use the coached prompt if the coaching test shows it compacts,
+     or both.
+2. **Lost sandboxes.** An attempt whose sandbox Prime kills must be dropped from its group, not scored 0. Otherwise
+   it teaches the model that harmless work fails. This needs checking in prime-rl's config before the pilot.
+
+**The pilot: a go/no-go run that isn't wasted.**
+- **Tasks:** a fixed pool of 16 tasks R1s-SD solves sometimes. Each step trains on 4 of them in groups of 8 attempts.
+  Over 12 steps, every task comes up 3 times, so its solve rate can be watched rising (or not).
+- **Held-out check:** the held-out 20 at step 0 and step 12, on the run's own model server (prime-rl's eval setting).
+  The before and after are then the same engine and settings.
+- **Learning rate:** probably 2e-6 rather than the smoke tests' 1e-6, so 12 steps can show a trend.
+- **Go:** the pool's solve rate clearly up (about +10 points or more from its first pass to its third) and held-out not
+  down. The full run then resumes from the pilot's checkpoint, so the pilot's spend counts toward it.
+- **No-go:** the pool is flat (the recipe doesn't teach; fix it before spending more), or the pool is up but held-out
+  is down (memorising; needs a bigger pool).
+- **Cost:** ~$8–9 a step on h200x8, plus setup and load (~$15) and the checkpoint save: **about $120–140**, plus
+  sandbox fees.

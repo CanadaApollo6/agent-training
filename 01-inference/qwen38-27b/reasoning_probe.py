@@ -118,7 +118,8 @@ def run_server(args, rows):
                 model="local", messages=[{"role": "user", "content": rows[i]["problem"] + SUFFIX}],
                 max_tokens=args.cap, temperature=SAMPLING["temperature"], top_p=SAMPLING["top_p"], seed=args.seed + i,
                 extra_body={"top_k": SAMPLING["top_k"], "min_p": SAMPLING["min_p"],
-                            "chat_template_kwargs": args.template_kwargs}, timeout=min(max(remaining, 1), 86400))
+                            "chat_template_kwargs": args.template_kwargs,
+                            **({"draft": False} if args.no_draft else {})}, timeout=min(max(remaining, 1), 86400))
         except Exception as e:  # the timer ran out
             return "", "", {"finish": "deadline", "tokens": None, "s": time.perf_counter() - t0, "error": str(e)[:200]}
         c = r.choices[0]
@@ -156,6 +157,8 @@ def main():
     parser.add_argument("--out", type=Path, default=OUT, help="results directory")
     parser.add_argument("--template-kwargs", type=json.loads, default={},
                         help='server backend: chat template variables, e.g. \'{"reasoning_effort": "medium"}\'')
+    parser.add_argument("--no-draft", action="store_true",
+                        help='send "draft": false (TensorFold: plain one-token decoding, no draft model)')
     parser.add_argument("--deadline-min", type=float, default=1e9, help="optional heat guard: stop the run after this long")
     args = parser.parse_args()
     label = args.label or f"exl3-{args.revision}"
@@ -173,7 +176,7 @@ def main():
     lengths = sorted(g["tokens"] for g in graded if g["tokens"])
     summary = {"label": label, "n": len(rows), "problems": args.n, "samples": args.samples, "cap": args.cap,
                "sampling": SAMPLING,
-               "template_kwargs": args.template_kwargs, "wall_s": wall, **extra,
+               "template_kwargs": args.template_kwargs, "draft": not args.no_draft, "wall_s": wall, **extra,
                **counts, "accuracy": counts["correct"] / len(rows),
                "median_tokens": lengths[len(lengths) // 2] if lengths else None,
                "mean_tokens": sum(lengths) / len(lengths) if lengths else None,
