@@ -57,7 +57,8 @@ entry)
     curl -LsSf https://astral.sh/uv/install.sh | sh > /dev/null 2>&1
     export PATH=/usr/local/cuda/bin:$HOME/.local/bin:$PATH CUDA_HOME=/usr/local/cuda
     uv venv -q ~/vllm --python 3.12
-    VIRTUAL_ENV=~/vllm uv pip install -q vllm "transformers>=5.8.0" "huggingface_hub[hf_xet]" 2>&1 | tail -5
+    VIRTUAL_ENV=~/vllm uv pip install -q vllm "transformers>=5.8.0" "huggingface_hub[hf_xet]" ninja 2>&1 | tail -5
+    export PATH=$HOME/vllm/bin:$PATH   # ninja: vLLM JIT-builds kernels for this model at startup
     say "vllm $(~/vllm/bin/python -c 'import vllm; print(vllm.__version__)'), transformers $(~/vllm/bin/python -c 'import transformers; print(transformers.__version__)')"
     ~/vllm/bin/hf download $REPO --local-dir ~/model > /tmp/download.log 2>&1 || { say "download failed"; tail /tmp/download.log; exit 1; }
     say "model downloaded: $(du -sh ~/model | cut -f1)"
