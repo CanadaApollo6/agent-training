@@ -1,0 +1,16 @@
+20:38:09 WARNING Trace failed in group b017e96c-2c62-4d91-82fe-7b7ed0acd663 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:38:09 WARNING Trace failed in group b017e96c-2c62-4d91-82fe-7b7ed0acd663 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:38:40 WARNING Trace failed in group b017e96c-2c62-4d91-82fe-7b7ed0acd663 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:39:09 WARNING Trace failed in group b017e96c-2c62-4d91-82fe-7b7ed0acd663 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:40:09 WARNING Trace failed in group b017e96c-2c62-4d91-82fe-7b7ed0acd663 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:46:55 SUCCESS Step 1 |  17m 4s | Reward 0.8125 | Trainable 16/16 (100.0%) | Turns 36.9 | Branches 1.0 | Max Off-Policy 0 | Error 0.0% | Cancelled 0.0% | Truncation 12.5% | Timeout 0.0%
+20:49:09 WARNING Trace failed in group 56537d8f-951d-4e77-b053-c64664f38dc6 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:56:54 WARNING Trace failed in group 5f0a85f5-40c8-4a6a-8af9-0f8cf7a51b36 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+20:59:24 WARNING Trace failed in group 5f0a85f5-40c8-4a6a-8af9-0f8cf7a51b36 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+21:02:39 WARNING Trace failed in group b017e96c-2c62-4d91-82fe-7b7ed0acd663 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+21:04:30 WARNING Trace failed in group 6cfd8792-0a09-4ffc-a117-945592c0f3b6 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+21:06:38 WARNING Trace failed in group 7b506a8d-9f2b-4afb-8360-187989a06892 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+21:07:08 WARNING Trace failed in group 7b506a8d-9f2b-4afb-8360-187989a06892 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+21:08:08 WARNING Trace failed in group 7b506a8d-9f2b-4afb-8360-187989a06892 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+21:08:09 WARNING Trace failed in group 7b506a8d-9f2b-4afb-8360-187989a06892 (tb2-train) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated
+21:09:28 SUCCESS Step 2 | 22m 32s | Reward 0.6875 | Trainable 16/16 (100.0%) | Turns 23.7 | Branches 1.0 | Max Off-Policy 1 | Error 2.5% | Cancelled 0.0% | Truncation 0.0% | Timeout 0.0%

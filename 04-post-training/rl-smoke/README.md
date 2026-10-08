@@ -124,6 +124,33 @@ RL moves R1s-SD.
 - Lost sandboxes are already handled: the config reruns a Prime-killed attempt up to twice and drops it from training
   after that, and drops timed-out attempts too.
 
+**The pi check (2026-10-08): the length cap is fixed.**
+`ornith35b-sd-rl-pi-check-h200x8.toml`, 2 steps on h200x8, 52 min, ~$35. Results: `results/picheck-35b-*`.
+- Two changes from the fit check:
+  - pi's contextWindow is patched to 98304 (`PI_CONTEXT_WINDOW` in `hf_rl_job.sh`), so pi summarizes at ~82K.
+  - max_total_tokens went from 90K to 400K. It counts every new input token and every reply over the whole attempt,
+    so at 90K it would have cut summarized attempts anyway.
+- Training through pi works. Both steps trained on all their samples, and the job exited cleanly.
+
+| | prime_agent fit check | pi check |
+|---|---|---|
+| Steps 1 / 2: minutes | 26 / 10 | 17 / 23 |
+| Steps 1 / 2: reward | 0.61 / 0.60 | 0.81 / 0.69 |
+| Steps 1 / 2: "truncation" | 48% / 20% | 12.5% / 0% |
+| Attempts stopped by the length cap | most of the truncation | **0 of 136** |
+
+- 12 of 129 attempts with a saved trace summarized (3–5 trainer rows each). No call's prompt went over 82K; the
+  largest was 81K.
+- Those 12 are the long, hard attempts: 11 then ran into the 60-turn cap and 3 were solved, against 75 of 103 for
+  the rest.
+- What still ends attempts early:
+  - **60-turn cap: 18 attempts.** For the pilot, raise it to 100. Summarizing frees room, but turns keep counting.
+  - **A reply cut at 32K: 6 attempts, 0 solved.** This is the known "thinks without acting" failure. It's left alone:
+    RL should learn to avoid it, since every one scores 0.
+  - **Prime killed the sandbox: 14 (10%).** Dropped from training, as before.
+- Summary calls are trained on like any other turn: their reward is the attempt's. Masking them would need code and
+  there's no reason yet.
+
 **The pilot: a go/no-go run that isn't wasted.**
 - **Tasks:** a fixed pool of 16 tasks R1s-SD solves sometimes. Each step trains on 4 of them in groups of 8 attempts.
   Over 12 steps, every task comes up 3 times, so its solve rate can be watched rising (or not).
