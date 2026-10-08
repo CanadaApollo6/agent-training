@@ -556,6 +556,11 @@ How the table counts runs:
 - It still never compacts or starts sub-agents, but it never needed to: no run went past 100K.
 - So the earlier question ("are these features learnable by a mid-size model?") stays open. Neither model used them,
   and the 27B didn't get long enough to need compaction.
+- Harness fit: an earlier 8-bit run (qwen38-27b-q8h, 2026-10-01, same 20 × 3) scored pi 34/60 (3 lost) vs
+  prime_agent 31/60 (10 lost). On usable runs that's 60% vs 62%: a tie.
+  - R1s/R1s-SD lean to pi: full TB2 40 vs 35, and the untrained pilot 11 vs 6–7.
+  - So the 27B isn't better in prime_agent on solves. It's better *behaved* there: it follows the tool rules. R1s-SD
+    is worse there on both counts.
 - Caveat: this is the full-precision 27B, not a 4-bit local build. R1s-SD's runs were its 3-bit local build on
   TensorFold.
 
