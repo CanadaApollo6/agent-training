@@ -130,6 +130,8 @@ RL moves R1s-SD.
     network access to the upstream project.
   - After it, run the same scan used on our 1,653 rollouts over the pilot's rollouts.
   - A rising solve rate that comes from a loophole is a no-go.
+- **Weights moving:** log the share of bf16 weights that change each step. NeMo-DCR measured 0.6–1.2% per GRPO step
+  across six models. Near zero means the updates round away, and the run can't be learning.
 - **No-go:** the pool is flat (the recipe doesn't teach; fix it before spending more), or the pool is up but held-out
   is down (memorising; needs a bigger pool).
 - **Cost:** ~$8–9 a step on h200x8, plus setup and load (~$15) and the checkpoint save: **about $120–140**, plus

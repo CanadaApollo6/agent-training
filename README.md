@@ -85,6 +85,25 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     19, fix-git 11, sanitize-git-repo 4), where that's the job.
   - 68 runs called the GitHub API, mostly on mteb tasks, and 4 of them were solved.
   - No clear hack so far. RL rewards any loophole it finds, though, so the scan has to run on RL rollouts too.
+- [NeMo-DCR: Bit-Exact Delta-Compressed Refit for Scalable Agentic RL at Trillion-Parameter Scale](https://arxiv.org/abs/2610.08430)
+  (Jiang, Li, Kong, Yao, Kwon, Nguyen, Aithal, Di Francesco; Aalto and NVIDIA, 2026-10-06; code in
+  [NeMo RL PR #2444](https://github.com/NVIDIA-NeMo/RL/pull/2444)).
+  - When rollouts run on a separate serving cluster, each policy update must be shipped there ("refit"). A full 1T
+    checkpoint takes 87.5 min between two AWS regions.
+  - Only 0.6–1.2% of bf16 weight elements change per GRPO step (six models). So it sends only the changed values, as
+    XOR masks or overwrites, and the receiver ends bit-identical to a full refit. Mid-refit failures are retried
+    safely.
+  - 12–40× faster refits at 3–5% change rates for 30B–1T models: 1T in 150 s instead of 87.5 min, 120B in 22.6 s
+    instead of 750 s.
+
+  For us:
+  - Not needed now. Our RL runs trainer and vLLM on one h200x8 node, refit is NCCL inside the node (seconds), and
+    collecting rollouts is the slow part.
+  - It would matter if we split trainer and rollout servers across machines, e.g. a trainer on HF and rollouts on
+    cheaper servers. Only for bf16 rollout servers, though: deltas don't apply to our 3-bit R1s builds.
+  - **A free check for the RL pilot:** count the share of bf16 weights that change between steps. Their 0.6–1.2% is a
+    reference. Near zero means the updates are rounding away (learning rate too low, or the fp32 master copy isn't
+    reaching vLLM), and the run isn't learning whatever the reward says.
 - [Automating eval design and hillclimbing](https://claude.dev/blog/automating-eval-design-and-hillclimbing/)
   (Lance Martin, Anthropic, 2026-09-28): two Claude Code commands, shipped in the
   [claude-api skill](https://github.com/anthropics/skills/tree/main/skills/claude-api).
