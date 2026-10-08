@@ -555,6 +555,23 @@ A fast 3-bit kernel wouldn't buy much:
 - 3 bits held up again (17 vs 15 at 4.0 on this engine; 19 vs 18 in ExLlamaV3). With one try per problem, that is
   noise, not a 3-bit advantage.
 
+**Drafts off (`probe_nodraft.sh`, `"draft": false` per request): 17/20.** 3 run-outs, 0 wrong, median 2,234
+tokens, 55 min at ~27 tok/s.
+
+| | ExLlamaV3 4.0 | TF EXL3 4.0, drafts on | TF EXL3 4.0, drafts off |
+|---|---|---|---|
+| Correct | 18 | 15 | 17 |
+| Six hard problems solved | 4 of 6 | 2 of 6 | 3 of 6 |
+
+- Drafts off lands between the two. With one try per problem, 15 vs 17 vs 18 can't be told apart: a single hard
+  problem flipping moves the score by one.
+- Across all five TensorFold runs, the hard six went 1, 1, 2, 3 (drafts on) and 3 (drafts off), against 4 and 5 for
+  ExLlamaV3. TensorFold is lower either way.
+- The thinking stays longer without drafts (median 2.2K tokens against 1.0-1.7K), so the draft sampler can't be the
+  whole story.
+- A score-level answer needs several tries per hard problem, hours of 3090 time. The cheaper next step is to read the
+  draft accept rule and the base sampler for a distribution bug. That needs no GPU.
+
 ### Next: where more room comes from
 
 | Change | Frees | Then |
