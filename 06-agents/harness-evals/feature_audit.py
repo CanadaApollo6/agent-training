@@ -52,7 +52,7 @@ def experiment(path: Path) -> str:
     s = str(path.relative_to(HERE / "outputs"))
     for key, name in [("tlhard", "Terminal-Lego hard"), ("tlpilot", "Terminal-Lego pilot"), ("tlsmoke", "Terminal-Lego smoke"),
                       ("lessons", "lessons loop"), ("plans/", "plan-first"), ("fixes-off", "fix test, off"),
-                      ("fixes-on", "fix test, on"), ("fixsmoke", "fix smoke"), ("-c16-", "16K reply cap"),
+                      ("fixes-on", "fix test, on"), ("fixsmoke", "fix smoke"), ("-coach-", "coached"), ("-c16-", "16K reply cap"),
                       ("-c32-", "32K reply cap"), ("-dg-", "round-2 data"), ("-big", "big budget"), ("-hftp-", "HF pod runs")]:
         if key in s:
             return name
