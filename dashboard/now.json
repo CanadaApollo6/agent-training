@@ -46,5 +46,5 @@
  },
  "extra_today_dollars": 62,
  "extra_today_note": " (including ~$18 for the 9B RL test and ~$44 for the 35B fit check on Hugging Face)",
- "next_text": "Coaching test, 2 of 3 passes: so far 16 of 27 usable runs solved (59%), plain 31 of 54 (57%). The model now runs shell commands the right way (74% of runs, was 7%) and rarely calls missing tools (15%, was 72%), but still never compacts. 12 runs lost to Prime sandboxes, to be rerun. RL: pilot (~$120-140) after this result, with a reward-hack check."
+ "next_text": "Coaching test done: a tie on solves (13 clean tasks: 21/39 coached vs 20/39 plain). It took up the tool rules but never compacted or used sub-agents. By the rule set beforehand, RL goes to pi. Next: adapt the RL pilot to pi and fix the length cap (~$120-140, your OK)."
 }
