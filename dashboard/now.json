@@ -42,9 +42,9 @@
    ]
   ],
   "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
-  "next": "Weights: EXL3 builds now run in TensorFold (after fixing a crash on the 3090), but fewer bits don't make them faster. A mixed 3/4-bit build would gain at most ~6% even with a new kernel: weight bits are no longer the speed limit. Math test: the same EXL3 4-bit weights score 18/20 in ExLlamaV3 but 15/20 in TensorFold, so the engine loses the points, not the weights. It overthinks on hard problems. Suspect: how it samples with the draft model. Math gap closed: at medium effort (the same prompt ExLlamaV3 got), TensorFold scores 17/20 against 18, inside one-try noise, and finishes a third faster than at xhigh."
+  "next": "Done on your 3090: 102 chat / 143-192 code tok/s, the full 262K window in 4-bit, and the math gap closed (17/20 at medium effort vs 18 in ExLlamaV3). Fewer weight bits wouldn't make it faster. Next: test it as an agent in prime_agent, untrained, at medium effort, to see if it uses the harness better than R1s-SD."
  },
  "extra_today_dollars": 62,
  "extra_today_note": " (including ~$18 for the 9B RL test and ~$44 for the 35B fit check on Hugging Face)",
- "next_text": "Coaching test done: a tie on solves (13 clean tasks: 21/39 coached vs 20/39 plain). It took up the tool rules but never compacted or used sub-agents. By the rule set beforehand, RL goes to pi. Next: adapt the RL pilot to pi and fix the length cap (~$120-140, your OK)."
+ "next_text": "Coaching: a tie, so RL goes to pi, which summarizes long conversations by itself (seen in 34 of 600 R1s-SD runs) and so handles the length cap. Next, no cost: set up the pilot in pi (summarize before 90K, 16 tasks, leak check). Then a short pi test (~$15-20) and the 12-step pilot (~$120-140), each with your OK."
 }
