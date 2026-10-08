@@ -491,6 +491,41 @@ whether the model *can* use those features when told to, and whether that helps.
 - **Cost:** 60 rollouts. At the fix test's rate (about $91 of HF servers for ~350 rollouts), that's roughly $15-25,
   plus sandbox fees.
 
+**Result (2026-10-07/08): a tie on solves; the model takes up the simple rules, not compaction or sub-agents.** Coached
+arm: one HF a10g-large server, 3 passes, ~5 h. The runs Prime killed were rerun once (`coach_rerun.sh`), on a second
+server for ~1.5 h. Together the two servers cost ~$10.
+
+| Held-out 20 × 3 | Plain (32K arm) | Coached |
+|---|---|---|
+| Solved per pass | 11, 9, 11 | 9, 8, 8 (+1 in reruns) |
+| Solved of usable runs | 31/56 (55%) | 26/51 (51%) |
+| The 13 tasks no run lost on either side | 20/39 | 21/39 |
+| Runs whose sandbox Prime killed (before reruns) | 1 | 11 |
+
+How the table counts runs:
+- qemu-startup is left out on both sides: setup failed both times on a package-download 404.
+- Runs that ended on an image request count as fails on both sides: that was the model's own choice.
+- The reruns lost 8 of 11 coached runs again, and the plain rerun (compile-compcert) was lost too. The kills follow
+  the heavy tasks (compcert, rstan, mteb, pytorch-model-cli, portfolio) on that night's Prime, not the coaching. The
+  plain arm ran two days earlier, when kills were rarer.
+
+| Feature use (usable runs) | Plain | Coached |
+|---|---|---|
+| `await bash()` | 7% | 74% |
+| Calls to tools that don't exist | 72% | 15% |
+| `subprocess` | 89% | 30% |
+| `edit` | 7% | 15% |
+| `compact` | 0 | 0, including 3 runs past 100K |
+| `rlm.spawn` | 0 | 0 |
+
+**Reading, by the rules set before the test:**
+- Simple tool rules stick when written down. Compaction and sub-agents don't, even when the context fills.
+- The tool rules cut wasted turns but didn't change solves on these tasks.
+- So this is "uses them, no gain": the tie defaults to pi for RL. pi and prime_agent also tie on this yardstick
+  (≈31/60).
+- Compaction and sub-agents, if we want them, have to come from training (teacher demonstrations, or RL on long
+  tasks), not from the prompt.
+
 **Also planned: Qwen3.8-27B under prime_agent, untrained.** It's a much stronger model for its size. If it uses
 compaction and sub-agents without being told, the features are learnable by a mid-size model, and the gap is
 R1s-SD's training, not the harness. Run the same held-out 20 with `feature_audit.py`, served on the 3090
