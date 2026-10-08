@@ -85,6 +85,15 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     19, fix-git 11, sanitize-git-repo 4), where that's the job.
   - 68 runs called the GitHub API, mostly on mteb tasks, and 4 of them were solved.
   - No clear hack so far. RL rewards any loophole it finds, though, so the scan has to run on RL rollouts too.
+- [Memory Mosaics at scale](https://arxiv.org/abs/2507.03285) (Zhang, Bottou; NYU and FAIR Meta, 2025-07, rev. 2026-01).
+  - A different architecture: networks of associative memories instead of attention, scaled to llama-8B size. "v2"
+    matches a transformer on stored knowledge (56.8 vs 57.1, 13 benchmarks).
+  - It beats the transformer clearly on facts given in the prompt (RULER multi-doc QA at 32K: 53.4 vs 41.1) and on
+    few-shot learning (>10%).
+  - Trained on 1T tokens, it still beats a transformer trained on 8T at 32K (53.4 vs 46.9).
+  - Nothing about agents or harnesses, and no released model in our size class.
+  - Verdict: background only. Pretraining from scratch is out of scope. If architectures like this ship as open
+    models, they'd be candidates for long agent runs that live off in-context information.
 - [NeMo-DCR: Bit-Exact Delta-Compressed Refit for Scalable Agentic RL at Trillion-Parameter Scale](https://arxiv.org/abs/2610.08430)
   (Jiang, Li, Kong, Yao, Kwon, Nguyen, Aithal, Di Francesco; Aalto and NVIDIA, 2026-10-06; code in
   [NeMo RL PR #2444](https://github.com/NVIDIA-NeMo/RL/pull/2444)).
