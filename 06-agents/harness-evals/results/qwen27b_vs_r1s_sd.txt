@@ -1,0 +1,16 @@
+== qwen27b: rollouts 60, lost 13, solved 33, usable solved 33/47
+ stops: {'agent_completed': 28, 'max_turns': 9, 'harness_error': 13, 'agent_timeout': 10}
+ ended on 32K cut: 0  median turns 17  runs>100K prompt: 0
+  edit: 7/47  compact: 0/47  spawn: 0/47  harness_layer: 3/47  bash_await: 15/47  bash_background: 39/47  attach_image: 5/47  py_file_io: 46/47
+  subprocess: 18 / 47  missing-tool runs: 14 / 47
+  per-task solved: {'build-pov-ray"': 2, 'compile-compce': 0, 'mteb-retrieve': 0, 'nginx-request': 3, 'portfolio-opt': 2, 'protein-assem': 2, 'pypi-server",': 3, 'pytorch-model': 0, 'rstan-to-pyst': 0, 'schemelike-me': 0, 'sqlite-db-tru': 3, 'custom-memory-': 3, 'financial-docu': 3, 'git-leak-recov': 3, 'git-multibranc': 3, 'hf-model-infer': 1, 'kv-store-grpc"': 2, 'make-mips-inte': 0, 'modernize-scie': 3}
+== r1s-sd c32: rollouts 60, lost 6, solved 31, usable solved 31/54
+ stops: {'agent_completed': 36, 'harness_error': 4, 'max_turns': 13, 'agent_timeout': 5, 'provider_error': 2}
+ ended on 32K cut: 7  median turns 30  runs>100K prompt: 11
+  edit: 4/54  compact: 0/54  spawn: 0/54  harness_layer: 0/54  bash_await: 4/54  bash_background: 3/54  attach_image: 1/54  py_file_io: 54/54
+  subprocess: 48 / 54  missing-tool runs: 39 / 54
+  per-task solved: {'build-pov-ray"': 2, 'compile-compce': 0, 'mteb-retrieve': 3, 'nginx-request': 2, 'portfolio-opt': 3, 'protein-assem': 0, 'pypi-server",': 3, 'pytorch-model': 2, 'rstan-to-pyst': 0, 'schemelike-me': 0, 'sqlite-db-tru': 1, 'custom-memory-': 1, 'financial-docu': 1, 'git-leak-recov': 3, 'git-multibranc': 2, 'hf-model-infer': 3, 'kv-store-grpc"': 2, 'make-mips-inte': 0, 'modernize-scie': 3}
+tasks both: 19 qwen 63%  r1s-sd 58%
+qwen better on 5 worse on 2
+qwen lost: {'portfolio-opt': 1, 'qemu-startup"': 3, 'schemelike-me': 1, 'hf-model-infer': 2, 'mteb-retrieve': 2, 'pytorch-model': 2, 'rstan-to-pyst': 2}
+qwen timeouts: {'kv-store-grpc"': 3, 'hf-model-infer': 1, 'make-mips-inte': 2, 'protein-assem': 1, 'pypi-server",': 2, 'build-pov-ray"': 1}

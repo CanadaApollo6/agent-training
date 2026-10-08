@@ -526,10 +526,38 @@ How the table counts runs:
 - Compaction and sub-agents, if we want them, have to come from training (teacher demonstrations, or RL on long
   tasks), not from the prompt.
 
-**Also planned: Qwen3.8-27B under prime_agent, untrained.** It's a much stronger model for its size. If it uses
-compaction and sub-agents without being told, the features are learnable by a mid-size model, and the gap is
-R1s-SD's training, not the harness. Run the same held-out 20 with `feature_audit.py`, served on the 3090
-(TensorFold, 262K) or on HF.
+**Qwen3.8-27B under prime_agent, untrained (2026-10-08).**
+- Setup:
+  - Qwen/Qwen3.8-27B in bf16 on vLLM 0.31, on one HF H200 (`hf_serve_vllm.sh`).
+  - Reasoning effort is set to medium on the server. The template's default, xhigh, overthought in the math probe.
+  - Held-out 20 × 3, the same caps as R1s-SD's c32 runs: 32K reply, 60 turns, 1 h.
+  - ~80 min, ~$7.
+  - Numbers: `compare_qwen27b.py` → `results/qwen27b_vs_r1s_sd.txt`.
+
+| | Qwen3.8-27B (untrained) | R1s-SD c32 |
+|---|---|---|
+| Solved, of 60 | **33** | 31 |
+| Lost to sandbox kills | 13 (qemu-startup all 3) | 6 |
+| Per-task solve rate, 19 tasks with usable runs on both | 63% | 58% |
+| Tasks better / worse | 5 / 2 | |
+| Median turns per run | **17** | 30 |
+| Runs that ended on a reply cut at 32K | **0** | 7 |
+| Runs with context over 100K | 0 | 11 |
+| Runs using bash() handles (as prompted) | **39 of 47** | 3 of 54 |
+| Runs calling a tool that doesn't exist | 14 of 47 | 39 of 54 |
+| Runs using subprocess instead | 18 of 47 | 48 of 54 |
+| compact / sub-agents | 0 / 0 | 0 / 0 |
+
+- On solves it's a tie. 33 vs 31 isn't a real difference, and it lost twice as many runs to sandbox kills.
+- How it works is clearly different:
+  - It follows prime_agent's tool conventions without coaching, better than coached R1s-SD did.
+  - It finishes in about half the turns.
+  - It never thinks itself into the reply cap.
+- It still never compacts or starts sub-agents, but it never needed to: no run went past 100K.
+- So the earlier question ("are these features learnable by a mid-size model?") stays open. Neither model used them,
+  and the 27B didn't get long enough to need compaction.
+- Caveat: this is the full-precision 27B, not a 4-bit local build. R1s-SD's runs were its 3-bit local build on
+  TensorFold.
 
 ## So far
 
