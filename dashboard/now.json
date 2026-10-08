@@ -44,7 +44,7 @@
   "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
   "next": "Done on your 3090: 102 chat / 143-192 code tok/s, the full 262K window in 4-bit, and the math gap closed (17/20 at medium effort vs 18 in ExLlamaV3). Fewer weight bits wouldn't make it faster. Next: test it as an agent in prime_agent, untrained, at medium effort, to see if it uses the harness better than R1s-SD."
  },
- "extra_today_dollars": 5,
- "extra_today_note": " before the two runs now going (coaching reruns, overnight); the two runs add ~$50-60",
- "next_text": "Running now: (1) RL test in pi on R1s-SD, 2 training steps on 8 H200s, pi set to summarize at ~82K tokens (capped at 70 min, ~$35-45). It checks whether summarizing stops attempts from being cut off by length (48% and 20% in the prime_agent fit check). (2) Qwen3.8-27B in prime_agent, untrained, medium effort, on one rented H200: held-out 20 tasks x 3 tries, to compare with R1s-SD's 31/60 (~$15)."
+ "extra_today_dollars": 40,
+ "extra_today_note": " (~$35 for the pi RL test, ~$5 coaching reruns); the 27B run adds ~$10-15",
+ "next_text": "RL test in pi: done (~$35). Training works through pi, and the length cap stopped 0 of 136 attempts (20-53% per step in the prime_agent fit check). 12 attempts summarized, none went over 82K. Running: Qwen3.8-27B in prime_agent, held-out 20 x 3 (~$10-15). Next for R1s-SD: pick the 16 pilot tasks and check them for leaked answers, then the 12-step pilot (~$120-140) with your OK."
 }
