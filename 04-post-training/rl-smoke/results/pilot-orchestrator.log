@@ -1,0 +1,1267 @@
+W1009 16:40:57.988000 6397 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1009 16:40:58.011000 6397 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+[2m16:41:02[0m [1m   INFO[0m [1m[22mStarting orchestrator[0m[0m
+[2m16:41:02[0m [1m   INFO[0m [1m[22mInitializing tokenizer (name='/workspace/ornith-sd-bf16' trust_remote_code=False chat_template=None)[0m[0m
+[2m16:41:03[0m [1m   INFO[0m [1m[22mInitializing policy inference pool (name='/workspace/ornith-sd-bf16' trust_remote_code=False vlm=VLMConfig(vision_encoder_attr='model.visual', language_model_attr='model.language_model', freeze_vision_encoder=True) lora=None client=VLLMClientConfig(base_url='http://localhost:8000/v1', api_key_var='VLLM_API_KEY', headers={}, headers_from_env={}, timeout=ClientTimeoutConfig(connect=30.0, read=None, write=None, pool=None), wait_for_ready_timeout=3600, skip_model_check=False, admin_base_url=['http://localhost:8100/v1'], dynamo=None))[0m[0m
+[2m16:41:03[0m [1m   INFO[0m [1m[22mInitializing monitors (file)[0m[0m
+[2m16:41:03[0m [1m   INFO[0m [1m[22mInitializing file monitor (path=PosixPath('metrics.jsonl') chunk_bytes=5368709120 compress=True float_decimals=4)[0m[0m
+[2m16:41:03[0m [1m   INFO[0m [1m[22mLogging metrics and episodes to the local filesystem (outputs/ornith35b-sd-pilot-1009-1234)[0m[0m
+[2m16:41:03[0m [1m   INFO[0m [1m[22mInitializing grpo algorithm for tb2-pool[0m[0m
+[2m16:41:03[0m [1m   INFO[0m [1m[22mStarting from scratch[0m[0m
+[2m16:41:03[0m [1m   INFO[0m [1m[22mInitializing micro batch sender (type='zmq' host='localhost' port=5555 hwm=10)[0m[0m
+[2m16:41:03[0m [1m   INFO[0m [1m[22mLoading train environments (tb2-pool)[0m[0m
+[2m16:41:07[0m [1m   INFO[0m [1m[22mEnv tb2-pool ready in 2.8s (num_tasks=16)[0m[0m
+[2m16:41:07[0m [32m[1mSUCCESS[0m [32m[1m[22mTrain environments ready in 4.0s[0m[0m
+[2m16:41:07[0m [1m   INFO[0m [1m[22mLoading eval environments (tb2-heldout)[0m[0m
+[2m16:41:07[0m [1m   INFO[0m [1m[22mEnv tb2-heldout ready in 20ms (num_tasks=20)[0m[0m
+[2m16:41:07[0m [32m[1mSUCCESS[0m [32m[1m[22mEval environments ready in 20ms[0m[0m
+[2m16:41:07[0m [1m   INFO[0m [1m[22mWaiting for policy inference pool to be ready[0m[0m
+[2m16:41:37[0m [1m   INFO[0m [1m[22mWaiting for inference server at http://localhost:8000 to start up (30s elapsed)[0m[0m
+[2m16:42:07[0m [1m   INFO[0m [1m[22mWaiting for inference server at http://localhost:8000 to start up (60s elapsed)[0m[0m
+[2m16:42:37[0m [1m   INFO[0m [1m[22mWaiting for inference server at http://localhost:8000 to start up (90s elapsed)[0m[0m
+[2m16:43:07[0m [1m   INFO[0m [1m[22mWaiting for inference server at http://localhost:8000 to start up (120s elapsed)[0m[0m
+[2m16:43:37[0m [1m   INFO[0m [1m[22mWaiting for inference server at http://localhost:8000 to start up (150s elapsed)[0m[0m
+[2m16:43:52[0m [32m[1mSUCCESS[0m [32m[1m[22mPolicy inference pool ready after 2m 45s[0m[0m
+[2m16:43:52[0m [1m   INFO[0m [1m[22mInitializing weight broadcast (timeout=1200 host='localhost' port=29501 inference_world_size=4 type='nccl')[0m[0m
+[2m16:43:52[0m [1m   INFO[0m [1m[22mInitializing NCCL broadcast: 1 servers, inference_world_size=4, gpus_per_server=4[0m[0m
+[2m16:43:53[0m [1m   INFO[0m [1m[22mCollecting inference metrics from server0=http://localhost:8100[0m[0m
+[2m16:43:53[0m [1m   INFO[0m [1m[22mSyncing inference to the trainer's startup broadcast (v0)[0m[0m
+[2m16:43:57[0m [1m   INFO[0m [1m[22mSwitching dispatcher mode to prefer eval episodes because eval was triggered at step 0[0m[0m
+[2m16:43:57[0m [1m   INFO[0m [1m[22mStarting evals in tb2-heldout (40 total rollouts)[0m[0m
+[2m16:43:57[0m [1m   INFO[0m [1m[22mStarting orchestrator loop (max_steps=12)[0m[0m
+[2m16:44:07[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 24 inflight episodes (train=0, eval=24)[0m[0m
+[2m16:44:17[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 40 inflight episodes (train=0, eval=40)[0m[0m
+[2m16:44:18[0m [1m   INFO[0m [1m[22mSwitching dispatcher mode to prefer train episodes because the eval queue drained[0m[0m
+[2m16:44:20[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 61ba659e-149f-4b8a-9a02-2832ab9bb5f0 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:20[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 61ba659e-149f-4b8a-9a02-2832ab9bb5f0 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:21[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3505cedc-4429-4fc7-8a3a-e5cd402878d3 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:21[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7127bdc8-fdd2-4a5e-b886-a317fcf10907 (tb2-heldout) — HarnessError: harness setup: RuntimeError: Node.js install failed: nghttp2-14_1.43.0-1%2bdeb11u3_amd64.deb  404  Not Found [IP: 151.101.194.132 80]
+E: Failed to fetch http://security.debian.org/debian-security/pool/updates/main/c/curl/libcurl4_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 151.101.194.132 80]
+E: Failed to fetch http://security.debian.org/debian-security/pool/updates/main/c/curl/curl_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 151.101.194.132 80]
+E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?[0m[0m
+[2m16:44:23[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6119a97d-84f5-4a7c-9771-993fc00bd8e1 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:23[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 038a266e-3526-48fe-9a4c-72db0bf65319 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:23[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 038a266e-3526-48fe-9a4c-72db0bf65319 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:23[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6119a97d-84f5-4a7c-9771-993fc00bd8e1 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:24[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fc9f37b0-2ea0-496a-8a5f-b5c0f17f38e7 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:24[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group ec95e867-775b-48c8-a588-a8892dc85c7d (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:24[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group ec95e867-775b-48c8-a588-a8892dc85c7d (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fc9f37b0-2ea0-496a-8a5f-b5c0f17f38e7 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 87992f8e-3fc9-4d7b-86ca-875a52d04e69 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 87992f8e-3fc9-4d7b-86ca-875a52d04e69 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3418f621-6fff-4dfb-8eb1-68801d60a51d (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 08732c1c-fa54-4753-9a39-5981bda9cdc2 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:26[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 07090992-005c-4d26-ac60-080d5537991b (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:26[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 07090992-005c-4d26-ac60-080d5537991b (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:27[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3505cedc-4429-4fc7-8a3a-e5cd402878d3 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:27[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) | tb2-heldout 19/40 (47.5%); 55 inflight episodes (train=34, eval=21)[0m[0m
+[2m16:44:28[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 82f2152b-6bfb-4c25-96eb-b58fa78884df (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:28[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 82f2152b-6bfb-4c25-96eb-b58fa78884df (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:29[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3418f621-6fff-4dfb-8eb1-68801d60a51d (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:29[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 08732c1c-fa54-4753-9a39-5981bda9cdc2 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:31[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 82844fb7-2c53-4320-8ed2-7b2d17514b60 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:31[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 82844fb7-2c53-4320-8ed2-7b2d17514b60 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:33[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group acda467a-c282-4de0-a30f-e0358f1fb8e8 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:34[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group f2824129-24f1-4279-8c95-132c240a0df2 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:35[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3d2fc631-a0f4-4a5b-bcc8-5f417fb521dc (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:36[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group f2824129-24f1-4279-8c95-132c240a0df2 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:36[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3b278ffa-9178-40ee-867c-4c5a8c2d3892 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:36[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3d2fc631-a0f4-4a5b-bcc8-5f417fb521dc (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:37[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3b278ffa-9178-40ee-867c-4c5a8c2d3892 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:37[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group acda467a-c282-4de0-a30f-e0358f1fb8e8 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:37[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) | tb2-heldout 33/40 (82.5%); 64 inflight episodes (train=57, eval=7)[0m[0m
+[2m16:44:39[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 8e0c9fcc-a4c3-4f9e-aa8b-6fd24ca9ecd6 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:39[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0377271b-59a9-4a8d-a8a8-8aea568bea1e (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:41[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0377271b-59a9-4a8d-a8a8-8aea568bea1e (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:43[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 618d5ead-b7cc-4e55-bf3e-b45b2dc1d401 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:44[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 8e0c9fcc-a4c3-4f9e-aa8b-6fd24ca9ecd6 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:47[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 618d5ead-b7cc-4e55-bf3e-b45b2dc1d401 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m16:44:47[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) | tb2-heldout 39/40 (97.5%); 64 inflight episodes (train=63, eval=1)[0m[0m
+[2m16:44:53[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7127bdc8-fdd2-4a5e-b886-a317fcf10907 (tb2-heldout) — HarnessError: harness setup: RuntimeError: Node.js install failed: p2/libnghttp2-14_1.43.0-1%2bdeb11u3_amd64.deb  404  Not Found [IP: 151.101.2.132 80]
+E: Failed to fetch http://security.debian.org/debian-security/pool/updates/main/c/curl/libcurl4_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 151.101.2.132 80]
+E: Failed to fetch http://security.debian.org/debian-security/pool/updates/main/c/curl/curl_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 151.101.2.132 80]
+E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?[0m[0m
+[2m16:44:53[0m [32m[1mSUCCESS[0m [32m[1m[22mEvaluated tb2-heldout | Policy v0 |   55.6s | Reward 0.0000 | Turns 0.0 | Branches 0.0 | Error 100.0% | Truncation 0.0% | Timeout 0.0%[0m[0m
+[2m16:44:57[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:45:07[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:45:17[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:45:27[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:45:37[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:45:47[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:45:57[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:46:07[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+1 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:46:17[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+2 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:46:27[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+2 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:46:37[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+4 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:46:47[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+4 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:46:57[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+7 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:47:07[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+8 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:47:17[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+9 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:47:27[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+10 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:47:37[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:47:47[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:47:57[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+13 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:48:07[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:48:17[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:48:27[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:48:37[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+16 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:48:47[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+16 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:48:57[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+10 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:49:07[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+10 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:49:17[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+10 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:49:27[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:49:37[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:49:47[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:49:57[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:50:07[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:50:17[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:50:27[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:50:37[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:50:47[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:50:57[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:51:07[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:51:17[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:51:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fb7ac882-c2d3-440a-9cf7-92ce45d0d8df (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m16:51:27[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:51:37[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+13 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:51:47[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+13 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:51:57[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+13 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:52:07[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+13 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:52:18[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+13 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:52:28[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+13 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:52:38[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:52:48[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:52:58[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:53:08[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:53:18[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:53:28[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:53:38[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:53:48[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:53:58[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:54:08[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:54:18[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:54:28[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:54:38[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:54:48[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:54:58[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:55:08[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:55:18[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:55:28[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:55:38[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:55:48[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:55:58[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+17 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:56:08[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+17 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:56:18[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+17 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:56:28[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+17 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:56:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+10 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:56:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:56:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:57:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:57:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:57:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:57:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:57:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:57:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+11 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:58:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:58:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:58:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:58:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:58:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:58:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+12 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:59:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+13 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:59:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:59:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+14 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:59:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:59:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m16:59:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+15 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:00:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+16 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:00:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+16 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:00:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+16 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:00:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+16 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:00:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+17 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:00:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+18 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:01:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+19 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:01:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+19 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:01:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+19 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:01:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+21 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:01:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+22 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:01:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+23 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:02:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+23 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:02:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+23 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:02:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+24 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:02:34[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fe3aa824-5fe5-4145-8e84-6a96a4591347 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:02:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+26 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:02:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+26 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:02:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+28 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:03:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+31 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:03:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+32 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:03:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+32 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:03:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+33 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:03:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:03:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:04:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:04:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:04:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:04:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:04:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:04:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:05:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:05:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:05:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:05:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:05:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:05:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:06:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:06:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:06:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:06:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:06:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:06:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:07:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:07:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:07:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:07:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:07:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:07:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:08:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:08:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:08:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:08:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:08:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:08:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:09:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:09:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:09:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:09:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:09:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:09:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:10:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:10:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:10:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:10:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:10:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:10:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:11:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:11:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:11:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:11:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:11:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:11:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:12:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:12:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:12:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:12:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:12:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:12:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:13:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:13:18[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:13:28[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:13:38[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:13:38[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 4bb739a8-fcb3-4d72-bd26-5f2e4086f324 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:13:48[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:13:58[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:14:08[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:14:18[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:14:28[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:14:38[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:14:45[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 1 | 30m 46s | Reward 0.5938 | Trainable 32/32 (100.0%) | Turns 20.0 | Branches 1.0 | Max Off-Policy 0 | Error 0.0% | Cancelled 0.0% | Truncation 0.0% | Timeout 0.0%[0m[0m
+[2m17:14:48[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:14:54[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fb7ac882-c2d3-440a-9cf7-92ce45d0d8df (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:14:55[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group caf8c74f-91b4-45cb-b0c2-6b7602cd412c (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:14:55[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fb7ac882-c2d3-440a-9cf7-92ce45d0d8df (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:14:57[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group caf8c74f-91b4-45cb-b0c2-6b7602cd412c (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:14:57[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group caf8c74f-91b4-45cb-b0c2-6b7602cd412c (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:14:57[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fb7ac882-c2d3-440a-9cf7-92ce45d0d8df (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:14:57[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group caf8c74f-91b4-45cb-b0c2-6b7602cd412c (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:14:58[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:15:02[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fb7ac882-c2d3-440a-9cf7-92ce45d0d8df (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:02[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fb7ac882-c2d3-440a-9cf7-92ce45d0d8df (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:08[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:15:08[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group cdc8e99f-2e05-41f3-ab28-f706e8e4b947 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:08[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group cdc8e99f-2e05-41f3-ab28-f706e8e4b947 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:09[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group eebad4cf-771c-47cd-bb02-1f5f217149d5 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:09[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 44c87e9d-bb1f-4293-bebf-1dea8f8c34bd (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:15[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group eebad4cf-771c-47cd-bb02-1f5f217149d5 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:17[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group eebad4cf-771c-47cd-bb02-1f5f217149d5 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:18[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:15:19[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group eebad4cf-771c-47cd-bb02-1f5f217149d5 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:21[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 44c87e9d-bb1f-4293-bebf-1dea8f8c34bd (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:22[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group cdc8e99f-2e05-41f3-ab28-f706e8e4b947 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group eebad4cf-771c-47cd-bb02-1f5f217149d5 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:15:28[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:15:38[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:15:48[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:15:58[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:16:08[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:16:18[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:16:28[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:16:38[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:16:40[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fe3aa824-5fe5-4145-8e84-6a96a4591347 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:16:48[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:16:58[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:16:59[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fe3aa824-5fe5-4145-8e84-6a96a4591347 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:17:08[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:17:08[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fe3aa824-5fe5-4145-8e84-6a96a4591347 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:17:09[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fe3aa824-5fe5-4145-8e84-6a96a4591347 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:17:18[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:17:28[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:17:38[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:17:38[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group fe3aa824-5fe5-4145-8e84-6a96a4591347 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:17:48[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:17:58[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:18:08[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:18:18[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:18:28[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:18:38[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:18:43[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 8da64b6c-4031-4dee-8024-3c138f41bb17 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:18:48[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:18:58[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:19:08[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:19:18[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:19:20[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6a10f312-94f2-449c-810f-1bae79b7c164 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:19:28[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:19:29[0m [1m   INFO[0m [1m[22mPausing dispatcher until inference applies policy v1 (currently v0)[0m[0m
+[2m17:19:30[0m [33m[1mWARNING[0m [33m[1m[22mDiscarded 29/56 episodes (51.8%): stale=0, errored=24, no_signal=5. Review max_off_policy_steps, episode errors, and reward signal.[0m[0m
+[2m17:19:30[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 2 |  4m 44s | Reward 0.6296 | Trainable 27/27 (100.0%) | Turns 34.3 | Branches 1.3 | Max Off-Policy 1 | Error 42.9% | Cancelled 0.0% | Truncation 11.1% | Timeout 37.5%[0m[0m
+[2m17:19:35[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6a10f312-94f2-449c-810f-1bae79b7c164 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:19:38[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+39 buffered); 61 inflight episodes (train=61, eval=0)[0m[0m
+[2m17:19:40[0m [1m   INFO[0m [1m[22mResuming dispatcher (policy v1)[0m[0m
+[2m17:19:48[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:19:54[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group d288aaa5-e5a1-4904-8861-5d504b6ec674 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:19:56[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6c4c93cb-33cd-43d0-bb4a-cb8362ca603e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:19:58[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:20:08[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:20:18[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:20:28[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:20:38[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:20:48[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:20:58[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:21:02[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6c4c93cb-33cd-43d0-bb4a-cb8362ca603e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:21:08[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:21:18[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:21:28[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:21:38[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:21:42[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6c4c93cb-33cd-43d0-bb4a-cb8362ca603e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:21:48[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:21:58[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:21:59[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6a10f312-94f2-449c-810f-1bae79b7c164 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:22:07[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6a10f312-94f2-449c-810f-1bae79b7c164 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:22:08[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+40 buffered); 63 inflight episodes (train=63, eval=0)[0m[0m
+[2m17:22:18[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:22:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group d288aaa5-e5a1-4904-8861-5d504b6ec674 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:22:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group d288aaa5-e5a1-4904-8861-5d504b6ec674 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:22:28[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:22:38[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:22:48[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:22:58[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:23:08[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:23:18[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:23:28[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:23:38[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:23:48[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:23:58[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:24:08[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:24:18[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:24:28[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:24:38[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:24:48[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:24:58[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:25:08[0m [1m   INFO[0m [1m[22mTrain batch 12/32 (37.5%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:25:09[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group cdc8e99f-2e05-41f3-ab28-f706e8e4b947 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:25:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:25:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:25:38[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:25:48[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:25:58[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:26:08[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:26:18[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:26:28[0m [1m   INFO[0m [1m[22mTrain batch 16/32 (50.0%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:26:38[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+34 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:26:48[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:26:58[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:27:08[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:27:18[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:27:28[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:27:38[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:27:48[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:27:58[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:28:08[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:28:18[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:28:28[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:28:38[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:28:48[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:28:48[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 4bb739a8-fcb3-4d72-bd26-5f2e4086f324 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:28:58[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:29:08[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:29:18[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:29:28[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:29:38[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:29:48[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:29:58[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:30:08[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:30:18[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:30:28[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:30:38[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:30:45[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 4bb739a8-fcb3-4d72-bd26-5f2e4086f324 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:30:48[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+33 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:30:58[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+33 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:31:05[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 3 | 11m 35s | Reward 0.3500 | Trainable 20/20 (100.0%) | Turns 24.6 | Branches 1.1 | Max Off-Policy 2 | Error 22.9% | Cancelled 0.0% | Truncation 0.0% | Timeout 20.8%[0m[0m
+[2m17:31:08[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+26 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:31:18[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+26 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:31:28[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+26 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:31:38[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+27 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:31:48[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+27 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:31:58[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+28 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:32:08[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+28 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:32:09[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3e4746f5-b1c9-4c3f-8230-ccc8cc62a447 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:32:18[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+30 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:32:28[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+30 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:32:38[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+30 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:32:48[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+30 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:32:58[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+31 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:33:08[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+32 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:33:18[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+33 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:33:28[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:33:38[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:33:48[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:33:58[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:34:08[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:34:18[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:34:28[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:34:38[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:34:48[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:34:58[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:35:08[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:35:18[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:35:28[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:35:35[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group ab0e7a2f-21ca-4eee-b339-7523652dd3cf (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:35:38[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:35:48[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:35:58[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:36:08[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:36:18[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:36:22[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group ab0e7a2f-21ca-4eee-b339-7523652dd3cf (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:36:28[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:36:38[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:36:48[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:36:58[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:37:08[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:37:18[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:37:28[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:37:38[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:37:48[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:37:58[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:38:08[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:38:18[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:38:28[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:38:38[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+36 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:38:48[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:38:58[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:39:08[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:39:18[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:39:28[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:39:38[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:39:48[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:39:58[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:40:08[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:40:18[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:40:28[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:40:38[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:40:48[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:40:58[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:41:08[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:41:18[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:41:28[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:41:38[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:41:48[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:41:58[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:42:08[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:42:18[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:42:28[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:42:38[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:42:48[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:42:58[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:43:08[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:43:18[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:43:28[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:43:38[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:43:48[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:43:58[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:44:08[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:44:18[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:44:28[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:44:33[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group be366298-2894-44f2-aa3d-7c395e6b72e4 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:44:38[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:44:48[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:44:58[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:45:08[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:45:18[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:45:28[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:45:36[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group d288aaa5-e5a1-4904-8861-5d504b6ec674 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:45:38[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+58 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:45:40[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group d288aaa5-e5a1-4904-8861-5d504b6ec674 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:45:43[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group d288aaa5-e5a1-4904-8861-5d504b6ec674 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:45:46[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group be366298-2894-44f2-aa3d-7c395e6b72e4 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (unavailable): Bad Gateway[0m[0m
+[2m17:45:48[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:45:51[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3e4746f5-b1c9-4c3f-8230-ccc8cc62a447 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:45:53[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3e4746f5-b1c9-4c3f-8230-ccc8cc62a447 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:45:53[0m [1m   INFO[0m [1m[22mSaving checkpoint at step 4[0m[0m
+[2m17:45:54[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 4 | 14m 49s | Reward 0.4167 | Trainable 24/24 (100.0%) | Turns 20.1 | Branches 1.0 | Max Off-Policy 3 | Error 27.5% | Cancelled 0.0% | Truncation 8.3% | Timeout 17.5%[0m[0m
+[2m17:45:58[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:46:08[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:46:14[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3012e7ea-95f5-4722-9488-801e644a1ae3 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:46:18[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:46:28[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:46:38[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:46:48[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:46:58[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:47:08[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:47:18[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:47:28[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:47:38[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:47:43[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3012e7ea-95f5-4722-9488-801e644a1ae3 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:47:44[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3012e7ea-95f5-4722-9488-801e644a1ae3 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:47:48[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:47:58[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:48:07[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e6754b53-0d5d-4f76-9851-6f322b81cc66 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:48:08[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:48:18[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group b0f3a2e6-9f45-4db7-ac16-01d4b54da5e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:48:18[0m [1m   INFO[0m [1m[22mTrain batch 2/32 (6.2%) (+67 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:48:28[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:48:31[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e6754b53-0d5d-4f76-9851-6f322b81cc66 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:48:31[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e6754b53-0d5d-4f76-9851-6f322b81cc66 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:48:38[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:48:40[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e6754b53-0d5d-4f76-9851-6f322b81cc66 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:48:42[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e6754b53-0d5d-4f76-9851-6f322b81cc66 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:48:48[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+58 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:48:51[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group b0f3a2e6-9f45-4db7-ac16-01d4b54da5e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:48:55[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group b0f3a2e6-9f45-4db7-ac16-01d4b54da5e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:48:58[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:49:05[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group b0f3a2e6-9f45-4db7-ac16-01d4b54da5e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:49:08[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:49:13[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3012e7ea-95f5-4722-9488-801e644a1ae3 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:49:14[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group b0f3a2e6-9f45-4db7-ac16-01d4b54da5e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:49:15[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group b0f3a2e6-9f45-4db7-ac16-01d4b54da5e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:49:18[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:49:28[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:49:38[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:49:42[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group be366298-2894-44f2-aa3d-7c395e6b72e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:49:48[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:49:58[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:50:08[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:50:08[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group be366298-2894-44f2-aa3d-7c395e6b72e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:50:18[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:50:20[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group be366298-2894-44f2-aa3d-7c395e6b72e4 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:50:28[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:50:38[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:50:48[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:50:58[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:51:08[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:51:18[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:51:28[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:51:38[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:51:48[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:51:58[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:52:08[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:52:18[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:52:28[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:52:38[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:52:48[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:52:58[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:53:03[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 5 |   7m 8s | Reward 0.6957 | Trainable 23/23 (100.0%) | Turns 33.3 | Branches 1.3 | Max Off-Policy 4 | Error 31.2% | Cancelled 0.0% | Truncation 4.3% | Timeout 22.9%[0m[0m
+[2m17:53:08[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:53:18[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:53:28[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:53:38[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:53:48[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:53:58[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:54:08[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:54:18[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:54:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group af742a3c-5522-47f7-9c3f-20b4eaa07292 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:54:28[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:54:38[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:54:48[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:54:58[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:55:08[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:55:18[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:55:28[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:55:29[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group bbaab946-e2a4-4b0d-bf19-165cd795cc50 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:55:38[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:55:42[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group bbaab946-e2a4-4b0d-bf19-165cd795cc50 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:55:48[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:55:58[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:56:04[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group bbaab946-e2a4-4b0d-bf19-165cd795cc50 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:56:08[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:56:12[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 12194081-d804-46ea-a7ae-21bddff86264 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:56:12[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 22a7ebe6-9ead-4b51-a3e9-85f0b963dd3b (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m17:56:12[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 12194081-d804-46ea-a7ae-21bddff86264 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:56:18[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:56:28[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:56:38[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:56:48[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:56:58[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:57:08[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:57:18[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:57:23[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group ad5297fe-c56a-4770-adfa-33ba68302f75 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:57:28[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:57:38[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:57:48[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:57:58[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:58:08[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:58:18[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:58:28[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:58:38[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:58:48[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:58:55[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group ad5297fe-c56a-4770-adfa-33ba68302f75 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:58:58[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:59:08[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:59:18[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:59:28[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:59:36[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group ad5297fe-c56a-4770-adfa-33ba68302f75 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m17:59:38[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:59:48[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m17:59:58[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:00:08[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:00:18[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:00:28[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:00:38[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:00:48[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:00:58[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:01:02[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group ad5297fe-c56a-4770-adfa-33ba68302f75 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:01:08[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:01:18[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:01:28[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:01:38[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:01:48[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:01:58[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:02:08[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:02:18[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:02:28[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:02:38[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:02:48[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:02:58[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:03:03[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 5c36089c-1903-4bba-aebc-3df07f9078e6 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:03:08[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:03:18[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:03:28[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:03:38[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:03:48[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:03:58[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:04:08[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:04:18[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:04:28[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:04:38[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:04:48[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:04:58[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:05:08[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:05:18[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:05:28[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:05:38[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+67 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:05:48[0m [1m   INFO[0m [1m[22mTrain batch 20/32 (62.5%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:05:58[0m [1m   INFO[0m [1m[22mTrain batch 20/32 (62.5%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:05:59[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 02cb98a0-e6eb-49c3-b63c-149b67582e66 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:06:08[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:06:18[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:06:28[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:06:38[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:06:47[0m [33m[1mWARNING[0m [33m[1m[22mDiscarded 25/40 episodes (62.5%): stale=0, errored=8, no_signal=17. Review max_off_policy_steps, episode errors, and reward signal.[0m[0m
+[2m18:06:47[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 6 | 13m 43s | Reward 0.6667 | Trainable 15/15 (100.0%) | Turns 22.8 | Branches 1.3 | Max Off-Policy 2 | Error 20.0% | Cancelled 0.0% | Truncation 6.7% | Timeout 17.5%[0m[0m
+[2m18:06:48[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:06:58[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:07:08[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:07:18[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:07:28[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:07:38[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:07:48[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:07:58[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:08:08[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:08:18[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:08:28[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:08:33[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group bbaab946-e2a4-4b0d-bf19-165cd795cc50 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:08:38[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:08:48[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:08:58[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:09:08[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:09:18[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:09:28[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:09:38[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:09:48[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:09:58[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:10:08[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:10:18[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:10:28[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:10:38[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:10:48[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:10:58[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:11:08[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:11:18[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:11:28[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:11:38[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:11:48[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:11:58[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:12:07[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 59ce570c-8f27-4bdc-bc7a-2c413b4e7e0f (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:12:08[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:12:18[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:12:28[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:12:38[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:12:48[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:12:58[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:13:08[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:13:18[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:13:28[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:13:38[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:13:48[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:13:58[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:14:08[0m [1m   INFO[0m [1m[22mTrain batch 14/32 (43.8%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:14:17[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6c4c93cb-33cd-43d0-bb4a-cb8362ca603e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:14:18[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:14:28[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:14:38[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:14:48[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:14:58[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:15:08[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:15:18[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:15:28[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:15:38[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:15:48[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:15:58[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:16:07[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group af742a3c-5522-47f7-9c3f-20b4eaa07292 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:16:08[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:16:09[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group af742a3c-5522-47f7-9c3f-20b4eaa07292 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:16:17[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group af742a3c-5522-47f7-9c3f-20b4eaa07292 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:16:18[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group af742a3c-5522-47f7-9c3f-20b4eaa07292 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:16:18[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group af742a3c-5522-47f7-9c3f-20b4eaa07292 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:16:18[0m [1m   INFO[0m [1m[22mTrain batch 28/32 (87.5%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:16:23[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c7b0dac0-95e1-44af-b622-f4a570b655e3 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:16:28[0m [1m   INFO[0m [1m[22mTrain batch 28/32 (87.5%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:16:38[0m [1m   INFO[0m [1m[22mTrain batch 28/32 (87.5%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:16:45[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c7b0dac0-95e1-44af-b622-f4a570b655e3 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:16:48[0m [1m   INFO[0m [1m[22mTrain batch 28/32 (87.5%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:16:58[0m [1m   INFO[0m [1m[22mTrain batch 28/32 (87.5%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:17:08[0m [1m   INFO[0m [1m[22mTrain batch 28/32 (87.5%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:17:18[0m [1m   INFO[0m [1m[22mTrain batch 28/32 (87.5%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:17:21[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c7b0dac0-95e1-44af-b622-f4a570b655e3 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:17:26[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c7b0dac0-95e1-44af-b622-f4a570b655e3 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:17:28[0m [33m[1mWARNING[0m [33m[1m[22mDiscarded 29/48 episodes (60.4%): stale=0, errored=19, no_signal=10. Review max_off_policy_steps, episode errors, and reward signal.[0m[0m
+[2m18:17:28[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 7 | 10m 40s | Reward 0.5000 | Trainable 22/22 (100.0%) | Turns 32.6 | Branches 1.3 | Max Off-Policy 6 | Error 39.6% | Cancelled 0.0% | Truncation 9.1% | Timeout 37.5%[0m[0m
+[2m18:17:28[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:17:38[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:17:43[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group df78de91-40fa-4616-a576-626ada12ce7a (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:17:48[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:17:58[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:18:08[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:18:18[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:18:28[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:18:34[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 72ca5566-d3c1-4424-bdb3-4d8b73c5bcd3 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:18:38[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:18:48[0m [1m   INFO[0m [1m[22mTrain batch 8/32 (25.0%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:18:56[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group b6cd702b-a33f-4635-ac2b-e6c0c8684f1f (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:18:58[0m [1m   INFO[0m [1m[22mTrain batch 23/32 (71.9%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:19:08[0m [1m   INFO[0m [1m[22mTrain batch 23/32 (71.9%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:19:12[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 9943d765-6059-450a-93c6-42e9f4c2393a (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:19:15[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group b6cd702b-a33f-4635-ac2b-e6c0c8684f1f (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:19:18[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 9943d765-6059-450a-93c6-42e9f4c2393a (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:19:18[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+35 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:19:24[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 9943d765-6059-450a-93c6-42e9f4c2393a (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:19:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 9943d765-6059-450a-93c6-42e9f4c2393a (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:19:26[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 9943d765-6059-450a-93c6-42e9f4c2393a (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:19:28[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:19:38[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:19:39[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 9943d765-6059-450a-93c6-42e9f4c2393a (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:19:49[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:19:59[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:20:09[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:20:19[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:20:29[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+40 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:20:36[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 5c36089c-1903-4bba-aebc-3df07f9078e6 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:20:39[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:20:49[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:20:55[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1ea2b9d6-89ef-428d-a28a-9ac8b468a929 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:20:55[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1ea2b9d6-89ef-428d-a28a-9ac8b468a929 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:20:59[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:21:02[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 5c36089c-1903-4bba-aebc-3df07f9078e6 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:21:09[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:21:19[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:21:29[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:21:39[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:21:49[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:21:54[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1ea2b9d6-89ef-428d-a28a-9ac8b468a929 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:21:59[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:22:09[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:22:19[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:22:29[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:22:39[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:22:49[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:22:59[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:23:09[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:23:19[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:23:29[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:23:39[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:23:49[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:23:59[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:24:09[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:24:19[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:24:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group be366298-2894-44f2-aa3d-7c395e6b72e4 (tb2-pool) — SandboxError: prime exec failed: Read file failed: HTTP 502 GET https://gateway.sandbox-v2-prod.pinfra.io/prod-box-cmu3837y5001txoa3wfgw9fwi/a5p2dfrkb5efwp3fuku6y59g/read-file?path=%2Ftmp%2Fjob_fcbf58cd.exit: sandbox upstream unavailable
+[0m[0m
+[2m18:24:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:24:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:24:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:24:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:25:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:25:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:25:22[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 14acb0ed-2262-4ac2-9af1-8931dd37081e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:25:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:25:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:25:42[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e36f2d37-f99c-4ee1-9f04-e735038eb1d3 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:25:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:25:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:26:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:26:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:26:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:26:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:26:41[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 14acb0ed-2262-4ac2-9af1-8931dd37081e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:26:46[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 029f63ac-0cde-41f5-a495-1a32a6d13259 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:26:46[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 14acb0ed-2262-4ac2-9af1-8931dd37081e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:26:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:26:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:27:05[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 8fd66c1b-818d-4817-bfb8-dbc421e33e45 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:27:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:27:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:27:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:27:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:27:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:27:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:28:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:28:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:28:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:28:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:28:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:28:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:29:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:29:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:29:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:29:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:29:49[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 029f63ac-0cde-41f5-a495-1a32a6d13259 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:29:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:29:49[0m [1m   INFO[0m [1m[22mSaving checkpoint at step 8[0m[0m
+[2m18:29:50[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 8 | 12m 22s | Reward 0.5000 | Trainable 24/24 (100.0%) | Turns 16.6 | Branches 1.0 | Max Off-Policy 3 | Error 22.9% | Cancelled 0.0% | Truncation 0.0% | Timeout 14.6%[0m[0m
+[2m18:29:59[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:30:09[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:30:19[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:30:29[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:30:39[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:30:49[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:30:59[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:31:09[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:31:19[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:31:29[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:31:39[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:31:49[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:31:59[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:32:09[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:32:19[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:32:29[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:32:39[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:32:49[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:32:59[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:33:09[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:33:19[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:33:29[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:33:39[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:33:49[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:33:59[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:34:09[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:34:19[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:34:29[0m [1m   INFO[0m [1m[22mTrain batch 5/32 (15.6%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:34:36[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 14acb0ed-2262-4ac2-9af1-8931dd37081e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:34:39[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:34:49[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:34:59[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:35:09[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:35:19[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:35:29[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:35:39[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:35:49[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:35:59[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:36:09[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:36:19[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:36:29[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:36:31[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 72ca5566-d3c1-4424-bdb3-4d8b73c5bcd3 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:36:39[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:36:49[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:36:59[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:37:09[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:37:19[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:37:29[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:37:39[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:37:49[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:37:59[0m [1m   INFO[0m [1m[22mTrain batch 15/32 (46.9%) (+51 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:38:09[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:38:19[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:38:29[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:38:39[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:38:48[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 5c36089c-1903-4bba-aebc-3df07f9078e6 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:38:49[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:38:59[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:39:09[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:39:19[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:39:29[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:39:38[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c50a69a7-5c86-41b9-84f0-4fdc1241ede9 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:39:39[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:39:49[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:39:59[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:40:09[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:40:19[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:40:29[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:40:39[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:40:49[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:40:58[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 58de25a6-3d4f-4377-9487-0202f3cfcc4a (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:40:59[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:41:09[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:41:19[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:41:29[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:41:39[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:41:49[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:41:59[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:42:09[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:42:19[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:42:29[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:42:39[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:42:49[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:42:59[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:43:09[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:43:19[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:43:29[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:43:39[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:43:49[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:43:59[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:44:09[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:44:19[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+47 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:44:29[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:44:33[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 5c36089c-1903-4bba-aebc-3df07f9078e6 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:44:39[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:44:49[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:44:59[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:45:09[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:45:19[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:45:29[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:45:39[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:45:49[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:45:59[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:46:09[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+45 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:46:19[0m [1m   INFO[0m [1m[22mTrain batch 27/32 (84.4%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:46:27[0m [33m[1mWARNING[0m [33m[1m[22mDiscarded 29/48 episodes (60.4%): stale=0, errored=18, no_signal=11. Review max_off_policy_steps, episode errors, and reward signal.[0m[0m
+[2m18:46:27[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 9 | 16m 35s | Reward 0.4286 | Trainable 21/21 (100.0%) | Turns 34.7 | Branches 1.0 | Max Off-Policy 4 | Error 37.5% | Cancelled 0.0% | Truncation 0.0% | Timeout 31.2%[0m[0m
+[2m18:46:29[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:46:39[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:46:42[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1ea2b9d6-89ef-428d-a28a-9ac8b468a929 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:46:47[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1ea2b9d6-89ef-428d-a28a-9ac8b468a929 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:46:49[0m [1m   INFO[0m [1m[22mTrain batch 3/32 (9.4%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:46:49[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1ea2b9d6-89ef-428d-a28a-9ac8b468a929 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:46:54[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1ea2b9d6-89ef-428d-a28a-9ac8b468a929 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:46:59[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:47:01[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c98bda52-f46e-43c0-9bf1-c93e1dbe1c4e (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:47:03[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0703cf46-bb32-4f94-93c7-3de05d4bd4a6 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:47:09[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:47:19[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+41 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:47:22[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0703cf46-bb32-4f94-93c7-3de05d4bd4a6 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:47:29[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:47:39[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+44 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:47:48[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0703cf46-bb32-4f94-93c7-3de05d4bd4a6 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:47:49[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+37 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:47:59[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:48:09[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+38 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:48:19[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+39 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:48:29[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:48:39[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:48:49[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+42 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:48:59[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:49:09[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+43 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:49:10[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7d768e3a-9254-4855-b267-25d45294db60 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:19[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+46 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:49:27[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7d768e3a-9254-4855-b267-25d45294db60 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:29[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+48 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:49:30[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7d768e3a-9254-4855-b267-25d45294db60 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:39[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+49 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:49:41[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7d768e3a-9254-4855-b267-25d45294db60 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:47[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7d768e3a-9254-4855-b267-25d45294db60 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:49[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:49:51[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6629e17c-acbf-414a-9826-a92e4d4200fa (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:54[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6629e17c-acbf-414a-9826-a92e4d4200fa (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:56[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6629e17c-acbf-414a-9826-a92e4d4200fa (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:59[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6629e17c-acbf-414a-9826-a92e4d4200fa (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:49:59[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+58 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:50:07[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6629e17c-acbf-414a-9826-a92e4d4200fa (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:50:08[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7d768e3a-9254-4855-b267-25d45294db60 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:50:09[0m [1m   INFO[0m [1m[22mTrain batch 9/32 (28.1%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:50:12[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 6629e17c-acbf-414a-9826-a92e4d4200fa (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:50:19[0m [1m   INFO[0m [1m[22mTrain batch 11/32 (34.4%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:50:29[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:50:39[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:50:49[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+50 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:50:59[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+52 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:51:09[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+53 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:51:13[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e25bae75-3afa-4e06-8890-e4b56f43efdd (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:51:19[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:51:29[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+58 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:51:35[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0552e97c-ee32-49f1-88d3-1dd1ff9d43b8 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:51:39[0m [1m   INFO[0m [1m[22mTrain batch 19/32 (59.4%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:51:49[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+54 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:51:59[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+55 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:52:09[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+56 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:52:11[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0552e97c-ee32-49f1-88d3-1dd1ff9d43b8 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:52:13[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e25bae75-3afa-4e06-8890-e4b56f43efdd (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:52:19[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:52:29[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:52:31[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0552e97c-ee32-49f1-88d3-1dd1ff9d43b8 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:52:39[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:52:49[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:52:59[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:53:09[0m [1m   INFO[0m [1m[22mTrain batch 26/32 (81.2%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:53:13[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e25bae75-3afa-4e06-8890-e4b56f43efdd (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:53:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+57 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:53:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:53:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:53:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:53:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:54:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:54:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:54:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:54:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:54:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:54:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:55:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:55:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+67 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:55:24[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 10379ac2-7ac9-44bb-a4c3-8a75faf31ba7 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:55:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:55:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:55:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:55:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:56:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:56:19[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:56:25[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 10379ac2-7ac9-44bb-a4c3-8a75faf31ba7 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m18:56:29[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:56:39[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:56:49[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:56:59[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:57:09[0m [1m   INFO[0m [1m[22mTrain batch 31/32 (96.9%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:57:17[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3210124c-96b8-4103-bc28-96e9c5bf7994 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:57:20[0m [33m[1mWARNING[0m [33m[1m[22mDiscarded 31/56 episodes (55.4%): stale=0, errored=21, no_signal=10. Review max_off_policy_steps, episode errors, and reward signal.[0m[0m
+[2m18:57:20[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 10 | 10m 52s | Reward 0.7273 | Trainable 22/22 (100.0%) | Turns 28.0 | Branches 1.3 | Max Off-Policy 3 | Error 37.5% | Cancelled 0.0% | Truncation 13.6% | Timeout 25.0%[0m[0m
+[2m18:57:21[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:57:31[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:57:41[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:57:51[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:58:01[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:58:11[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:58:21[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:58:31[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:58:41[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:58:51[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:59:01[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:59:11[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:59:21[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:59:31[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:59:41[0m [1m   INFO[0m [1m[22mTrain batch 6/32 (18.8%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m18:59:43[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 7d768e3a-9254-4855-b267-25d45294db60 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m18:59:51[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:00:01[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:00:11[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:00:21[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:00:31[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:00:41[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:00:51[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:01:01[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:01:11[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:01:18[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c98bda52-f46e-43c0-9bf1-c93e1dbe1c4e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:01:21[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:01:31[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:01:41[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:01:51[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:02:01[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:02:11[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:02:21[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:02:31[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:02:41[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:02:51[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+61 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:02:57[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c98bda52-f46e-43c0-9bf1-c93e1dbe1c4e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:03:01[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:03:11[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:03:21[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:03:31[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:03:41[0m [1m   INFO[0m [1m[22mTrain batch 7/32 (21.9%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:03:42[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c98bda52-f46e-43c0-9bf1-c93e1dbe1c4e (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:03:43[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group c50a69a7-5c86-41b9-84f0-4fdc1241ede9 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:03:51[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:04:01[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:04:11[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:04:21[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:04:31[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:04:41[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:04:51[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:05:01[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:05:11[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+59 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:05:21[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:05:31[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:05:41[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+60 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:05:51[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:06:01[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:06:11[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:06:21[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:06:31[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:06:41[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:06:51[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:07:01[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:07:11[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:07:21[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:07:31[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:07:41[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:07:51[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:08:01[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:08:11[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:08:21[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:08:31[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:08:41[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:08:51[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:09:01[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:09:11[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:09:21[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+73 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:09:31[0m [1m   INFO[0m [1m[22mTrain batch 13/32 (40.6%) (+73 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:09:41[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0552e97c-ee32-49f1-88d3-1dd1ff9d43b8 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:09:41[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:09:51[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:10:01[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:10:11[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:10:21[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:10:31[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:10:41[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:10:51[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+72 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:11:01[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+74 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:11:11[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+74 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:11:21[0m [1m   INFO[0m [1m[22mTrain batch 21/32 (65.6%) (+76 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:11:31[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:11:41[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:11:51[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:12:01[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:12:11[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:12:21[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:12:31[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:12:41[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group cd696088-c7ce-4609-b526-2ad5f5061a20 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:12:41[0m [1m   INFO[0m [1m[22mTrain batch 29/32 (90.6%) (+63 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:12:43[0m [33m[1mWARNING[0m [33m[1m[22mDiscarded 22/40 episodes (55.0%): stale=0, errored=10, no_signal=12. Review max_off_policy_steps, episode errors, and reward signal.[0m[0m
+[2m19:12:43[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 11 | 15m 23s | Reward 0.5000 | Trainable 14/14 (100.0%) | Turns 25.8 | Branches 1.7 | Max Off-Policy 2 | Error 25.0% | Cancelled 0.0% | Truncation 0.0% | Timeout 22.5%[0m[0m
+[2m19:12:51[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:13:01[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:13:11[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+64 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:13:21[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+65 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:13:31[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:13:39[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 9e0f7e18-efe4-4a23-87ee-287f152055a8 (tb2-pool) — HarnessError: harness 'pi': APIError: process stream RPC failed (not_found): The sandbox has been terminated[0m[0m
+[2m19:13:41[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+67 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:13:51[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+67 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:14:01[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:14:11[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:14:21[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:14:31[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:14:41[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:14:51[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:15:01[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:15:11[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:15:21[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:15:31[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:15:41[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:15:51[0m [1m   INFO[0m [1m[22mTrain batch 4/32 (12.5%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:15:52[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 8fd66c1b-818d-4817-bfb8-dbc421e33e45 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:16:01[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:16:11[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:16:21[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+67 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:16:31[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:16:41[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:16:51[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:17:01[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:17:11[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+72 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:17:21[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+74 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:17:31[0m [1m   INFO[0m [1m[22mTrain batch 10/32 (31.2%) (+75 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:17:40[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 46ffcaa3-6fee-40cb-aeee-7e634c339a55 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:17:41[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+68 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:17:51[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:18:01[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:18:11[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:18:21[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+70 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:18:31[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+71 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:18:41[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+72 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:18:51[0m [1m   INFO[0m [1m[22mTrain batch 17/32 (53.1%) (+72 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:18:54[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 05bbc17f-6c7b-48e6-b7b4-c5a754684e24 (tb2-pool) — Timeout: Trace stopped by agent_timeout[0m[0m
+[2m19:19:01[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+66 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:19:11[0m [1m   INFO[0m [1m[22mTrain batch 24/32 (75.0%) (+69 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:19:21[0m [33m[1mWARNING[0m [33m[1m[22mDiscarded 18/32 episodes (56.2%): stale=0, errored=4, no_signal=14. Review max_off_policy_steps, episode errors, and reward signal.[0m[0m
+[2m19:19:21[0m [32m[1mSUCCESS[0m [32m[1m[22mStep 12 |  6m 38s | Reward 0.5714 | Trainable 14/14 (100.0%) | Turns 28.8 | Branches 1.0 | Max Off-Policy 3 | Error 12.5% | Cancelled 0.0% | Truncation 0.0% | Timeout 12.5%[0m[0m
+[2m19:19:21[0m [1m   INFO[0m [1m[22mWaiting for inference to apply policy v12 before shutdown[0m[0m
+[2m19:19:21[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:19:31[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:19:41[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:19:51[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:20:01[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:20:11[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:20:21[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+62 buffered); 64 inflight episodes (train=64, eval=0)[0m[0m
+[2m19:20:22[0m [1m   INFO[0m [1m[22mSwitching dispatcher mode to prefer eval episodes because eval was triggered at step 12[0m[0m
+[2m19:20:22[0m [1m   INFO[0m [1m[22mStarting evals in tb2-heldout (40 total rollouts)[0m[0m
+[2m19:20:23[0m [1m   INFO[0m [1m[22mShipped the final batch — draining pipeline (cancelled 64 in-flight train episode(s); any in-flight evals will complete)[0m[0m
+[2m19:20:31[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+66 buffered); 16 inflight episodes (train=0, eval=16)[0m[0m
+[2m19:20:41[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+66 buffered); 32 inflight episodes (train=0, eval=32)[0m[0m
+[2m19:20:45[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 2ccb870e-99f6-45cc-91f1-5e1494afca63 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:45[0m [1m   INFO[0m [1m[22mSwitching dispatcher mode to prefer train episodes because the eval queue drained[0m[0m
+[2m19:20:49[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group a6913f75-4ca0-487a-a0ae-082abf5d3234 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:49[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group a4835775-81ab-4219-bbcd-94e54ccf81b0 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:49[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group a4835775-81ab-4219-bbcd-94e54ccf81b0 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:49[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 2ccb870e-99f6-45cc-91f1-5e1494afca63 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:50[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group a6913f75-4ca0-487a-a0ae-082abf5d3234 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:50[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 867d43bc-ff34-4100-b778-2876d93c6ec9 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:51[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+66 buffered) | tb2-heldout 7/40 (17.5%); 33 inflight episodes (train=0, eval=33)[0m[0m
+[2m19:20:52[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group f6bfb641-1302-4245-bca7-2577d6586ff0 (tb2-heldout) — HarnessError: harness setup: RuntimeError: Node.js install failed: p2/libnghttp2-14_1.43.0-1%2bdeb11u3_amd64.deb  404  Not Found [IP: 151.101.2.132 80]
+E: Failed to fetch http://security.debian.org/debian-security/pool/updates/main/c/curl/libcurl4_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 151.101.2.132 80]
+E: Failed to fetch http://security.debian.org/debian-security/pool/updates/main/c/curl/curl_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 151.101.2.132 80]
+E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?[0m[0m
+[2m19:20:52[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group f6bfb641-1302-4245-bca7-2577d6586ff0 (tb2-heldout) — HarnessError: harness setup: RuntimeError: Node.js install failed: nghttp2-14_1.43.0-1%2bdeb11u3_amd64.deb  404  Not Found [IP: 151.101.130.132 80]
+E: Failed to fetch http://security.debian.org/debian-security/pool/updates/main/c/curl/libcurl4_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 151.101.130.132 80]
+E: Failed to fetch http://security.debian.org/debian-security/pool/updates/main/c/curl/curl_7.74.0-1.3%2bdeb11u16_amd64.deb  404  Not Found [IP: 151.101.130.132 80]
+E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?[0m[0m
+[2m19:20:52[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 82cf79ba-8c53-4512-b6a5-aa4ce276e46f (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:52[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 867d43bc-ff34-4100-b778-2876d93c6ec9 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:54[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3c0b6234-35b9-4798-869c-f3c6b7a2e1fc (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:55[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 2eca5531-ee1b-425a-9bf5-4b1abb284a0e (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:55[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 100296b2-41b9-4830-9f2c-4284387f98f1 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:56[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 4dd82ae0-5252-408a-ac76-bd2981fb9cf9 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:56[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 62b550b6-873a-4a16-800d-4a17c30dc4aa (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:56[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 09187398-b52d-49d0-a809-8657440243ee (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:57[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 4dd82ae0-5252-408a-ac76-bd2981fb9cf9 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:57[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 3c0b6234-35b9-4798-869c-f3c6b7a2e1fc (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:57[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 100296b2-41b9-4830-9f2c-4284387f98f1 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:59[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 2eca5531-ee1b-425a-9bf5-4b1abb284a0e (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:20:59[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 82cf79ba-8c53-4512-b6a5-aa4ce276e46f (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:00[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 62b550b6-873a-4a16-800d-4a17c30dc4aa (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:00[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1e991361-5321-4c8e-92e6-fe2284c9dc14 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:01[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0dcf7c90-51e3-4010-98cc-652bcdbe0953 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:01[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+66 buffered) | tb2-heldout 25/40 (62.5%); 15 inflight episodes (train=0, eval=15)[0m[0m
+[2m19:21:01[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 09187398-b52d-49d0-a809-8657440243ee (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:01[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 4fb7e03f-2084-48f3-8f04-38126d60d7d5 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:02[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1e991361-5321-4c8e-92e6-fe2284c9dc14 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:04[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 0dcf7c90-51e3-4010-98cc-652bcdbe0953 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:04[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1fdadd54-db81-4aba-a286-ce4765b1d1a2 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:04[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 93215b0f-fb5f-4754-9f18-297fa55628e8 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:05[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 93215b0f-fb5f-4754-9f18-297fa55628e8 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:06[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 4fb7e03f-2084-48f3-8f04-38126d60d7d5 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:06[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 5069fb1b-f45d-4aeb-b82a-fd03add6ff4e (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:07[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 5069fb1b-f45d-4aeb-b82a-fd03add6ff4e (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:07[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group 1fdadd54-db81-4aba-a286-ce4765b1d1a2 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:09[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e723f610-abee-4686-8b95-4128ce2177ed (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:10[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group e723f610-abee-4686-8b95-4128ce2177ed (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:11[0m [1m   INFO[0m [1m[22mTrain batch 0/32 (0.0%) (+66 buffered) | tb2-heldout 38/40 (95.0%); 2 inflight episodes (train=0, eval=2)[0m[0m
+[2m19:21:12[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group a6ac3a06-ea6e-4423-a19f-88dfd6976851 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:13[0m [33m[1mWARNING[0m [33m[1m[22mTrace failed in group a6ac3a06-ea6e-4423-a19f-88dfd6976851 (tb2-heldout) — ProviderError: upstream 400: {"error":{"message":"\"auto\" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set","type":"BadRequestError","param":null,"code":400}}[0m[0m
+[2m19:21:13[0m [32m[1mSUCCESS[0m [32m[1m[22mEvaluated tb2-heldout | Policy v12 |   50.3s | Reward 0.0000 | Turns 0.0 | Branches 0.0 | Error 100.0% | Truncation 0.0% | Timeout 0.0%[0m[0m
+[2m19:21:13[0m [1m   INFO[0m [1m[22mPipeline drained, exiting main loop[0m[0m
+[2m19:21:13[0m [1m   INFO[0m [1m[22mSaving final checkpoint at step 12[0m[0m
+[2m19:21:13[0m [32m[1mSUCCESS[0m [32m[1m[22mOrchestrator step loop done in 2h 37m[0m[0m
+[2m19:21:15[0m [1m   INFO[0m [1m[22mFinalized metrics at outputs/ornith35b-sd-pilot-1009-1234/monitors/file/metrics.jsonl[0m[0m
+[2m19:21:15[0m [1m   INFO[0m [1m[22mStopping orchestrator components[0m[0m
+[2m19:21:15[0m [32m[1mSUCCESS[0m [32m[1m[22mOrchestrator finished[0m[0m

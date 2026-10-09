@@ -1,0 +1,24 @@
+543 of 598 training attempts kept (left out: dispatched in the run's last 31 min)
+
+task                                 early: solved/all (finished)    late: solved/all (finished)
+cancel-async-tasks                                      5/16 (14)                      6/16 (14)
+configure-git-webserver                                 9/16 (16)                     10/16 (15)
+count-dataset-tokens                                   12/16 (16)                     10/16 (16)
+db-wal-recovery                                          4/16 (8)                      6/15 (11)
+feal-linear-cryptanalysis                               6/16 (10)                       4/11 (8)
+fix-ocaml-gc                                           15/16 (16)                        6/8 (8)
+large-scale-text-editing                                 7/16 (7)                        1/8 (1)
+llm-inference-batching-scheduler                         5/16 (5)                        1/8 (2)
+mailman                                                  3/16 (8)                        2/6 (2)
+mcmc-sampling-stan                                      9/16 (10)                        7/8 (7)
+model-extraction-relu-logits                             2/16 (8)                        1/7 (4)
+password-recovery                                       8/16 (10)                        5/8 (7)
+polyglot-c-py                                           2/16 (16)                        4/8 (8)
+query-optimize                                            2/8 (8)                        2/8 (8)
+regex-log                                                 6/8 (6)                        7/8 (7)
+sqlite-with-gcov                                          6/8 (8)                        8/8 (8)
+
+early v0-2  232 attempts: solved 44% of all, 61% of finished; timeouts 28%
+mid v3-5    152 attempts: solved 53% of all, 66% of finished; timeouts 20%
+late v6+    159 attempts: solved 50% of all, 63% of finished; timeouts 21%
+per-task mean change early -> late (16 tasks): +5.0 pts of all attempts, +3.6 pts of finished; 10 tasks up, 5 down
