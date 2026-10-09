@@ -46,5 +46,5 @@
  },
  "extra_today_dollars": 47,
  "extra_today_note": " (~$35 pi RL test, ~$7 Qwen 27B run, ~$5 coaching reruns)",
- "next_text": "RL test in pi: done (~$35). Training works through pi, and the length cap stopped 0 of 136 attempts (20-53% per step in the prime_agent fit check). Qwen3.8-27B in prime_agent: 33/60 vs R1s-SD 31/60 (~$7). Next for R1s-SD: pick the 16 pilot tasks and check them for leaked answers, then the 12-step pilot (~$120-140) with your OK."
+ "next_text": "RL pilot prep: done, no spend. 16 tasks picked; their images and all 215 earlier attempts at them checked for leaked answers, all clean. Pilot config passes prime-rl's own check; the job now saves, checks, measures and uploads the trained weights. Cost: about $150-215 (hard cap $240). HF has nothing cheaper that fits, so I cut waiting time instead: steps were held up by a few slow attempts, now capped at 30 min. Waiting on your OK to launch."
 }

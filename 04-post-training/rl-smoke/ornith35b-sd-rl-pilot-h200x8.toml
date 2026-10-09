@@ -2,8 +2,9 @@
 # 20 TB2 tasks scored before step 1 and after the last step, and the final weights exported and uploaded.
 # Pool (pilot/pool.txt): TB2 train tasks R1s-SD solves sometimes but not always, minus three with heavy sandbox loss;
 # their images and earlier rollouts were checked for leaks (pilot/image_check, pilot/hack_scan.py).
-# Changes from the pi check: 12 steps, lr 2e-6, max_turns 100 (60 cut 7 of 32 pi-check attempts), 4 tasks x 8 per
-# step, [ckpt] (final step only), [orchestrator.eval]. Submit with PI_CONTEXT_WINDOW=98304 EXPORT=1 RL_TIMEOUT=7h TIMEOUT=8h (hf_rl_job.sh).
+# Changes from the pi check: 12 steps, lr 2e-6, max_turns 100 (60 cut 7 of 32 pi-check attempts), attempts capped at
+# 30 min, 64 in flight from the start, [ckpt], [orchestrator.eval]. Submit with PI_CONTEXT_WINDOW=98304 EXPORT=1
+# RL_TIMEOUT=5h TIMEOUT=6h (hf_rl_job.sh).
 max_steps = 12
 seq_len = 131072                      # one packed row = one full rollout branch
 
@@ -49,7 +50,7 @@ group_size = 8
 max_completion_tokens = 32768         # same per-call reply cap as the evals
 
 [orchestrator.concurrency]
-initial_inflight = 32
+initial_inflight = 64                 # pi check: started at 32 and took ~40 min to creep to 54, while steps waited on stragglers
 max_inflight = 64                     # also caps live Prime sandboxes
 
 [orchestrator.renderer]               # Ornith isn't in MODEL_RENDERER_MAP; 'auto' is rejected at config time
@@ -66,7 +67,8 @@ env.agent.runtime.type = "prime"
 env.agent.runtime.labels = ["ornith35b-rl-pilot"]
 env.agent.max_turns = 100
 env.agent.max_total_tokens = 400000   # cumulative over the attempt; pi's compaction keeps each call under max_model_len
-env.agent.timeout.rollout = 3600      # a timed-out rollout is DROPPED from training; 1 h as in the evals
+env.agent.timeout.rollout = 1800      # DROPPED from training if hit. pi check: 3 of 136 attempts ran past 30 min (1 of 84 solves), but
+                                      # each held its whole group of 8, and a step needs 4 finished groups
 env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]   # Prime-terminated sandboxes rerun; else dropped
 
 [ckpt]                                # exported by hf_rl_job.sh (EXPORT=1) after training
@@ -90,7 +92,7 @@ env.agent.runtime.type = "prime"
 env.agent.runtime.labels = ["ornith35b-rl-pilot"]
 env.agent.max_turns = 100
 env.agent.max_total_tokens = 400000
-env.agent.timeout.rollout = 3600
+env.agent.timeout.rollout = 1800      # same 30 min before and after; the last eval attempt holds all 8 GPUs
 env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]
 
 [inference.vllm]

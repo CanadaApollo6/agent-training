@@ -168,7 +168,7 @@ Config: `ornith35b-sd-rl-pilot-h200x8.toml`; prime-rl's own config check passes.
   - checks that the frozen parts (vision tower, routers) are unchanged;
   - measures how much of the model changed;
   - uploads the weights (~67 GB) to the sd-out bucket.
-  - A time limit on training (7 h) leaves room for this even if steps run slow.
+  - A time limit on training (5 h) leaves room for this even if steps run slow.
 - **Leak checks done before the pilot (all clean):**
   - Images (`pilot/image_check.sh`, reports in `pilot/image_check/`): each of the 16 images opened with the network
     off. No Git repos, no test or solution files.
@@ -192,15 +192,24 @@ Config: `ornith35b-sd-rl-pilot-h200x8.toml`; prime-rl's own config check passes.
   is down (memorising; needs a bigger pool).
 - **On go:** the full run starts from the pilot's uploaded weights, so the pilot's training counts toward it. Its
   optimizer state is not kept (~0.4 TB); that only costs the first few steps' warm-up.
-- **Cost, re-estimated from the pi check's real step times (17 and 23 min at $40/h).** The pilot's tasks are harder
-  and attempts may run longer (turn cap 100), so I budget 20–30 min a step.
+- **Cost.** HF has no cheaper machine that fits: training needs ~134 GB per GPU, and only H200s have 141 GB (A100 80,
+  RTX PRO 6000 96). Prime's H200 pods cost about the same per GPU. So the saving has to come from wasted time.
+  - **Where the time went in the pi check:** steps took 17–23 min although the median attempt took 5 min. A step needs 4
+    complete groups of 8, and one slow attempt (up to 41 min) holds up its whole group. At the worst point, 67 finished
+    attempts sat waiting while the batch stood at 31 of 32. Meanwhile attempts in flight crept from 32 to 54 over 40 min.
+  - **Two changes:**
+    - attempts capped at 30 min (was 60). In the pi check only 3 of 136 attempts ran longer, and 1 of the 84 solves;
+    - 64 attempts in flight from the start.
+    - The held-out test uses the same 30-min cap before and after, so it stays a fair comparison.
+  - **Estimate:** 12–20 min a step. That's a guess from the pi check, not measured with these settings.
 
   | Part | Time | Cost |
   |---|---|---|
   | Setup, model load, server start | ~20 min | ~$13 |
-  | 12 training steps (the first overlaps the "before" eval) | 4–6 h | $160–240 |
-  | "After" eval on the held-out 20 | 30–45 min | $20–30 |
+  | 12 training steps (the first overlaps the "before" test) | 2.5–4 h | $100–160 |
+  | "After" test on the held-out 20 | ≤30 min | ≤$20 |
   | Export, checks, upload | ~30 min | ~$20 |
-  | **Total** | **5–7.5 h** | **about $215–300**, hard cap $320 (8 h job limit) |
+  | **Total** | **3.5–5 h** | **about $150–215**, hard cap $240 (6 h job limit; training stops at 5 h) |
 
-  Prime sandbox fees come on top. The earlier $120–140 quote assumed ~$9 a step; the pi check measured $11–15.
+  Prime sandbox fees come on top. The first quote ($120–140) assumed ~$9 a step; with the old settings the pi check's
+  pace put it at $215–300.
