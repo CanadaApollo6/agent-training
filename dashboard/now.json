@@ -46,5 +46,5 @@
  },
  "extra_today_dollars": 47,
  "extra_today_note": " (~$35 pi RL test, ~$7 Qwen 27B run, ~$5 coaching reruns)",
- "next_text": "RL pilot prep: done, no spend. 16 tasks picked; their images and all 215 earlier attempts at them checked for leaked answers, all clean. Pilot config passes prime-rl's own check; the job now saves, checks, measures and uploads the trained weights. Cost: about $150-215 (hard cap $240). HF has nothing cheaper that fits, so I cut waiting time instead: steps were held up by a few slow attempts, now capped at 30 min. Waiting on your OK to launch."
+ "next_text": "RL pilot launched 12:34 p.m. on 9 Oct: 12 training steps on 16 tasks, held-out 20 tested before and after, then the trained model is saved, measured and uploaded. Expected 3.5-5 h, about $150-215; the job is capped at 6 h ($240)."
 }

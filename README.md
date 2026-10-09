@@ -94,6 +94,16 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   - Nothing about agents or harnesses, and no released model in our size class.
   - Verdict: background only. Pretraining from scratch is out of scope. If architectures like this ship as open
     models, they'd be candidates for long agent runs that live off in-context information.
+- TensorFold "Living Weights" (Ash Hart, [@ashxhart](https://x.com/ashxhart), tweet 2026-10-09 11:27): a model that
+  updates its own weights while in use and keeps what it learned when moved to another machine. Announced to ship "in
+  the latest TensorFold release today", with Nemotron Lightning support.
+  - Not public yet at 12:45 the same day: the latest release is still 1.0.2 (2026-10-07). No branch, pull request or
+    code mentions it.
+  - Open questions: what it learns from (the conversation itself, or only corrections); what changes (likely a small
+    add-on layer, since TensorFold's builds are 3–4-bit); and what guards against forgetting or learning the user's
+    mistakes. RL only keeps what a verifier passed; nothing in the tweet says what plays that role here.
+  - Verdict: watch. Recheck when it ships. If it works on Qwen3.8-27B, it's a cheap test of learning on the 3090:
+    tasks it fails, then the same tasks after a session of use.
 - [NeMo-DCR: Bit-Exact Delta-Compressed Refit for Scalable Agentic RL at Trillion-Parameter Scale](https://arxiv.org/abs/2610.08430)
   (Jiang, Li, Kong, Yao, Kwon, Nguyen, Aithal, Di Francesco; Aalto and NVIDIA, 2026-10-06; code in
   [NeMo RL PR #2444](https://github.com/NVIDIA-NeMo/RL/pull/2444)).
