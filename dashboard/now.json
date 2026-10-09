@@ -46,24 +46,24 @@
  },
  "extra_today_dollars": 127,
  "extra_today_note": "(~$118 RL pilot, ~$9 held-out test)",
- "next_text": "RL pilot done (~$118 + ~$9 held-out test). Practice tasks +5 points (10 of 16 up, 5 down); held-out 20: 32/48 -> 34/46 (not down, maybe up); trained model's replies ~25-35% shorter on held-out tasks; 16% of weights moved; one shortcut (downloading upstream OCaml to copy a fix). Small gain everywhere, none proven: not a clear go for the full run. Your call on next step.",
- "headline_text": "The RL pilot is done: 12 training steps on 16 practice tasks, then a before/after test on 20 tasks it never trained on. The trained model got a little better on both and its replies got shorter, but every gain is inside the noise. Not a clear go for the ~$400 full run.",
+ "next_text": "Continuation running (job 6ac95652, cap 230 min, ~$120-150). Go for the full run if practice tasks keep climbing past 50% and held-out holds or rises; stop RL if both flatten.",
+ "headline_text": "RL continuation launched at 5:01 p.m.: 12 more training steps from the pilot's weights, with GitHub blocked while the model works and 60 minutes per attempt. Done around 8:30 p.m., then a held-out test (~$5). Decides whether the ~$400 full run is worth it.",
  "headline_numbers": [
   {
-   "value": "+5 pts",
-   "label": "Practice tasks, early vs late"
+   "value": "Starting",
+   "label": "Continuation (12 steps)"
   },
   {
-   "value": "32 \u2192 34",
-   "label": "Held-out solves (of ~47 usable)"
+   "value": "50%",
+   "label": "Pilot's late practice score, to beat"
   },
   {
-   "value": "\u221225\u201335%",
-   "label": "Reply length on held-out"
+   "value": "34 / 46",
+   "label": "Pilot held-out, to hold or beat"
   },
   {
-   "value": "$127",
-   "label": "Pilot + held-out test"
+   "value": "\u2264 $155",
+   "label": "Continuation cap"
   }
  ],
  "pilot": {
