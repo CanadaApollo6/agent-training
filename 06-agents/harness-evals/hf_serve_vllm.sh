@@ -11,6 +11,8 @@
 # prompt and made it overthink in the math probe (01-inference/qwen38-27b README). EFFORT (default medium) is set
 # server-side with --default-chat-template-kwargs, so every request gets it whatever the harness sends.
 # Same caps as R1s-SD's c32 runs: 131K window, 32K per-call reply cap, 60 turns, 1-hour rollouts.
+# MODEL_SRC=<dir in the sd-out bucket> serves our own checkpoint instead of REPO (e.g. the RL pilot's export); EFFORT=
+# (empty) sends no reasoning_effort. HARNESS (default prime_agent), TURNS and RTIMEOUT (rollout seconds) set the eval.
 set -euo pipefail
 HF="uvx --from huggingface_hub hf"
 case ${1:-} in
@@ -22,12 +24,13 @@ submit)
     $HF buckets create "$NS/sd-in" --private --exist-ok > /dev/null
     $HF buckets sync $S "hf://buckets/$NS/sd-in/vllm-serve" --delete > /dev/null
     $HF jobs run --detach -q --flavor ${FLAVOR:-h200} --timeout ${TIMEOUT:-5h} --expose 8080 --name "serve-$P" \
-        -e REPO=${REPO:-Qwen/Qwen3.8-27B} -e NAMES="$P-a1 $P-a2 $P-a3" -e EFFORT=${EFFORT:-medium} \
-        -e CONTEXT=${CONTEXT:-131072} -v "hf://buckets/$NS/sd-in/vllm-serve:/code:ro" \
+        -e REPO=${REPO:-Qwen/Qwen3.8-27B} -e NAMES="$P-a1 $P-a2 $P-a3" -e EFFORT=${EFFORT-medium} \
+        -e CONTEXT=${CONTEXT:-131072} -e MODEL_SRC=${MODEL_SRC:-} -v "hf://buckets/$NS/sd-in/vllm-serve:/code:ro" \
+        -v "hf://buckets/$NS/sd-out:/sd:ro" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /code/hf_serve_vllm.sh entry
     ;;
 eval)
-    J=$2 P=$3
+    J=$2 P=$3 H=${HARNESS:-prime_agent}
     cd "$(dirname "$0")"
     export HF_TOKEN=$(cat ${HF_HOME:-$HOME/.cache/huggingface}/token)
     U=https://$J--8080.hf.jobs/v1
@@ -37,10 +40,10 @@ eval)
     if ! up; then log "$P: vLLM on job $J never came up"
     else
         for a in 1 2 3; do
-            log "$P-a$a prime_agent start (job $J)"
-            ( BASE_URL=$U KEY_VAR=HF_TOKEN TIMEOUT=3600 EXTRA="--sampling.max-tokens 32768" \
-                ./run_eval.sh tb2 prime_agent "$P-a$a" ${CONC:-8} > /dev/null 2>&1
-              log "$P-a$a prime_agent done (exit $?): $(grep -c 'reward=1' logs/tb2-$P-a$a-prime_agent.log) solved" ) &
+            log "$P-a$a $H start (job $J)"
+            ( BASE_URL=$U KEY_VAR=HF_TOKEN TIMEOUT=${RTIMEOUT:-3600} EXTRA="--sampling.max-tokens 32768" \
+                ./run_eval.sh tb2 $H "$P-a$a" ${CONC:-8} > /dev/null 2>&1
+              log "$P-a$a $H done (exit $?): $(grep -c 'reward=1' logs/tb2-$P-a$a-$H.log) solved" ) &
             sleep 30
         done
         wait
@@ -60,13 +63,14 @@ entry)
     VIRTUAL_ENV=~/vllm uv pip install -q vllm "transformers>=5.8.0" "huggingface_hub[hf_xet]" ninja 2>&1 | tail -5
     export PATH=$HOME/vllm/bin:$PATH   # ninja: vLLM JIT-builds kernels for this model at startup
     say "vllm $(~/vllm/bin/python -c 'import vllm; print(vllm.__version__)'), transformers $(~/vllm/bin/python -c 'import transformers; print(transformers.__version__)')"
-    ~/vllm/bin/hf download $REPO --local-dir ~/model > /tmp/download.log 2>&1 || { say "download failed"; tail /tmp/download.log; exit 1; }
-    say "model downloaded: $(du -sh ~/model | cut -f1)"
-    say "serving $REPO as: $NAMES (reasoning_effort $EFFORT, context $CONTEXT)"
+    if [ -n "${MODEL_SRC:-}" ]; then cp -r /sd/$MODEL_SRC ~/model || { say "copy failed"; exit 1; }; REPO=sd-out/$MODEL_SRC
+    else ~/vllm/bin/hf download $REPO --local-dir ~/model > /tmp/download.log 2>&1 || { say "download failed"; tail /tmp/download.log; exit 1; }; fi
+    say "model ready: $(du -sh ~/model | cut -f1)"
+    say "serving $REPO as: $NAMES (reasoning_effort ${EFFORT:-none}, context $CONTEXT)"
+    KW=(); [ -n "${EFFORT:-}" ] && KW=(--default-chat-template-kwargs "{\"reasoning_effort\": \"$EFFORT\"}")
     exec ~/vllm/bin/vllm serve ~/model --served-model-name $NAMES --host 0.0.0.0 --port 8080 \
         --max-model-len $CONTEXT --gpu-memory-utilization 0.92 --enable-prefix-caching \
-        --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder \
-        --default-chat-template-kwargs "{\"reasoning_effort\": \"$EFFORT\"}"
+        --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder "${KW[@]}"
     ;;
 *) echo "usage: hf_serve_vllm.sh submit <label prefix> | eval <job id> <label prefix> | entry"; exit 1 ;;
 esac
