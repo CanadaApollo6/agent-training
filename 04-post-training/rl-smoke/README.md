@@ -249,3 +249,30 @@ Run `ornith35b-sd-pilot-1009-1234`, 12 steps in 2 h 44 min, ~$118. The trained w
   - block GitHub downloads on tasks with an upstream fix (`network_block`);
   - raise the 30-minute cap (45–60 min) or score timeouts as fails;
   - fix the in-job eval: a tool-call parser on the run's vLLM, or keep testing outside as here.
+
+**Continuation (approved 2026-10-09): 12 more steps from the pilot's weights, with the fixes.**
+Config `ornith35b-sd-rl-cont-h200x8.toml`. Same pool, settings and lr, so the pool numbers continue the pilot's.
+The optimizer starts fresh, because the pilot's checkpoints stayed on its job.
+
+- **GitHub blocked while the agent works.**
+  - Hosts blocked: github.com, \*.github.com, githubusercontent.com, \*.githubusercontent.com.
+  - Prime matches exact names. A bare `github.com` still let raw.githubusercontent.com through (`pilot/egress_test.py`).
+  - In the pilot only 2 of ~600 attempts touched GitHub, so honest work loses almost nothing.
+  - TB2 scores in the agent's own sandbox, and every pool task's `test.sh` installs uv from GitHub (fix-ocaml-gc's also clones from GitHub).
+  - So `SCORING_REOPEN=1` patches verifiers to lift the block after the agent stops and before scoring. The block and the reopen were tested on a Prime sandbox, and one full regex-log attempt (DeepSeek V4.1 Flash, pi) was tested end to end: blocked at 16:53, reopened at 17:01, scored 1.0.
+- **Timeouts:**
+  - The cap is now 60 min, up from 30.
+  - Scoring timeouts as fails isn't an option: prime-rl drops a timed-out training attempt by design (`dispatcher.py`).
+- **No in-job eval:**
+  - The fix is one setting (`tool_call_parser = "qwen3_coder"`, `reasoning_parser = "qwen3"`). But each in-job eval holds all 8 GPUs (~$20 per eval).
+  - The held-out 20 are tested outside afterwards (~$5), as for the pilot.
+- **Saving and cost:**
+  - Checkpoints at steps 3, 6, 9 and 12.
+  - RL_TIMEOUT=3h15m, job TIMEOUT=3h50m: at most ~$155, expected $120–150.
+- **Read-out:**
+  - `pilot/pool_progress.py <traces> 61` on the pool.
+  - Held-out on `<run>-bf16`, compared with base 32/48 and pilot 34/46.
+  - `pilot/hack_scan.py` on the stream.
+- **Go/no-go for the full run:**
+  - Go if the pool keeps climbing past the pilot's late 50% and the held-out score holds or rises.
+  - Stop RL if both flatten.

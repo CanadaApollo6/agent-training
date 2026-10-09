@@ -1,12 +1,13 @@
 """Pilot go/no-go, part 1: did the 16 pool tasks get solved more often as training went on?
 
 Reads a prime-rl run's trace stream (stream/00000.jsonl + stream.index.jsonl) and compares attempts by the policy
-version that made them: early (v0-2), mid (v3-5), late (v6+). Attempts dispatched in the last 31 minutes are left out:
+version that made them: early (v0-2), mid (v3-5), late (v6+). Attempts dispatched in the run's last CUT minutes (the
+attempt time limit + 1; default 31, use 61 for the continuation's 60-min limit) are left out:
 the run stopped before slow ones among them could finish or time out, so keeping them would make late versions look
-faster and better than they are. Rates are given two ways: of all attempts (a 30-minute timeout counts as a fail), and
+faster and better than they are. Rates are given two ways: of all attempts (a timeout counts as a fail), and
 of attempts that finished.
 
-    python pool_progress.py OUTPUTS/<run>/monitors/file/traces
+    python pool_progress.py OUTPUTS/<run>/monitors/file/traces [CUT]
 """
 import collections
 import json
@@ -15,6 +16,7 @@ import sys
 from pathlib import Path
 
 D = Path(sys.argv[1])
+CUT = int(sys.argv[2]) if len(sys.argv) > 2 else 31
 idx = {}
 for l in open(D / "stream.index.jsonl"):
     if l.strip():
@@ -33,8 +35,8 @@ for line in open(D / "stream/00000.jsonl"):
     recs.append(dict(task=r["task"]["data"]["name"].split("/")[-1], d=x["dispatch"], pol=r["run"]["work"]["policy"]["start"],
                      to=x["timeout"], ok=bool(s and s > 0.5) and not x["timeout"]))
 tend = max(x["arrival"] for x in idx.values())
-kept = [r for r in recs if r["d"] <= tend - 31 * 60]
-print(f"{len(kept)} of {len(recs)} training attempts kept (left out: dispatched in the run's last 31 min)")
+kept = [r for r in recs if r["d"] <= tend - CUT * 60]
+print(f"{len(kept)} of {len(recs)} training attempts kept (left out: dispatched in the run's last {CUT} min)")
 B = lambda p: "early v0-2" if p <= 2 else ("mid v3-5" if p <= 5 else "late v6+")
 agg = collections.defaultdict(lambda: collections.defaultdict(lambda: [0, 0, 0]))  # solved, finished, all
 for r in kept:

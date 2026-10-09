@@ -1,0 +1,88 @@
+# R1s-SD RL continuation: 12 more steps from the pilot's exported weights (sd-out/ornith35b-sd-pilot-1009-1234-bf16),
+# same 16-task pool and settings, with the pilot's lessons applied (README.md, pilot result):
+# - GitHub blocked while the agent works (one pilot attempt copied the fix from upstream OCaml source; only 2 of ~600
+#   attempts touched GitHub at all). TB2 scores in the agent's own sandbox and every test.sh installs uv from GitHub
+#   (fix-ocaml-gc's also clones it), so the job patches verifiers to reopen the network before scoring
+#   (SCORING_REOPEN=1 in hf_rl_job.sh; block, then reopen, tested on a Prime sandbox: pilot/egress_test.py).
+# - attempts capped at 60 min, not 30: prime-rl always drops a timed-out attempt from training, and the 30-min cap
+#   dropped 15-31% per step, mostly the hard attempts.
+# - no in-job eval: it ties up all 8 GPUs (~$20 each time); the held-out 20 are tested outside afterwards
+#   (06-agents/harness-evals/hf_serve_vllm.sh MODEL_SRC=<run>-bf16, ~$5), as for the pilot. If it is wanted later,
+#   tool_call_parser = "qwen3_coder" and reasoning_parser = "qwen3" under inference.vllm fix its tool_choice error.
+# Fresh optimizer state: the pilot's checkpoints stayed on its job. Checkpoint every 3 steps so an RL_TIMEOUT stop
+# loses at most 2. Submit with SCORING_REOPEN=1 MODEL_SRC=ornith35b-sd-pilot-1009-1234-bf16 PI_CONTEXT_WINDOW=98304 EXPORT=1
+# RL_TIMEOUT=3h15m TIMEOUT=3h50m (hf_rl_job.sh).
+max_steps = 12
+seq_len = 131072                      # one packed row = one full rollout branch
+
+[env_vars]
+FLA_DISABLE_TENSOR_CACHE = "1"        # prime-rl#3882: FLA tensor cache breaks Qwen3.5 checkpointed backward
+
+[model]
+name = "/workspace/ornith35b-sd-pilot-1009-1234-bf16"   # the pilot's 12-step weights (vision tower present)
+
+[model.vlm]                           # the harness can send images; a text-only trainer raises on any image sample
+vision_encoder_attr = "model.visual"
+language_model_attr = "model.language_model"
+
+[deployment]
+num_train_gpus = 4
+num_infer_gpus = 4
+
+[trainer]
+enable_router_replay = true           # vLLM returns its expert routes and the trainer replays them (custom impl, picked automatically for qwen3_5_moe)
+
+[trainer.model]
+attn = "flash_attention_2"            # auto picks FA3 on Hopper, which the job doesn't install
+ep = 4
+cp = 4
+cp_style = "ulysses"                  # the only CP style for Gated DeltaNet layers and for VLMs
+# fp32 master weights, as in the SD run: at lr 1e-6 most bf16 updates would round away
+optimization_dtype = "float32"
+reduce_dtype = "float32"
+freeze_moe_router = true              # R1s's 3-bit experts were searched against these routes
+
+[trainer.optim]
+lr = 2e-6                             # as in the pilot
+
+[orchestrator]
+batch_size = 32                       # rollouts per step: the planned real-run size
+constant_trainer_batch_size = false
+max_off_policy_steps = 8
+
+[orchestrator.train]
+group_size = 8
+
+[orchestrator.train.sampling]
+max_completion_tokens = 32768         # same per-call reply cap as the evals
+
+[orchestrator.concurrency]
+initial_inflight = 64                 # pi check: started at 32 and took ~40 min to creep to 54, while steps waited on stragglers
+max_inflight = 64                     # also caps live Prime sandboxes
+
+[orchestrator.renderer]               # Ornith isn't in MODEL_RENDERER_MAP; 'auto' is rejected at config time
+name = "qwen3.5"
+enable_thinking = true
+thinking_retention = "all"            # Ornith's template keeps all past <think> blocks
+
+[[orchestrator.train.source]]
+name = "tb2-pool"
+env.taskset.id = "terminal-bench-2"
+env.taskset.tasks = ["cancel-async-tasks", "configure-git-webserver", "count-dataset-tokens", "fix-ocaml-gc", "password-recovery", "mcmc-sampling-stan", "regex-log", "large-scale-text-editing", "llm-inference-batching-scheduler", "mailman", "sqlite-with-gcov", "db-wal-recovery", "feal-linear-cryptanalysis", "polyglot-c-py", "query-optimize", "model-extraction-relu-logits"]
+env.agent.harness.id = "pi"
+env.agent.runtime.type = "prime"
+env.agent.runtime.labels = ["ornith35b-rl-cont"]
+env.agent.runtime.block = ["github.com", "*.github.com", "githubusercontent.com", "*.githubusercontent.com"]   # Prime matches exact
+                                      # names: "github.com" alone let raw.githubusercontent.com through (tested)
+env.agent.max_turns = 100
+env.agent.max_total_tokens = 400000   # cumulative over the attempt; pi's compaction keeps each call under max_model_len
+env.agent.timeout.rollout = 3600      # DROPPED from training if hit (prime-rl, not configurable); 1800 dropped 15-31% per step
+env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]   # Prime-terminated sandboxes rerun; else dropped
+
+[ckpt]                                # exported by hf_rl_job.sh (EXPORT=1) after training
+interval = 3                          # also at steps 3, 6 and 9, so a run stopped by RL_TIMEOUT still has weights to export
+keep_last = 1                         # each holds fp32 weights + optimizer (~0.4 TB); the job disk is 24 TB
+
+[inference.vllm]
+max_model_len = 131072
+data_parallel_size = 4               # explicit: rl sizes the NCCL weight broadcast before [deployment] sets dp

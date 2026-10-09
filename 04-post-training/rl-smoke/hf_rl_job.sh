@@ -10,6 +10,8 @@
 # pi then assumes 128000): pi compacts once its context passes contextWindow - 16384.
 # EXPORT=1 (needs MODEL_SRC and a [ckpt] in the config) turns the run's last checkpoint into bf16 weights after training,
 # measures how many weights changed (pilot/weights_moved.py) and uploads them to the sd-out bucket as <run>-bf16.
+# SCORING_REOPEN=1 patches verifiers to lift the runtime's network block after the agent stops, before the task's
+# collect hooks and test.sh run in the same sandbox (TB2's test.sh installs uv from GitHub).
 # RL_TIMEOUT=<duration> (e.g. 7h) stops training cleanly after that long, so a long run still leaves the job time to
 # export its latest checkpoint before TIMEOUT kills the job.
 #
@@ -32,7 +34,7 @@ submit)
       echo "PRIME_API_KEY=$(python3 -c "import json,os; print(json.load(open(os.path.expanduser('~/.prime/config.json')))['api_key'])")"; } |
     $HF jobs run --detach -q --secrets-file - --flavor ${FLAVOR:-a100x8} --timeout ${TIMEOUT:-270m} --name "rl-$RUN" \
         -e RUN=$RUN -e NS=$NS -e CONFIG=${CONFIG:-ornith9b-tb2-smoke.toml} -e PRIME_RL_COMMIT=$PRIME_RL_COMMIT \
-        -e MODEL_SRC=${MODEL_SRC:-} -e PI_CONTEXT_WINDOW=${PI_CONTEXT_WINDOW:-} -e EXPORT=${EXPORT:-} -e RL_TIMEOUT=${RL_TIMEOUT:-} "${MOUNT[@]}" \
+        -e MODEL_SRC=${MODEL_SRC:-} -e PI_CONTEXT_WINDOW=${PI_CONTEXT_WINDOW:-} -e EXPORT=${EXPORT:-} -e RL_TIMEOUT=${RL_TIMEOUT:-} -e SCORING_REOPEN=${SCORING_REOPEN:-} "${MOUNT[@]}" \
         -v "hf://buckets/$NS/rl-in/$RUN:/inputs:ro" -v "hf://buckets/$NS/rl-out:/out" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /inputs/hf_rl_job.sh entry
     echo "run $RUN"
@@ -58,6 +60,12 @@ entry)
         sed -i "s/^\( *\)\"input\": \[\"text\", \"image\"\],/&\n\1\"contextWindow\": $PI_CONTEXT_WINDOW,/" $PI_PY
         grep -q "\"contextWindow\": $PI_CONTEXT_WINDOW," $PI_PY && say "pi contextWindow patched: $PI_CONTEXT_WINDOW" \
             || { say "pi contextWindow patch failed"; exit 1; }
+    fi
+    if [ -n "${SCORING_REOPEN:-}" ]; then
+        RO=deps/verifiers/verifiers/v1/rollout.py
+        sed -i 's/^\( *\)assert runtime is not None$/&\n\1await runtime.prepare_execution(None)  # hf_rl_job.sh: reopen egress for scoring/' $RO
+        [ "$(grep -c 'await runtime.prepare_execution(None)  # hf_rl_job.sh' $RO)" = 1 ] && say "scoring reopen patched" \
+            || { say "scoring reopen patch failed"; exit 1; }
     fi
     uv sync --extra gpu --extra flash-attn --extra kernels --extra disagg --package prime-rl --package terminal-bench-2 > /tmp/sync.log 2>&1 \
         || { say "uv sync failed"; tail -40 /tmp/sync.log >> $OUT/job.log; exit 1; }
