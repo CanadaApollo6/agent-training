@@ -3,12 +3,12 @@ name = "harness-evals"
 version = "0.1.0"
 description = "verifiers v1 harness evals (pi vs prime-agent) against a self-hosted model"
 requires-python = ">=3.12,<3.13"
-# git main: pi 0.86.1 and prime-agent 0.9.5 are only pinned from 0.3.2.dev120 on
+# verifiers main 50ccf5a8 + the prime-agent Rust 0.10.0 patch, built into vendor/ by vendor_verifiers.sh
 dependencies = [
     "deep-swe>=0.1.0",
     "terminal-bench-2>=0.3.1",
     "tb2-lessons",
-    "verifiers[harbor] @ git+https://github.com/PrimeIntellect-ai/verifiers@aa924e7d",
+    "verifiers[harbor]",
 ]
 
 [tool.uv]
@@ -22,3 +22,4 @@ url = "https://hub.primeintellect.ai/primeintellect/terminal-bench-2/install/sim
 
 [tool.uv.sources]
 tb2-lessons = { path = "tb2-lessons", editable = true }
+verifiers = { path = "vendor/verifiers" }

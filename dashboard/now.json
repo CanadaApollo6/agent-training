@@ -47,11 +47,11 @@
  "extra_today_dollars": 127,
  "extra_today_note": "(~$118 RL pilot, ~$9 held-out test)",
  "next_text": "Continuation running (job 6ac95652, cap 230 min, ~$120-150). Go for the full run if practice tasks keep climbing past 50% and held-out holds or rises; stop RL if both flatten.",
- "headline_text": "RL continuation launched at 5:01 p.m.: 12 more training steps from the pilot's weights, with GitHub blocked while the model works and 60 minutes per attempt. Done around 8:30 p.m., then a held-out test (~$5). Decides whether the ~$400 full run is worth it.",
+ "headline_text": "RL continuation halfway: 6 of 12 steps, on pace to finish around 8:15 p.m. Step scores 0.58, 0.45, 0.75, 0.52, 1.00, 0.47 (noisy: some steps trained on only 6-8 attempts). About a third of attempts in the busy steps are lost: 31 to Prime shutting sandboxes down, 26 to the 60-min limit.",
  "headline_numbers": [
   {
-   "value": "Starting",
-   "label": "Continuation (12 steps)"
+   "value": "6 / 12",
+   "label": "Continuation steps done (6:43 p.m.)"
   },
   {
    "value": "50%",

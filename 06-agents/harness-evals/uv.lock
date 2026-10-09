@@ -469,7 +469,7 @@ wheels = [
 
 [[package]]
 name = "harbor"
-version = "0.21.0"
+version = "0.24.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dirhash" },
@@ -477,6 +477,7 @@ dependencies = [
     { name = "filelock" },
     { name = "httpx" },
     { name = "jinja2" },
+    { name = "jsonschema" },
     { name = "litellm" },
     { name = "packaging" },
     { name = "pathspec" },
@@ -487,6 +488,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "requests" },
     { name = "rich" },
+    { name = "semver" },
     { name = "shortuuid" },
     { name = "supabase" },
     { name = "tenacity" },
@@ -494,9 +496,9 @@ dependencies = [
     { name = "typer" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d1/30/c854dcf2b6cbc67f97265e1fd07de02b29419007d4258cded336c23d6356/harbor-0.21.0.tar.gz", hash = "sha256:93f7c2e4b150b2983a90b226c61daf071c35a9dd0f76e1053413d9ee0d738395", size = 1690211, upload-time = "2026-08-10T20:52:34.767Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/82/7d/16e21cfd52938260dce71ff77ec1ed156bd8c327642760fe66163b0cd3ce/harbor-0.24.0.tar.gz", hash = "sha256:6c5185e6a76abc677ed3f95e688dc0dbf8597e4fa50847cb9a37a4448c91b1e5", size = 2090577, upload-time = "2026-10-05T05:04:46.252Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/a4/b3e8aafbc0a002501c11c91958fc31a5098c2bd9376c46225af615373329/harbor-0.21.0-py3-none-any.whl", hash = "sha256:c77d779a03f1a9e8ecb3c449e17f39a9728b82238832f1fd28632eb9426c0a21", size = 1896665, upload-time = "2026-08-10T20:52:32.305Z" },
+    { url = "https://files.pythonhosted.org/packages/9e/63/0e3d788e8d1ed116125507c6a01e3fb95cf82be71f2ea7040a1458709d21/harbor-0.24.0-py3-none-any.whl", hash = "sha256:23b7ba616a3aae4eff561ced5e2c51c7186f2981e53a770dea9c689d3969877c", size = 2331740, upload-time = "2026-10-05T05:04:42.088Z" },
 ]
 
 [[package]]
@@ -515,7 +517,7 @@ requires-dist = [
     { name = "deep-swe", specifier = ">=0.1.0" },
     { name = "tb2-lessons", editable = "tb2-lessons" },
     { name = "terminal-bench-2", specifier = ">=0.3.1" },
-    { name = "verifiers", extras = ["harbor"], git = "https://github.com/PrimeIntellect-ai/verifiers?rev=aa924e7d" },
+    { name = "verifiers", extras = ["harbor"], directory = "vendor/verifiers" },
 ]
 
 [[package]]
@@ -1094,20 +1096,20 @@ toml = [
 
 [[package]]
 name = "prime-runs"
-version = "0.1.3"
+version = "0.1.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "prime-traces" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3f/ba/3d38aeafc0ef885eef7b99bbe26fe350b4248af8d3fa89d4ca8a249f0f04/prime_runs-0.1.3.tar.gz", hash = "sha256:181ab1c720ed9113abbf3719ba6863c9ee23c55309101c0b7f4021ff9dafbe20", size = 65541, upload-time = "2026-09-17T15:31:42.319Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/de/6fb503ce854315d096982b79340b02eb5a978b139a7c719d39df77e7f211/prime_runs-0.1.4.tar.gz", hash = "sha256:f06c2bc7db28f0ed99ca6b06aa5186245ca94009872eb861ab0be7cff25484bd", size = 67282, upload-time = "2026-10-08T00:23:59.354Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6e/93/5fff685470a6cb12fc93192432951a081de70e271aef1cebc506fba4ccc5/prime_runs-0.1.3-py3-none-any.whl", hash = "sha256:86c3d5183ed5848854a194233b4a9451deabea56a9063771244c5c54c00d69df", size = 45087, upload-time = "2026-09-17T15:31:40.913Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/51/8f300ac057c95afa9df591172b2e8374743afdeeae300771fd78c91a5f75/prime_runs-0.1.4-py3-none-any.whl", hash = "sha256:f33b477c2d53eca08524a3d469810943eee31af8f60ceffc38ef2b9c90596d1b", size = 46253, upload-time = "2026-10-08T00:23:57.736Z" },
 ]
 
 [[package]]
 name = "prime-sandboxes"
-version = "0.4.0"
+version = "0.4.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -1119,9 +1121,9 @@ dependencies = [
     { name = "pyqwest" },
     { name = "tenacity" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/75/49/81cff52505b30ab5bcb9d4442d9e114b901b9cf51fa3c4b2f3ee3a67a471/prime_sandboxes-0.4.0.tar.gz", hash = "sha256:a6934a5f5fce8342dbe9ade9816242e893ebf23b83a4fa5fda5b0ddbce651f27", size = 133339, upload-time = "2026-09-28T20:25:51.42Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/1b/01e02c9d2346956f5ed77d269f836905a017ad796a4b4c719debd8942dc4/prime_sandboxes-0.4.3.tar.gz", hash = "sha256:a2169182f74307485c73f897e224c978eba3276133ddb40715be4d346594c487", size = 140588, upload-time = "2026-10-08T00:24:03.668Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/0c/9c93d51a4a5cd12da82ce1822b82664f2ffe575ef846ad423fb477c4bfd5/prime_sandboxes-0.4.0-py3-none-any.whl", hash = "sha256:2a15263a30f3a3a27307c83701b92317af83ec8df0968e910100ccdb557cbb6b", size = 71501, upload-time = "2026-09-28T20:25:49.782Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/5f/d0b5cd1dabdb6e5cb1ab5d84c8ba9a96e2a9a0be8913ec9db9177c9645fb/prime_sandboxes-0.4.3-py3-none-any.whl", hash = "sha256:dd26007838c25b5d38a8b7af0514c07027b783406c0ea5b9fcf0eb74a45139bd", size = 75515, upload-time = "2026-10-08T00:24:02.208Z" },
 ]
 
 [[package]]
@@ -1139,16 +1141,16 @@ wheels = [
 
 [[package]]
 name = "prime-tunnel"
-version = "0.1.11"
+version = "0.1.14"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "pydantic" },
     { name = "tenacity" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/de/c7/55c21d8e1abfb66d3a0dc0e25b89abb506b0a49605fb4b0040590af82136/prime_tunnel-0.1.11.tar.gz", hash = "sha256:cd93e78824ef824b45e636f5f506898bc7f9a6c913fd5095ab1df2233a49b949", size = 15889, upload-time = "2026-09-04T17:09:25.258Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/db/7d/8d8cdd03aada223acc53d4de49cf7f195d7656705a0f3d2339051890a9f1/prime_tunnel-0.1.14.tar.gz", hash = "sha256:4968787d8702578b213204d2524c3525985cd0362f50841af5fa2465d0d4e2cb", size = 22378, upload-time = "2026-10-09T00:16:40.263Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d0/7f/6ea38563db9414ed208758de6e8dc557b20e245787e42568f89531fc6717/prime_tunnel-0.1.11-py3-none-any.whl", hash = "sha256:19c5e02e389e5e61fff1507f07c46db9b05ad01424ff3b6a0cbe66187c957f61", size = 16676, upload-time = "2026-09-04T17:09:24.157Z" },
+    { url = "https://files.pythonhosted.org/packages/b8/d4/51e2b8fea13709edf3a6b94fb81d27a0eb3da11b339d870ace41de813dbb/prime_tunnel-0.1.14-py3-none-any.whl", hash = "sha256:a0e21f2b9ff61cf07c038486ddc541fe07326c65e703aaf4c795fae460ac6402", size = 19345, upload-time = "2026-10-09T00:16:38.845Z" },
 ]
 
 [[package]]
@@ -1596,6 +1598,15 @@ wheels = [
 ]
 
 [[package]]
+name = "semver"
+version = "3.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/92/f5/e1dfe8e1d91c54ce212fd93916eb01fd1c590f413be0a0978c39a97aa1bb/semver-3.1.0.tar.gz", hash = "sha256:14bc073439513d7773662a338f4db9829cf16c12b74b9568e2d2689975fbd7fc", size = 304162, upload-time = "2026-09-12T18:38:14.045Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/be/02/bce7a1d70e9d0f6ea8623c16386138c251b5855af6cd3a11433d3fba4e66/semver-3.1.0-py3-none-any.whl", hash = "sha256:6e4998f8b4762acdfea85f9bfd5b4032e0bb50038dc04bf82011b42d5d1145c5", size = 18783, upload-time = "2026-09-12T18:38:12.457Z" },
+]
+
+[[package]]
 name = "shellingham"
 version = "1.5.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1957,8 +1968,7 @@ wheels = [
 
 [[package]]
 name = "verifiers"
-version = "0.3.2.dev153"
-source = { git = "https://github.com/PrimeIntellect-ai/verifiers?rev=aa924e7d#aa924e7d6b6adef4386864830867649d913f116a" }
+source = { directory = "vendor/verifiers" }
 dependencies = [
     { name = "aiohttp" },
     { name = "anthropic" },
@@ -1989,6 +1999,72 @@ dependencies = [
 [package.optional-dependencies]
 harbor = [
     { name = "harbor" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.14.1" },
+    { name = "anthropic", specifier = ">=1.0.0" },
+    { name = "e2b", marker = "extra == 'e2b'", specifier = ">=2.35.0,<3" },
+    { name = "gepa", specifier = ">=0.0.6" },
+    { name = "h11", specifier = ">=0.16.0" },
+    { name = "harbor", marker = "python_full_version >= '3.12' and extra == 'harbor'", specifier = "==0.24.0" },
+    { name = "httpx", specifier = ">=0.27.0" },
+    { name = "httpx2", specifier = ">=2.12.0" },
+    { name = "loguru", specifier = ">=0.7.0" },
+    { name = "math-verify", specifier = ">=0.8.0" },
+    { name = "mcp", specifier = "==2.0.0" },
+    { name = "modal", marker = "extra == 'modal'", specifier = ">=1.5.4" },
+    { name = "msgpack", specifier = ">=1.1.2" },
+    { name = "nltk", marker = "extra == 'ta'", specifier = ">=3.9.2" },
+    { name = "numpy", specifier = ">=2.1.0" },
+    { name = "openai", specifier = ">=2.54.0,<3.0.0" },
+    { name = "openenv", marker = "extra == 'openenv'", specifier = ">=0.4.1" },
+    { name = "prime-pydantic-config", extras = ["toml"], specifier = ">=0.4.3" },
+    { name = "prime-runs", specifier = ">=0.1.4" },
+    { name = "prime-sandboxes", specifier = ">=0.4.2" },
+    { name = "prime-tunnel", specifier = ">=0.1.13" },
+    { name = "pydantic", specifier = ">=2.12.3" },
+    { name = "pyzmq", specifier = ">=27.1.0" },
+    { name = "renderers", extras = ["multimodal"], specifier = ">=0.1.12.dev2" },
+    { name = "rich", specifier = ">=11.0.0" },
+    { name = "tenacity", specifier = ">=8.5.0" },
+    { name = "textarena", marker = "extra == 'ta'", specifier = "==0.7.4" },
+    { name = "tomli-w", specifier = ">=1.0.0" },
+    { name = "typing-extensions", specifier = ">=4.12.2" },
+    { name = "uvicorn", specifier = ">=0.52.0" },
+]
+provides-extras = ["e2b", "harbor", "modal", "openenv", "ta"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pre-commit", specifier = ">=2.19.0" },
+    { name = "pytest", specifier = ">=7.0.0,<9.1.0" },
+    { name = "pytest-asyncio", specifier = ">=0.21.0" },
+    { name = "pytest-cov", specifier = ">=4.0.0" },
+    { name = "pytest-xdist", specifier = ">=3.8.0" },
+    { name = "ruff", specifier = ">=0.16.0" },
+    { name = "ty", specifier = ">=0.0.63" },
+]
+examples = [
+    { name = "alphabet-sort", editable = "vendor/verifiers/environments/alphabet_sort" },
+    { name = "bash-interception", editable = "vendor/verifiers/environments/bash_interception" },
+    { name = "code-golf", editable = "vendor/verifiers/environments/code_golf" },
+    { name = "color-codeword", editable = "vendor/verifiers/environments/color_codeword" },
+    { name = "compact", editable = "vendor/verifiers/environments/compact" },
+    { name = "deepwiki", editable = "vendor/verifiers/environments/deepwiki" },
+    { name = "glossary", editable = "vendor/verifiers/environments/glossary" },
+    { name = "grayscale-interception", editable = "vendor/verifiers/environments/grayscale_interception" },
+    { name = "gsm8k", editable = "vendor/verifiers/environments/gsm8k" },
+    { name = "interception", editable = "vendor/verifiers/environments/interception" },
+    { name = "kuhn-poker", editable = "vendor/verifiers/environments/kuhn_poker" },
+    { name = "openenv-wordle", editable = "vendor/verifiers/environments/openenv_wordle" },
+    { name = "proposer-solver", editable = "vendor/verifiers/environments/proposer_solver" },
+    { name = "reverse-text", editable = "vendor/verifiers/environments/reverse_text" },
+    { name = "scratchpad", editable = "vendor/verifiers/environments/scratchpad" },
+    { name = "web-search-interception", editable = "vendor/verifiers/environments/web_search_interception" },
+    { name = "wiki-search", editable = "vendor/verifiers/environments/wiki_search" },
+    { name = "wordle", editable = "vendor/verifiers/environments/wordle" },
 ]
 
 [[package]]
