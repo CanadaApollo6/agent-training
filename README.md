@@ -104,6 +104,19 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     mistakes. RL only keeps what a verifier passed; nothing in the tweet says what plays that role here.
   - Verdict: watch. Recheck when it ships. If it works on Qwen3.8-27B, it's a cheap test of learning on the 3090:
     tasks it fails, then the same tasks after a session of use.
+- [Prime Agent, rewritten in Rust](https://www.primeintellect.ai/blog/prime-agent-rust) (Thomas, Müller, Karten;
+  Prime Intellect, 2026-10-09). Repo: [PrimeIntellect-ai/prime-agent](https://github.com/PrimeIntellect-ai/prime-agent).
+  - The harness client was rebuilt from TypeScript in Rust, mostly by agents (~2,200 agent runs on GLM-5.3).
+  - Startup is ~14x faster (cold 736 to 52 ms), memory on a large session is ~4.8x smaller (1,130 to 237 MB), and
+    the install is ~2.9x smaller.
+  - Its startup is the fastest of the harnesses compared (Claude Code, Codex, Pi, Hermes). The model was scripted
+    and inference left out; the post itself warns that there is no common benchmark standard.
+  - No Terminal-Bench or other agent scores, and nothing on small or open models, or on training in the harness.
+  - Our pinned verifiers (prime-rl 81052082) still installs the npm/TypeScript build.
+  - What it means here: lighter sandboxes when prime_agent is the RL harness. The memory drop is the part that
+    counts at 64 attempts in flight; startup time is noise next to 7-minute attempts.
+  - Verdict: relevant, not evidence. Prime is investing in prime_agent as a product (Riel's thesis,
+    memory/harness-training-thesis). Whether training in it pays off is what an RL run in prime_agent would measure.
 - [NeMo-DCR: Bit-Exact Delta-Compressed Refit for Scalable Agentic RL at Trillion-Parameter Scale](https://arxiv.org/abs/2610.08430)
   (Jiang, Li, Kong, Yao, Kwon, Nguyen, Aithal, Di Francesco; Aalto and NVIDIA, 2026-10-06; code in
   [NeMo RL PR #2444](https://github.com/NVIDIA-NeMo/RL/pull/2444)).
