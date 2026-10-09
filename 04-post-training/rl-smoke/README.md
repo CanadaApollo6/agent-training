@@ -268,7 +268,7 @@ The optimizer starts fresh, because the pilot's checkpoints stayed on its job.
   - The held-out 20 are tested outside afterwards (~$5), as for the pilot.
 - **Saving and cost:**
   - Checkpoints at steps 3, 6, 9 and 12.
-  - RL_TIMEOUT=3h15m, job TIMEOUT=3h50m: at most ~$155, expected $120–150.
+  - RL_TIMEOUT=195m, job TIMEOUT=230m: at most ~$155, expected $120–150.
 - **Read-out:**
   - `pilot/pool_progress.py <traces> 61` on the pool.
   - Held-out on `<run>-bf16`, compared with base 32/48 and pilot 34/46.

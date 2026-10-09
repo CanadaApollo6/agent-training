@@ -11,7 +11,7 @@
 #   tool_call_parser = "qwen3_coder" and reasoning_parser = "qwen3" under inference.vllm fix its tool_choice error.
 # Fresh optimizer state: the pilot's checkpoints stayed on its job. Checkpoint every 3 steps so an RL_TIMEOUT stop
 # loses at most 2. Submit with SCORING_REOPEN=1 MODEL_SRC=ornith35b-sd-pilot-1009-1234-bf16 PI_CONTEXT_WINDOW=98304 EXPORT=1
-# RL_TIMEOUT=3h15m TIMEOUT=3h50m (hf_rl_job.sh).
+# RL_TIMEOUT=195m TIMEOUT=230m (hf_rl_job.sh).
 max_steps = 12
 seq_len = 131072                      # one packed row = one full rollout branch
 
