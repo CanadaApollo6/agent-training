@@ -172,9 +172,15 @@ fixes off on <b class="bad">{worse}</b>.</div>
         for s in lego["sets"])
 
     stats = "".join(f'<div class="stat"><div class="sv">{e(n["value"])}</div><div class="muted small">{e(n["label"])}</div></div>'
-                    for n in d["headline"]["numbers"])
+                    for n in now.get("headline_numbers") or d["headline"]["numbers"])
 
     now_html = ""
+    if now.get("pilot"):
+        p = now["pilot"]
+        rows = "".join(f'<tr><td>{e(a)}</td><td class="num">{e(b)}</td><td class="num">{e(c)}</td></tr>' for a, b, c in p["rows"])
+        now_html += f"""<h2>{e(p["title"])}</h2><div class="muted">{e(p["intro"])}</div>
+<table style="margin-top:8px"><tr><th></th><th>Before training</th><th>After 12 steps</th></tr>{rows}</table>
+<div class="note">{e(p["note"])}</div>"""
     if now.get("rl"):
         r = now["rl"]
         rows = "".join(f'<tr><td class="num">{e(x["step"])}</td><td>{e(x["time"])}</td><td class="num">{e(x["reward"])}</td>'
@@ -215,7 +221,7 @@ th{{font-size:12px;font-weight:500;color:var(--muted-foreground)}}
 @media (max-width:520px){{.lrow{{grid-template-columns:1fr;gap:3px}}}}
 </style></head><body>
 <div class="muted small">{e(d["model"]["name"])} · updated {e(d["generated_label"])}</div>
-<div style="margin-top:6px">{e(d["headline"]["paragraph"])}</div>
+<div style="margin-top:6px">{e(now.get("headline_text") or d["headline"]["paragraph"])}</div>
 <div class="stats">{stats}</div>
 
 {now_html}

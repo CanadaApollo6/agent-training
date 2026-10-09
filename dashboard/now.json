@@ -1,6 +1,6 @@
 {
  "rl": {
-  "title": "RL fit check on R1s-SD (35B): it fits, with little room",
+  "title": "Earlier: RL fit check on R1s-SD (35B), it fits with little room",
   "intro": "Three training steps of 32 attempts each on the real model, same Terminal-Bench 2 tasks in Prime sandboxes. 8 H200 GPUs on Hugging Face ($40/h): 4 run the model, 4 train it.",
   "steps": [
    {
@@ -46,5 +46,66 @@
  },
  "extra_today_dollars": 127,
  "extra_today_note": "(~$118 RL pilot, ~$9 held-out test)",
- "next_text": "RL pilot done (~$118 + ~$9 held-out test). Practice tasks +5 points (10 of 16 up, 5 down); held-out 20: 32/48 -> 34/46 (not down, maybe up); trained model's replies ~25-35% shorter on held-out tasks; 16% of weights moved; one shortcut (downloading upstream OCaml to copy a fix). Small gain everywhere, none proven: not a clear go for the full run. Your call on next step."
+ "next_text": "RL pilot done (~$118 + ~$9 held-out test). Practice tasks +5 points (10 of 16 up, 5 down); held-out 20: 32/48 -> 34/46 (not down, maybe up); trained model's replies ~25-35% shorter on held-out tasks; 16% of weights moved; one shortcut (downloading upstream OCaml to copy a fix). Small gain everywhere, none proven: not a clear go for the full run. Your call on next step.",
+ "headline_text": "The RL pilot is done: 12 training steps on 16 practice tasks, then a before/after test on 20 tasks it never trained on. The trained model got a little better on both and its replies got shorter, but every gain is inside the noise. Not a clear go for the ~$400 full run.",
+ "headline_numbers": [
+  {
+   "value": "+5 pts",
+   "label": "Practice tasks, early vs late"
+  },
+  {
+   "value": "32 \u2192 34",
+   "label": "Held-out solves (of ~47 usable)"
+  },
+  {
+   "value": "\u221225\u201335%",
+   "label": "Reply length on held-out"
+  },
+  {
+   "value": "$127",
+   "label": "Pilot + held-out test"
+  }
+ ],
+ "pilot": {
+  "title": "RL pilot on R1s-SD: small gain everywhere, none proven",
+  "intro": "12 steps on 16 Terminal-Bench 2 practice tasks in the pi harness, 8 H200s on Hugging Face (2h44m). Held-out: 20 tasks, 3 tries each, base vs trained, on one H200 each.",
+  "rows": [
+   [
+    "Practice tasks, solved per task",
+    "44%",
+    "50%"
+   ],
+   [
+    "Practice tasks that went up / down",
+    "",
+    "10 up, 5 down"
+   ],
+   [
+    "Held-out tasks solved",
+    "32 of 48 (67%)",
+    "34 of 46 (74%)"
+   ],
+   [
+    "Held-out reply length, median",
+    "13.1K tokens",
+    "9.8K tokens"
+   ],
+   [
+    "Held-out runs hitting the turn limit",
+    "8",
+    "5"
+   ],
+   [
+    "Weights changed",
+    "",
+    "16% (vision and routers untouched)"
+   ],
+   [
+    "Shortcuts found",
+    "",
+    "1: downloaded OCaml's own source to copy a fix"
+   ]
+  ],
+  "note": "Lost data: 15-31% of practice attempts per step hit the 30-min limit and were dropped, and 12-14 held-out runs per side were lost to Prime sandbox shutdowns. The training job's own held-out test failed (a server setting), so the test was rerun outside. Before any longer run: block GitHub downloads on tasks with an upstream fix, give attempts 45-60 min, and fix the in-job test."
+ }
 }
