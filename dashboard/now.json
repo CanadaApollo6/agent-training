@@ -44,7 +44,7 @@
   "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
   "next": "Done on your 3090: 102 chat / 143-192 code tok/s, full 262K window in 4-bit, math gap closed at medium effort. As an agent in prime_agent, untrained (full-precision on a rented H200): 33 of 60 vs R1s-SD's 31, a tie on solves, but it finishes in half the turns, never thinks itself into the reply cap, and follows prime_agent's tool rules without coaching (39 of 47 runs vs 3 of 54)."
  },
- "extra_today_dollars": 47,
- "extra_today_note": " (~$35 pi RL test, ~$7 Qwen 27B run, ~$5 coaching reruns)",
- "next_text": "RL pilot launched 12:34 p.m. on 9 Oct: 12 training steps on 16 tasks, held-out 20 tested before and after, then the trained model is saved, measured and uploaded. Expected 3.5-5 h, about $150-215; the job is capped at 6 h ($240)."
+ "extra_today_dollars": 127,
+ "extra_today_note": "(~$118 RL pilot, ~$9 held-out test)",
+ "next_text": "RL pilot done (~$118 + ~$9 held-out test). Practice tasks +5 points (10 of 16 up, 5 down); held-out 20: 32/48 -> 34/46 (not down, maybe up); trained model's replies ~25-35% shorter on held-out tasks; 16% of weights moved; one shortcut (downloading upstream OCaml to copy a fix). Small gain everywhere, none proven: not a clear go for the full run. Your call on next step."
 }

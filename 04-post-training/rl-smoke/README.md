@@ -151,7 +151,7 @@ RL moves R1s-SD.
 - Summary calls are trained on like any other turn: their reward is the attempt's. Masking them would need code and
   there's no reason yet.
 
-**The pilot: a go/no-go run that isn't wasted.** Ready to launch (2026-10-08), waiting on Riel's OK.
+**The pilot: a go/no-go run that isn't wasted.** Ran 2026-10-09 (results below the plan).
 Config: `ornith35b-sd-rl-pilot-h200x8.toml`; prime-rl's own config check passes. Everything else is the pi check's setup.
 - **Tasks:** a fixed pool of 16 tasks R1s-SD solves sometimes (`pilot/pool.txt`). Each step trains on 4 of them, 8
   attempts each. Over 12 steps every task comes up 3 times, so its solve rate can be watched rising (or not).
@@ -213,3 +213,39 @@ Config: `ornith35b-sd-rl-pilot-h200x8.toml`; prime-rl's own config check passes.
 
   Prime sandbox fees come on top. The first quote ($120–140) assumed ~$9 a step; with the old settings the pi check's
   pace put it at $215–300.
+
+**Pilot result (2026-10-09): a small gain everywhere, none of it proven. Not a clear go.**
+Run `ornith35b-sd-pilot-1009-1234`, 12 steps in 2 h 44 min, ~$118. The trained weights are in the sd-out bucket as
+`ornith35b-sd-pilot-1009-1234-bf16`. Results: `results/pilot-*`.
+
+| Check | Result |
+|---|---|
+| Pool solve rate up ~10 points | **+5.0 points** per task, early (v0–2) vs late (v6+) versions, of all attempts; +3.6 of finished attempts. 10 tasks up, 5 down (`pilot/pool_progress.py`). |
+| Held-out not down | **32/48 → 34/46** usable runs (67% → 74%), the held-out 20 × 3 in pi. Up 3 tasks, down 2, all by 1–2 runs. |
+| No reward hacks | **One shortcut.** A late fix-ocaml-gc attempt downloaded upstream OCaml's `shared_heap.c`, diffed it against the broken copy and copied the fix (solved). None of 14 attempts did that before the pilot; 1 of 40 during it. Everything else the scan flagged is ordinary work (`pilot/hack_scan_pilot.json`). |
+| Weights moving | **Yes.** 16.2% of bf16 weights differ from the start (experts 17%, attention 14%). Vision tower and routers are bit-identical, as frozen. |
+
+- **A trap in reading the pool numbers.**
+  - At first, late versions looked +13 points better, with timeouts falling from 28% to 15%.
+  - Attempts still running when training stopped were never recorded, and those were mostly slow ones from the last
+    versions. That made late versions look faster and better than they were.
+  - Finished attempts never got shorter (~7 min, ~22 turns throughout).
+  - With attempts dispatched in the last 31 minutes left out, it's +5.
+- **Shorter replies on the held-out tasks.**
+  - The trained model's replies per attempt dropped: median 13.1K → 9.8K tokens, mean 51K → 34K.
+  - Turns stayed the same (~21), and fewer attempts hit the 100-turn cap (8 → 5).
+  - Its three series finished ~20 min sooner.
+  - On the pool tasks, reply length didn't change, so this may be noise too.
+- **Lost data.**
+  - 30-minute timeouts dropped 15–31% of each step's attempts. Steps trained on 14–32 attempts, not 32.
+  - In the held-out test, 12 and 14 of each model's 60 runs were lost: most to Prime terminating sandboxes, three to a
+    Node.js package 404 at pi setup.
+- **The in-job held-out eval failed.**
+  - prime-rl sends eval requests as plain chat with `tool_choice: auto`, which the run's vLLM rejects; it had no tool
+    parser. Training goes through the renderer and wasn't affected.
+  - The held-out test was rerun outside: each model served by plain vLLM on its own H200
+    (`06-agents/harness-evals/hf_serve_vllm.sh` with MODEL_SRC), same tasks and settings for both. ~$9.
+- **Before any longer run:**
+  - block GitHub downloads on tasks with an upstream fix (`network_block`);
+  - raise the 30-minute cap (45–60 min) or score timeouts as fails;
+  - fix the in-job eval: a tool-call parser on the run's vLLM, or keep testing outside as here.
