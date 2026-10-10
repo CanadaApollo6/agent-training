@@ -1,0 +1,167 @@
+diff -ru a/src/tensorfold/cuda/kernels/qmm.cu b/src/tensorfold/cuda/kernels/qmm.cu
+--- a/src/tensorfold/cuda/kernels/qmm.cu	2026-10-10 13:09:38.266882552 -0400
++++ b/src/tensorfold/cuda/kernels/qmm.cu	2026-10-10 13:09:38.267882551 -0400
+@@ -2,6 +2,7 @@
+ 
+ #include <ATen/ATen.h>
+ #include <algorithm>
++#include <vector>
+ #include <ATen/cuda/CUDAContext.h>
+ #include <cooperative_groups.h>
+ #include <cuda_bf16.h>
+@@ -268,7 +269,7 @@
+ // takes half the mmas. A lane ends with its columns wn 16 + gq (acc 0, 1) and wn 16 + 8 + gq (acc 2, 3) for tokens
+ // 8 tt + 2 t and + 1. The tensor core's dot product doesn't depend on which operand is which, and the steps run on the
+ // same values in the same order, so every output has tile_slice's bits.
+-template <int GS, int BN, int WN, int STAGES, int TT>
++template <int GS, int BN, int WN, int STAGES, int TT, int G = 1>
+ __device__ __forceinline__ void tile_slice_swap(float (&acc)[TT][4], unsigned char* buf,
+         const __nv_bfloat16* __restrict__ x, const float* __restrict__ xs, const uint32_t* __restrict__ w,
+         const __nv_bfloat16* __restrict__ scales, const __nv_bfloat16* __restrict__ biases, int M, int KG, int per,
+@@ -276,7 +277,12 @@
+     constexpr int BM = 16;
+     using T = Tile<GS, BM, BN, 1, WN, STAGES>;
+     static_assert(T::NT == 2 && T::MT == 1, "a warp: one m16 tile of 16 columns");
+-    const int tid = threadIdx.x, lane = tid & 31, wn = tid >> 5, gq = lane >> 2, t = lane & 3;
++    const int tid = threadIdx.x % T::THREADS, lane = tid & 31, wn = tid >> 5, gq = lane >> 2, t = lane & 3;
++    // G > 1: the block holds G slices of a tile, a group of T::THREADS each with its own stages, synced alone
++    auto sync = [] {
++        if constexpr (G == 1) __syncthreads();
++        else asm volatile("bar.sync %0, %1;" :: "r"(1 + static_cast<int>(threadIdx.x) / T::THREADS), "n"(T::THREADS));
++    };
+ 
+     auto stage = [&](int s) { return buf + s * T::STAGE; };
+     // a group's stage is one 16-byte copy of inputs and one of weights a thread, a scale or bias piece for 16 threads
+@@ -315,7 +321,7 @@
+     const int c0 = wn * 16 + gq, c1 = c0 + 8;             // the lane's columns in the block
+     for (int it = 0; it < per; ++it) {
+         wait<STAGES - 2>();
+-        __syncthreads();
++        sync();
+         const int next = it + STAGES - 1;
+         if (next < per) load(next % STAGES, next);
+         commit();
+@@ -355,7 +361,7 @@
+         }
+     }
+     wait<0>();
+-    __syncthreads();
++    sync();
+ }
+ 
+ // Several weights of the same input in one launch (decode, one row tile): segment i's blocks are its column tiles
+@@ -382,9 +388,11 @@
+     else reinterpret_cast<__nv_bfloat16*>(out)[i] = __float2bfloat16_rn(v);
+ }
+ 
+-// TT 0: tile_slice; 1 or 2: tile_slice_swap with that many 8-token tiles
+-template <int GS, int BM, int BN, int WM, int WN, int STAGES, bool F32, int TT>
+-__global__ void __launch_bounds__(WM * WN * 32) qmm_seg_kernel(
++// TT 0: tile_slice; 1 or 2: tile_slice_swap with that many 8-token tiles. G > 1 (swapped form, every segment G K
++// slices): a block is a tile's G slices side by side, and slice 0 adds the others' partials from shared memory in slice
++// order, the sum the slice buffer gives, without parking them in global memory or a block waiting on the others.
++template <int GS, int BM, int BN, int WM, int WN, int STAGES, bool F32, int TT, int G = 1>
++__global__ void __launch_bounds__(WM * WN * 32 * G) qmm_seg_kernel(
+         const __nv_bfloat16* __restrict__ x, const float* __restrict__ xs, const Segs segs, int* __restrict__ sync,
+         int M, int K, int ldx) {
+     using T = Tile<GS, BM, BN, WM, WN, STAGES>;
+@@ -396,12 +404,13 @@
+     Seg sg = segs.s[0];
+ #pragma unroll
+     for (int i = 1; i < SEGS; ++i)
+-        if (i < segs.count && b >= sg.blocks) {
+-            b -= sg.blocks;
++        if (i < segs.count && b >= sg.blocks / G) {           // G > 1: a block a tile
++            b -= sg.blocks / G;
+             sg = segs.s[i];
+         }
+     const int KG = K / GS, per = KG / sg.SK, tiles = sg.blocks / sg.SK;
+-    const int slice = b / tiles, tile = b - slice * tiles, n0 = tile * BN;
++    const int slice = G > 1 ? static_cast<int>(threadIdx.x) / T::THREADS : b / tiles;
++    const int tile = G > 1 ? b : b - slice * tiles, n0 = tile * BN;
+     constexpr int E = TT ? TT * 4 : T::MT * T::NT * 4;  // the lane's outputs
+     float v[E];
+     int rows[E], cols[E];
+@@ -423,8 +432,8 @@
+     } else {
+         static_assert(WM == 1 && BM == 16, "the swapped form: one 16-row tile, a warp's 16 columns");
+         float acc[TT][4];
+-        tile_slice_swap<GS, BN, WN, STAGES, TT>(acc, buf, x, xs, sg.w, sg.scales, sg.biases, M, KG, per, slice * per,
+-                                                n0, sg.npad, ldx);
++        tile_slice_swap<GS, BN, WN, STAGES, TT, G>(acc, buf + (G > 1 ? slice * STAGES * T::STAGE : 0), x, xs, sg.w,
++                                                   sg.scales, sg.biases, M, KG, per, slice * per, n0, sg.npad, ldx);
+ #pragma unroll
+         for (int u = 0; u < TT; ++u)
+ #pragma unroll
+@@ -436,6 +445,24 @@
+     }
+     const int N = sg.N;
+     const size_t MN = static_cast<size_t>(M) * N;
++    if constexpr (G > 1) {
++        float* red = reinterpret_cast<float*>(buf);       // slice s's lane values at [s - 1][q][thread]
++        const int lt = threadIdx.x % T::THREADS;
++        __syncthreads();                                  // every slice's stages done
++        if (slice > 0)
++#pragma unroll
++            for (int q = 0; q < E; ++q) red[((slice - 1) * E + q) * T::THREADS + lt] = v[q];
++        __syncthreads();
++        if (slice > 0) return;
++#pragma unroll
++        for (int q = 0; q < E; ++q) {
++            float a = v[q];
++#pragma unroll
++            for (int s2 = 1; s2 < G; ++s2) a = a + red[((s2 - 1) * E + q) * T::THREADS + lt];
++            if (rows[q] < M && cols[q] < N) put<F32>(sg.out, static_cast<size_t>(rows[q]) * N + cols[q], a);
++        }
++        return;
++    }
+ #pragma unroll
+     for (int q = 0; q < E; ++q) {
+         if (rows[q] >= M || cols[q] >= N) continue;
+@@ -583,22 +610,39 @@
+         blocks += sg.blocks;
+     }
+     TORCH_CHECK(counters <= sync.numel(), "qmm_seg: more split tiles than counters");
++    // every segment the same 2 or 4 K slices (the swapped form): a block a tile, its slices side by side
++    int same = segs.s[0].SK;
++    for (int i = 1; i < segs.count; ++i)
++        if (segs.s[i].SK != same) same = 0;
++    // (the 3090 at 8 rows: 5120x6144 27.2 -> 23.8 us, 5120x17408 63.1 -> 60.2; a plain read 21.9 and 58.3)
++    const int G = swap && (same == 2 || same == 4) ? same : 1;
+     auto run = [&](auto kernel) {
+-        static bool configured = false;                   // one per instantiation (the lambda's type differs)
+-        if (!configured) {
+-            C10_CUDA_CHECK(cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, T::SMEM));
+-            configured = true;
++        // every instantiation has the same pointer type, so one flag per kernel address
++        static std::vector<const void*> configured;
++        const int smem = G > 1 ? G * STAGES * T::STAGE : T::SMEM;
++        const void* key = reinterpret_cast<const void*>(kernel);
++        if (std::find(configured.begin(), configured.end(), key) == configured.end()) {
++            C10_CUDA_CHECK(cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem));
++            configured.push_back(key);
+         }
+         const int M = x.size(0), K = x.size(1);
+-        kernel<<<blocks, T::THREADS, T::SMEM, at::cuda::getCurrentCUDAStream()>>>(
++        kernel<<<blocks / G, T::THREADS * G, smem, at::cuda::getCurrentCUDAStream()>>>(
+             reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), xs.data_ptr<float>(), segs, sync.data_ptr<int>(), M,
+             K, M == 1 ? K : static_cast<int>(x.stride(0)));
+         C10_CUDA_KERNEL_LAUNCH_CHECK();
+     };
+     const int tt = swap ? (x.size(0) <= 8 ? 1 : 2) : 0;
+ #define SEG(F, TT) run(qmm_seg_kernel<GS, BM, BN, WM, WN, STAGES, F, TT>)
+-    if (f32) { if (tt == 0) SEG(true, 0); else if (tt == 1) SEG(true, 1); else SEG(true, 2); }
+-    else { if (tt == 0) SEG(false, 0); else if (tt == 1) SEG(false, 1); else SEG(false, 2); }
++#define SEGG(F, TT) (G == 2 ? run(qmm_seg_kernel<GS, BM, BN, WM, WN, STAGES, F, TT, 2>) \
++                            : run(qmm_seg_kernel<GS, BM, BN, WM, WN, STAGES, F, TT, 4>))
++    if (G > 1) {
++        if (f32) { if (tt == 1) SEGG(true, 1); else SEGG(true, 2); }
++        else { if (tt == 1) SEGG(false, 1); else SEGG(false, 2); }
++    } else {
++        if (f32) { if (tt == 0) SEG(true, 0); else if (tt == 1) SEG(true, 1); else SEG(true, 2); }
++        else { if (tt == 0) SEG(false, 0); else if (tt == 1) SEG(false, 1); else SEG(false, 2); }
++    }
++#undef SEGG
+ #undef SEG
+ }
+ } // namespace

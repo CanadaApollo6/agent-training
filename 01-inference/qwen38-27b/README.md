@@ -904,3 +904,26 @@ Daily 262K server (`bench_tf.sh kv4r-262k-commit`, same setup as above):
 
 132K recall right, peak 24.08 GB. What's left of the commit stage (~0.55 ms with the sync) is mostly the GDN replay
 kernel itself (0.37 ms, reading and writing the 48 fp32 states).
+
+### K slices inside one block (the 5120-column projections)
+
+The GDN out and attention o projections (5120 x 6144) and MLP down (5120 x 17408) have only 80 column tiles, so each
+splits K 4 ways: 320 blocks, each parking its partial sums in global memory, and the tile's last block to finish adding
+them up. Timed alone (`qmm_probe.py`, a plain read of the same bytes as the floor), 5120 x 6144 ran 27.4 us against a
+22.1 us read; skipping the final sum saved 2.3 us, and skipping the partial stores another 1.4. Deeper or shallower
+pipelines and other K splits moved it by 1 us at best.
+
+Now a launch whose weights all have 2 or 4 K slices puts a tile's slices side by side in one block (4 groups of 4 warps,
+each with its own stages and its own barrier), and slice 0 adds the others' partials from shared memory in slice order:
+the same sum as before, so the same bits (`qmm_inblock_test.py`: 160 cases, 1–16 rows, bf16 and f32; greedy text and
+tokens a round unchanged in the model). `qmm-inblock.patch` (on top of `qmm-lean.patch`) also fixes a latent bug: every
+kernel variant shared one "shared memory configured" flag, which only worked because none needed more than 48 KB.
+
+| us a call, 8 rows | Before | In-block | Plain read |
+|---|---|---|---|
+| GDN out / attention o (5120 x 6144) | 27.2 | **23.8** | 21.9 |
+| MLP down (5120 x 17408) | 63.1 | **60.2** | 58.3 |
+
+Graphed matmuls a round 17.62 -> 17.31 ms (read floor 16.59); a verify 20.19 -> 19.92 ms. End to end that's ~1%, inside
+the noise: the 262K server measured code 205 / chat 144 greedy and 216 / 131 sampled, the same as before
+(`results/bench-kv4r-262k-inblock.json`). The remaining 0.7 ms over the floor is spread over every shape (2–3 us a call).

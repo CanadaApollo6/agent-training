@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "New today: a faster save step after each round (the accepted tokens go into the model's memory and the drafter's). It took 1.7 ms a round, mostly Python issuing ~150 tiny GPU jobs; now a handful, 0.9 ms, with bit-identical results. Daily 262K server: code 193 to 205, chat 135 to 144 tok/s greedy; the 132K recall test still right. Next: the remaining matmul gap (the 5120-wide projections sit ~6 us above the memory ceiling each).",
+ "next_text": "New today: a faster save step (1.7 to 0.9 ms a round; server code 193 to 205, chat 135 to 144 tok/s), then the matmul gap: the 5120-wide projections now add their K slices inside one block, 27.2 to 23.8 us a call (a plain read is 21.9), same bits. Matmuls a round 17.6 to 17.3 ms against a 16.6 ms floor; that's ~1% end to end, inside the server's noise. What's left over the floor is spread thin (2-3 us a call). Bigger remaining pieces: the rest of a verify (~2.6 ms of attention, GDN and glue) and the 2.2 ms drafter.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 205 tok/s and chat 117 → 144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, and a faster save step.",
  "headline_numbers": [
   {
