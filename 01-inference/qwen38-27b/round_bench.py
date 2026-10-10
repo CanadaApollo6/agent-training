@@ -30,6 +30,27 @@ PROMPTS = [
               "show the patch as a unified diff."),
 ]
 
+# more prompts for acceptance studies (pick by name with --prompts; the default stays the three above)
+EXTRA = [
+    ("rust", "Implement a thread-safe bounded channel in Rust with send, recv and close, using only std, with tests."),
+    ("sql", "Given tables orders(id, customer_id, total, created_at) and customers(id, name, country), write SQL for "
+            "the top 5 countries by revenue per month in 2025, then explain each clause."),
+    ("bash", "Write a bash script that finds the 20 largest files under a directory, skips .git, prints human "
+             "sizes, and exits non-zero on bad arguments. Explain the tricky parts."),
+    ("math", "A train leaves at 9:40 at 72 km/h; a second leaves the same station at 10:05 at 90 km/h on the same "
+             "track. When and where does the second catch the first? Show the algebra, then check it."),
+    ("tool", "You can call tools by replying with JSON {\"tool\": name, \"args\": {...}}. Tools: read_file(path), "
+             "run(cmd), write_file(path, text). The CI log says `ImportError: cannot import name 'Mapping' from "
+             "'collections'`. Plan the fix step by step and make the calls you'd make."),
+    ("essay", "Summarize the trade-offs between renting cloud GPUs and buying a workstation GPU for a small AI lab, "
+              "with a short table of costs and a recommendation."),
+    ("json", "Produce a JSON schema for a recipe (title, servings, ingredients with quantity and unit, steps, tags), "
+             "then three example recipes that validate against it."),
+    ("refactor", "Refactor this into idiomatic Python with type hints and a dataclass, keeping behavior: "
+                 "def f(d):\n  r=[]\n  for k in d:\n    if d[k]['a']>3 and d[k]['b']!=None: r.append((k,d[k]['a']*2))\n"
+                 "  r.sort(key=lambda x:-x[1])\n  return r"),
+]
+
 
 def snapshot(repo: str) -> Path:
     base = Path.home() / ".cache/huggingface/hub" / ("models--" + repo.replace("/", "--")) / "snapshots"
@@ -83,7 +104,7 @@ def main() -> None:
         docs = "\n\n".join(p.read_text() for p in sorted(root.glob("*/**/README.md"))[:200])
         prefix = tok.decode(tok.encode(docs, add_special_tokens=False).ids[:a.prefix_tokens])
         prefix = "Project notes for context:\n\n" + prefix + "\n\nNow the task.\n\n"
-    for name, text in PROMPTS:
+    for name, text in PROMPTS + EXTRA:
         if name in wanted:
             rendered = template.render([{"role": "user", "content": prefix + text}], tools=None, enable_thinking=True,
                                        extra={"reasoning_effort": "medium"})
@@ -135,6 +156,18 @@ def main() -> None:
         timed(dec, "commit", "commit")
         timed(dec, "sample_rows", "sample_rows")
         timed(dec, "tree_forward", "tree_forward")
+    trace_out = os.environ.get("DRAFT_TRACE")                           # every round's drafter candidates, for draft_sim.py
+    draft_log: list = []
+    if trace_out:
+        finish = eng.draft.finish_tree
+        def logged(launched, context_length, max_nodes, sampling=None):
+            out = finish(launched, context_length, max_nodes, sampling)
+            if launched is not None:
+                shared, start, n, pending = launched
+                draft_log.append((context_length, pending, shared[2][0][start:start + n].copy(),
+                                  shared[2][1][start:start + n].astype("float32")))
+            return out
+        eng.draft.finish_tree = logged
     for rows in rows_list:                                               # warm-up: kernel builds, autotune per width
         run(rows, *prompts[0], 0.0)
     if a.serial:
@@ -196,6 +229,7 @@ def main() -> None:
             for temp in temps:
                 for rep in range(a.reps):
                     timing.clear()
+                    draft_log.clear()
                     r, trace = run(rows, name, ids, temp, sync=sync)
                     n = len(r.tokens) - 1
                     rec = {
@@ -222,6 +256,17 @@ def main() -> None:
                         greedy_ref.setdefault(key, r.tokens)
                     results.append(rec)
                     print(json.dumps(rec), flush=True)
+                    if trace_out:
+                        import numpy as np
+                        books = Path(f"{trace_out}-codebooks.npy")
+                        if not books.exists():                           # the selector's codebooks, once (~0.5 GB)
+                            np.save(books, np.stack([np.asarray(eng.draft.weights[f"candidate_selector.{k}_codebook"],
+                                                                np.float32) for k in ("predecessor", "successor")]))
+                        np.savez(f"{trace_out}-{name}-r{rows}-t{temp:g}.npz", prompt=np.array(ids),
+                                 out=np.array(r.tokens), ctx=np.array([e[0] for e in draft_log]),
+                                 pending=np.array([e[1] for e in draft_log]), ids=np.stack([e[2] for e in draft_log]),
+                                 floats=np.stack([e[3] for e in draft_log]))
+                    draft_log.clear()
     if a.out:
         Path(a.out).write_text(json.dumps({"args": vars(a), "results": results}, indent=1))
 
