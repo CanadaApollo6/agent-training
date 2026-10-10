@@ -1,0 +1,8 @@
+tasks in all four stages: 10
+pilot early (base, v0-2)        232 attempts  pooled  42.2%  per-task mean (common)  47.5%  (all its tasks:  43.8%, 16 tasks)
+pilot late (v6-11)              159 attempts  pooled  49.1%  per-task mean (common)  46.0%  (all its tasks:  48.4%, 16 tasks)
+cont early (pilot wts, v0-2)    224 attempts  pooled  48.2%  per-task mean (common)  53.1%  (all its tasks:  49.2%, 16 tasks)
+cont late (v6-11)                73 attempts  pooled  53.4%  per-task mean (common)  51.7%  (all its tasks:  51.7%, 10 tasks)
+  pilot late (v6-11) vs base:  -1.5 pts per task, 5 up, 5 down
+  cont early (pilot wts, v0-2) vs base:  +5.6 pts per task, 5 up, 5 down
+  cont late (v6-11) vs base:  +4.2 pts per task, 3 up, 3 down
