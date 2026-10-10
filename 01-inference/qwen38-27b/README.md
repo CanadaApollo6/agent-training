@@ -709,3 +709,27 @@ Matmul time by shape at 8 rows, alone (`qmm_shapes.py`): 19.8 ms a round for 14.
 inside a round. MLP 12.7 ms at ~760 GB/s, GDN input 3.3 ms at 696, the 5120-output projections (GDN out, attention o)
 2.1 ms at 545–583, the head 0.83 ms at 862. At 850 GB/s they would take 17 ms.
 
+
+**In the server** (`tensorfold-27b-context.patch`): `TENSORFOLD_ROWS=8` sets the rows a round (TensorFold's default
+is 12), and `TENSORFOLD_GRAPHS=1` turns on both replays for one GPU serving one request at a time. The request's
+GDN state points at the replay's fixed copy, so the state isn't held twice, and after each reply (or a cut-off one)
+the replay lets go of the conversation's cache buffers, so a fresh prompt can still reserve its whole window.
+
+Daily setup, 4-bit cache, full 262K window, `bench_tf.sh` (TensorFold's bench, medians of 3), same day:
+
+```bash
+TENSORFOLD_ROWS=8 TENSORFOLD_GRAPHS=1 TENSORFOLD_KV_BITS=4 TENSORFOLD_ONE_BUFFER=1 \
+  PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TF_DRAFT_PACKED=1 TF_BUDGET_GIB=200 \
+  LONG="100000" ./bench_tf.sh kv4r-262k-r8g --context 262144
+```
+
+| tok/s | Switches off | Rows 8 + replay | 2026-10-07 record |
+|---|---|---|---|
+| Code, greedy | 169 | **183** | 144 |
+| Code, sampled | 178 | **192** | 147 |
+| Chat, greedy | 117 | **126** | 114 |
+| Chat, sampled | 113 | **126** | 103 |
+
+The 132K-token recall prompt still answers right; peak card memory 24.07 GB (23.82 before), prompt reading 587 tok/s.
+The "off" column is also faster than the October 7 record: the 4-bit cache's Triton rotation and the merged MLP launch
+help the normal path too.

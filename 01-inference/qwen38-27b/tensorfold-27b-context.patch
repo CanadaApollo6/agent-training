@@ -384,8 +384,21 @@ index fa14f6a..5feb7e3 100644
 -    return out
 +                                     R=kvq.width(d), QBITS=kvq.BITS, num_warps=8, num_stages=1 if d > 128 else 2)
 +    return kvq.rotate(out)
+diff --git i/src/tensorfold/families/qwen3_5/__init__.py w/src/tensorfold/families/qwen3_5/__init__.py
+index 9ed041e..ac60cd5 100644
+--- i/src/tensorfold/families/qwen3_5/__init__.py
++++ w/src/tensorfold/families/qwen3_5/__init__.py
+@@ -290,7 +290,7 @@ def cuda_engine(model_dir: str | Path, *, drafter: str = "", tp: int = 1, rank:
+                          "--tp 2), or pass --no-drafts for the serial reference")
+     draft = Path(drafter) if drafter and not no_drafts else None
+     streams = max(1, int(options.get("parallel") or 1))
+-    return Qwen27Engine(Path(model_dir), draft, max_rows=12, tp=tp, rank=rank, master=master, port=master_port,
++    return Qwen27Engine(Path(model_dir), draft, max_rows=int(os.environ.get("TENSORFOLD_ROWS", "12")), tp=tp, rank=rank, master=master, port=master_port,
+                         split_head=tp == 2, tp_draft=tp == 2 and draft is not None, allow_copy=not no_drafts,
+                         streams=streams, context=options.get("context"),
+                         context_explicit=options.get("context_explicit"), vision=bool(options.get("vision", False)),
 diff --git i/src/tensorfold/families/qwen3_5/cuda/decode.py w/src/tensorfold/families/qwen3_5/cuda/decode.py
-index 624f6ad..628dd16 100644
+index 624f6ad..0dce0b3 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/decode.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/decode.py
 @@ -3,6 +3,7 @@
@@ -420,7 +433,7 @@ index 624f6ad..628dd16 100644
      if st.pos >= len(prompt):
          raise ValueError("a reused state must leave at least one prompt token to process")
      out = prefill_stops(w, prompt, st, draft, stops=stops, keep=keep, keep_at=keep_at, vision=vision)
-@@ -189,15 +200,16 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+@@ -189,15 +200,17 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
                   *, max_rows: int = 128, tree_rows: int | None = None,
                   allow_copy: bool = True, stop_eos: bool = True,
                   on_tokens: Callable[[list[int]], bool | None] | None = None,
@@ -436,11 +449,12 @@ index 624f6ad..628dd16 100644
      if not 1 <= tree_rows <= max_rows:
          raise ValueError("tree_rows must be between 1 and max_rows")
 -    st = st if inplace else clone_state(st)
++    request = st
 +    st = graphs.load(st) if graphs is not None else st if inplace else clone_state(st)
      out = [pending]
      context = list(prompt) + out
      copies = CopyIndex() if allow_copy else None
-@@ -219,11 +231,13 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+@@ -219,11 +232,13 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
              guesses, parents = [], []
          tokens = [out[-1]] + guesses
          tree_parents = [-1] + [0 if p < 0 else p + 1 for p in parents]
@@ -456,7 +470,7 @@ index 624f6ad..628dd16 100644
              w, _tokens(tokens, w.norm.device), tree_parents, st, capture_taps=draft is not None)
          torch.cuda.synchronize()
          spent["verify"] = time.perf_counter() - stage
-@@ -253,14 +267,15 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+@@ -253,14 +268,15 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
              trace.append(_round_record(tokens, tree_parents, depths, path, terminal, stop,
                                         "copy" if copied else "tree", draft, spent))
          stage = time.perf_counter()
@@ -474,6 +488,15 @@ index 624f6ad..628dd16 100644
          stages["commit"] += time.perf_counter() - stage
          if trace is not None:
              trace[-1]["commit_ms"] = round(1000 * (time.perf_counter() - stage), 3)
+@@ -270,6 +286,8 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+         widths.append(len(tokens))
+         if on_tokens is not None:
+             stopped = bool(on_tokens([tokens[row] for row in path[1:]] + [terminal]))
++    if graphs is not None:
++        graphs.release(request)
+     return DecodeResult(out, time.perf_counter() - start, rounds, drafted_rows,
+                         accepted_drafts, stages["draft"], stages["verify"],
+                         stages["sample"], stages["commit"], widths)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/dflash2.py w/src/tensorfold/families/qwen3_5/cuda/dflash2.py
 index f7740aa..a8ec456 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/dflash2.py
@@ -542,19 +565,37 @@ index 633c0e4..ebb20bc 100644
      group = heads // kv_heads
      _block_attention[(streams, kv_heads)](q, k, v, table, lens, out, scale, window, rows, G=group, HKV=kv_heads,
 diff --git i/src/tensorfold/families/qwen3_5/cuda/engine.py w/src/tensorfold/families/qwen3_5/cuda/engine.py
-index 6029ae1..3371de7 100644
+index 6029ae1..69ef79a 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/engine.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/engine.py
-@@ -6,6 +6,8 @@ import time
+@@ -6,6 +6,12 @@ import time
  from pathlib import Path
  from typing import Callable, Sequence
  
++import os
++
 +from .decode import ONE_BUFFER
++
++GRAPHS = os.environ.get("TENSORFOLD_GRAPHS") == "1"
 +
  
  KEEP = 3             # prompt states a concurrent decoder keeps to resume from (each holds a DeltaNet copy)
  KEEP_ONE = 4         # prompt states one stream keeps (they share its attention buffers)
-@@ -189,6 +191,8 @@ class Qwen27Engine:
+@@ -116,6 +122,13 @@ class Qwen27Engine:
+         from tensorfold.cuda.markers import resume_points
+         from tensorfold.cuda.streams import PrefixCache
+ 
++        # TENSORFOLD_GRAPHS=1: one GPU, one request at a time: verify windows and drafter blocks replay CUDA graphs
++        self.graphs = None
++        if GRAPHS and tp == 1 and streams == 1 and self.draft is not None:
++            from .graphs27 import DraftGraphs, TreeGraphs
++
++            self.graphs = TreeGraphs(self.w)
++            self.draft.launch_block = DraftGraphs(self.draft).launch_block
+         self.eos = tuple(self.w.config.eos)
+         self.points = resume_points(model_dir)              # message starts a prefill keeps states at
+         self.cache = PrefixCache(KEEP_ONE)                  # (committed ids, state, drafter snapshot)
+@@ -189,6 +202,8 @@ class Qwen27Engine:
                                           vision=vision)
          t0 = time.perf_counter()
          hit = self._resume(prompt) if draft and vision is None else None
@@ -563,6 +604,25 @@ index 6029ae1..3371de7 100644
          encoded = self.vision.encode(vision, prompt) if vision is not None else None
          if self.tp == 2:
              return self._generate_tp(prompt, max_tokens, sampling, on_tokens, hit, t0, draft, stop_eos, vision=encoded)
+@@ -207,9 +222,15 @@ class Qwen27Engine:
+         if on_tokens([pending]):
+             return {"prefill_s": prefill_s, "cached": hit[1].pos if hit else 0}
+         # the cache holds the state before the last prompt token, not ``st``: the decode may commit into it
+-        result = draft_decode(self.w, st, prompt, pending, max_tokens, sampling, drafter,
+-                              max_rows=self.max_rows, allow_copy=self.allow_copy and draft, stop_eos=stop_eos,
+-                              on_tokens=on_tokens, inplace=True)
++        try:
++            result = draft_decode(self.w, st, prompt, pending, max_tokens, sampling, drafter,
++                                  max_rows=self.max_rows, allow_copy=self.allow_copy and draft, stop_eos=stop_eos,
++                                  on_tokens=on_tokens, inplace=True,
++                                  graphs=self.graphs if drafter is not None else None,
++                                  sync_stages=self.graphs is None)
++        finally:
++            if self.graphs is not None:             # a reply cut short (client gone) lets go of its buffers too
++                self.graphs.release(st)
+         return {"prefill_s": prefill_s, "decode_s": result.seconds, "rounds": result.rounds,
+                 "cached": hit[1].pos if hit else 0, "drafts": draft, "min_rows": min(result.widths, default=0)}
+ 
 diff --git i/src/tensorfold/families/qwen3_5/cuda/forward.py w/src/tensorfold/families/qwen3_5/cuda/forward.py
 index 97003b6..8e4728b 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/forward.py
@@ -759,10 +819,10 @@ index 97003b6..8e4728b 100644
          st.pos += len(path)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/graphs27.py w/src/tensorfold/families/qwen3_5/cuda/graphs27.py
 new file mode 100644
-index 0000000..c024e93
+index 0000000..395b5a8
 --- /dev/null
 +++ w/src/tensorfold/families/qwen3_5/cuda/graphs27.py
-@@ -0,0 +1,283 @@
+@@ -0,0 +1,295 @@
 +"""One stream's verify trees (``TreeGraphs``, ``draft_decode(graphs=...)``) and DFlash2 blocks (``DraftGraphs``)
 +replayed as CUDA graphs (Qwen3.8-27B).
 +
@@ -836,14 +896,26 @@ index 0000000..c024e93
 +
 +    # -- state ---------------------------------------------------------------------------------------------------
 +    def load(self, st: State) -> State:
-+        """Copy a request's committed GDN and conv states into the fixed ones; attention rows stay in its buffers."""
++        """Copy a request's committed GDN and conv states into the fixed ones, and point ``st`` at them (its own copies
++        go, so a request holds one set); attention rows stay in its buffers."""
 +
-+        for dst, src in zip(self.st.rec + self.st.conv, st.rec + st.conv):
-+            if dst is not None:
-+                dst.copy_(src)
++        for mine, theirs in ((self.st.rec, st.rec), (self.st.conv, st.conv)):
++            for i, dst in enumerate(mine):
++                if dst is not None:
++                    dst.copy_(theirs[i])
++                    theirs[i] = dst
 +        self.st.kv = list(st.kv)
 +        self.st.pos, self.st.limit, self.st.rope_delta = st.pos, st.limit, st.rope_delta
 +        return self.st
++
++    def release(self, st: State) -> None:
++        """Hand the decoded state back to the request (its attention buffers, position) and drop this object's hold on
++        them, so a later prompt can reserve its window."""
++
++        if all(kv is None for kv in self.st.kv):         # released already
++            return
++        st.kv, st.pos, st.limit = list(self.st.kv), self.st.pos, self.st.limit
++        self.st.kv = [None] * len(self.st.kv)
 +
 +    def commit(self, record, path: Sequence[int]) -> None:
 +        commit(self.st, record, path, in_place=True)
