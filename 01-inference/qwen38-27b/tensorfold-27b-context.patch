@@ -564,7 +564,7 @@ index 6029ae1..3371de7 100644
          if self.tp == 2:
              return self._generate_tp(prompt, max_tokens, sampling, on_tokens, hit, t0, draft, stop_eos, vision=encoded)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/forward.py w/src/tensorfold/families/qwen3_5/cuda/forward.py
-index 97003b6..1efc96f 100644
+index 97003b6..8e4728b 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/forward.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/forward.py
 @@ -2,6 +2,7 @@
@@ -602,7 +602,20 @@ index 97003b6..1efc96f 100644
  def _row_mm(x: torch.Tensor, w: QLinear, tp: bool,
              xs: torch.Tensor | None = None) -> torch.Tensor:
      if not tp:
-@@ -119,8 +129,9 @@ class State:
+@@ -39,7 +49,11 @@ def _mlp(layer, h: torch.Tensor, xs: torch.Tensor, tp: bool) -> torch.Tensor:
+         if tp:
+             raise ValueError("routed experts run on one GPU")
+         return moe.run(h, layer.moe)
+-    act, act_xs = glue.swiglu(_mm(h, layer.gate, xs), _mm(h, layer.up, xs))
++    if h.shape[0] <= 8:                             # one launch for both (the same bits; slower past 8 rows)
++        gate, up = _mm_many(h, [layer.gate, layer.up], xs)
++    else:
++        gate, up = _mm(h, layer.gate, xs), _mm(h, layer.up, xs)
++    act, act_xs = glue.swiglu(gate, up)
+     return _row_mm(act, layer.down, tp, act_xs)
+ 
+ 
+@@ -119,8 +133,9 @@ class State:
              else:
                  self.conv.append(None)
                  self.rec.append(None)
@@ -614,7 +627,7 @@ index 97003b6..1efc96f 100644
  
  
  @dataclass
-@@ -162,6 +173,16 @@ def stage(w: Weights, st: State, width: int, context: int) -> Staged:
+@@ -162,6 +177,16 @@ def stage(w: Weights, st: State, width: int, context: int) -> Staged:
                    _cache_offsets([st], softmax, device), _conv_windows(parents, c.conv_kernel - 1).to(device), host, dev)
  
  
@@ -631,7 +644,7 @@ index 97003b6..1efc96f 100644
  def reserve(st: State, rows: int) -> None:
      """Grow every attention cache to ``rows`` now, so later commits never move a buffer (graphs keep addresses)."""
  
-@@ -192,6 +213,9 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+@@ -192,6 +217,9 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
      if staged is not None:                          # a graph replay's inputs, refreshed in place
          ids, pos, plan, aplan = staged.ids, staged.pos, staged.plan, staged.aplan
          aoffs, windows = staged.aoffs, staged.windows
@@ -641,7 +654,7 @@ index 97003b6..1efc96f 100644
      else:
          ids = tokens.to(torch.int32)
          pos = torch.tensor([st.pos + st.rope_delta + d for d in depths], device=tokens.device,
-@@ -214,17 +238,15 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+@@ -214,17 +242,15 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
          x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
          if layer.linear:
              gdn = layer.gdn
@@ -662,7 +675,7 @@ index 97003b6..1efc96f 100644
              q, k, v, g, beta = glue.gdn_pre(qkv, st.conv[i], gdn.conv, windows, a, b,
                                                gdn.A_log, gdn.dt_bias, kh=c.k_heads,
                                                vh=c.v_heads, dk=c.dk)
-@@ -234,15 +256,14 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+@@ -234,15 +260,14 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
              record.append(GDNRecord(q, k, v, g, beta, qkv))
          else:
              attn = layer.attn
@@ -681,7 +694,7 @@ index 97003b6..1efc96f 100644
              q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
                                      w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
                                      head_dim=c.head_dim)
-@@ -322,17 +343,15 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+@@ -322,17 +347,15 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
          x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
          if layer.linear:
              gdn = layer.gdn
@@ -702,7 +715,7 @@ index 97003b6..1efc96f 100644
              conv = states[0].conv[i] if S == 1 else torch.cat([st.conv[i] for st in states])
              q, k, v, g, beta = glue.gdn_pre(qkv, conv, gdn.conv, windows_t, a, b, gdn.A_log, gdn.dt_bias,
                                              kh=c.k_heads, vh=c.v_heads, dk=c.dk, stream_ids=sid_t, nkeep=keep)
-@@ -342,15 +361,14 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+@@ -342,15 +365,14 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
              record.append(GDNRecord(q, k, v, g, beta, qkv))
          else:
              attn = layer.attn
@@ -721,7 +734,7 @@ index 97003b6..1efc96f 100644
              q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
                                      w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
                                      head_dim=c.head_dim)
-@@ -451,9 +469,7 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
+@@ -451,9 +473,7 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
              for i, _ in att:
                  kbuf, vbuf = st.kv[i]
                  if kbuf.shape[0] < need:
@@ -732,7 +745,7 @@ index 97003b6..1efc96f 100644
                      grown_k = kbuf.new_empty((cap, *kbuf.shape[1:]))
                      grown_v = vbuf.new_empty((cap, *vbuf.shape[1:]))
                      grown_k[:st.pos] = kbuf[:st.pos]
-@@ -470,6 +486,10 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
+@@ -470,6 +490,10 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
                  dst += [st.kv[i][0][st.pos:st.pos + n], st.kv[i][1][st.pos:st.pos + n]]
                  src += [keys[a0:a0 + n], values[a0:a0 + n]]
                  a0 += n

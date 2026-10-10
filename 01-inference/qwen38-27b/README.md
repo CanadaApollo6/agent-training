@@ -695,7 +695,17 @@ Width 8, greedy, exact, 2 reps (tok/s; `results/rounds/draftgraphs-*.json`):
 | normal | 154 | 130 | 169 | 151 |
 | verify graphs | 161 | 133 | 176 | 157 |
 | + no timing waits | 159 | 135 | 176 | 157 |
-| + drafter graphs | 163 | 136 | 179 | **159** |
+| + drafter graphs | 163 | 136 | 179 | 159 |
+| + MLP gate and up in one launch | 163 | 139 | 181 | **161** |
 
 Width 12 with verify graphs: 152 (from 145); width 8 still wins. The GPU is now busy 91% of a round (25.4 of 28 ms),
 and the 4-bit matmuls are 20.6 ms of it (~735 GB/s for ~15 GB). They are the remaining lever.
+
+The MLP's gate and up projections went out as two launches; `matmul_many` takes both in one with the same bits
+(checked on all 64 layers at 1–16 rows). Up to 8 rows that saves 3 us a layer; at 12–16 rows it is slower, so
+`_mlp` merges them only up to 8 rows (`results/rounds/gateup.json`).
+
+Matmul time by shape at 8 rows, alone (`qmm_shapes.py`): 19.8 ms a round for 14.4 GB (729 GB/s), about what they take
+inside a round. MLP 12.7 ms at ~760 GB/s, GDN input 3.3 ms at 696, the 5120-output projections (GDN out, attention o)
+2.1 ms at 545–583, the head 0.83 ms at 862. At 850 GB/s they would take 17 ms.
+
