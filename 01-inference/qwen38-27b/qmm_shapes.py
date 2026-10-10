@@ -42,6 +42,11 @@ def main() -> None:
     for lock in (Path.home() / ".cache/torch_extensions").glob("*/tensorfold_*/lock"):
         lock.unlink()
 
+    import os
+    from tensorfold.cuda.kernels import qmm
+    if os.environ.get("QMM_TARGET"):                      # more K slices: split_k's block target (default 192)
+        orig, target = qmm.split_k, int(os.environ["QMM_TARGET"])
+        qmm.split_k = lambda n, k, gs=64, target_=None: orig(n, k, gs, target)
     from tensorfold.families.qwen3_5.cuda.weights import load
     from tensorfold.families.qwen3_5.cuda.forward import _mm, _mm_many
 

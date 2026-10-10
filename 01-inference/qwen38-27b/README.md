@@ -667,3 +667,35 @@ Widths, greedy, all exact (tok/s; `results/rounds/rows-exact.json`):
 
 Width 8 wins by ~3.5%: the matmuls take the weights-as-A path up to 8 rows (verify 24.0 vs 27.6 ms a round), which
 outweighs 10% fewer tokens a round.
+
+**Other knobs tried (no gain):** more K slices in the matmuls (`split_k` target 400 or 800 instead of 192) is slower.
+Chains instead of trees (`--branch 1`) accept 6–8% fewer tokens a round at width 8. Per-shape matmul speed
+([`qmm_shapes.py`](qmm_shapes.py)) at 8 rows is the same as at 1 row: 650–765 GB/s for the MLP, ~500 GB/s for the
+GDN and attention output projections (5120 outputs), 740–870 GB/s for the head.
+
+**Host time** (`TIMING=1`, synced, width 8): verify 24.0 ms, drafter block 2.9 ms, commit 1.1 ms, drafter taps 0.7 ms,
+tree policy 0.28 ms, sampling 0.16 ms. The host's own decisions are small; the idle GPU time was Python launching
+~600 kernels a round.
+
+**Replaying rounds as CUDA graphs** (`graphs27.py`, in `tensorfold-27b-context.patch`; `round_bench.py --graphs`):
+- `TreeGraphs` records the verify forward once per (width, GDN slot class, context bucket) and replays it. Each round
+  the host writes the tree (token ids, positions, GDN schedule, attention parents and committed length, conv windows,
+  cache offsets) into fixed buffers; the paths are computed inside the graph. GDN and conv states live at fixed
+  addresses and commit writes them in place. Five or six graphs cover a 512-token reply.
+- `DraftGraphs` does the same for the DFlash2 block (one graph per block length). Its context keys stay where they
+  are; the attention reads them through a pointer table refreshed each round.
+- `GRAPH_CHECK=1` also runs every round the normal way and compares bits: 0 mismatches in either over 240 rounds.
+  `--serial` passes (drafted == serial).
+- `--sync 0` drops the decode loop's timing-only waits (`draft_decode(sync_stages=False)`): +1%.
+
+Width 8, greedy, exact, 2 reps (tok/s; `results/rounds/draftgraphs-*.json`):
+
+| Setting | code | chat | agent | mean |
+|---|---|---|---|---|
+| normal | 154 | 130 | 169 | 151 |
+| verify graphs | 161 | 133 | 176 | 157 |
+| + no timing waits | 159 | 135 | 176 | 157 |
+| + drafter graphs | 163 | 136 | 179 | **159** |
+
+Width 12 with verify graphs: 152 (from 145); width 8 still wins. The GPU is now busy 91% of a round (25.4 of 28 ms),
+and the 4-bit matmuls are 20.6 ms of it (~735 GB/s for ~15 GB). They are the remaining lever.

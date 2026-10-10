@@ -385,7 +385,7 @@ index fa14f6a..5feb7e3 100644
 +                                     R=kvq.width(d), QBITS=kvq.BITS, num_warps=8, num_stages=1 if d > 128 else 2)
 +    return kvq.rotate(out)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/decode.py w/src/tensorfold/families/qwen3_5/cuda/decode.py
-index 624f6ad..c357da7 100644
+index 624f6ad..628dd16 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/decode.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/decode.py
 @@ -3,6 +3,7 @@
@@ -420,6 +420,127 @@ index 624f6ad..c357da7 100644
      if st.pos >= len(prompt):
          raise ValueError("a reused state must leave at least one prompt token to process")
      out = prefill_stops(w, prompt, st, draft, stops=stops, keep=keep, keep_at=keep_at, vision=vision)
+@@ -189,15 +200,16 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+                  *, max_rows: int = 128, tree_rows: int | None = None,
+                  allow_copy: bool = True, stop_eos: bool = True,
+                  on_tokens: Callable[[list[int]], bool | None] | None = None,
+-                 trace: list | None = None, inplace: bool = False) -> DecodeResult:
+-    """Verify trees and replay matching paths (host-only traces leave tokens unchanged); ``inplace``: commit into ``st`` itself, which nothing else holds."""
++                 trace: list | None = None, inplace: bool = False, graphs=None,
++                 sync_stages: bool = True) -> DecodeResult:
++    """Verify trees and replay matching paths (host-only traces leave tokens unchanged); ``inplace``: commit into ``st`` itself, which nothing else holds; ``graphs`` (``graphs27.TreeGraphs``): replay verify windows from CUDA graphs on its own copy of ``st``, which ends in ``graphs.st``."""
+ 
+     if count < 1 or not 1 <= max_rows <= 128:
+         raise ValueError("count >= 1 and 1 <= max_rows <= 128 required")
+     tree_rows = max_rows if tree_rows is None else tree_rows
+     if not 1 <= tree_rows <= max_rows:
+         raise ValueError("tree_rows must be between 1 and max_rows")
+-    st = st if inplace else clone_state(st)
++    st = graphs.load(st) if graphs is not None else st if inplace else clone_state(st)
+     out = [pending]
+     context = list(prompt) + out
+     copies = CopyIndex() if allow_copy else None
+@@ -219,11 +231,13 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+             guesses, parents = [], []
+         tokens = [out[-1]] + guesses
+         tree_parents = [-1] + [0 if p < 0 else p + 1 for p in parents]
+-        torch.cuda.synchronize()
++        if sync_stages:                      # stage times only; the reads that need results wait on their own
++            torch.cuda.synchronize()
+         spent = {"draft": time.perf_counter() - stage}
+         stages["draft"] += spent["draft"]
+         stage = time.perf_counter()
+-        logits, record, *tapped = tree_forward(
++        replayed = graphs.verify(tokens, tree_parents, capture_taps=draft is not None) if graphs is not None else None
++        logits, record, *tapped = replayed if replayed is not None else tree_forward(
+             w, _tokens(tokens, w.norm.device), tree_parents, st, capture_taps=draft is not None)
+         torch.cuda.synchronize()
+         spent["verify"] = time.perf_counter() - stage
+@@ -253,14 +267,15 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+             trace.append(_round_record(tokens, tree_parents, depths, path, terminal, stop,
+                                        "copy" if copied else "tree", draft, spent))
+         stage = time.perf_counter()
+-        commit(st, record, path)
++        commit(st, record, path, in_place=graphs is not None)
+         if draft is not None:
+             draft.add_taps(tapped[0][path])
+         out.extend(tokens[row] for row in path[1:])
+         out.append(terminal)
+         context.extend(tokens[row] for row in path[1:])
+         context.append(terminal)
+-        torch.cuda.synchronize()
++        if sync_stages:
++            torch.cuda.synchronize()
+         stages["commit"] += time.perf_counter() - stage
+         if trace is not None:
+             trace[-1]["commit_ms"] = round(1000 * (time.perf_counter() - stage), 3)
+diff --git i/src/tensorfold/families/qwen3_5/cuda/dflash2.py w/src/tensorfold/families/qwen3_5/cuda/dflash2.py
+index f7740aa..a8ec456 100644
+--- i/src/tensorfold/families/qwen3_5/cuda/dflash2.py
++++ w/src/tensorfold/families/qwen3_5/cuda/dflash2.py
+@@ -444,8 +444,9 @@ class DFlash2:
+         return q, k, v
+ 
+     def _layer_fast(self, i: int, x: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor, ctx: list,
+-                    length: int) -> torch.Tensor:
+-        """One layer over several streams' blocks (``length`` rows each); each block attends its own context."""
++                    length: int, staged: tuple | None = None) -> torch.Tensor:
++        """One layer over several streams' blocks (``length`` rows each); each block attends its own context
++        (``staged``: this layer's context table and lengths, already on the device)."""
+ 
+         w = self.weights
+         base = f"layers.{i}."
+@@ -455,7 +456,7 @@ class DFlash2:
+         q, k, v = self._prep(self._lin(_dconv(normed, dyn, conv, 0, self.group_size, seg=length),
+                                        base + "self_attn.qkv.weight"), i, cos, sin, self.heads_local)
+         out = block_attention(q, k, v, [snap[0][i] for snap in ctx], [snap[1][i] for snap in ctx], length,
+-                              self.window, self.head_dim ** -0.5, self.is_causal)
++                              self.window, self.head_dim ** -0.5, self.is_causal, staged)
+         x = _dconv(self._row(out, base + "self_attn.o_proj.weight"), dyn, conv, 1, self.group_size, x, seg=length)
+         normed = F.rms_norm(x, (self.hidden,), w[base + "post_attention_layernorm.weight"], self.eps)
+         dyn = self._lin(normed, base + "mlp_conv.kernel_projection.weight")
+diff --git i/src/tensorfold/families/qwen3_5/cuda/draft_attention.py w/src/tensorfold/families/qwen3_5/cuda/draft_attention.py
+index 633c0e4..ebb20bc 100644
+--- i/src/tensorfold/families/qwen3_5/cuda/draft_attention.py
++++ w/src/tensorfold/families/qwen3_5/cuda/draft_attention.py
+@@ -68,22 +68,25 @@ def _block_attention(Q, KB, VB, TABLE, LENS, O, scale, window, R,
+ 
+ def block_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, keys: Sequence[torch.Tensor],
+                     values: Sequence[torch.Tensor], length: int, window: int, scale: float,
+-                    causal: bool = False) -> torch.Tensor:
+-    """q [H, S*L, D], k and v [Hkv, S*L, D] (S streams' blocks of ``length`` rows), stream s's context [Hkv, n_s, D] -> [S*L, H*D] bf16."""
++                    causal: bool = False, staged: tuple[torch.Tensor, torch.Tensor] | None = None) -> torch.Tensor:
++    """q [H, S*L, D], k and v [Hkv, S*L, D] (S streams' blocks of ``length`` rows), stream s's context [Hkv, n_s, D] -> [S*L, H*D] bf16; ``staged``: the (table, lens) device inputs already written (a graph replay's, keys and values unused)."""
+ 
+     heads, rows, dim = q.shape
+     kv_heads = k.shape[0]
+     streams = rows // length
+-    if len(keys) != streams or len(values) != streams or rows != streams * length or heads % kv_heads:
+-        raise ValueError("one context a stream, and blocks of equal length")
+-    for kc, vc in zip(keys, values):
+-        if kc.shape != vc.shape or kc.shape[0] != kv_heads or kc.shape[2] != dim or not kc.is_contiguous() \
+-                or not vc.is_contiguous() or kc.dtype != torch.bfloat16:
+-            raise ValueError("contexts are contiguous bf16 [Hkv, n, D] keys and values")
+-    host = torch.tensor([p for kc, vc in zip(keys, values) for p in (kc.data_ptr(), vc.data_ptr())] +
+-                        [kc.shape[1] for kc in keys], dtype=torch.int64).pin_memory()
+-    dev = host.to(q.device, non_blocking=True)
+-    table, lens = dev[:2 * streams], dev[2 * streams:].to(torch.int32)
++    if staged is not None:
++        table, lens = staged
++    else:
++        if len(keys) != streams or len(values) != streams or rows != streams * length or heads % kv_heads:
++            raise ValueError("one context a stream, and blocks of equal length")
++        for kc, vc in zip(keys, values):
++            if kc.shape != vc.shape or kc.shape[0] != kv_heads or kc.shape[2] != dim or not kc.is_contiguous() \
++                    or not vc.is_contiguous() or kc.dtype != torch.bfloat16:
++                raise ValueError("contexts are contiguous bf16 [Hkv, n, D] keys and values")
++        host = torch.tensor([p for kc, vc in zip(keys, values) for p in (kc.data_ptr(), vc.data_ptr())] +
++                            [kc.shape[1] for kc in keys], dtype=torch.int64).pin_memory()
++        dev = host.to(q.device, non_blocking=True)
++        table, lens = dev[:2 * streams], dev[2 * streams:].to(torch.int32)
+     out = torch.empty((rows, heads * dim), dtype=torch.bfloat16, device=q.device)
+     group = heads // kv_heads
+     _block_attention[(streams, kv_heads)](q, k, v, table, lens, out, scale, window, rows, G=group, HKV=kv_heads,
 diff --git i/src/tensorfold/families/qwen3_5/cuda/engine.py w/src/tensorfold/families/qwen3_5/cuda/engine.py
 index 6029ae1..3371de7 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/engine.py
@@ -443,7 +564,7 @@ index 6029ae1..3371de7 100644
          if self.tp == 2:
              return self._generate_tp(prompt, max_tokens, sampling, on_tokens, hit, t0, draft, stop_eos, vision=encoded)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/forward.py w/src/tensorfold/families/qwen3_5/cuda/forward.py
-index 97003b6..aac69ea 100644
+index 97003b6..1efc96f 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/forward.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/forward.py
 @@ -2,6 +2,7 @@
@@ -510,7 +631,17 @@ index 97003b6..aac69ea 100644
  def reserve(st: State, rows: int) -> None:
      """Grow every attention cache to ``rows`` now, so later commits never move a buffer (graphs keep addresses)."""
  
-@@ -214,17 +235,15 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+@@ -192,6 +213,9 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+     if staged is not None:                          # a graph replay's inputs, refreshed in place
+         ids, pos, plan, aplan = staged.ids, staged.pos, staged.plan, staged.aplan
+         aoffs, windows = staged.aoffs, staged.windows
++        if getattr(staged, "tree", False):          # a tree's paths and depths from this round's parents
++            tree_attention._paths[(W,)](aplan.parents, aplan.paths, aplan.depths, MAXD=tree_attention.MAX_NODES,
++                                        num_warps=1)
+     else:
+         ids = tokens.to(torch.int32)
+         pos = torch.tensor([st.pos + st.rope_delta + d for d in depths], device=tokens.device,
+@@ -214,17 +238,15 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
          x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
          if layer.linear:
              gdn = layer.gdn
@@ -531,7 +662,7 @@ index 97003b6..aac69ea 100644
              q, k, v, g, beta = glue.gdn_pre(qkv, st.conv[i], gdn.conv, windows, a, b,
                                                gdn.A_log, gdn.dt_bias, kh=c.k_heads,
                                                vh=c.v_heads, dk=c.dk)
-@@ -234,15 +253,14 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
+@@ -234,15 +256,14 @@ def tree_forward(w: Weights, tokens: torch.Tensor, parents: Sequence[int], st: S
              record.append(GDNRecord(q, k, v, g, beta, qkv))
          else:
              attn = layer.attn
@@ -550,7 +681,7 @@ index 97003b6..aac69ea 100644
              q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
                                      w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
                                      head_dim=c.head_dim)
-@@ -322,17 +340,15 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+@@ -322,17 +343,15 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
          x, h, xs = glue.add_rmsnorm(x, pending, layer.input_norm, c.eps)
          if layer.linear:
              gdn = layer.gdn
@@ -571,7 +702,7 @@ index 97003b6..aac69ea 100644
              conv = states[0].conv[i] if S == 1 else torch.cat([st.conv[i] for st in states])
              q, k, v, g, beta = glue.gdn_pre(qkv, conv, gdn.conv, windows_t, a, b, gdn.A_log, gdn.dt_bias,
                                              kh=c.k_heads, vh=c.v_heads, dk=c.dk, stream_ids=sid_t, nkeep=keep)
-@@ -342,15 +358,14 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
+@@ -342,15 +361,14 @@ def multi_tree_forward(w: Weights, streams: Sequence[tuple[Sequence[int], Sequen
              record.append(GDNRecord(q, k, v, g, beta, qkv))
          else:
              attn = layer.attn
@@ -590,7 +721,7 @@ index 97003b6..aac69ea 100644
              q, key = glue.attn_prep(qg, key, attn.q_norm, attn.k_norm, pos,
                                      w.inv_freq, c.eps, heads=c.heads, kv_heads=c.kv_heads,
                                      head_dim=c.head_dim)
-@@ -451,9 +466,7 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
+@@ -451,9 +469,7 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
              for i, _ in att:
                  kbuf, vbuf = st.kv[i]
                  if kbuf.shape[0] < need:
@@ -601,7 +732,7 @@ index 97003b6..aac69ea 100644
                      grown_k = kbuf.new_empty((cap, *kbuf.shape[1:]))
                      grown_v = vbuf.new_empty((cap, *vbuf.shape[1:]))
                      grown_k[:st.pos] = kbuf[:st.pos]
-@@ -470,6 +483,10 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
+@@ -470,6 +486,10 @@ def _commit(states: Sequence[State], record: Sequence[Record], paths: Sequence[S
                  dst += [st.kv[i][0][st.pos:st.pos + n], st.kv[i][1][st.pos:st.pos + n]]
                  src += [keys[a0:a0 + n], values[a0:a0 + n]]
                  a0 += n
@@ -613,6 +744,295 @@ index 97003b6..aac69ea 100644
 +                kvq.store(d_rows, s_rows)
      for st, path in zip(states, paths):
          st.pos += len(path)
+diff --git i/src/tensorfold/families/qwen3_5/cuda/graphs27.py w/src/tensorfold/families/qwen3_5/cuda/graphs27.py
+new file mode 100644
+index 0000000..c024e93
+--- /dev/null
++++ w/src/tensorfold/families/qwen3_5/cuda/graphs27.py
+@@ -0,0 +1,283 @@
++"""One stream's verify trees (``TreeGraphs``, ``draft_decode(graphs=...)``) and DFlash2 blocks (``DraftGraphs``)
++replayed as CUDA graphs (Qwen3.8-27B).
++
++The eager verify launches ~600 kernels from Python a round; on a busy desktop the host falls behind the GPU. A graph
++per (width, GDN slot class, context bucket) replays the same kernels, so the bits are the eager forward's. Each round
++the host writes the tree into a pinned mirror (token ids, positions, the GDN schedule, the attention parents and the
++stream's committed length, the conv windows, the cache offsets) and copies it in before the replay; paths and depths
++are computed inside the graph. The GDN and conv states live in this object's own tensors (``load`` copies a request's
++state in), and ``commit`` writes them in place, so the graphs' addresses never move. Attention rows stay in the
++request's buffers, read through offsets refreshed each round.
++"""
++
++from __future__ import annotations
++
++import gc
++from dataclasses import dataclass
++from typing import Sequence
++
++import torch
++import torch.nn.functional as F
++
++from tensorfold.cuda.kernels import attention as tree_attention
++from tensorfold.cuda.kernels import gdn as deltanet
++
++from .forward import State, commit, tree_forward
++from .glue import embedding
++from .qmm_fast import matmul_rows
++
++BUCKET = 8192        # smallest context span a graph covers; larger contexts take the next power of two
++SLOT_CLASSES = (2, 4, 8, 16, 32)
++
++
++def slot_class(slots: int) -> int:
++    """The GDN kernel variant a schedule takes (``dispatch_tree``): 0 is the chain kernel."""
++
++    return 0 if slots == 0 else next(c for c in SLOT_CLASSES if slots <= c)
++
++
++@dataclass
++class TreeStaged:
++    """A tree window's device inputs, as ``tree_forward(staged=...)`` reads them, with their pinned host mirror."""
++
++    width: int
++    ids: torch.Tensor
++    pos: torch.Tensor
++    plan: deltanet.Plan
++    aplan: tree_attention.Plan
++    aoffs: dict
++    windows: torch.Tensor
++    host: torch.Tensor
++    dev: torch.Tensor
++    host64: torch.Tensor
++    dev64: torch.Tensor
++    at: dict                # name -> (start, length) in the int32 mirror
++    tree: bool = True       # tree_forward computes paths and depths from ``aplan.parents`` inside the graph
++
++
++class TreeGraphs:
++    def __init__(self, w) -> None:
++        self.w = w
++        self.st = State(w)                          # GDN/conv states at fixed addresses; kv from the request
++        c = w.config
++        self.group = c.heads // c.kv_heads
++        self.keep = next(s for s in self.st.conv if s is not None).shape[0]
++        self.softmax = [i for i, layer in enumerate(w.layers) if not layer.linear]
++        self.graphs: dict[tuple[int, int, int], tuple] = {}
++        self.pool = torch.cuda.graph_pool_handle()
++        self.replays = self.eager = 0
++        self.check = False                          # also run each window eagerly and require identical bits
++        self.mismatches = 0
++
++    # -- state ---------------------------------------------------------------------------------------------------
++    def load(self, st: State) -> State:
++        """Copy a request's committed GDN and conv states into the fixed ones; attention rows stay in its buffers."""
++
++        for dst, src in zip(self.st.rec + self.st.conv, st.rec + st.conv):
++            if dst is not None:
++                dst.copy_(src)
++        self.st.kv = list(st.kv)
++        self.st.pos, self.st.limit, self.st.rope_delta = st.pos, st.limit, st.rope_delta
++        return self.st
++
++    def commit(self, record, path: Sequence[int]) -> None:
++        commit(self.st, record, path, in_place=True)
++
++    # -- staging -------------------------------------------------------------------------------------------------
++    def _rows(self) -> int:
++        return self.st.kv[self.softmax[0]][0].shape[0]
++
++    def _bucket(self, end: int) -> int:
++        return min(self._rows(), max(BUCKET, 1 << (end - 1).bit_length()))
++
++    def _stage(self, width: int, slots: int, context: int) -> TreeStaged:
++        device = self.w.norm.device
++        chain = list(range(-1, width - 1))
++        flat, n_items, chunks = tree_attention.padded_host(chain, context, self.group)
++        at, sizes = {}, [("ids", width), ("pos", width), ("entries", 3 * width), ("starts", 2), ("att", len(flat)),
++                         ("windows", width * (self.keep + 1))]
++        o = 0
++        for name, n in sizes:
++            at[name] = (o, n)
++            o += n
++        host = torch.zeros(o, dtype=torch.int32).pin_memory()
++        a0 = at["att"][0]
++        host[a0:a0 + len(flat)] = torch.tensor(flat, dtype=torch.int32)
++        s0 = at["starts"][0]
++        host[s0 + 1] = width
++        dev = host.to(device)
++        host64 = torch.zeros(2 * len(self.softmax), dtype=torch.int64).pin_memory()
++        dev64 = host64.to(device)
++
++        def view(name):
++            s, n = at[name]
++            return dev[s:s + n]
++
++        plan = deltanet.Plan(view("entries").view(width, 3), view("starts"), slots, width)
++        att = view("att")
++        rows = att[:width]
++        table = att[width:width + 4].view(1, 4)
++        items = att[width + 4:width + 4 + 3 * n_items].view(n_items, 3)
++        parents = att[width + 4 + 3 * n_items:width + 4 + 3 * n_items + width]
++        paths = torch.empty((width, tree_attention.MAX_NODES), dtype=torch.int32, device=device)
++        depths = torch.empty((width,), dtype=torch.int32, device=device)
++        aplan = tree_attention.Plan(rows, table, items, parents, paths, depths, chunks, width)
++        aoffs = {layer: dev64[2 * j:2 * j + 2].view(1, 2) for j, layer in enumerate(self.softmax)}
++        return TreeStaged(width, view("ids"), view("pos"), plan, aplan, aoffs,
++                          view("windows").view(width, self.keep + 1), host, dev, host64, dev64, at)
++
++    def _refresh(self, s: TreeStaged, tokens: Sequence[int], parents: Sequence[int], depths: Sequence[int],
++                 entries: Sequence[int]) -> None:
++        w, p, h, at = s.width, self.st.pos, s.host.numpy(), s.at
++
++        def put(name, values, offset=0):
++            start = at[name][0] + offset
++            h[start:start + len(values)] = values
++
++        put("ids", tokens)
++        put("pos", [p + self.st.rope_delta + d for d in depths])
++        put("entries", entries)
++        put("att", [p, -(-(p + w) // tree_attention.CHUNK)], offset=w + 2)     # the stream's committed keys, chunks
++        att_parents = at["att"][1] - w
++        put("att", parents, offset=att_parents)
++        keep, windows = self.keep, []
++        for row, parent in enumerate(parents):
++            tail = list(range(keep)) if parent < 0 else windows[parent][1:]
++            windows.append(tail + [keep + row])
++        put("windows", [x for win in windows for x in win])
++        s.host64.numpy()[:] = [o for i in self.softmax for o in tree_attention.offsets([self.st.kv[i]], s.dev.device)]
++        s.dev.copy_(s.host, non_blocking=True)
++        s.dev64.copy_(s.host64, non_blocking=True)
++
++    def _capture(self, fn):
++        torch.cuda.synchronize()
++        g = torch.cuda.CUDAGraph()
++        enabled = gc.isenabled()
++        gc.disable()                                    # collecting an old graph mid-capture invalidates it
++        try:
++            with torch.cuda.graph(g, pool=self.pool):
++                out = fn()
++        finally:
++            if enabled:
++                gc.enable()
++        return g, out
++
++    # -- verify --------------------------------------------------------------------------------------------------
++    @torch.no_grad()
++    def verify(self, tokens: Sequence[int], parents: Sequence[int], *, capture_taps: bool = True):
++        """``tree_forward(w, tokens, parents, st, capture_taps=...)`` on the fixed state, replayed; None past the
++        buffers (the caller runs it eagerly)."""
++
++        width, st = len(tokens), self.st
++        if st.pos + width > self._rows():
++            self.eager += 1
++            return None
++        depths = [0] * width
++        for row in range(1, width):
++            depths[row] = depths[parents[row]] + 1
++        entries, _, slots, _ = deltanet.plan_host([parents])
++        key = (width, slot_class(slots), self._bucket(st.pos + width))
++        entry = self.graphs.get(key)
++        if entry is None:
++            staged = self._stage(width, key[1], key[2])
++            self._refresh(staged, tokens, parents, depths, entries)
++            run = lambda: tree_forward(self.w, staged.ids, list(parents), st, capture_taps=capture_taps, staged=staged)
++            run()                                       # compiles and tunes each kernel outside the capture
++            self._refresh(staged, tokens, parents, depths, entries)
++            g, out = self._capture(run)
++            entry = self.graphs[key] = (g, staged, out)
++        g, staged, out = entry
++        self._refresh(staged, tokens, parents, depths, entries)
++        g.replay()
++        self.replays += 1
++        if self.check:
++            ref = tree_forward(self.w, torch.tensor(list(tokens), dtype=torch.int32, device=self.w.norm.device),
++                               list(parents), st, capture_taps=capture_taps)
++            self.mismatches += not all(torch.equal(a, b) for a, b in zip((out[0], *out[2:]), (ref[0], *ref[2:])))
++        return out
++
++
++@dataclass
++class BlockStaged:
++    length: int
++    host: torch.Tensor      # int64: block tokens, first position, each layer's (keys, values) pointers, context rows
++    dev: torch.Tensor
++    steps: torch.Tensor     # arange(length) on the device
++
++
++class DraftGraphs:
++    """DFlash2's ``launch_block`` (one stream, the fused 4-bit path) replayed from a graph per block length.
++
++    The context keys and values stay where ``add_taps`` leaves them: the block attention reads them through a pointer
++    table refreshed each round, so the replay is the eager launch's kernels on the same inputs. Install with
++    ``draft.launch_block = DraftGraphs(draft).launch_block``.
++    """
++
++    def __init__(self, draft) -> None:
++        if not draft.fast or draft.world != 1 or draft.sub_rows is None:
++            raise ValueError("drafter graphs take one GPU's fused path with a tiled target head")
++        self.d = draft
++        self.eager_launch = draft.launch_block
++        self.graphs: dict[int, tuple] = {}
++        self.pool = torch.cuda.graph_pool_handle()
++        self.check = False
++        self.mismatches = self.replays = 0
++
++    def _stage(self, length: int) -> BlockStaged:
++        host = torch.zeros(length + 2 + 2 * self.d.layers, dtype=torch.int64).pin_memory()
++        device = self.d.device
++        return BlockStaged(length, host, host.to(device), torch.arange(length, device=device))
++
++    def _refresh(self, s: BlockStaged, pending: int) -> None:
++        d, h, n = self.d, s.host.numpy(), s.length
++        h[:n] = [pending] + [d.mask_id] * (n - 1)
++        h[n] = d.context_end
++        h[n + 1:n + 1 + 2 * d.layers] = [p for kc, vc in zip(d.kc, d.vc) for p in (kc.data_ptr(), vc.data_ptr())]
++        h[n + 1 + 2 * d.layers] = d.kc[0].shape[1]
++        s.dev.copy_(s.host, non_blocking=True)
++
++    def _body(self, s: BlockStaged):
++        """``launch_blocks``' fused path for one stream, every host-built input read from ``s.dev``."""
++
++        d, n, dev = self.d, s.length, s.dev
++        x = embedding(dev[:n].to(torch.int32), d.target_embed)
++        phase = (dev[n] + s.steps).to(torch.float32)[:, None] * d.inv_freq[None, :]
++        cos, sin = phase.cos().contiguous(), phase.sin().contiguous()
++        lens = dev[n + 1 + 2 * d.layers:n + 2 + 2 * d.layers].to(torch.int32)
++        for layer in range(d.layers):
++            x = d._layer_fast(layer, x, cos, sin, [], n, (dev[n + 1 + 2 * layer:n + 3 + 2 * layer], lens))
++        h = F.rms_norm(x[1:], (d.hidden,), d.weights["norm.weight"], d.eps)
++        projected = d._lin(h, "candidate_selector.hidden_projection.weight").float()
++        values, local_ids = torch.topk(matmul_rows(h, d.sub_rows).float(), k=16, dim=-1, sorted=False)
++        return d.head_ids[local_ids], torch.cat((values, projected), dim=1)
++
++    @torch.no_grad()
++    def launch_block(self, pending: int, max_nodes: int, block: int | None = None):
++        d = self.d
++        if d.context_len <= 0 or max_nodes < 1:
++            return self.eager_launch(pending, max_nodes, block)
++        n = min(block or d.block, max_nodes + 1)
++        entry = self.graphs.get(n)
++        if entry is None:
++            s = self._stage(n)
++            self._refresh(s, pending)
++            self._body(s)                               # compiles each kernel outside the capture
++            torch.cuda.synchronize()
++            g = torch.cuda.CUDAGraph()
++            enabled = gc.isenabled()
++            gc.disable()
++            try:
++                with torch.cuda.graph(g, pool=self.pool):
++                    out = self._body(s)
++            finally:
++                if enabled:
++                    gc.enable()
++            entry = self.graphs[n] = (g, s, out)
++        g, s, (ids, floats) = entry
++        self._refresh(s, pending)
++        g.replay()
++        self.replays += 1
++        if self.check:
++            ref = self.eager_launch(pending, max_nodes, block)[0]
++            self.mismatches += not (torch.equal(ids, ref[0]) and torch.equal(floats, ref[1]))
++        return ([ids, floats, None], 0, n - 1, int(pending))
 diff --git i/src/tensorfold/families/qwen3_5/cuda/prefill.py w/src/tensorfold/families/qwen3_5/cuda/prefill.py
 index 9aca8c2..b5f6ac7 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/prefill.py

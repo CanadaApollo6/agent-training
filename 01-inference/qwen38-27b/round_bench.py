@@ -12,6 +12,7 @@ Usage (from envs/tensorfold):
 from __future__ import annotations
 
 import argparse
+import collections
 import json
 import os
 import statistics
@@ -46,7 +47,10 @@ def main() -> None:
     ap.add_argument("--prompts", default=",".join(p[0] for p in PROMPTS))
     ap.add_argument("--reps", type=int, default=1)
     ap.add_argument("--out", default="")
+    ap.add_argument("--branch", default="", help="draft_tree.POLICY branch values to sweep (1 = chains)")
     ap.add_argument("--serial", action="store_true", help="also decode greedy serially and check drafted == serial")
+    ap.add_argument("--sync", default="1", help="draft_decode sync_stages values to sweep (0: no timing syncs)")
+    ap.add_argument("--graphs", action="store_true", help="replay verify windows from CUDA graphs (graphs27)")
     a = ap.parse_args()
 
     # torch leaves its build lock files behind, and the next start waits on them forever (run one TensorFold at a time)
@@ -77,10 +81,20 @@ def main() -> None:
                                        extra={"reasoning_effort": "medium"})
             prompts.append((name, tok.encode(rendered, add_special_tokens=False).ids))
 
+    graphs = None
+    if a.graphs:
+        from tensorfold.families.qwen3_5.cuda.graphs27 import TreeGraphs
+        graphs = TreeGraphs(eng.w)
+        graphs.check = os.environ.get("GRAPH_CHECK") == "1"
+        if os.environ.get("DRAFT_GRAPHS", "1") == "1":
+            from tensorfold.families.qwen3_5.cuda.graphs27 import DraftGraphs
+            dgraphs = DraftGraphs(eng.draft)
+            dgraphs.check = graphs.check
+            eng.draft.launch_block = dgraphs.launch_block
     temps = [float(t) for t in a.temps.split(",")]
     results, greedy_ref = [], {}
 
-    def run(rows: int, name: str, ids: list[int], temp: float, prof=None):
+    def run(rows: int, name: str, ids: list[int], temp: float, prof=None, sync: bool = True):
         smp = None if temp <= 0 else Sampling(seed=1234, temperature=temp)
         eng.draft.restore(([None] * eng.draft.layers, [None] * eng.draft.layers, 0, 0))
         st, pending = prefill(eng.w, ids, smp, eng.draft, limit=eng.context_window)
@@ -88,9 +102,28 @@ def main() -> None:
         if prof is not None:
             prof.start()
         trace: list = []
-        r = draft_decode(eng.w, st, ids, pending, a.tokens, smp, eng.draft, max_rows=rows, trace=trace, inplace=True)
+        r = draft_decode(eng.w, st, ids, pending, a.tokens, smp, eng.draft, max_rows=rows, trace=trace, inplace=True,
+                         graphs=graphs, sync_stages=sync)
         return r, trace
 
+    timing = collections.defaultdict(float)
+    if os.environ.get("TIMING") == "1":                                  # synced wall time of each drafter/commit call
+        import tensorfold.families.qwen3_5.cuda.decode as dec
+        def timed(obj, name, label):
+            fn = getattr(obj, name)
+            def inner(*args, **kw):
+                torch.cuda.synchronize()
+                t = time.perf_counter()
+                out = fn(*args, **kw)
+                torch.cuda.synchronize()
+                timing[label] += time.perf_counter() - t
+                return out
+            setattr(obj, name, inner)
+        for name in ("launch_block", "finish_tree", "add_taps"):
+            timed(eng.draft, name, "draft." + name)
+        timed(dec, "commit", "commit")
+        timed(dec, "sample_rows", "sample_rows")
+        timed(dec, "tree_forward", "tree_forward")
     for rows in rows_list:                                               # warm-up: kernel builds, autotune per width
         run(rows, *prompts[0], 0.0)
     if a.serial:
@@ -117,21 +150,31 @@ def main() -> None:
             if t:
                 print(f"{t / 1000 / r.rounds:8.3f} ms/round {e.count / r.rounds:7.1f} calls/round  {e.key[:90]}")
         return
-    for rows in rows_list:
+    from tensorfold.families.qwen3_5.cuda import draft_tree
+    branches = [int(b) for b in a.branch.split(",")] if a.branch else [draft_tree.POLICY["branch"]]
+    syncs = [s == "1" for s in a.sync.split(",")]
+    for rows, branch, sync in [(r, b, s) for r in rows_list for b in branches for s in syncs]:
+        draft_tree.POLICY["branch"] = branch
         for name, ids in prompts:
             for temp in temps:
                 for rep in range(a.reps):
-                    r, trace = run(rows, name, ids, temp)
+                    timing.clear()
+                    r, trace = run(rows, name, ids, temp, sync=sync)
                     n = len(r.tokens) - 1
                     rec = {
-                        "rows": rows, "prompt": name, "temp": temp, "rep": rep, "tokens": n,
+                        "rows": rows, "branch": branch, "sync": int(sync), "prompt": name, "temp": temp, "rep": rep, "tokens": n,
                         "tok_s": round(n / r.seconds, 1), "rounds": r.rounds,
                         "tok_per_round": round(n / r.rounds, 2),
                         "copy_rounds": sum(t["source"] == "copy" for t in trace),
                         **{f"{k}_ms": round(1000 * getattr(r, f"{k}_seconds") / r.rounds, 2)
                            for k in ("draft", "verify", "sample", "commit")},
                         "width_mean": round(statistics.mean(r.widths), 1),
+                        **{f"t.{k}": round(1000 * v / r.rounds, 2) for k, v in timing.items()},
                     }
+                    if graphs is not None:
+                        rec.update(graphs=len(graphs.graphs), eager=graphs.eager, mismatches=graphs.mismatches)
+                        if os.environ.get("DRAFT_GRAPHS", "1") == "1":
+                            rec.update(draft_mismatches=dgraphs.mismatches, draft_replays=dgraphs.replays)
                     if temp <= 0:
                         key = (name,)
                         if key in greedy_ref and greedy_ref[key] != r.tokens:
