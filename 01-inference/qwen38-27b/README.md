@@ -1051,3 +1051,31 @@ depth sweeps (1-8 slices, 3-8 stages, slices summed in the block or through memo
 call. The small kernel projections (1280 x 5120, 10 a block, 8.4 us against a 3.6 us read) are bound by each block's
 load latency: one 64-column tile alone runs 80 groups at ~0.26 us each. Splitting K further would save ~15-25 us a
 block. The drafter is now ~8% of a round; what's left in it is worth well under 1% of tok/s.
+
+### Tokens per round and rows per round, re-measured (2026-10-10)
+
+[`draft_sim.py`](draft_sim.py) replays recorded drafter rounds offline (`round_bench.py` with `DRAFT_TRACE=path`
+saves each round's 16 candidates per depth, their scores and the true continuation). The replay reproduces the real
+run (code 5.02 vs 5.01 tokens a round). Nothing in the tree policy pays: the default (edge 0.6, noise 0.7, scale 1.5,
+branch 4) is best on a grid for both held-out halves, mixing in copies from the context is worse than the tree alone,
+and a per-depth scale or depth penalty gives at most noise (4.307 vs 4.319 held out). The truth is the drafter's top
+pick 82% of the time at depth 1, falling to 55% at depth 7; it is in the top 16 99% at depth 1 and ~74% at depth 7.
+
+Rows a round, with today's kernels (`results/rounds/rows-8-12-16.json`: 11 prompts, 1024 tokens, greedy, short
+prompts; `results/rounds/rows-8-16-ctx100k.json`: code with 100K tokens of READMEs before it; 0 mismatches in all):
+
+| | 8 rows | 12 rows | 16 rows |
+|---|---|---|---|
+| Short prompts: tok/s (11 prompts) | 200.3 | 209.6 | **213.5** |
+| Short prompts: tokens a round | 4.72 | 5.29 | 5.67 |
+| Short prompts: verify | 20.4 ms | 22.0 ms | 23.2 ms |
+| 100K context: tok/s (code) | **146.0** | | 130.1 |
+| 100K context: tokens a round | 4.65 | | 5.55 |
+| 100K context: verify | 27.8 ms | | 38.1 ms |
+
+16 rows wins on short contexts and loses on long ones: long-context attention costs twice as much at 16 rows (7.4 ->
+~15 ms a round per 100K keys), because attn4 takes at most 48 (row, head) pairs a block and does the same work per
+pair. A straight line through both points puts the break-even near 20K tokens of context. The 262K server at 16 rows
+fits (peak 24.07 GB, same as 8) and the 132K recall prompt answers right; its two short prompts went code 214 -> 220
+greedy, chat 140 -> 144 (`results/bench-kv4r-262k-r16.json`). The daily setup stays at 8 rows until the row count
+follows the context length.

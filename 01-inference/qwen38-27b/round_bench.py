@@ -168,8 +168,13 @@ def main() -> None:
                                   shared[2][1][start:start + n].astype("float32")))
             return out
         eng.draft.finish_tree = logged
+    warm = prompts[0]
+    if prefix and os.environ.get("WARM_SHORT") == "1":                   # warm up without the long prefix (half the reading)
+        name, text = next(p for p in PROMPTS + EXTRA if p[0] == warm[0])
+        warm = (name, tok.encode(template.render([{"role": "user", "content": text}], tools=None, enable_thinking=True,
+                                                 extra={"reasoning_effort": "medium"}), add_special_tokens=False).ids)
     for rows in rows_list:                                               # warm-up: kernel builds, autotune per width
-        run(rows, *prompts[0], 0.0)
+        run(rows, *warm, 0.0)
     if a.serial:
         for name, ids in prompts:
             eng.draft.restore(([None] * eng.draft.layers, [None] * eng.draft.layers, 0, 0))
