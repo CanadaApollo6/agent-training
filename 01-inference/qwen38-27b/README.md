@@ -647,3 +647,23 @@ Quality is unchanged in kind: committed tokens were always read from the 4-bit c
 
 **Width 16 vs 12** (exact now, same text): 147 vs 147 code, 164 vs 156 chat, 182 vs 188 agent. Verify costs +1.1 ms
 a round, eating most of the extra accepted tokens. Width stays 12.
+
+**Widths 3–9 weren't exact either.** [`chain_check.py`](chain_check.py) runs one verify window over a chain of tokens
+decoded serially and compares every row's logits with serial decoding's, width by width. Widths 1, 2, 12 and 16
+were exact; 3–9 differed in every row, by up to 0.28 in a logit. `BISECT=4` records every op's first-row output at
+width 1 and width 4: the first difference was the first attention layer's output. The 4-bit cache rotates the queries
+with a torch fp32 matmul, and cuBLAS picks its kernel by row count. Fix (`kvq.rotate`): a Triton butterfly per group
+of 32, the same `h32` the cache store uses. Now every width 1–16 is exact (`chain_check.py`), and `round_bench.py
+--serial` passes at widths 8, 10, 12 and 16.
+
+Widths, greedy, all exact (tok/s; `results/rounds/rows-exact.json`):
+
+| Width | code | chat | agent | mean |
+|---|---|---|---|---|
+| 8 | 154 | 130 | 168 | **151** |
+| 10 | 149 | 120 | 161 | 144 |
+| 12 (TensorFold's default) | 149 | 120 | 167 | 145 |
+| 16 | 156 | 118 | 165 | 146 |
+
+Width 8 wins by ~3.5%: the matmuls take the weights-as-A path up to 8 rows (verify 24.0 vs 27.6 ms a round), which
+outweighs 10% fewer tokens a round.

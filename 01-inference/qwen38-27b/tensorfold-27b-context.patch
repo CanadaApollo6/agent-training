@@ -124,10 +124,10 @@ index 798958b..bc57945 100644
 +    return kvq.rotate(out)
 diff --git i/src/tensorfold/cuda/kernels/kvq.py w/src/tensorfold/cuda/kernels/kvq.py
 new file mode 100644
-index 0000000..975f6de
+index 0000000..0498013
 --- /dev/null
 +++ w/src/tensorfold/cuda/kernels/kvq.py
-@@ -0,0 +1,176 @@
+@@ -0,0 +1,193 @@
 +"""A quantized attention cache, packed per (row, key head) into int8 elements.
 +
 +``TENSORFOLD_KV_BITS``: 16 (default, bf16 rows), 8 or 4. A packed cache keeps the bf16 cache's (rows, kv heads,
@@ -272,13 +272,30 @@ index 0000000..975f6de
 +    return (codes.unflatten(-1, (d // GROUP, GROUP)) * scales[..., None]).flatten(-2).to(torch.bfloat16).contiguous()
 +
 +
++@triton.jit
++def _rotate(X, Y, groups, M: tl.constexpr):
++    g = tl.program_id(0) * M + tl.arange(0, M)
++    ok = g < groups
++    j = tl.arange(0, 32)
++    x = tl.load(X + g[:, None] * 32 + j[None, :], mask=ok[:, None], other=0.0).to(tl.float32)
++    tl.store(Y + g[:, None] * 32 + j[None, :], h32(x, M).to(Y.dtype.element_ty), mask=ok[:, None])
++
++
 +def rotate(x: torch.Tensor) -> torch.Tensor:
-+    """H32 over each 32 values of the last axis for a 4-bit cache (its own inverse); unchanged otherwise."""
++    """H32 over each 32 values of the last axis for a 4-bit cache (its own inverse); unchanged otherwise.
++
++    One Triton butterfly a group, so a row's bits never depend on how many rows there are. (A torch fp32 matmul here
++    picked cuBLAS kernels by row count: verify windows of 3-9 rows rounded their queries differently from 1, 2, 12
++    or 16, and drafted replies at those widths left serial decoding's.)"""
 +
 +    if BITS != 4:
 +        return x
-+    y = x.float().unflatten(-1, (x.shape[-1] // GROUP, GROUP)) @ _hadamard32(x.device)
-+    return y.flatten(-2).to(x.dtype).contiguous()
++    x = x.contiguous()
++    y = torch.empty_like(x)
++    groups = x.numel() // GROUP
++    if groups:
++        _rotate[(triton.cdiv(groups, 64),)](x, y, groups, M=64, num_warps=4)
++    return y
 +
 +
 +def unpack(rows: torch.Tensor, d: int) -> torch.Tensor:
