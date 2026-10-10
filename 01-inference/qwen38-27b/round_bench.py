@@ -147,6 +147,30 @@ def main() -> None:
                   flush=True)
             del st, pending, r                                           # a long window's cache, twice, won't fit
             torch.cuda.empty_cache()
+    if os.environ.get("DRAFT_PROFILE") == "1":                           # the drafter's launch alone, kernels by name
+        from torch.profiler import ProfilerActivity, profile
+        run(rows_list[0], *prompts[0], 0.0)                              # leaves a full drafter context
+        calls = 50
+        for _ in range(5):
+            eng.draft.launch_block(1000, 127)
+        torch.cuda.synchronize()
+        t = time.perf_counter()
+        for _ in range(calls):
+            eng.draft.launch_block(1000, 127)
+        torch.cuda.synchronize()
+        print(f"launch_block: {(time.perf_counter() - t) * 1000 / calls:.3f} ms a call (synced loop)", flush=True)
+        with profile(activities=[ProfilerActivity.CUDA]) as prof:
+            for _ in range(calls):
+                eng.draft.launch_block(1000, 127)
+            torch.cuda.synchronize()
+        avg = prof.key_averages()
+        gpu_us = sum(getattr(e, "self_device_time_total", 0) for e in avg)
+        print(f"GPU kernel time {gpu_us / 1000 / calls:.3f} ms a call", flush=True)
+        for e in sorted(avg, key=lambda e: -getattr(e, "self_device_time_total", 0))[:40]:
+            t = getattr(e, "self_device_time_total", 0)
+            if t:
+                print(f"{t / calls:8.1f} us/call {e.count / calls:6.1f} calls  {e.key[:100]}")
+        return
     if os.environ.get("PROFILE") == "1":                                 # kernel time by name over one short decode
         from torch.profiler import ProfilerActivity, profile
         prof = profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA])

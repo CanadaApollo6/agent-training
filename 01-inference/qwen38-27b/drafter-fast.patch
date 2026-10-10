@@ -1,0 +1,249 @@
+diff -ru a/src/tensorfold/cuda/kernels/qmm.py b/src/tensorfold/cuda/kernels/qmm.py
+--- a/src/tensorfold/cuda/kernels/qmm.py	2026-10-10 16:47:48.267875092 -0400
++++ b/src/tensorfold/cuda/kernels/qmm.py	2026-10-10 16:47:48.273861805 -0400
+@@ -151,9 +151,10 @@
+ 
+ SEG_ROWS = 16        # decode calls of up to this many rows take the segmented launch (one row tile)
+ # a lone weight takes the segmented launch up to this many rows (weights as A there: 8 slices of o_proj 11.0 -> 8.7 us at
+-# 1 row, 11.7 -> 9.4 at 8; the head 335 -> 329 at 1 row, the draft head 120 -> 108); past it the last block's slice sum
+-# costs more than reduce_kernel's launch (8 slices, 16 rows: 11.4 -> 13.0) and the swapped heads lose
+-SUM_ROWS = 8
++# 1 row, 11.7 -> 9.4 at 8; the head 335 -> 329 at 1 row, the draft head 120 -> 108). With in-block slices and the lean
++# stage copies it also wins at 16 rows, the drafter's block (3090: its 38 matmuls 1.81 -> 1.69 ms, the 98K-row head
++# even); the same bits either way
++SUM_ROWS = 16
+ SWAP = True          # segmented launches with the weights as the mma's A (the same bits; half the mmas at <= 8 rows)
+ _SYNC: dict = {}
+ 
+diff -ru a/src/tensorfold/families/qwen3_5/cuda/dflash2.py b/src/tensorfold/families/qwen3_5/cuda/dflash2.py
+--- a/src/tensorfold/families/qwen3_5/cuda/dflash2.py	2026-10-10 16:47:48.270861814 -0400
++++ b/src/tensorfold/families/qwen3_5/cuda/dflash2.py	2026-10-10 16:47:48.279861786 -0400
+@@ -16,10 +16,10 @@
+ from tensorfold.engine.exact_sampling import Sampling
+ 
+ from .draft_tree import best_first
+-from .glue import embedding, swiglu
++from .glue import add_rmsnorm, embedding, swiglu
+ from .draft_attention import append, block_attention
+ from .qmm import group_sums
+-from .qmm_fast import matmul, matmul_rows, rows, tile, untile
++from .qmm_fast import matmul, matmul_many, matmul_rows, rows, tile, untile
+ from .weights import Exl3, Plain, QLinear, Weights
+ 
+ 
+@@ -98,6 +98,66 @@
+     return out
+ 
+ 
++@triton.jit
++def _top16_key(v, cols):
++    """fp32 -> int64 key, larger value larger key; equal values: the lower column larger."""
++
++    b = v.to(tl.int32, bitcast=True)
++    o = b ^ ((b >> 31) & 0x7fffffff)
++    return (o.to(tl.int64) << 32) | (2147483647 - cols).to(tl.int64)
++
++
++@triton.jit
++def _top16_unkey(k):
++    o = (k >> 32).to(tl.int32)
++    b = o ^ ((o >> 31) & 0x7fffffff)
++    return b.to(tl.float32, bitcast=True), 2147483647 - (k & 0xffffffff).to(tl.int32)
++
++
++@triton.jit
++def _top16_part(X, KEYS, N, CHUNKS, CHUNK: tl.constexpr, S: tl.constexpr):
++    """Program (row, chunk): the chunk's 16 largest keys. They sit in the 16 groups of S with the largest maxima,
++    so pick those groups first, then the 16 largest of their 16*S keys."""
++
++    row = tl.program_id(0)
++    chunk = tl.program_id(1)
++    cols = chunk * CHUNK + tl.arange(0, CHUNK // S)[:, None] * S + tl.arange(0, S)[None, :]
++    v = tl.load(X + row * N + cols, mask=cols < N, other=float("-inf")).to(tl.float32)
++    _, top = _top16_unkey(tl.topk(tl.max(_top16_key(v, cols), axis=1), 16))
++    cols = (top // S * S)[:, None] + tl.arange(0, S)[None, :]
++    v = tl.load(X + row * N + cols, mask=cols < N, other=float("-inf")).to(tl.float32)
++    keys = tl.topk(tl.reshape(_top16_key(v, cols), (16 * S,)), 16)
++    tl.store(KEYS + (row * CHUNKS + chunk) * 16 + tl.arange(0, 16), keys)
++
++
++@triton.jit
++def _top16_merge(KEYS, HEAD_IDS, OUT_V, OUT_I, M: tl.constexpr, BLOCK: tl.constexpr):
++    """Program (row): the 16 largest of the row's chunk keys, as values and global word ids."""
++
++    row = tl.program_id(0)
++    offs = tl.arange(0, BLOCK)
++    keys = tl.load(KEYS + row * M + offs, mask=offs < M, other=-9223372036854775807)
++    v, col = _top16_unkey(tl.topk(keys, 16))
++    tl.store(OUT_V + row * 16 + tl.arange(0, 16), v)
++    tl.store(OUT_I + row * 16 + tl.arange(0, 16), tl.load(HEAD_IDS + col))
++
++
++def _top16(logits: torch.Tensor, head_ids: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
++    """The 16 largest logits a row (fp32, largest first) and their ``head_ids``; the set ``torch.topk`` picks
++    (3090, 15 x 98592 bf16: 92 -> 12 us)."""
++
++    rows, n = logits.shape
++    chunk = 4096
++    chunks = triton.cdiv(n, chunk)
++    keys = torch.empty((rows, chunks * 16), dtype=torch.int64, device=logits.device)
++    _top16_part[(rows, chunks)](logits, keys, n, chunks, CHUNK=chunk, S=8, num_warps=2)
++    out_v = torch.empty((rows, 16), dtype=torch.float32, device=logits.device)
++    out_i = torch.empty((rows, 16), dtype=head_ids.dtype, device=logits.device)
++    _top16_merge[(rows,)](keys, head_ids, out_v, out_i, M=chunks * 16,
++                          BLOCK=triton.next_power_of_2(chunks * 16), num_warps=4)
++    return out_v, out_i
++
++
+ def _norm(x: torch.Tensor, weight: torch.Tensor, eps: float) -> torch.Tensor:
+     xf = x.float()
+     return (xf * torch.rsqrt((xf * xf).mean(dim=-1, keepdim=True) + eps)
+@@ -295,11 +355,11 @@
+         self.context_len = 0
+         self.context_end = 0
+ 
+-    def _lin(self, x: torch.Tensor, name: str) -> torch.Tensor:
++    def _lin(self, x: torch.Tensor, name: str, xs: torch.Tensor | None = None) -> torch.Tensor:
+         q = self.q4.get(name)
+         if q is None:
+             return F.linear(x, self.weights[name])
+-        return matmul(x.to(torch.bfloat16).contiguous(), q)
++        return matmul(x.to(torch.bfloat16).contiguous(), q, xs)
+ 
+     def snapshot(self):
+         return (list(self.kc), list(self.vc), self.context_len, self.context_end)
+@@ -450,21 +510,21 @@
+ 
+         w = self.weights
+         base = f"layers.{i}."
+-        normed = F.rms_norm(x, (self.hidden,), w[base + "input_layernorm.weight"], self.eps)
+-        dyn = self._lin(normed, base + "attention_conv.kernel_projection.weight")
++        _, normed, xs = add_rmsnorm(x, None, w[base + "input_layernorm.weight"], self.eps)
++        dyn = self._lin(normed, base + "attention_conv.kernel_projection.weight", xs)
+         conv = w[base + "attention_conv.base_kernel"]
+         q, k, v = self._prep(self._lin(_dconv(normed, dyn, conv, 0, self.group_size, seg=length),
+                                        base + "self_attn.qkv.weight"), i, cos, sin, self.heads_local)
+         out = block_attention(q, k, v, [snap[0][i] for snap in ctx], [snap[1][i] for snap in ctx], length,
+                               self.window, self.head_dim ** -0.5, self.is_causal, staged)
+         x = _dconv(self._row(out, base + "self_attn.o_proj.weight"), dyn, conv, 1, self.group_size, x, seg=length)
+-        normed = F.rms_norm(x, (self.hidden,), w[base + "post_attention_layernorm.weight"], self.eps)
+-        dyn = self._lin(normed, base + "mlp_conv.kernel_projection.weight")
++        _, normed, xs = add_rmsnorm(x, None, w[base + "post_attention_layernorm.weight"], self.eps)
++        dyn = self._lin(normed, base + "mlp_conv.kernel_projection.weight", xs)
+         conv = w[base + "mlp_conv.base_kernel"]
+         h = _dconv(normed, dyn, conv, 0, self.group_size, seg=length)
+         xs = group_sums(h)
+-        act, act_xs = swiglu(matmul(h, self.q4[base + "mlp.gate_proj.weight"], xs),
+-                             matmul(h, self.q4[base + "mlp.up_proj.weight"], xs))
++        act, act_xs = swiglu(*matmul_many(h, [self.q4[base + "mlp.gate_proj.weight"],
++                                              self.q4[base + "mlp.up_proj.weight"]], xs))
+         mlp = self._row(act, base + "mlp.down_proj.weight", act_xs)
+         return _dconv(mlp, dyn, conv, 1, self.group_size, x, seg=length)
+ 
+@@ -506,8 +566,8 @@
+             cos, sin = torch.cat([c for c, _ in rot]), torch.cat([s for _, s in rot])
+             for layer in range(self.layers):
+                 x = self._layer_fast(layer, x, cos, sin, ctx, length)
+-            h = F.rms_norm(x.view(len(live), length, -1)[:, 1:].reshape(-1, self.hidden), (self.hidden,),
+-                           self.weights["norm.weight"], self.eps)
++            _, h, h_xs = add_rmsnorm(x.view(len(live), length, -1)[:, 1:].reshape(-1, self.hidden), None,
++                                   self.weights["norm.weight"], self.eps)
+         else:                                    # the reference path, one stream at a time
+             hs = []
+             for j, i in enumerate(live):
+@@ -516,19 +576,18 @@
+                 for layer in range(self.layers):
+                     y = self._layer(layer, y)
+                 hs.append(_norm(y[1:], self.weights["norm.weight"], self.eps))
+-            h = torch.cat(hs)
+-        projected = self._lin(h, "candidate_selector.hidden_projection.weight").float()
++            h, h_xs = torch.cat(hs), None
++        projected = self._lin(h, "candidate_selector.hidden_projection.weight", h_xs).float()
+         if self.sub_parts is not None:
+             h = h.contiguous()
+             logits = torch.cat([part(h)[:, lo:hi] for part, lo, hi in self.sub_parts], dim=1)
+         elif self.head_cols is not None:
+             logits = self.sub_head(h.contiguous()).index_select(1, self.head_cols)
+         elif self.sub_rows is not None:
+-            logits = matmul_rows(h, self.sub_rows)
++            logits = matmul_rows(h, self.sub_rows, h_xs)
+         else:
+-            logits = matmul(h, self.sub_head)
+-        values, local_ids = torch.topk(logits.float(), k=16, dim=-1, sorted=False)
+-        global_ids = self.head_ids[local_ids]
++            logits = matmul(h, self.sub_head, h_xs)
++        values, global_ids = _top16(logits.contiguous(), self.head_ids)
+         if self.world == 2:
+             import torch.distributed as dist
+ 
+diff -ru a/src/tensorfold/families/qwen3_5/cuda/graphs27.py b/src/tensorfold/families/qwen3_5/cuda/graphs27.py
+--- a/src/tensorfold/families/qwen3_5/cuda/graphs27.py	2026-10-10 16:47:48.268861821 -0400
++++ b/src/tensorfold/families/qwen3_5/cuda/graphs27.py	2026-10-10 16:47:48.275861798 -0400
+@@ -19,7 +19,6 @@
+ from typing import Sequence
+ 
+ import torch
+-import torch.nn.functional as F
+ import triton
+ import triton.language as tl
+ 
+@@ -28,7 +27,8 @@
+ 
+ from . import commit_fast
+ from .forward import GDNRecord, State, commit, path_indices, tree_forward
+-from .glue import embedding
++from .dflash2 import _top16
++from .glue import add_rmsnorm, embedding
+ from .qmm_fast import matmul_rows
+ 
+ FAST_COMMIT = os.environ.get("TENSORFOLD_FAST_COMMIT", "1") == "1"   # commit_fast: three launches, same bits
+@@ -445,10 +445,10 @@
+         lens = dev[n + 1 + 2 * d.layers:n + 2 + 2 * d.layers].to(torch.int32)
+         for layer in range(d.layers):
+             x = d._layer_fast(layer, x, cos, sin, [], n, (dev[n + 1 + 2 * layer:n + 3 + 2 * layer], lens))
+-        h = F.rms_norm(x[1:], (d.hidden,), d.weights["norm.weight"], d.eps)
+-        projected = d._lin(h, "candidate_selector.hidden_projection.weight").float()
+-        values, local_ids = torch.topk(matmul_rows(h, d.sub_rows).float(), k=16, dim=-1, sorted=False)
+-        return d.head_ids[local_ids], torch.cat((values, projected), dim=1)
++        _, h, h_xs = add_rmsnorm(x[1:], None, d.weights["norm.weight"], d.eps)
++        projected = d._lin(h, "candidate_selector.hidden_projection.weight", h_xs).float()
++        values, ids = _top16(matmul_rows(h, d.sub_rows, h_xs), d.head_ids)
++        return ids, torch.cat((values, projected), dim=1)
+ 
+     @torch.no_grad()
+     def launch_block(self, pending: int, max_nodes: int, block: int | None = None):
+diff -ru a/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py b/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
+--- a/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py	2026-10-10 16:47:48.269861817 -0400
++++ b/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py	2026-10-10 16:47:48.277861792 -0400
+@@ -38,11 +38,14 @@
+     return tile(QLinear(w[lo:hi].contiguous(), s[lo:hi].contiguous(), bias[lo:hi].contiguous()))
+ 
+ 
+-def matmul_rows(x: torch.Tensor, parts: list[QLinear]) -> torch.Tensor:
++def matmul_rows(x: torch.Tensor, parts: list[QLinear], xs: torch.Tensor | None = None) -> torch.Tensor:
+     """``x`` against row blocks of one weight, with the bits of the stacked weight's matmul."""
+ 
+     sk = shared.split_k(sum(p.n for p in parts), parts[0].k, parts[0].gs)
+-    xs = shared.group_sums(x, parts[0].gs)
++    if xs is None:
++        xs = shared.group_sums(x, parts[0].gs)
++    if len(parts) <= 4 and shared.segmented(x, parts):              # one launch, each part's slices as given
++        return torch.cat(shared.matmul_many(x, parts, xs, sks=[sk] * len(parts)), dim=1)
+     return torch.cat([shared.matmul(x, p, xs, sk=sk) for p in parts], dim=1)
+ 
+ 
+@@ -58,6 +61,14 @@
+     return lane_matmul(x, q.weight, q.scales, q.biases, xs=xs)
+ 
+ 
++def matmul_many(x: torch.Tensor, qs: list[QLinear], xs: torch.Tensor | None = None) -> list[torch.Tensor]:
++    """``[matmul(x, q, xs) for q in qs]`` with the same bits, tiled 4-bit weights in shared launches."""
++
++    if all(q.fast and q.layout == "tiled" for q in qs):
++        return shared.matmul_many(x, qs, xs)
++    return [matmul(x, q, xs) for q in qs]
++
++
+ def matmul_partial(x: torch.Tensor, q: QLinear, xs: torch.Tensor | None = None) -> torch.Tensor:
+     """fp32 sums for a tiled weight, unrounded: a row-parallel rank's share of a projection."""
+ 

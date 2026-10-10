@@ -978,3 +978,39 @@ input, so the activation ran ~160 times over; with the math removed, the per-gro
 more than the 2.3 us launch it replaced. Folding the norm into the matmul that reads it hits the same wall. Doing it on
 the producing side has no repeats, but needs a wait across all 80 tiles for the row's sum (~1.5 us), for at most
 ~0.1 ms a round. Left as is. (Code kept outside the repo; `TENSORFOLD_ACT_FUSE` never shipped.)
+
+### Faster drafter block (`drafter-fast.patch`)
+
+The drafter's block (5 layers over 16 rows, then the 98K-word head and the top 16 words a row) took 2.22 ms of GPU
+time with a full 2048-token drafter window (`DRAFT_PROFILE=1 round_bench.py`, kernels by name). Three changes:
+
+1. **16-row matmuls in the segmented swapped form** (`SUM_ROWS` 8 -> 16 in `qmm.py`), the gate and up projections in
+   one launch (`matmul_many`) and the head's row blocks in one launch (`matmul_rows`). Same bits. The drafter's 38
+   matmuls 1.81 -> 1.67 ms.
+2. **The engine's add + norm** (`glue.add_rmsnorm`) instead of PyTorch's RMS norm: 6.2 -> 2.4 us a call, and it hands
+   the next matmul the 64-group sums it needs, so 11 group-sum launches go away.
+3. **Top 16 words a row in two Triton kernels** (`_top16` in `dflash2.py`) instead of `torch.topk` (9 kernels): 15 x
+   98592 logits 92 -> 12 us. Each value becomes an int64 key (value bits above, column below, so ties go to the lower
+   column); a chunk of 4096 picks its 16 groups of 8 with the largest maxima, then the top 16 of those 128 keys; a
+   second kernel merges the chunks. Same values and same word set as `torch.topk` on random and tied logits.
+
+| Drafter block, GPU time | ms |
+|---|---|
+| Before | 2.22 |
+| + 16-row segmented matmuls | 2.04 |
+| + engine norm, Triton top 16 | **1.91** |
+
+The norm rounds differently from PyTorch's, so the draft logits move in their last bits; tokens a round didn't change
+on the three round-bench prompts (code 4.41, chat 4.26, agent 5.01, as before). Drafted == serial, and the graphed
+block equals the eager one (`GRAPH_CHECK=1`, 0 mismatches). Round bench at 8 rows (`results/rounds/drafter-fast-ctx0.json`,
+short prompts, so the drafter window is small):
+
+| | Before | After |
+|---|---|---|
+| Drafter call (synced) | 1.92 ms | **1.78 ms** |
+| Code tok/s | 193.3 | 194.4 |
+| Chat tok/s | 187.0 | 188.6 |
+| Agent tok/s | 219.1 | 219.3 |
+
+A small step: the drafter is ~9% of a round, the verify ~87%. What's left in the block: matmuls 1.67 ms against a
+~1.40 ms read floor, attention over the window 96 us (split + merge), the two-tap convolutions 39 us, group sums 19 us.

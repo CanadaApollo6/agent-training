@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "New: a faster GDN step kernel (18.9 to 11.2 us for 8 steps; a round ~2% shorter; server code 205 to 214). Then the add + normalize step: it's already at its floor alone (2.35 us vs 1.23 for a plain copy), and folding it or the MLP activation into the matmuls made them slower (every column tile redoes the work; 60 to 98 us). Not kept. Next: the 2.2 ms draft model.",
+ "next_text": "New: a faster draft model step, 2.22 to 1.91 ms of GPU time (16-row matmuls in the faster form, the engine's own normalize, and a top-16 word pick in 12 us instead of 92). Same output as serial; tok/s up about 0.5 to 1% because the drafter is only ~9% of a round. Next on the drafter: its attention (96 us, about twice its floor) and the matmuls (1.67 ms vs a 1.40 floor).",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 214 tok/s and chat 117 → 140-144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, and a faster GDN step kernel.",
  "headline_numbers": [
   {
