@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "Rows a round: 16 beats 8 on short contexts (200 to 214 tok/s over 11 prompts) but loses at 100K context (146 to 130), because long-context attention costs twice as much at 16 rows. Break-even is near 20K tokens of context. 16 rows fits the full 262K window (24.07 GB, recall right). Daily stays at 8 rows for now. Next: pick the row count from the context length each round (16 short, fewer long), then try making long-context attention share work across rows.",
+ "next_text": "Rows a round now follow the context length: 16 rows under 50K tokens of context, 8 after (new daily setting TENSORFOLD_ROWS=16 TENSORFOLD_ROWS_BY_CONTEXT=16:50000,8). Short prompts 200 to 214 tok/s (11 prompts), 20K context +1-3%, 50K a tie, 100K stays at 146 instead of dropping to 130. Crossing the switch mid-reply gives identical output. Next: try making long-context attention share work across rows, which would let 16 rows win at every length.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 214 tok/s and chat 117 → 140-144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, and a faster GDN step kernel.",
  "headline_numbers": [
   {
