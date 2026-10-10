@@ -951,8 +951,127 @@ index 9ed041e..ac60cd5 100644
                          split_head=tp == 2, tp_draft=tp == 2 and draft is not None, allow_copy=not no_drafts,
                          streams=streams, context=options.get("context"),
                          context_explicit=options.get("context_explicit"), vision=bool(options.get("vision", False)),
+diff --git i/src/tensorfold/families/qwen3_5/cuda/commit_fast.py w/src/tensorfold/families/qwen3_5/cuda/commit_fast.py
+new file mode 100644
+index 0000000..27a8a97
+--- /dev/null
++++ w/src/tensorfold/families/qwen3_5/cuda/commit_fast.py
+@@ -0,0 +1,113 @@
++"""One stream's in-place commit in three launches: the GDN replay, every conv window, every 4-bit cache row.
++
++``forward.commit`` issues ~150 small launches a round from Python (a conv copy per GDN layer, two gathers and two
++stores per attention layer) and rebuilds the replay's pointer table on the host; the round's GPU work is ~0.4 ms of
++it but the host takes ~1 ms. Here the conv windows and the accepted key/value rows of every layer go in one launch
++each, through pointer tables cached by address (the graph replay's records and states don't move). The arithmetic is
++``kvq.store``'s and the conv rows are copies, so the committed state has the same bits.
++"""
++
++from __future__ import annotations
++
++import torch
++import triton
++import triton.language as tl
++
++from tensorfold.cuda.kernels import gdn as deltanet
++from tensorfold.cuda.kernels import kvq
++from tensorfold.cuda.kernels.kvq import h32
++
++_TABLES: dict = {}
++
++
++def _table(key, build) -> torch.Tensor:
++    t = _TABLES.get(key)
++    if t is None:
++        if len(_TABLES) > 256:                      # records of graphs no longer replayed
++            _TABLES.clear()
++        t = _TABLES[key] = build()
++    return t
++
++
++@triton.jit
++def _conv_commit(OLD, NEW, ROWS, COUNT, C: tl.constexpr, KEEP: tl.constexpr, KP: tl.constexpr, BC: tl.constexpr):
++    """Layer l's window becomes the last KEEP rows of [window | accepted record rows], in place (all read first)."""
++    l = tl.program_id(0)
++    c = tl.program_id(1) * BC + tl.arange(0, BC)
++    r = tl.arange(0, KP)
++    old = tl.load(OLD + l).to(tl.pointer_type(tl.bfloat16))
++    new = tl.load(NEW + l).to(tl.pointer_type(tl.bfloat16))
++    i = r + tl.load(COUNT)
++    live = r < KEEP
++    from_old = live & (i < KEEP)
++    from_new = live & (i >= KEEP)
++    src = tl.load(ROWS + tl.maximum(i - KEEP, 0), mask=from_new, other=0).to(tl.int64)
++    ok = c[None, :] < C
++    x = tl.load(old + tl.minimum(i, KEEP - 1)[:, None] * C + c[None, :], mask=ok & from_old[:, None], other=0.0)
++    x += tl.load(new + src[:, None] * C + c[None, :], mask=ok & from_new[:, None], other=0.0)
++    tl.store(old + r[:, None] * C + c[None, :], x, mask=ok & live[:, None])
++
++
++@triton.jit
++def _kv_commit4(SRC, DST, TAKE, pos, HK: tl.constexpr, D: tl.constexpr, R: tl.constexpr):
++    """Record row TAKE[i] of table entry e (a layer's keys or values) into cache row pos + i: ``kvq._quant4``."""
++    ih = tl.program_id(0)
++    e = tl.program_id(1)
++    i = ih // HK
++    h = ih % HK
++    src = tl.load(SRC + e).to(tl.pointer_type(tl.bfloat16))
++    dst = tl.load(DST + e).to(tl.pointer_type(tl.int8))
++    row = tl.load(TAKE + i).to(tl.int64)
++    X = src + (row * HK + h) * D
++    OUT = dst + ((pos + i) * HK + h).to(tl.int64) * R
++    G: tl.constexpr = D // 32
++    g = tl.arange(0, G)
++    j = tl.arange(0, 32)
++    x = h32(tl.load(X + g[:, None] * 32 + j[None, :]).to(tl.float32), G)
++    s = tl.max(tl.abs(x), axis=1) + 1e-10
++    q = tl.floor(x * tl.math.div_rn(1.0, s)[:, None] * 8.0) + 8.0
++    q = tl.minimum(tl.maximum(q, 0.0), 15.0).to(tl.int32)
++    lo, hi = tl.split(tl.reshape(q, (D // 2, 2)))
++    tl.store(OUT + tl.arange(0, D // 2), (lo | (hi << 4)).to(tl.uint8).to(tl.int8, bitcast=True))
++    tl.store((OUT + D // 2).to(tl.pointer_type(tl.float16)) + g, s.to(tl.float16))
++
++
++def usable(st, record) -> bool:
++    return kvq.BITS == 4 and all(t is None or t.dtype == torch.bfloat16 for t in st.conv)
++
++
++def commit(st, record, path, rows: torch.Tensor, count: torch.Tensor, take: torch.Tensor, linear, att) -> None:
++    """``forward._commit`` for one stream, in place, with the same bits."""
++    device = rows.device
++    n = len(path)
++    if linear:
++        items = [item for _, item in linear]
++        states = [st.rec[i] for i, _ in linear]
++        key = ("replay",) + tuple(t.data_ptr() for it in items for t in (it.k, it.v, it.g, it.beta)) + tuple(
++            s.data_ptr() for s in states)
++        table = _table(key, lambda: deltanet.to_device(
++            deltanet.replay_table([t.k for t in items], [t.v for t in items], [t.g for t in items],
++                                  [t.beta for t in items], [states]), torch.int64, device))
++        deltanet.replay(table, len(items), 1, rows.view(1, -1), count, items[0].k, items[0].v, in_place=True)
++        olds = [st.conv[i] for i, _ in linear]
++        keep, c = olds[0].shape
++        key = ("conv",) + tuple(o.data_ptr() for o in olds) + tuple(it.qkv.data_ptr() for it in items)
++        ptrs = _table(key, lambda: deltanet.to_device([o.data_ptr() for o in olds] + [it.qkv.data_ptr() for it in items],
++                                                      torch.int64, device))
++        bc = 1024
++        _conv_commit[(len(olds), triton.cdiv(c, bc))](ptrs[:len(olds)], ptrs[len(olds):], rows, count, C=c, KEEP=keep,
++                                                       KP=triton.next_power_of_2(keep), BC=bc, num_warps=4)
++    if att:
++        need = st.pos + n
++        if any(st.kv[i][0].shape[0] < need for i, _ in att):
++            raise ValueError("fast commit: the cache must hold its window (graph replay reserves it)")
++        srcs, dsts = [], []
++        for i, item in att:
++            srcs += [item.k, item.v]
++            dsts += [st.kv[i][0], st.kv[i][1]]
++        key = ("kv",) + tuple(t.data_ptr() for t in srcs + dsts)
++        ptrs = _table(key, lambda: deltanet.to_device([t.data_ptr() for t in srcs + dsts], torch.int64, device))
++        _, hk, d = srcs[0].shape
++        _kv_commit4[(n * hk, len(srcs))](ptrs[:len(srcs)], ptrs[len(srcs):], take, st.pos, HK=hk, D=d,
++                                         R=kvq.width(d), num_warps=2)
++    st.pos += n
 diff --git i/src/tensorfold/families/qwen3_5/cuda/decode.py w/src/tensorfold/families/qwen3_5/cuda/decode.py
-index 624f6ad..0dce0b3 100644
+index 624f6ad..d37a122 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/decode.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/decode.py
 @@ -3,6 +3,7 @@
@@ -1024,12 +1143,15 @@ index 624f6ad..0dce0b3 100644
              w, _tokens(tokens, w.norm.device), tree_parents, st, capture_taps=draft is not None)
          torch.cuda.synchronize()
          spent["verify"] = time.perf_counter() - stage
-@@ -253,14 +268,15 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+@@ -253,14 +268,18 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
              trace.append(_round_record(tokens, tree_parents, depths, path, terminal, stop,
                                         "copy" if copied else "tree", draft, spent))
          stage = time.perf_counter()
 -        commit(st, record, path)
-+        commit(st, record, path, in_place=graphs is not None)
++        if graphs is not None:                      # st is graphs.st: its states and caches stay put
++            graphs.commit(record, path)
++        else:
++            commit(st, record, path)
          if draft is not None:
              draft.add_taps(tapped[0][path])
          out.extend(tokens[row] for row in path[1:])
@@ -1042,7 +1164,7 @@ index 624f6ad..0dce0b3 100644
          stages["commit"] += time.perf_counter() - stage
          if trace is not None:
              trace[-1]["commit_ms"] = round(1000 * (time.perf_counter() - stage), 3)
-@@ -270,6 +286,8 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
+@@ -270,6 +289,8 @@ def draft_decode(w: Weights, st: State, prompt: Sequence[int], pending: int,
          widths.append(len(tokens))
          if on_tokens is not None:
              stopped = bool(on_tokens([tokens[row] for row in path[1:]] + [terminal]))
@@ -1243,7 +1365,7 @@ index 633c0e4..a50387b 100644
  
  
 diff --git i/src/tensorfold/families/qwen3_5/cuda/engine.py w/src/tensorfold/families/qwen3_5/cuda/engine.py
-index 6029ae1..69ef79a 100644
+index 6029ae1..41bed24 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/engine.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/engine.py
 @@ -6,6 +6,12 @@ import time
@@ -1269,7 +1391,7 @@ index 6029ae1..69ef79a 100644
 +            from .graphs27 import DraftGraphs, TreeGraphs
 +
 +            self.graphs = TreeGraphs(self.w)
-+            self.draft.launch_block = DraftGraphs(self.draft).launch_block
++            DraftGraphs(self.draft).install()
          self.eos = tuple(self.w.config.eos)
          self.points = resume_points(model_dir)              # message starts a prefill keeps states at
          self.cache = PrefixCache(KEEP_ONE)                  # (committed ids, state, drafter snapshot)
@@ -1497,10 +1619,10 @@ index 97003b6..8e4728b 100644
          st.pos += len(path)
 diff --git i/src/tensorfold/families/qwen3_5/cuda/graphs27.py w/src/tensorfold/families/qwen3_5/cuda/graphs27.py
 new file mode 100644
-index 0000000..395b5a8
+index 0000000..ad3c0f3
 --- /dev/null
 +++ w/src/tensorfold/families/qwen3_5/cuda/graphs27.py
-@@ -0,0 +1,295 @@
+@@ -0,0 +1,482 @@
 +"""One stream's verify trees (``TreeGraphs``, ``draft_decode(graphs=...)``) and DFlash2 blocks (``DraftGraphs``)
 +replayed as CUDA graphs (Qwen3.8-27B).
 +
@@ -1515,19 +1637,27 @@ index 0000000..395b5a8
 +
 +from __future__ import annotations
 +
++import copy
 +import gc
++import os
 +from dataclasses import dataclass
 +from typing import Sequence
 +
 +import torch
 +import torch.nn.functional as F
++import triton
++import triton.language as tl
 +
 +from tensorfold.cuda.kernels import attention as tree_attention
 +from tensorfold.cuda.kernels import gdn as deltanet
 +
-+from .forward import State, commit, tree_forward
++from . import commit_fast
++from .forward import GDNRecord, State, commit, path_indices, tree_forward
 +from .glue import embedding
 +from .qmm_fast import matmul_rows
++
++FAST_COMMIT = os.environ.get("TENSORFOLD_FAST_COMMIT", "1") == "1"   # commit_fast: three launches, same bits
++COMMIT_CHECK = os.environ.get("TENSORFOLD_COMMIT_CHECK") == "1"      # also run the plain commit on copies, compare
 +
 +BUCKET = 8192        # smallest context span a graph covers; larger contexts take the next power of two
 +SLOT_CLASSES = (2, 4, 8, 16, 32)
@@ -1571,6 +1701,7 @@ index 0000000..395b5a8
 +        self.replays = self.eager = 0
 +        self.check = False                          # also run each window eagerly and require identical bits
 +        self.mismatches = 0
++        self.commit_checks = self.commit_mismatches = 0
 +
 +    # -- state ---------------------------------------------------------------------------------------------------
 +    def load(self, st: State) -> State:
@@ -1596,7 +1727,33 @@ index 0000000..395b5a8
 +        self.st.kv = [None] * len(self.st.kv)
 +
 +    def commit(self, record, path: Sequence[int]) -> None:
-+        commit(self.st, record, path, in_place=True)
++        if FAST_COMMIT and commit_fast.usable(self.st, record):
++            linear = [(i, item) for i, item in enumerate(record) if isinstance(item, GDNRecord)]
++            att = [(i, item) for i, item in enumerate(record) if not isinstance(item, GDNRecord)]
++            rows, count, take = path_indices(record, [path])[0]
++            ref = self._reference(record, path) if COMMIT_CHECK else None
++            commit_fast.commit(self.st, record, path, rows, count, take, linear, att)
++            if ref is not None:
++                self._compare(ref)
++        else:
++            commit(self.st, record, path, in_place=True)
++
++    def _reference(self, record, path: Sequence[int]) -> State:
++        """The plain commit on copies of the state, for COMMIT_CHECK."""
++        ref = copy.copy(self.st)
++        ref.rec = [None if t is None else t.clone() for t in self.st.rec]
++        ref.conv = [None if t is None else t.clone() for t in self.st.conv]
++        ref.kv = [None if t is None else (t[0].clone(), t[1].clone()) for t in self.st.kv]
++        commit(ref, record, path, in_place=True)
++        return ref
++
++    def _compare(self, ref: State) -> None:
++        pairs = [(a, b) for xs, ys in ((self.st.rec, ref.rec), (self.st.conv, ref.conv)) for a, b in zip(xs, ys)
++                 if a is not None]
++        pairs += [(a[j][:ref.pos], b[j][:ref.pos]) for a, b in zip(self.st.kv, ref.kv) if a is not None for j in (0, 1)]
++        if ref.pos != self.st.pos or not all(torch.equal(a, b) for a, b in pairs):
++            self.commit_mismatches += 1
++        self.commit_checks += 1
 +
 +    # -- staging -------------------------------------------------------------------------------------------------
 +    def _rows(self) -> int:
@@ -1712,6 +1869,32 @@ index 0000000..395b5a8
 +        return out
 +
 +
++@triton.jit
++def _slide(TABLE, NEW, LENS, H: tl.constexpr, D: tl.constexpr, WINDOW: tl.constexpr, BP: tl.constexpr):
++    """Context e's last WINDOW rows of [old | new] into the other buffer, both contiguous (H, rows, D).
++
++    TABLE: old pointers, then destination pointers (one each a layer's keys and values); NEW: e's new rows (H, n, D);
++    LENS: old rows, new rows."""
++    e = tl.program_id(0)
++    h = tl.program_id(1)
++    p = tl.program_id(2) * BP + tl.arange(0, BP)
++    E = tl.num_programs(0)
++    old = tl.load(TABLE + e).to(tl.pointer_type(tl.bfloat16))
++    dst = tl.load(TABLE + E + e).to(tl.pointer_type(tl.bfloat16))
++    new = tl.load(NEW + e).to(tl.pointer_type(tl.bfloat16))
++    m = tl.load(LENS)
++    n = tl.load(LENS + 1)
++    keep = tl.minimum(m + n, WINDOW)
++    j = p + (m + n - keep)                              # row in [old | new]
++    live = p < keep
++    d = tl.arange(0, D)
++    a = tl.load(old + (h * m + tl.minimum(j, m - 1))[:, None].to(tl.int64) * D + d[None, :],
++                mask=(live & (j < m))[:, None], other=0.0)
++    b = tl.load(new + (h * n + tl.maximum(j - m, 0))[:, None].to(tl.int64) * D + d[None, :],
++                mask=(live & (j >= m))[:, None], other=0.0)
++    tl.store(dst + (h * keep + p)[:, None].to(tl.int64) * D + d[None, :], a + b, mask=live[:, None])
++
++
 +@dataclass
 +class BlockStaged:
 +    length: int
@@ -1725,7 +1908,8 @@ index 0000000..395b5a8
 +
 +    The context keys and values stay where ``add_taps`` leaves them: the block attention reads them through a pointer
 +    table refreshed each round, so the replay is the eager launch's kernels on the same inputs. Install with
-+    ``draft.launch_block = DraftGraphs(draft).launch_block``.
++    ``DraftGraphs(draft).install()``, which also graphs ``add_taps``: each context window goes into one of two buffers
++    a layer (the one the round doesn't read) by one launch for every layer, in place of a concatenation and a copy each.
 +    """
 +
 +    def __init__(self, draft) -> None:
@@ -1737,6 +1921,131 @@ index 0000000..395b5a8
 +        self.pool = torch.cuda.graph_pool_handle()
 +        self.check = False
 +        self.mismatches = self.replays = 0
++        self.eager_add_taps, self.eager_snapshot = draft.add_taps, draft.snapshot
++        self.bufs = self.taps = None
++        self.mine: dict = {}
++        self.views: dict = {}
++        self.tap_graphs: dict = {}
++        self.tap_replays = self.tap_mismatches = 0
++
++    def install(self) -> "DraftGraphs":
++        """Replace the drafter's ``launch_block``, ``add_taps`` and ``snapshot`` with this object's."""
++        self.d.launch_block, self.d.add_taps, self.d.snapshot = self.launch_block, self.add_taps, self.snapshot
++        return self
++
++    # -- committed rows ------------------------------------------------------------------------------------------
++    def _buffers(self):
++        """Two flat buffers a context (layer keys, layer values): each round's window goes to the one not read."""
++        if self.bufs is None:
++            d = self.d
++            size = d.kv_local * d.window * d.head_dim
++            self.bufs = [[torch.empty(size, dtype=torch.bfloat16, device=d.device) for _ in range(2)]
++                         for _ in range(2 * d.layers)]
++            self.mine = {b.data_ptr(): (e, j) for e, pair in enumerate(self.bufs) for j, b in enumerate(pair)}
++        return self.bufs
++
++    def _view(self, e: int, j: int, rows: int) -> torch.Tensor:
++        key = (e, j, rows)
++        v = self.views.get(key)
++        if v is None:
++            d = self.d
++            v = self.views[key] = self.bufs[e][j][:d.kv_local * rows * d.head_dim].view(d.kv_local, rows, d.head_dim)
++        return v
++
++    def _taps_body(self, t) -> list[torch.Tensor]:
++        """``add_taps``' fused path up to each layer's new keys and values, its inputs read from ``t``."""
++        from .dflash2 import _norm
++
++        d, n = self.d, t["n"]
++        projected = _norm(d._lin(t["taps"][:n], "fc.weight"), d.weights["hidden_norm.weight"], d.eps)
++        phase = (t["dev"][0] + t["steps"][:n]).to(torch.float32)[:, None] * d.inv_freq[None, :]
++        cos, sin = phase.cos().contiguous(), phase.sin().contiguous()
++        out = []
++        for layer in range(d.layers):
++            _, k, v = d._prep(d._lin(projected, f"layers.{layer}.self_attn.kv.weight"), layer, cos, sin, 0)
++            out += [k, v]
++        return out
++
++    @torch.no_grad()
++    def add_taps(self, taps: torch.Tensor) -> None:
++        """DFlash2's ``add_taps`` from a graph per row count, every window moved by one launch; the same bits."""
++        d = self.d
++        n = taps.shape[0]
++        if (not d.fast or n < 1 or n > d.block * 4 or d.context_len <= 0 or d.kc[0] is None
++                or taps.ndim != 2 or taps.shape[1] != 5 * d.hidden):
++            return self.eager_add_taps(taps)
++        bufs = self._buffers()
++        if self.taps is None:
++            rows = d.block * 4
++            self.taps = {"taps": torch.empty((rows, 5 * d.hidden), dtype=torch.bfloat16, device=d.device),
++                         "host": torch.zeros(2 + 6 * d.layers, dtype=torch.int64).pin_memory(),
++                         "steps": torch.arange(rows, device=d.device)}
++            self.taps["dev"] = self.taps["host"].to(d.device)
++        t = self.taps
++        entry = self.tap_graphs.get(n)
++        if entry is None:
++            tt = dict(t, n=n)
++            self._taps_body(tt)                         # compiles each kernel outside the capture
++            torch.cuda.synchronize()
++            g = torch.cuda.CUDAGraph()
++            enabled = gc.isenabled()
++            gc.disable()
++            try:
++                with torch.cuda.graph(g, pool=self.pool):
++                    news = self._taps_body(tt)
++            finally:
++                if enabled:
++                    gc.enable()
++            news_ptrs = torch.tensor([x.data_ptr() for x in news], dtype=torch.int64, device=d.device)
++            entry = self.tap_graphs[n] = (g, news, news_ptrs)
++        g, news, news_ptrs = entry
++        olds = [x for pair in zip(d.kc, d.vc) for x in pair]
++        m = olds[0].shape[1]
++        keep = min(m + n, d.window)
++        targets = []
++        for e, x in enumerate(olds):
++            src = self.mine.get(x.data_ptr())
++            targets.append(1 - src[1] if src is not None and src[0] == e else 0)
++        h = t["host"].numpy()
++        h[0] = d.context_end
++        h[1], h[2] = m, n
++        h[3:3 + 2 * d.layers] = [x.data_ptr() for x in olds]
++        h[3 + 2 * d.layers:3 + 4 * d.layers] = [bufs[e][j].data_ptr() for e, j in enumerate(targets)]
++        t["taps"][:n].copy_(taps)
++        t["dev"].copy_(t["host"], non_blocking=True)
++        g.replay()
++        bp = 64
++        _slide[(2 * d.layers, d.kv_local, triton.cdiv(keep, bp))](t["dev"][3:], news_ptrs, t["dev"][1:3], H=d.kv_local,
++                                                                 D=d.head_dim, WINDOW=d.window, BP=bp, num_warps=4)
++        views = [self._view(e, j, keep) for e, j in enumerate(targets)]
++        d.kc, d.vc = views[0::2], views[1::2]
++        d.context_len = min(d.window, d.context_len + n)
++        d.context_end += n
++        self.tap_replays += 1
++        if self.check:
++            ref = self.eager_snapshot_after(taps, olds, m)
++            self.tap_mismatches += not all(torch.equal(a, b) for a, b in zip(views, ref))
++
++    def eager_snapshot_after(self, taps, olds, m) -> list[torch.Tensor]:
++        """The eager ``add_taps`` on the pre-call contexts, for ``check``: each new context."""
++        d = self.d
++        saved = (d.kc, d.vc, d.context_len, d.context_end)
++        n = taps.shape[0]
++        d.kc, d.vc = list(olds[0::2]), list(olds[1::2])
++        d.context_len, d.context_end = m, saved[3] - n
++        self.eager_add_taps(taps)
++        ref = [x for pair in zip(d.kc, d.vc) for x in pair]
++        d.kc, d.vc, d.context_len, d.context_end = saved
++        return ref
++
++    def snapshot(self):
++        """The drafter's snapshot, with copies of any context in this object's buffers (later rounds overwrite them)."""
++        kc, vc, length, end = self.eager_snapshot()
++        if self.bufs is not None:
++            own = lambda x: x is not None and x.untyped_storage().data_ptr() in self.mine
++            kc = [x.clone() if own(x) else x for x in kc]
++            vc = [x.clone() if own(x) else x for x in vc]
++        return (kc, vc, length, end)
 +
 +    def _stage(self, length: int) -> BlockStaged:
 +        host = torch.zeros(length + 2 + 2 * self.d.layers, dtype=torch.int64).pin_memory()

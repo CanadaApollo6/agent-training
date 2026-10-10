@@ -36,30 +36,30 @@
    ],
    [
     "Code",
-    "33\u201335",
-    "143\u2013192",
-    "\u2013"
+    "33–35",
+    "143–192",
+    "–"
    ]
   ],
-  "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
+  "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103–114, code 144–147 tok/s). Intelligence check: predictions drift KL 0.002–0.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003–0.0008) but only fits 144K.",
   "next": "Done on your 3090: 102 chat / 143-192 code tok/s, full 262K window in 4-bit, math gap closed at medium effort. As an agent in prime_agent, untrained (full-precision on a rented H200): 33 of 60 vs R1s-SD's 31, a tie on solves, but it finishes in half the turns, never thinks itself into the reply cap, and follows prime_agent's tool rules without coaching (39 of 47 runs vs 3 of 54)."
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "New today: a leaner 4-bit matmul kernel. Matmuls in a round 18.5 to 17.7 ms (a plain memory read of the same weights is 16.6). Daily 262K server: code 183 to 193, chat 128 to 135 tok/s greedy; the 132K recall test still right. The long-context attention kernel is checked too: at 100K context drafted output equals plain decoding, 125-132 tok/s. Next: the 5120-wide projections still sit ~6 us above the memory ceiling each.",
- "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 \u2192 193 tok/s and chat 117 \u2192 135 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, and a leaner 4-bit matmul kernel.",
+ "next_text": "New today: a faster save step after each round (the accepted tokens go into the model's memory and the drafter's). It took 1.7 ms a round, mostly Python issuing ~150 tiny GPU jobs; now a handful, 0.9 ms, with bit-identical results. Daily 262K server: code 193 to 205, chat 135 to 144 tok/s greedy; the 132K recall test still right. Next: the remaining matmul gap (the 5120-wide projections sit ~6 us above the memory ceiling each).",
+ "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 205 tok/s and chat 117 → 144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, and a faster save step.",
  "headline_numbers": [
   {
-   "value": "169 \u2192 193",
+   "value": "169 → 205",
    "label": "Server, code tok/s (262K window)"
   },
   {
-   "value": "117 \u2192 135",
+   "value": "117 → 144",
    "label": "Server, chat tok/s"
   },
   {
-   "value": "18.5 \u2192 17.7 ms",
-   "label": "Matmuls a round (memory floor 16.6)"
+   "value": "1.7 → 0.9 ms",
+   "label": "Save step a round"
   },
   {
    "value": "Identical",
@@ -73,22 +73,22 @@
    [
     "Practice tasks solved per task (30-min scale)",
     "43.8% (base)",
-    "48.4% pilot \u00b7 51.7% after 24 steps"
+    "48.4% pilot · 51.7% after 24 steps"
    ],
    [
     "Held-out solved (usable runs)",
     "32 of 46 (70%)",
-    "34/45 pilot (76%) \u00b7 37/50 after 24 steps (74%)"
+    "34/45 pilot (76%) · 37/50 after 24 steps (74%)"
    ],
    [
     "Shortcuts",
     "",
-    "1 in pilot (OCaml download) \u00b7 0 with GitHub blocked"
+    "1 in pilot (OCaml download) · 0 with GitHub blocked"
    ],
    [
     "Weights changed",
     "",
-    "16% pilot \u00b7 17% more in continuation"
+    "16% pilot · 17% more in continuation"
    ]
   ],
   "note": "Lost attempts stayed high: Prime sandbox shutdowns (not retried: pi reports them as harness errors) and timeouts even at 60 min. If RL continues, the better test is the same setup in prime_agent, where R1s-SD follows the tool rules in 3 of 54 runs, so it has room to learn."

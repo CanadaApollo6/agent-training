@@ -862,3 +862,45 @@ Daily 262K server (`bench_tf.sh kv4r-262k-qmm`, same setup as above):
 | Chat, sampled | 126 | 123 | 123 |
 
 132K recall right, peak 24.05 GB, prompt reading 588 tok/s.
+
+### Faster commit (saving the accepted tokens)
+
+After each round the accepted path goes into the model's state (the 48 GDN states, their conv windows, the 16 layers'
+4-bit cache rows) and into the drafter's context (its 5 layers' keys and values). That step took 1.6–1.7 ms of a ~24 ms
+round, but its GPU work was well under half of that: the host was issuing ~150 small launches from Python (a conv copy
+per GDN layer, a gather and a 4-bit store per attention layer's keys and values) and rebuilding the GDN replay's pointer
+table every round; the drafter concatenated and copied each layer's keys and values twice.
+
+Now, when the verify windows replay from graphs (`TENSORFOLD_GRAPHS=1`, the daily server):
+
+- **Model state** (`commit_fast.py`, `TENSORFOLD_FAST_COMMIT=1` default): three launches. The GDN replay as before,
+  its pointer table cached (the graph's records and states never move); every conv window in one kernel; every accepted
+  key/value row of every layer gathered, rotated and packed to 4 bits in one kernel with `kvq.store`'s arithmetic.
+- **Drafter context** (`DraftGraphs.install()`): the drafter's projection, norm and rotation of the new rows replay
+  from a graph per row count, and each layer's window goes into one of two fixed buffers (the one the round doesn't
+  read) by one launch for all layers. A snapshot (prefix cache) copies out of those buffers so later rounds can't
+  overwrite it.
+
+Checked bit for bit: `TENSORFOLD_COMMIT_CHECK=1` runs the old commit on copies every round, and `GRAPH_CHECK=1` runs the
+old drafter update. 299 + 299 rounds identical on short prompts (code, chat, greedy and sampled), and 110 + 110 with a
+3,000-token prompt, where the drafter's 2,047-row window is full and slides. Drafted == serial.
+
+Model, short prompts, rows 8, greedy, `TIMING=1` (`results/rounds/{commit-fast,taps-graph}{0,1}-ctx0.json`):
+
+| ms a round | Before | Fast commit | + drafter graph |
+|---|---|---|---|
+| Commit stage (both parts, synced) | 1.64–1.73 | 1.20 | **0.88–0.92** |
+| Drafter update (`add_taps`) | 0.63–0.65 | 0.64 | **0.32** |
+| tok/s, code / chat | 193 / 184 | 196 / 187 | **199 / 189** |
+
+Daily 262K server (`bench_tf.sh kv4r-262k-commit`, same setup as above):
+
+| tok/s | + leaner matmul | + faster commit |
+|---|---|---|
+| Code, greedy | 193 | **205** |
+| Code, sampled | 202 | **215** |
+| Chat, greedy | 135 | **144** |
+| Chat, sampled | 123 | **131** |
+
+132K recall right, peak 24.08 GB. What's left of the commit stage (~0.55 ms with the sync) is mostly the GDN replay
+kernel itself (0.37 ms, reading and writing the 48 fp32 states).

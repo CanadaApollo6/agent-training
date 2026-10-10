@@ -98,7 +98,10 @@ def main() -> None:
             from tensorfold.families.qwen3_5.cuda.graphs27 import DraftGraphs
             dgraphs = DraftGraphs(eng.draft)
             dgraphs.check = graphs.check
-            eng.draft.launch_block = dgraphs.launch_block
+            if os.environ.get("TAP_GRAPHS", "1") == "1":
+                dgraphs.install()
+            else:
+                eng.draft.launch_block = dgraphs.launch_block
     temps = [float(t) for t in a.temps.split(",")]
     results, greedy_ref = [], {}
 
@@ -182,9 +185,11 @@ def main() -> None:
                         **{f"t.{k}": round(1000 * v / r.rounds, 2) for k, v in timing.items()},
                     }
                     if graphs is not None:
-                        rec.update(graphs=len(graphs.graphs), eager=graphs.eager, mismatches=graphs.mismatches)
+                        rec.update(graphs=len(graphs.graphs), eager=graphs.eager, mismatches=graphs.mismatches,
+                                   commit_checks=graphs.commit_checks, commit_mismatches=graphs.commit_mismatches)
                         if os.environ.get("DRAFT_GRAPHS", "1") == "1":
-                            rec.update(draft_mismatches=dgraphs.mismatches, draft_replays=dgraphs.replays)
+                            rec.update(draft_mismatches=dgraphs.mismatches, draft_replays=dgraphs.replays,
+                                       tap_replays=dgraphs.tap_replays, tap_mismatches=dgraphs.tap_mismatches)
                     if temp <= 0:
                         key = (name,)
                         if key in greedy_ref and greedy_ref[key] != r.tokens:
