@@ -981,8 +981,10 @@ the producing side has no repeats, but needs a wait across all 80 tiles for the 
 
 ### Faster drafter block (`drafter-fast.patch`)
 
-The drafter's block (5 layers over 16 rows, then the 98K-word head and the top 16 words a row) took 2.22 ms of GPU
-time with a full 2048-token drafter window (`DRAFT_PROFILE=1 round_bench.py`, kernels by name). Three changes:
+The drafter's block (5 layers, then the 98K-word head and the top 16 words a row) took 2.22 ms of GPU time in
+`DRAFT_PROFILE=1 round_bench.py` (kernels by name). That first profile drafted 16 rows over a ~545-key drafter
+context; at `TENSORFOLD_ROWS=8` a round drafts 8 rows (pending + 7), which the profile now uses (next section).
+Three changes:
 
 1. **16-row matmuls in the segmented swapped form** (`SUM_ROWS` 8 -> 16 in `qmm.py`), the gate and up projections in
    one launch (`matmul_many`) and the head's row blocks in one launch (`matmul_rows`). Same bits. The drafter's 38
@@ -994,7 +996,7 @@ time with a full 2048-token drafter window (`DRAFT_PROFILE=1 round_bench.py`, ke
    column); a chunk of 4096 picks its 16 groups of 8 with the largest maxima, then the top 16 of those 128 keys; a
    second kernel merges the chunks. Same values and same word set as `torch.topk` on random and tied logits.
 
-| Drafter block, GPU time | ms |
+| Drafter block, GPU time (16 rows) | ms |
 |---|---|
 | Before | 2.22 |
 | + 16-row segmented matmuls | 2.04 |
@@ -1014,3 +1016,38 @@ short prompts, so the drafter window is small):
 
 A small step: the drafter is ~9% of a round, the verify ~87%. What's left in the block: matmuls 1.67 ms against a
 ~1.40 ms read floor, attention over the window 96 us (split + merge), the two-tap convolutions 39 us, group sums 19 us.
+
+### Drafter attention and input sums (`drafter-attn.patch`, on top of `drafter-fast.patch`)
+
+At the real size (8 rows, `DRAFT_PROFILE` fixed to draft `rows - 1` nodes) the block took 1.76 ms: matmuls 1.54 ms
+(within ~10% of a plain read, apart from the small kernel projections), attention 91 us, convolutions 35, norms 26,
+group sums 18.
+
+- **Attention** (`draft_attention.py`): the context runs in 16 slices, each storing fp32 partials for every query row
+  that the merge then reads back. Two wastes: the 8 block rows were padded to 16 in the partials, and a short context
+  filled only the first few slices while all 16 stored and were merged. Now the partials keep only the rows a head
+  has (G x 8 rows still feed the dots), empty slices store nothing and the merge reads the filled ones. Same bits as
+  before (equal outputs at 1-2048 keys, 8 and 16 rows). A layer, 8 rows: 15.9 -> 9.5 us at 1 key, 19.3 -> 12.1 at
+  545, 30.6 -> 24.4 at 2048; 16 rows also faster (20.0 -> 16.1 at 545). The merge loops over all 16 slices at 16 rows
+  and over the filled ones at 8 (each form is the faster one there).
+- **Input sums from the producers:** the matmuls need each input row's 64-group sums. The two convolutions that feed
+  the qkv and gate/up projections and the attention merge (o_proj's input) now write them as they store their output,
+  so 15 group-sum launches go. The merge's sums are the same bits as the separate kernel's.
+- **The selector's projection rides the head's launch** (`matmul_rows_with`): one launch for the head's rows and the
+  256-column projection, each with its own K slices, same bits.
+
+| Drafter block, GPU time (8 rows) | ms |
+|---|---|
+| Before (after `drafter-fast.patch`) | 1.764 |
+| + attention, sums, merged projection | **1.705** |
+
+Drafted == serial and 0 graph mismatches on code, chat and agent; tokens a round unchanged (4.41 / 4.26 / 5.01). Round
+bench (`results/rounds/drafter-attn-ctx0.json`): drafter call 1.92 -> 1.78 -> **1.72 ms** over the two patches; code
+193.3 -> 195.0 tok/s, chat 187.0 -> 188.5, agent 219.1 -> 220.9.
+
+**Not done, and why:** at 16 rows the swapped matmul runs a second mma per tile (qkv 23.8 -> 30.5 us from 8 to 9
+rows), but the daily rounds draft 8 rows, where the big matmuls are within 3-10% of a plain read. K split and pipeline
+depth sweeps (1-8 slices, 3-8 stages, slices summed in the block or through memory) moved nothing by more than ~2 us a
+call. The small kernel projections (1280 x 5120, 10 a block, 8.4 us against a 3.6 us read) are bound by each block's
+load latency: one 64-column tile alone runs 80 groups at ~0.26 us each. Splitting K further would save ~15-25 us a
+block. The drafter is now ~8% of a round; what's left in it is worth well under 1% of tok/s.

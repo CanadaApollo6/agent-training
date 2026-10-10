@@ -1,0 +1,306 @@
+diff -ru a/src/tensorfold/families/qwen3_5/cuda/dflash2.py b/src/tensorfold/families/qwen3_5/cuda/dflash2.py
+--- a/src/tensorfold/families/qwen3_5/cuda/dflash2.py	2026-10-10 17:06:01.302281770 -0400
++++ b/src/tensorfold/families/qwen3_5/cuda/dflash2.py	2026-10-10 17:06:01.312270191 -0400
+@@ -18,15 +18,15 @@
+ from .draft_tree import best_first
+ from .glue import add_rmsnorm, embedding, swiglu
+ from .draft_attention import append, block_attention
+-from .qmm import group_sums
+-from .qmm_fast import matmul, matmul_many, matmul_rows, rows, tile, untile
++from .qmm_fast import matmul, matmul_many, matmul_rows, matmul_rows_with, rows, tile, untile
+ from .weights import Exl3, Plain, QLinear, Weights
+ 
+ 
+ @triton.jit
+-def _dconv_kernel(X, DYN, BASE, RES, OUT, SEG, D: tl.constexpr, G: tl.constexpr, GS: tl.constexpr,
+-                  BRANCH: tl.constexpr, HAS_RES: tl.constexpr, BLOCK: tl.constexpr):
+-    """``_conv`` and its residual add as one kernel; row r mixes rows r and r-1 of its ``SEG``-row block."""
++def _dconv_kernel(X, DYN, BASE, RES, OUT, XS, SEG, D: tl.constexpr, G: tl.constexpr, GS: tl.constexpr,
++                  BRANCH: tl.constexpr, HAS_RES: tl.constexpr, SUMS: tl.constexpr, BLOCK: tl.constexpr):
++    """``_conv`` and its residual add as one kernel; row r mixes rows r and r-1 of its ``SEG``-row block; ``SUMS``:
++    also the output's 64-group sums (a matmul's input sums)."""
+ 
+     row = tl.program_id(0)
+     c = tl.program_id(1) * BLOCK + tl.arange(0, BLOCK)
+@@ -45,6 +45,10 @@
+         r = tl.load(RES + row * D + c, mask=ok, other=0.0).to(tl.float32)
+         y = (r + y.to(tl.float32)).to(tl.bfloat16)
+     tl.store(OUT + row * D + c, y, mask=ok)
++    if SUMS:
++        g = tl.program_id(1) * (BLOCK // 64) + tl.arange(0, BLOCK // 64)
++        tl.store(XS + row * (D // 64) + g, tl.sum(tl.reshape(y.to(tl.float32), (BLOCK // 64, 64)), axis=1),
++                 mask=g < D // 64)
+ 
+ 
+ @triton.jit
+@@ -86,16 +90,19 @@
+ 
+ 
+ def _dconv(x: torch.Tensor, dyn: torch.Tensor, base: torch.Tensor, branch: int, group_size: int,
+-           residual: torch.Tensor | None = None, seg: int | None = None) -> torch.Tensor:
++           residual: torch.Tensor | None = None, seg: int | None = None, sums: bool = False):
++    """The convolution's output; ``sums``: (output, its 64-group sums)."""
++
+     rows, d = x.shape
+     x = x.contiguous()
+     dyn = dyn.contiguous()
+     out = torch.empty_like(x)
++    xs = torch.empty((rows, d // 64), dtype=torch.float32, device=x.device) if sums else out
+     block = 1024
+-    _dconv_kernel[(rows, triton.cdiv(d, block))](x, dyn, base, residual if residual is not None else x, out,
++    _dconv_kernel[(rows, triton.cdiv(d, block))](x, dyn, base, residual if residual is not None else x, out, xs,
+                                                  seg or rows, D=d, G=d // group_size, GS=group_size, BRANCH=branch,
+-                                                 HAS_RES=residual is not None, BLOCK=block, num_warps=4)
+-    return out
++                                                 HAS_RES=residual is not None, SUMS=sums, BLOCK=block, num_warps=4)
++    return (out, xs) if sums else out
+ 
+ 
+ @triton.jit
+@@ -513,16 +520,15 @@
+         _, normed, xs = add_rmsnorm(x, None, w[base + "input_layernorm.weight"], self.eps)
+         dyn = self._lin(normed, base + "attention_conv.kernel_projection.weight", xs)
+         conv = w[base + "attention_conv.base_kernel"]
+-        q, k, v = self._prep(self._lin(_dconv(normed, dyn, conv, 0, self.group_size, seg=length),
+-                                       base + "self_attn.qkv.weight"), i, cos, sin, self.heads_local)
+-        out = block_attention(q, k, v, [snap[0][i] for snap in ctx], [snap[1][i] for snap in ctx], length,
+-                              self.window, self.head_dim ** -0.5, self.is_causal, staged)
+-        x = _dconv(self._row(out, base + "self_attn.o_proj.weight"), dyn, conv, 1, self.group_size, x, seg=length)
++        h, xs = _dconv(normed, dyn, conv, 0, self.group_size, seg=length, sums=True)
++        q, k, v = self._prep(self._lin(h, base + "self_attn.qkv.weight", xs), i, cos, sin, self.heads_local)
++        out, xs = block_attention(q, k, v, [snap[0][i] for snap in ctx], [snap[1][i] for snap in ctx], length,
++                                  self.window, self.head_dim ** -0.5, self.is_causal, staged, sums=True)
++        x = _dconv(self._row(out, base + "self_attn.o_proj.weight", xs), dyn, conv, 1, self.group_size, x, seg=length)
+         _, normed, xs = add_rmsnorm(x, None, w[base + "post_attention_layernorm.weight"], self.eps)
+         dyn = self._lin(normed, base + "mlp_conv.kernel_projection.weight", xs)
+         conv = w[base + "mlp_conv.base_kernel"]
+-        h = _dconv(normed, dyn, conv, 0, self.group_size, seg=length)
+-        xs = group_sums(h)
++        h, xs = _dconv(normed, dyn, conv, 0, self.group_size, seg=length, sums=True)
+         act, act_xs = swiglu(*matmul_many(h, [self.q4[base + "mlp.gate_proj.weight"],
+                                               self.q4[base + "mlp.up_proj.weight"]], xs))
+         mlp = self._row(act, base + "mlp.down_proj.weight", act_xs)
+@@ -533,6 +539,16 @@
+ 
+         return any(a <= token < b for a, b in self.vocab_spans)
+ 
++    def _head_rows(self, h: torch.Tensor, xs: torch.Tensor | None) -> tuple[torch.Tensor, torch.Tensor]:
++        """The tiled head's rows (``sub_rows``) and the candidate selector's projection (fp32) of ``h``, one launch."""
++
++        name = "candidate_selector.hidden_projection.weight"
++        q = self.q4.get(name)
++        if q is None:
++            return matmul_rows(h, self.sub_rows, xs), self._lin(h, name, xs).float()
++        logits, (projected,) = matmul_rows_with(h, self.sub_rows, [q], xs)
++        return logits, projected.float()
++
+     def _row(self, x: torch.Tensor, name: str, xs: torch.Tensor | None = None) -> torch.Tensor:
+         """A projection whose input is split over the ranks: rank partials summed in rank order."""
+ 
+@@ -577,16 +593,17 @@
+                     y = self._layer(layer, y)
+                 hs.append(_norm(y[1:], self.weights["norm.weight"], self.eps))
+             h, h_xs = torch.cat(hs), None
+-        projected = self._lin(h, "candidate_selector.hidden_projection.weight", h_xs).float()
+-        if self.sub_parts is not None:
+-            h = h.contiguous()
+-            logits = torch.cat([part(h)[:, lo:hi] for part, lo, hi in self.sub_parts], dim=1)
+-        elif self.head_cols is not None:
+-            logits = self.sub_head(h.contiguous()).index_select(1, self.head_cols)
+-        elif self.sub_rows is not None:
+-            logits = matmul_rows(h, self.sub_rows, h_xs)
++        if self.sub_rows is not None:
++            logits, projected = self._head_rows(h, h_xs)
+         else:
+-            logits = matmul(h, self.sub_head, h_xs)
++            projected = self._lin(h, "candidate_selector.hidden_projection.weight", h_xs).float()
++            if self.sub_parts is not None:
++                h = h.contiguous()
++                logits = torch.cat([part(h)[:, lo:hi] for part, lo, hi in self.sub_parts], dim=1)
++            elif self.head_cols is not None:
++                logits = self.sub_head(h.contiguous()).index_select(1, self.head_cols)
++            else:
++                logits = matmul(h, self.sub_head, h_xs)
+         values, global_ids = _top16(logits.contiguous(), self.head_ids)
+         if self.world == 2:
+             import torch.distributed as dist
+diff -ru a/src/tensorfold/families/qwen3_5/cuda/draft_attention.py b/src/tensorfold/families/qwen3_5/cuda/draft_attention.py
+--- a/src/tensorfold/families/qwen3_5/cuda/draft_attention.py	2026-10-10 17:06:01.299270202 -0400
++++ b/src/tensorfold/families/qwen3_5/cuda/draft_attention.py	2026-10-10 17:06:01.310270193 -0400
+@@ -8,6 +8,8 @@
+ import triton
+ import triton.language as tl
+ 
++from .qmm import group_sums
++
+ 
+ @triton.jit
+ def _block_attention(Q, KB, VB, TABLE, LENS, O, scale, window, R,
+@@ -74,7 +76,8 @@
+                    G: tl.constexpr, HKV: tl.constexpr, L: tl.constexpr, LP: tl.constexpr, D: tl.constexpr,
+                    BN: tl.constexpr, SPLITS: tl.constexpr):
+     """Program (stream j, kv head g, slice sp): G query heads x L block rows against one slice of the context keys a
+-    row's window keeps; the running max, sum and output go to the slice's partials."""
++    row's window keeps; the running max, sum and output go to the slice's partials. Slices of BN-key multiples, so a
++    short context fills only its first ones; the empty rest store nothing (``_block_merge`` reads as many)."""
+ 
+     j = tl.program_id(0)
+     g = tl.program_id(1)
+@@ -90,7 +93,7 @@
+     s = tl.load(LENS + j)
+     kc = tl.load(TABLE + 2 * j).to(tl.pointer_type(tl.bfloat16)) + g.to(tl.int64) * s * D
+     vc = tl.load(TABLE + 2 * j + 1).to(tl.pointer_type(tl.bfloat16)) + g.to(tl.int64) * s * D
+-    per = tl.cdiv(tl.cdiv(s, SPLITS), BN) * BN
++    per = tl.maximum(tl.cdiv(tl.cdiv(s, SPLITS), BN), 1) * BN
+     lo = sp * per
+     hi = tl.minimum(s, lo + per)
+     m_i = tl.full((M,), float("-inf"), tl.float32)
+@@ -112,22 +115,23 @@
+         acc = acc * alpha[:, None] + tl.dot(p.to(tl.bfloat16), v)
+         m_i = m_new
+     base = ((j * HKV + g) * SPLITS + sp) * M + rows
+-    tl.store(PM + base, m_i)
+-    tl.store(PL + base, l_i)
+-    tl.store(PA + base[:, None] * D + d[None, :], acc)
++    filled = lo < hi
++    tl.store(PM + base, m_i, mask=filled)
++    tl.store(PL + base, l_i, mask=filled)
++    tl.store(PA + base[:, None] * D + d[None, :], acc, mask=filled)
+ 
+ 
+ @triton.jit
+-def _block_merge(Q, KB, VB, PM, PL, PA, O, scale, R,
+-                 G: tl.constexpr, HKV: tl.constexpr, L: tl.constexpr, LP: tl.constexpr, D: tl.constexpr,
+-                 CAUSAL: tl.constexpr, SPLITS: tl.constexpr):
++def _block_merge(Q, KB, VB, LENS, PM, PL, PA, O, XS, scale, R,
++                 G: tl.constexpr, HKV: tl.constexpr, L: tl.constexpr, LP: tl.constexpr, LPS: tl.constexpr,
++                 D: tl.constexpr, BN: tl.constexpr, CAUSAL: tl.constexpr, SPLITS: tl.constexpr, SUMS: tl.constexpr):
+     """Program (stream j, kv head g, query head hh): the context slices' partials in slice order, then the block's
+     own keys."""
+ 
+     j = tl.program_id(0)
+     g = tl.program_id(1)
+     hh = tl.program_id(2)
+-    M: tl.constexpr = G * LP
++    M: tl.constexpr = G * LPS
+     r = tl.arange(0, LP)
+     head = g * G + hh
+     live = r < L
+@@ -137,11 +141,17 @@
+     m_i = tl.full((LP,), float("-inf"), tl.float32)
+     l_i = tl.zeros((LP,), tl.float32)
+     acc = tl.zeros((LP, D), tl.float32)
+-    for sp in range(SPLITS):
+-        base = ((j * HKV + g) * SPLITS + sp) * M + hh * LP + r
+-        mi = tl.load(PM + base)
+-        li = tl.load(PL + base)
+-        ai = tl.load(PA + base[:, None] * D + d[None, :])
++    s = tl.load(LENS + j)
++    per = tl.maximum(tl.cdiv(tl.cdiv(s, SPLITS), BN), 1) * BN
++    filled = tl.cdiv(s, per)
++    # the filled slices in slice order (an empty one adds nothing); the 3090 runs the loop over all SPLITS faster at 16
++    # rows a head, over the filled ones at 8 (a layer at 545 context keys: 16 rows 20.0 -> 16.1 us, 8 rows 19.3 -> 12.1)
++    for sp in range(filled if LPS < LP else SPLITS):
++        held = (r < LPS) & (sp < filled)
++        base = ((j * HKV + g) * SPLITS + sp) * M + hh * LPS + tl.where(held, r, 0)
++        mi = tl.load(PM + base, mask=held, other=float("-inf"))
++        li = tl.load(PL + base, mask=held, other=0.0)
++        ai = tl.load(PA + base[:, None] * D + d[None, :], mask=held[:, None], other=0.0)
+         m_new = tl.maximum(m_i, mi)
+         m_safe = tl.where(m_new == float("-inf"), 0.0, m_new)
+         a = tl.exp(m_i - m_safe)
+@@ -167,12 +177,17 @@
+     acc = acc * alpha[:, None] + tl.dot(p.to(tl.bfloat16), vb)
+     out = (acc / l_i[:, None]).to(tl.bfloat16)
+     tl.store(O + qrow[:, None] * (G * HKV * D) + head * D + d[None, :], out, mask=live[:, None])
++    if SUMS:                                              # the head's 64-column groups of the output row
++        gi = head * (D // 64) + tl.arange(0, D // 64)
++        sums = tl.sum(tl.reshape(out.to(tl.float32), (LP, D // 64, 64)), axis=2)
++        tl.store(XS + qrow[:, None] * (G * HKV * D // 64) + gi[None, :], sums, mask=live[:, None])
+ 
+ 
+ def block_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, keys: Sequence[torch.Tensor],
+                     values: Sequence[torch.Tensor], length: int, window: int, scale: float,
+-                    causal: bool = False, staged: tuple[torch.Tensor, torch.Tensor] | None = None) -> torch.Tensor:
+-    """q [H, S*L, D], k and v [Hkv, S*L, D] (S streams' blocks of ``length`` rows), stream s's context [Hkv, n_s, D] -> [S*L, H*D] bf16; ``staged``: the (table, lens) device inputs already written (a graph replay's, keys and values unused)."""
++                    causal: bool = False, staged: tuple[torch.Tensor, torch.Tensor] | None = None,
++                    sums: bool = False):
++    """q [H, S*L, D], k and v [Hkv, S*L, D] (S streams' blocks of ``length`` rows), stream s's context [Hkv, n_s, D] -> [S*L, H*D] bf16; ``staged``: the (table, lens) device inputs already written (a graph replay's, keys and values unused); ``sums``: (output, its 64-group sums)."""
+ 
+     heads, rows, dim = q.shape
+     kv_heads = k.shape[0]
+@@ -196,17 +211,20 @@
+     if SPLITS <= 1:
+         _block_attention[(streams, kv_heads)](q, k, v, table, lens, out, scale, window, rows, G=group, HKV=kv_heads,
+                                               L=length, LP=lp, D=dim, BN=64, CAUSAL=causal, num_warps=4, num_stages=2)
+-        return out
+-    m = group * lp
++        return (out, group_sums(out)) if sums else out
++    lps = max(16 // group, triton.next_power_of_2(length))   # the split's rows a head: G x lps rows feed its dots
++    m = group * lps
+     pm = torch.empty((streams, kv_heads, SPLITS, m), dtype=torch.float32, device=q.device)
+     pl = torch.empty_like(pm)
+     pa = torch.empty((streams, kv_heads, SPLITS, m, dim), dtype=torch.float32, device=q.device)
+     _context_split[(streams, kv_heads, SPLITS)](q, table, lens, pm, pl, pa, scale, window, rows, G=group,
+-                                                HKV=kv_heads, L=length, LP=lp, D=dim, BN=64, SPLITS=SPLITS,
++                                                HKV=kv_heads, L=length, LP=lps, D=dim, BN=64, SPLITS=SPLITS,
+                                                 num_warps=4, num_stages=2)
+-    _block_merge[(streams, kv_heads, group)](q, k, v, pm, pl, pa, out, scale, rows, G=group, HKV=kv_heads, L=length,
+-                                             LP=lp, D=dim, CAUSAL=causal, SPLITS=SPLITS, num_warps=4)
+-    return out
++    xs = torch.empty((rows, heads * dim // 64), dtype=torch.float32, device=q.device) if sums else out
++    _block_merge[(streams, kv_heads, group)](q, k, v, lens, pm, pl, pa, out, xs, scale, rows, G=group, HKV=kv_heads,
++                                             L=length, LP=lp, LPS=lps, D=dim, BN=64, CAUSAL=causal, SPLITS=SPLITS,
++                                             SUMS=sums, num_warps=4)
++    return (out, xs) if sums else out
+ 
+ 
+ @triton.jit
+diff -ru a/src/tensorfold/families/qwen3_5/cuda/graphs27.py b/src/tensorfold/families/qwen3_5/cuda/graphs27.py
+--- a/src/tensorfold/families/qwen3_5/cuda/graphs27.py	2026-10-10 17:06:01.302611364 -0400
++++ b/src/tensorfold/families/qwen3_5/cuda/graphs27.py	2026-10-10 17:06:01.314270189 -0400
+@@ -29,7 +29,6 @@
+ from .forward import GDNRecord, State, commit, path_indices, tree_forward
+ from .dflash2 import _top16
+ from .glue import add_rmsnorm, embedding
+-from .qmm_fast import matmul_rows
+ 
+ FAST_COMMIT = os.environ.get("TENSORFOLD_FAST_COMMIT", "1") == "1"   # commit_fast: three launches, same bits
+ COMMIT_CHECK = os.environ.get("TENSORFOLD_COMMIT_CHECK") == "1"      # also run the plain commit on copies, compare
+@@ -446,8 +445,8 @@
+         for layer in range(d.layers):
+             x = d._layer_fast(layer, x, cos, sin, [], n, (dev[n + 1 + 2 * layer:n + 3 + 2 * layer], lens))
+         _, h, h_xs = add_rmsnorm(x[1:], None, d.weights["norm.weight"], d.eps)
+-        projected = d._lin(h, "candidate_selector.hidden_projection.weight", h_xs).float()
+-        values, ids = _top16(matmul_rows(h, d.sub_rows, h_xs), d.head_ids)
++        logits, projected = d._head_rows(h, h_xs)
++        values, ids = _top16(logits, d.head_ids)
+         return ids, torch.cat((values, projected), dim=1)
+ 
+     @torch.no_grad()
+diff -ru a/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py b/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py
+--- a/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py	2026-10-10 17:06:01.302985667 -0400
++++ b/src/tensorfold/families/qwen3_5/cuda/qmm_fast.py	2026-10-10 17:06:01.316270187 -0400
+@@ -49,6 +49,22 @@
+     return torch.cat([shared.matmul(x, p, xs, sk=sk) for p in parts], dim=1)
+ 
+ 
++def matmul_rows_with(x: torch.Tensor, parts: list[QLinear], others: list[QLinear],
++                     xs: torch.Tensor | None = None) -> tuple[torch.Tensor, list[torch.Tensor]]:
++    """``(matmul_rows(x, parts, xs), [matmul(x, q, xs) for q in others])`` with the same bits, in one launch when the
++    weights fit one (each keeps its own K slices)."""
++
++    if xs is None:
++        xs = shared.group_sums(x, parts[0].gs)
++    if (len(parts) + len(others) <= 4 and all(q.fast and q.layout == "tiled" for q in others)
++            and shared.segmented(x, parts + others)):
++        sk = shared.split_k(sum(p.n for p in parts), parts[0].k, parts[0].gs)
++        outs = shared.matmul_many(x, parts + others, xs,
++                                  sks=[sk] * len(parts) + [shared.split_k(q.n, q.k, q.gs) for q in others])
++        return torch.cat(outs[:len(parts)], dim=1), outs[len(parts):]
++    return matmul_rows(x, parts, xs), [matmul(x, q, xs) for q in others]
++
++
+ def matmul(x: torch.Tensor, q: QLinear, xs: torch.Tensor | None = None) -> torch.Tensor:
+     """The lane matmul for either layout; both give the same bits."""
+ 

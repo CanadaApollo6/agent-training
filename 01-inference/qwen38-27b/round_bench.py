@@ -152,16 +152,16 @@ def main() -> None:
         run(rows_list[0], *prompts[0], 0.0)                              # leaves a full drafter context
         calls = 50
         for _ in range(5):
-            eng.draft.launch_block(1000, 127)
+            eng.draft.launch_block(1000, rows_list[0] - 1)
         torch.cuda.synchronize()
         t = time.perf_counter()
         for _ in range(calls):
-            eng.draft.launch_block(1000, 127)
+            eng.draft.launch_block(1000, rows_list[0] - 1)
         torch.cuda.synchronize()
         print(f"launch_block: {(time.perf_counter() - t) * 1000 / calls:.3f} ms a call (synced loop)", flush=True)
         with profile(activities=[ProfilerActivity.CUDA]) as prof:
             for _ in range(calls):
-                eng.draft.launch_block(1000, 127)
+                eng.draft.launch_block(1000, rows_list[0] - 1)
             torch.cuda.synchronize()
         avg = prof.key_averages()
         gpu_us = sum(getattr(e, "self_device_time_total", 0) for e in avg)
