@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "Draft model done: its GPU time per round went 2.22 to 1.71 ms over two steps (faster top-16 pick, engine normalize, leaner attention that skips empty work, fewer helper launches). Same output as serial. tok/s up ~0.5-1% (code 193 to 195, agent 219 to 221 in the round bench); the drafter is only ~8% of a round, and what's left in it is worth under 1%. Its matrix multiplies are already within 3-10% of the memory floor at the real 8-row size.",
+ "next_text": "Draft model done: its time per round went 1.92 to 1.72 ms over two steps (faster top-16 pick, engine normalize, leaner attention that skips empty work, fewer helper launches). Same output as serial. tok/s up ~0.5-1% (code 193 to 195, agent 219 to 221 in the round bench); the drafter is only ~8% of a round, and what's left in it is worth under 1%. Its matrix multiplies are already within 3-10% of the memory floor at the real 8-row size.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 214 tok/s and chat 117 → 140-144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, and a faster GDN step kernel.",
  "headline_numbers": [
   {
