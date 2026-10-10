@@ -962,3 +962,19 @@ Daily 262K server (`results/bench-kv4r-262k-gdnlanes.json`):
 A round is ~0.4 ms (2%) shorter. Because the state's last bits changed, the greedy replies take a different path after
 a while and accept a different number of tokens a round (code 4.65 -> 4.41, chat 4.44 -> 4.26 in the round bench), so
 single-prompt tok/s moves either way by more than the kernel saves: read this step as "about 2% faster a round".
+
+### Add + normalize and the MLP activation: tried, no gain (not kept)
+
+The verify's add + RMS norm runs 129 times a round (0.34 ms). Timed alone at 8 rows x 5120 in a graph: 2.35 us a call,
+against 0.68 us for an empty kernel and 1.23 us for a plain copy of the rows. Dropping its row sum saves 0.45 us, its
+64-group sums another 0.4. A hand-written CUDA version (one shared-memory step, group sums in 3 shuffles) ran 2.37 us:
+the kernel is at its floor, and its cost is being a separate step.
+
+So the next try made the MLP's activation (silu(gate) x up, 64 launches a round) inside the down projection as it
+loads its input: each thread converts its own 16 bytes and sums its group in 3 shuffles. The bits matched the two-step
+path in all 32 cases (and the activation matched the Triton kernel's bits), but at 8 rows the 5120 x 17408 down
+projection went 60.2 -> 98 us, against 63 us for the two launches. Every one of the 80 column tiles needs the whole
+input, so the activation ran ~160 times over; with the math removed, the per-group plumbing alone still cost +4 us,
+more than the 2.3 us launch it replaced. Folding the norm into the matmul that reads it hits the same wall. Doing it on
+the producing side has no repeats, but needs a wait across all 80 tiles for the row's sum (~1.5 us), for at most
+~0.1 ms a round. Left as is. (Code kept outside the repo; `TENSORFOLD_ACT_FUSE` never shipped.)
