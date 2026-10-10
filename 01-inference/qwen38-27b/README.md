@@ -1102,3 +1102,34 @@ TENSORFOLD_ROWS=16 TENSORFOLD_ROWS_BY_CONTEXT=16:50000,8 TENSORFOLD_GRAPHS=1 TEN
   TENSORFOLD_ONE_BUFFER=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TF_DRAFT_PACKED=1 TF_BUDGET_GIB=200 \
   LONG="100000" ./bench_tf.sh kv4r-262k-r16 --context 262144
 ```
+
+### Long-context attention at 16 rows: why it doubles, and 2 tiles a block (`attn4-tiles.patch`)
+
+Attention alone at 100K context, per layer (`attn_bench.py --profile`, CUDA events + torch.profiler):
+
+| | 8 rows | 16 rows |
+|---|---|---|
+| Shared chunks (`attn4_kernel<false, 3>`) | 391 us | 736 us |
+| Merge of the chunk partials | 50 us | 93 us |
+| Tail (last chunk + paths) | 16 us | 17 us |
+| Whole attention | 469 us | 858 us |
+
+The shared kernel does the same work per (row, head) pair whatever the block holds: 16 rows are 96 pairs, two blocks of
+48, each loading and decoding the same keys. Sharing the keys across more rows was already worth ~1% at 8 rows (445 ->
+439 us, above), and the kernel is held by its matrix math and the 420 W power cap, so a 96-pair block wouldn't change
+the doubling much. The merge reads every chunk's fp32 partials at ~800 GB/s; it shrinks only with fewer or smaller
+partials (bigger chunks: fewer blocks at 20K, where the grid already doesn't fill the card; 16-bit partials: different
+bits, needs a quality check). For 16 rows to beat 8 at 100K its attention would have to fall ~25%.
+
+12 rows cost as much as 16 here: 72 pairs are 4.5 tiles of 16, run as 6. That is why 12 rows never wins.
+
+Taken: blocks of 2 tiles instead of 3 when a window has more than 3 (`attention.py`; bits identical for 1, 2 and 3
+tiles at 8, 12 and 16 rows, `attn4_test.py` exact). Shared kernel, interleaved pairs (`attn4/attn4_ablate.py --rows
+--tiles`):
+
+| Shared kernel | 20K | 50K | 100K |
+|---|---|---|---|
+| 16 rows, 3 tiles -> 2 | 176 -> 168 us | 391 -> 379 us | 708-737 -> 714-722 us (noise) |
+| 12 rows, 3 tiles -> 2 | 169 -> 163 us | 374 -> 363 us | 683-706 -> 683-694 us |
+
+About 0.2 ms a round at 16 rows (0.5-0.7%), too small to see in the round bench.

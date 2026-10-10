@@ -16,6 +16,7 @@ def main() -> None:
     ap.add_argument("--context", type=int, default=20000)
     ap.add_argument("--rows", type=int, default=8)
     ap.add_argument("--reps", type=int, default=50)
+    ap.add_argument("--profile", action="store_true", help="also time each kernel by name (torch.profiler)")
     a = ap.parse_args()
     from tensorfold.cuda.kernels import attention as ta, kvq
 
@@ -45,6 +46,15 @@ def main() -> None:
     e.record()
     torch.cuda.synchronize()
     us = s.elapsed_time(e) * 1000 / a.reps
+    if a.profile:                                                        # time by kernel name
+        from torch.profiler import ProfilerActivity, profile
+        with profile(activities=[ProfilerActivity.CUDA]) as prof:
+            for _ in range(a.reps):
+                f()
+            torch.cuda.synchronize()
+        for ev in sorted(prof.key_averages(), key=lambda x: -x.self_device_time_total):
+            if ev.self_device_time_total:
+                print(f"{ev.self_device_time_total / a.reps:8.1f} us {ev.count / a.reps:4.1f}x  {ev.key[:90]}")
     cache = 2 * P * HK * r * k.element_size()
     print(f"rows {W} context {P}: {us:.1f} us a layer (all kernels), cache {cache / 1e6:.1f} MB "
           f"-> {cache / us / 1e3:.0f} GB/s; checksum {out.float().abs().sum().item():.6e}")

@@ -1,0 +1,12 @@
+--- a/src/tensorfold/cuda/kernels/attention.py
++++ b/src/tensorfold/cuda/kernels/attention.py
+@@ -359,7 +359,8 @@
+     partial_o = torch.empty((p.chunks, w, h, d), dtype=torch.float32, device=q.device)
+     partial_m = torch.empty((p.chunks, w, h), dtype=torch.float32, device=q.device)
+     partial_l = torch.empty_like(partial_m)
+-    tiles = min(3, -(-(w * (h // hk)) // QUERY_TILE))                       # 16-row tiles a block
++    tiles = -(-(w * (h // hk)) // QUERY_TILE)                              # 16-row tiles a block: all if they fit one,
++    tiles = tiles if tiles <= 3 else 2                                     # else 2 (3-4% faster than 3; same bits)
+     ext.shared(q, origin, offs, p.streams, p.items, partial_o, partial_m, partial_l, w, hk, scale, tiles)
+     ext.tail(q, origin, offs, p.streams, p.rows, p.paths, p.depths, kn, vn, partial_o, partial_m, partial_l, w, hk,
+              scale, 1 + -(-MAX_NODES // CHUNK))

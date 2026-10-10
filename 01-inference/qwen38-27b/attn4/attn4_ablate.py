@@ -19,12 +19,13 @@ def main() -> None:
     ap.add_argument("--context", type=int, default=100000)
     ap.add_argument("--abl", default="0,1,2,3,4")
     ap.add_argument("--tiles", type=int, default=3, help="16-row tiles a block (8 rows: 3)")
+    ap.add_argument("--rows", type=int, default=8)
     a = ap.parse_args()
     from tensorfold.cuda import build
     from tensorfold.cuda.kernels import attention as ta, kvq
     dev = torch.device("cuda")
     torch.manual_seed(0)
-    P, W = a.context, 8
+    P, W = a.context, a.rows
     k, v = t.cache(P, 1024, dev)
     q = kvq.rotate(torch.randn(W, t.H, t.D, device=dev, dtype=torch.bfloat16))
     plan = ta.plan([list(range(-1, W - 1))], [P], t.G, dev)
