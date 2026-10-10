@@ -97,13 +97,24 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
 - TensorFold "Living Weights" (Ash Hart, [@ashxhart](https://x.com/ashxhart), tweet 2026-10-09 11:27): a model that
   updates its own weights while in use and keeps what it learned when moved to another machine. Announced to ship "in
   the latest TensorFold release today", with Nemotron Lightning support.
-  - Not public yet at 12:45 the same day: the latest release is still 1.0.2 (2026-10-07). No branch, pull request or
-    code mentions it.
-  - Open questions: what it learns from (the conversation itself, or only corrections); what changes (likely a small
-    add-on layer, since TensorFold's builds are 3–4-bit); and what guards against forgetting or learning the user's
-    mistakes. RL only keeps what a verifier passed; nothing in the tweet says what plays that role here.
-  - Verdict: watch. Recheck when it ships. If it works on Qwen3.8-27B, it's a cheap test of learning on the 3090:
-    tasks it fails, then the same tasks after a session of use.
+  - Shipped in [1.0.3](https://github.com/ashhart/TensorFold/releases/tag/v1.0.3) (2026-10-09 23:47 UTC) as
+    "Sliding Weights", `serve --slide`. 1.0.4 only adds a guard against rewriting the shared Hugging Face cache. Guide:
+    [docs/living-weights.md](https://github.com/ashhart/TensorFold/blob/main/docs/living-weights.md).
+  - What it learns: facts you hand it on purpose (a sentence, a document or a URL), not lessons from tasks or from
+    the conversation. Each fact becomes a change to the output-projection weights, written into the model files in bf16.
+    Any TensorFold server started from those files knows it, including on NVIDIA.
+  - Guard: a fact is kept only if related questions it never trained on keep their answers. Otherwise it's undone.
+  - Results so far: "I like blue." is recalled on three phrasings after a restart, with nine other answers unchanged.
+    On a five-fact document, 5 of 11 recall questions were answered and 1 of 16 neighbouring questions leaked a fact.
+    A fact takes 2–4 minutes. Nothing undoes a learned fact except a backup copy.
+  - Limits: Nemotron 3.5 Lightning only, and learning needs an Apple-silicon Mac. NVIDIA GPUs refuse `--slide`; they
+    can only serve files that learned on a Mac.
+  - Verdict: can't run here (no Mac, and no Qwen3.8-27B or Ornith support). It's a memory feature, not learning from
+    work, so the task-before/after test I planned doesn't fit it. Background only. Recheck if CUDA learning or
+    learning from task results arrives.
+  - Same release, worth knowing: Nemotron 3.5 Lightning now runs on the 3090 on TensorFold's native engine, at 252
+    tok/s on prose and 313 on code (194 without drafts), 1.4–1.7x llama.cpp. Qwen3.8-27B also moved to the native
+    engine, but only Mac speeds are published; we run it on the older 0.3.6.3 CUDA path.
 - [Prime Agent, rewritten in Rust](https://www.primeintellect.ai/blog/prime-agent-rust) (Thomas, Müller, Karten;
   Prime Intellect, 2026-10-09). Repo: [PrimeIntellect-ai/prime-agent](https://github.com/PrimeIntellect-ai/prime-agent).
   - The harness client was rebuilt from TypeScript in Rust, mostly by agents (~2,200 agent runs on GLM-5.3).
