@@ -142,6 +142,8 @@ def main() -> None:
             greedy_ref[(name,)] = r.tokens
             print(json.dumps({"serial": name, "tokens": len(r.tokens) - 1, "tok_s": round(r.tokens_per_second, 1)}),
                   flush=True)
+            del st, pending, r                                           # a long window's cache, twice, won't fit
+            torch.cuda.empty_cache()
     if os.environ.get("PROFILE") == "1":                                 # kernel time by name over one short decode
         from torch.profiler import ProfilerActivity, profile
         prof = profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA])

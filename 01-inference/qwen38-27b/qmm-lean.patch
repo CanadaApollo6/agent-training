@@ -1,0 +1,150 @@
+diff -ru a/src/tensorfold/cuda/kernels/qmm.cu b/src/tensorfold/cuda/kernels/qmm.cu
+--- a/src/tensorfold/cuda/kernels/qmm.cu	2026-10-10 11:59:55.136746494 -0400
++++ b/src/tensorfold/cuda/kernels/qmm.cu	2026-10-10 11:59:55.158746539 -0400
+@@ -279,37 +279,37 @@
+     const int tid = threadIdx.x, lane = tid & 31, wn = tid >> 5, gq = lane >> 2, t = lane & 3;
+ 
+     auto stage = [&](int s) { return buf + s * T::STAGE; };
+-    auto load = [&](int s, int g) {
++    // a group's stage is one 16-byte copy of inputs and one of weights a thread, a scale or bias piece for 16 threads
++    // and an input sum for 16; each thread finds its sources once and steps them a group at a time (general copy loops
++    // made the loop several times longer than its mmas, so a block streamed ~5 GB/s)
++    static_assert(T::THREADS == BM * T::CHUNKS && T::W == T::THREADS * 16 && 2 * (T::S / 16) <= T::THREADS,
++                  "one copy of each kind a thread");
++    const int xr = tid / T::CHUNKS, xc = tid % T::CHUNKS;
++    const bool xread = xr < M;
++    const int xoff = xr * T::ROW + swz<T::CHUNKS>(xr, xc) * 16;
++    const __nv_bfloat16* xsrc = x + static_cast<size_t>(min(xr, M - 1)) * ldx + static_cast<size_t>(g0) * GS + xc * 8;
++    const unsigned char* wsrc = reinterpret_cast<const unsigned char*>(w)
++        + (static_cast<size_t>(n0 / 64) * KG + g0) * (64 * GS / 2) + tid * 16;
++    const int sw = tid / (T::S / 16), so = tid % (T::S / 16);
++    const bool sread = tid < 2 * (T::S / 16);
++    const __nv_bfloat16* ssrc = (sw ? biases : scales) + static_cast<size_t>(g0) * npad + n0 + so * 8;
++    const int soff = T::X + T::W + sw * T::S + so * 16;
++    const bool xsread = tid < BM;
++    const float* xssrc = xs + static_cast<size_t>(min(tid, M - 1)) * KG + g0;
++    const int xsoff = T::X + T::W + 2 * T::S + tid * 4;
++    auto load = [&](int s, int i) {                       // group g0 + i into stage s
+         unsigned char* p = stage(s);
+-        for (int c = tid; c < BM * T::CHUNKS; c += T::THREADS) {
+-            const int r = c / T::CHUNKS, ch = c % T::CHUNKS;
+-            const int row = min(r, M - 1);
+-            cp16z(p + r * T::ROW + swz<T::CHUNKS>(r, ch) * 16, x + static_cast<size_t>(row) * ldx + g * GS + ch * 8,
+-                  r < M);
+-        }
+-        unsigned char* pw = p + T::X;
+-        constexpr int TILE_BYTES = 64 * GS / 2;
+-        for (int c = tid; c < T::W / 16; c += T::THREADS) {
+-            const int tl = c / (TILE_BYTES / 16), off = c % (TILE_BYTES / 16);
+-            const size_t tile = static_cast<size_t>(n0 / 64 + tl) * KG + g;
+-            cp16(pw + c * 16, reinterpret_cast<const unsigned char*>(w) + tile * TILE_BYTES + off * 16);
+-        }
+-        unsigned char* ps = pw + T::W;
+-        for (int c = tid; c < 2 * (T::S / 16); c += T::THREADS) {
+-            const int which = c / (T::S / 16), off = c % (T::S / 16);
+-            const __nv_bfloat16* src = (which ? biases : scales) + static_cast<size_t>(g) * npad + n0 + off * 8;
+-            cp16(ps + which * T::S + off * 16, src);
+-        }
+-        float* px = reinterpret_cast<float*>(ps + 2 * T::S);
+-        for (int r = tid; r < BM; r += T::THREADS)
+-            cp4(px + r, xs + static_cast<size_t>(min(r, M - 1)) * KG + g);
++        cp16z(p + xoff, xsrc + i * GS, xread);
++        cp16(p + T::X + tid * 16, wsrc + static_cast<size_t>(i) * (64 * GS / 2));
++        if (sread) cp16(p + soff, ssrc + static_cast<size_t>(i) * npad);
++        if (xsread) cp4(p + xsoff, xssrc + i);
+     };
+ 
+ #pragma unroll
+     for (int u = 0; u < TT; ++u) acc[u][0] = acc[u][1] = acc[u][2] = acc[u][3] = 0.0f;
+ #pragma unroll
+     for (int s = 0; s < STAGES - 1; ++s) {
+-        if (s < per) load(s, g0 + s);
++        if (s < per) load(s, s);
+         commit();
+     }
+     const int c0 = wn * 16 + gq, c1 = c0 + 8;             // the lane's columns in the block
+@@ -317,7 +317,7 @@
+         wait<STAGES - 2>();
+         __syncthreads();
+         const int next = it + STAGES - 1;
+-        if (next < per) load(next % STAGES, g0 + next);
++        if (next < per) load(next % STAGES, next);
+         commit();
+         const unsigned char* p = stage(it % STAGES);
+         const uint32_t* pw = reinterpret_cast<const uint32_t*>(p + T::X);
+@@ -554,12 +554,14 @@
+     }
+ }
+ 
+-void qmm_seg_cuda(const at::Tensor& x, const at::Tensor& xs, const std::vector<at::Tensor>& w,
+-                  const std::vector<at::Tensor>& scales, const std::vector<at::Tensor>& biases,
+-                  const std::vector<at::Tensor>& out, const std::vector<at::Tensor>& part,
+-                  const std::vector<int64_t>& n, const std::vector<int64_t>& sk, const at::Tensor& sync, bool f32,
+-                  bool swap) {
+-    constexpr int BM = 16, BN = 64, WM = 1, WN = 4, STAGES = 4, GS = 64;
++namespace {
++template <int STAGES>
++void qmm_seg_run(const at::Tensor& x, const at::Tensor& xs, const std::vector<at::Tensor>& w,
++                 const std::vector<at::Tensor>& scales, const std::vector<at::Tensor>& biases,
++                 const std::vector<at::Tensor>& out, const std::vector<at::Tensor>& part,
++                 const std::vector<int64_t>& n, const std::vector<int64_t>& sk, const at::Tensor& sync, bool f32,
++                 bool swap) {
++    constexpr int BM = 16, BN = 64, WM = 1, WN = 4, GS = 64;
+     using T = Tile<GS, BM, BN, WM, WN, STAGES>;
+     Segs segs = {};
+     segs.count = static_cast<int>(w.size());
+@@ -599,3 +601,23 @@
+     else { if (tt == 0) SEG(false, 0); else if (tt == 1) SEG(false, 1); else SEG(false, 2); }
+ #undef SEG
+ }
++} // namespace
++
++void qmm_seg_cuda(const at::Tensor& x, const at::Tensor& xs, const std::vector<at::Tensor>& w,
++                  const std::vector<at::Tensor>& scales, const std::vector<at::Tensor>& biases,
++                  const std::vector<at::Tensor>& out, const std::vector<at::Tensor>& part,
++                  const std::vector<int64_t>& n, const std::vector<int64_t>& sk, const at::Tensor& sync, bool f32,
++                  bool swap) {
++    static const int sms = [] {
++        int device = 0, value = 0;
++        C10_CUDA_CHECK(cudaGetDevice(&device));
++        C10_CUDA_CHECK(cudaDeviceGetAttribute(&value, cudaDevAttrMultiProcessorCount, device));
++        return value;
++    }();
++    // past 4 blocks an SM, 3 stages: more blocks fit, with fewer copies in flight (the 3090 at 8 rows: MLP gate+up
++    // 135 -> 118 us; a launch that fits keeps 4, 5120-column projections 27.5 -> 26.3); the same bits either way
++    int blocks = 0;
++    for (size_t i = 0; i < w.size(); ++i) blocks += static_cast<int>((n[i] + 63) / 64 * sk[i]);
++    if (blocks > 4 * sms) qmm_seg_run<3>(x, xs, w, scales, biases, out, part, n, sk, sync, f32, swap);
++    else qmm_seg_run<4>(x, xs, w, scales, biases, out, part, n, sk, sync, f32, swap);
++}
+diff -ru a/src/tensorfold/cuda/kernels/qmm.py b/src/tensorfold/cuda/kernels/qmm.py
+--- a/src/tensorfold/cuda/kernels/qmm.py	2026-10-10 11:59:55.153937413 -0400
++++ b/src/tensorfold/cuda/kernels/qmm.py	2026-10-10 11:59:55.158746539 -0400
+@@ -111,6 +111,18 @@
+     return sk
+ 
+ 
++FILL = 192           # a launch with this many column tiles fills the GPU without K slices
++
++
++def launch_split(qs) -> list[int]:
++    """K slices for weights that share a launch: none once the launch's column tiles fill the GPU (slices add a sum and
++    the narrow weights hide inside the wide one's blocks), else each weight's ``split_k``. A function of the call's
++    shapes only (never of the row count); a lone weight gets its ``split_k``."""
++    if sum(-(-q.n // 64) for q in qs) >= FILL:
++        return [1] * len(qs)
++    return [split_k(q.n, q.k, q.gs) for q in qs]
++
++
+ def bucket(m: int) -> int:
+     """The row tile: 16 or 32 rows, else 64-row tiles side by side; tiles never change bits."""
+ 
+@@ -181,7 +193,7 @@
+         x = x.clone(memory_format=torch.contiguous_format)
+     if xs is None:
+         xs = group_sums(x, qs[0].gs)
+-    sks = list(sks) if sks is not None else [split_k(q.n, q.k, q.gs) for q in qs]
++    sks = list(sks) if sks is not None else [k for i in range(0, len(qs), 4) for k in launch_split(qs[i:i + 4])]
+     if not segmented(x, qs) or max(sks) > 8:            # the launch adds up to 8 slices
+         return [matmul(x, q, xs, sk=sk, f32=f32) for q, sk in zip(qs, sks)]
+     m, outs = x.shape[0], []

@@ -813,3 +813,52 @@ that didn't matter: the dequant arithmetic (removing it entirely: no change), th
 warps an SM partition, one warp's softmax only partly hides behind another's math. The tensor cores are fine: 82
 TFLOPS with realistic data at 280 W. This kernel hits the 420 W power cap at 1.8 GHz. It now runs at ~65% of matrix
 peak (Triton ~40%).
+
+At 100K context in the model (`round_bench.py --prefix-tokens 100000 --context 131072 --graphs --serial`, rows 8,
+code, greedy), drafted == serial over all 511 tokens, zero graph mismatches: 125–132 tok/s, a verify 28.1 ms (22.7
+on short prompts), serial 39 tok/s (`results/rounds/attn4-ctx100k.json`). The daily 262K server is unchanged on short
+prompts, as expected (attention is small there): code 183 greedy / 197 sampled, chat 128 / 123 (183/192/126/126
+before), the 132K recall prompt answers right, peak 24.07 GB (`results/bench-kv4r-262k-attn4.json`). `round_bench.py
+--serial` now frees the serial pass's cache before the drafted pass (two 100K caches didn't fit).
+
+**Leaner decode matmul** ([`qmm-lean.patch`](qmm-lean.patch), on TensorFold's `qmm.cu`/`qmm.py`; same bits for a
+given K split). [`qmm_probe.py`](qmm_probe.py) times every 4-bit matmul of a round at 8 rows three ways: as called,
+replayed in a CUDA graph, and a plain kernel that only reads the same bytes (the ceiling, launch included):
+
+| 8 rows, one round | Before | After | Plain read |
+|---|---|---|---|
+| All matmuls (graphed) | 18.50 ms | **17.66 ms** | 16.6 ms |
+| GDN input [qkv, z, b, a] x48 | 64.6 us | 57.5 | 55.4 |
+| MLP gate+up x64 | 122.6 | 117.5 | 114.4 |
+| MLP down x64 | 63.6 | 62.6 | 58.1 |
+| Attention input [q, k, v] x16 | 58.4 | 50.2 | 48.0 |
+| GDN out / attention o (5120 columns) | 26.9 / 27.2 | 26.3 / 26.6 | 20.7 |
+
+What was wrong: the head (one 715 MB launch) streamed at 97% of the plain read, so steady streaming was fine, but a
+block alone moved only ~5 GB/s. Skipping loads one kind at a time (`QMM_ABL`, since removed) showed the loop's own
+work took ~55% of the memory time and the two overlapped badly. The stage copies were general loops (`for c = tid; c <
+...; c += THREADS`) that compiled to hundreds of instructions of address math and branches a step; now each thread
+finds its four sources once and steps them (one 16-byte copy each of inputs and weights, a scale/bias piece, an input
+sum). Then two policy changes, both shape-only so drafted == serial still holds: a launch whose weights already have
+192+ column tiles gets no K slices (`launch_split`: the narrow k/v and b/a pieces hide inside the wide weight's blocks
+instead of adding an 8-way sum), and a launch with more than 4 blocks an SM runs 3 pipeline stages instead of 4 (more
+blocks fit, fewer copies in flight: gate+up 135 -> 118 us). The K-split change changes bits for the GDN and attention
+input projections, so greedy text changes too. What didn't help: deeper pipelines (8 or 12 stages: slower everywhere),
+two groups a stage (no change), and splitting K finer. The 5120-column projections still sit ~6 us above the read;
+their blocks are still limited by the loop, not memory.
+
+Model, short prompts, rows 8, greedy (`round_bench.py --graphs --serial`, `results/rounds/qmm-{old,lean}-ctx0.json`):
+drafted == serial on code, chat and agent, zero graph mismatches; a verify 21.2–22.4 -> 20.2–20.35 ms. tok/s code 159
+-> 178, chat 116 -> 177, agent 178 -> 198, but much of that is acceptance (the new bits change the greedy text; chat
+went from 3.4 to 4.4 tokens a round).
+
+Daily 262K server (`bench_tf.sh kv4r-262k-qmm`, same setup as above):
+
+| tok/s | Rows 8 + replay | + CUDA attention | + leaner matmul |
+|---|---|---|---|
+| Code, greedy | 183 | 183 | **193** |
+| Code, sampled | 192 | 197 | **202** |
+| Chat, greedy | 126 | 128 | **135** |
+| Chat, sampled | 126 | 123 | 123 |
+
+132K recall right, peak 24.05 GB, prompt reading 588 tok/s.

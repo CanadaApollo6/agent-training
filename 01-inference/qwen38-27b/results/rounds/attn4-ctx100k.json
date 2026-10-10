@@ -1,0 +1,44 @@
+{
+ "args": {
+  "model": "Vontra/Qwen3.8-27B-MLX-4bit",
+  "drafter": "z-lab/Qwen3.8-27B-DFlash2",
+  "rows": "8",
+  "tokens": 512,
+  "temps": "0",
+  "context": 131072,
+  "prompts": "code",
+  "reps": 1,
+  "out": "../../qwen38-27b/results/rounds/attn4-ctx100k.json",
+  "prefix_tokens": 100000,
+  "branch": "",
+  "serial": true,
+  "sync": "1",
+  "graphs": true
+ },
+ "results": [
+  {
+   "rows": 8,
+   "branch": 4,
+   "sync": 1,
+   "prompt": "code",
+   "prompt_tokens": 100045,
+   "temp": 0.0,
+   "rep": 0,
+   "tokens": 511,
+   "tok_s": 124.9,
+   "rounds": 117,
+   "tok_per_round": 4.37,
+   "copy_rounds": 0,
+   "draft_ms": 4.57,
+   "verify_ms": 28.1,
+   "sample_ms": 0.1,
+   "commit_ms": 2.17,
+   "width_mean": 8,
+   "graphs": 2,
+   "eager": 0,
+   "mismatches": 0,
+   "draft_mismatches": 0,
+   "draft_replays": 234
+  }
+ ]
+}

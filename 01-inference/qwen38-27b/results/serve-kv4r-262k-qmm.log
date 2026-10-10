@@ -1,0 +1,13 @@
+[serve_kernels] GPU-only budget: 21.1 GiB
+[serve_kernels] planner budget forced to 200.0 GiB: measure the real peak
+[serve_kernels] drafter counted at its packed 4-bit size
+[serve_kernels] new: SPLIT 0 SELECT True COMBINE 1
+[tensorfold] loading qwen27: Qwen3.8 dense (qwen3_5) on CUDA
+[tensorfold] CUDA rank 0 startup estimate 84.89 GiB within 200.00 GiB; native 262144, allocated prompt/reply window 262144, cache slots 262152
+[tensorfold] serving qwen27 at http://127.0.0.1:8091/v1 on CUDA (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 262144; loaded in 29.2s)
+[tensorfold] building CUDA extension tensorfold_qmm_v4 (first start after an install or update; later starts reuse it)
+[W1010 12:04:31.874003191 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 96796672, total: 25327763456).
+[W1010 12:04:36.137881398 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86310912, total: 25327763456).
+[W1010 12:04:37.669598444 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86310912, total: 25327763456).
+[W1010 12:04:37.207716853 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86310912, total: 25327763456).
+[W1010 12:04:38.010806602 CUDACachingAllocator.cpp:528] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 86310912, total: 25327763456).

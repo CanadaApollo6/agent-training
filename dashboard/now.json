@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "In progress: a purpose-built long-context attention kernel. Alone it takes attention per layer from 239 to 136 us at 20K context and 838 to 441 us at 100K (~6 ms a round less at 100K), with drafted rows bit-identical to serial ones. Now checking it inside the model (20K-context decode, drafted vs serial). Next lever after it: the 4-bit matmul kernel (~10%).",
+ "next_text": "New today: a leaner 4-bit matmul kernel. Matmuls in a round 18.5 to 17.7 ms (a plain memory read of the same weights is 16.6). Daily 262K server: code 183 to 193, chat 128 to 135 tok/s greedy; the 132K recall test still right. The long-context attention kernel is checked too: at 100K context drafted output equals plain decoding, 125-132 tok/s. Next: the 5120-wide projections still sit ~6 us above the memory ceiling each.",
  "headline_text": "Qwen 27B speed on your 3090, now in the server: your daily setup (4-bit cache, full 262K window) went 169 \u2192 183 tok/s on code and 117 \u2192 126 on chat, with answers identical to one-word-at-a-time decoding. Turn it on with TENSORFOLD_ROWS=8 TENSORFOLD_GRAPHS=1. With 20K tokens of context it's 158 vs 141 for TensorFold's default.",
  "headline_numbers": [
   {
