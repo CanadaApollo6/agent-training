@@ -523,11 +523,116 @@ index f7740aa..a8ec456 100644
          normed = F.rms_norm(x, (self.hidden,), w[base + "post_attention_layernorm.weight"], self.eps)
          dyn = self._lin(normed, base + "mlp_conv.kernel_projection.weight")
 diff --git i/src/tensorfold/families/qwen3_5/cuda/draft_attention.py w/src/tensorfold/families/qwen3_5/cuda/draft_attention.py
-index 633c0e4..ebb20bc 100644
+index 633c0e4..a50387b 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/draft_attention.py
 +++ w/src/tensorfold/families/qwen3_5/cuda/draft_attention.py
-@@ -68,22 +68,25 @@ def _block_attention(Q, KB, VB, TABLE, LENS, O, scale, window, R,
+@@ -66,29 +66,146 @@ def _block_attention(Q, KB, VB, TABLE, LENS, O, scale, window, R,
+     tl.store(O + qrow[:, None] * (G * HKV * D) + head[:, None] * D + d[None, :], out, mask=live[:, None])
  
+ 
++SPLITS = 16          # context slices a block's attention runs side by side (one program per kv head was 8 programs)
++
++
++@triton.jit
++def _context_split(Q, TABLE, LENS, PM, PL, PA, scale, window, R,
++                   G: tl.constexpr, HKV: tl.constexpr, L: tl.constexpr, LP: tl.constexpr, D: tl.constexpr,
++                   BN: tl.constexpr, SPLITS: tl.constexpr):
++    """Program (stream j, kv head g, slice sp): G query heads x L block rows against one slice of the context keys a
++    row's window keeps; the running max, sum and output go to the slice's partials."""
++
++    j = tl.program_id(0)
++    g = tl.program_id(1)
++    sp = tl.program_id(2)
++    M: tl.constexpr = G * LP
++    rows = tl.arange(0, M)
++    head = g * G + rows // LP
++    r = rows % LP
++    live = r < L
++    d = tl.arange(0, D)
++    qrow = (j * L + r).to(tl.int64)
++    q = tl.load(Q + head[:, None].to(tl.int64) * R * D + qrow[:, None] * D + d[None, :], mask=live[:, None], other=0.0)
++    s = tl.load(LENS + j)
++    kc = tl.load(TABLE + 2 * j).to(tl.pointer_type(tl.bfloat16)) + g.to(tl.int64) * s * D
++    vc = tl.load(TABLE + 2 * j + 1).to(tl.pointer_type(tl.bfloat16)) + g.to(tl.int64) * s * D
++    per = tl.cdiv(tl.cdiv(s, SPLITS), BN) * BN
++    lo = sp * per
++    hi = tl.minimum(s, lo + per)
++    m_i = tl.full((M,), float("-inf"), tl.float32)
++    l_i = tl.zeros((M,), tl.float32)
++    acc = tl.zeros((M, D), tl.float32)
++    for n0 in range(lo, hi, BN):
++        kidx = n0 + tl.arange(0, BN)
++        inside = kidx < hi
++        k = tl.load(kc + kidx[None, :] * D + d[:, None], mask=inside[None, :], other=0.0)
++        qk = tl.dot(q, k) * scale
++        seen = inside[None, :] & (s + r[:, None] - kidx[None, :] < window + 1)
++        qk = tl.where(seen, qk, float("-inf"))
++        m_new = tl.maximum(m_i, tl.max(qk, 1))
++        m_safe = tl.where(m_new == float("-inf"), 0.0, m_new)
++        p = tl.exp(qk - m_safe[:, None])
++        alpha = tl.exp(m_i - m_safe)
++        l_i = l_i * alpha + tl.sum(p, 1)
++        v = tl.load(vc + kidx[:, None] * D + d[None, :], mask=inside[:, None], other=0.0)
++        acc = acc * alpha[:, None] + tl.dot(p.to(tl.bfloat16), v)
++        m_i = m_new
++    base = ((j * HKV + g) * SPLITS + sp) * M + rows
++    tl.store(PM + base, m_i)
++    tl.store(PL + base, l_i)
++    tl.store(PA + base[:, None] * D + d[None, :], acc)
++
++
++@triton.jit
++def _block_merge(Q, KB, VB, PM, PL, PA, O, scale, R,
++                 G: tl.constexpr, HKV: tl.constexpr, L: tl.constexpr, LP: tl.constexpr, D: tl.constexpr,
++                 CAUSAL: tl.constexpr, SPLITS: tl.constexpr):
++    """Program (stream j, kv head g, query head hh): the context slices' partials in slice order, then the block's
++    own keys."""
++
++    j = tl.program_id(0)
++    g = tl.program_id(1)
++    hh = tl.program_id(2)
++    M: tl.constexpr = G * LP
++    r = tl.arange(0, LP)
++    head = g * G + hh
++    live = r < L
++    d = tl.arange(0, D)
++    qrow = (j * L + r).to(tl.int64)
++    q = tl.load(Q + head.to(tl.int64) * R * D + qrow[:, None] * D + d[None, :], mask=live[:, None], other=0.0)
++    m_i = tl.full((LP,), float("-inf"), tl.float32)
++    l_i = tl.zeros((LP,), tl.float32)
++    acc = tl.zeros((LP, D), tl.float32)
++    for sp in range(SPLITS):
++        base = ((j * HKV + g) * SPLITS + sp) * M + hh * LP + r
++        mi = tl.load(PM + base)
++        li = tl.load(PL + base)
++        ai = tl.load(PA + base[:, None] * D + d[None, :])
++        m_new = tl.maximum(m_i, mi)
++        m_safe = tl.where(m_new == float("-inf"), 0.0, m_new)
++        a = tl.exp(m_i - m_safe)
++        b = tl.exp(mi - m_safe)
++        l_i = l_i * a + li * b
++        acc = acc * a[:, None] + ai * b[:, None]
++        m_i = m_new
++    cols = tl.arange(0, LP)
++    krow = (j * L + cols).to(tl.int64)
++    in_block = cols < L
++    kb = tl.load(KB + g.to(tl.int64) * R * D + krow[None, :] * D + d[:, None], mask=in_block[None, :], other=0.0)
++    qk = tl.dot(q, kb) * scale
++    seen = in_block[None, :]
++    if CAUSAL:
++        seen = seen & (cols[None, :] <= r[:, None])
++    qk = tl.where(seen, qk, float("-inf"))
++    m_new = tl.maximum(m_i, tl.max(qk, 1))
++    m_safe = tl.where(m_new == float("-inf"), 0.0, m_new)
++    p = tl.exp(qk - m_safe[:, None])
++    alpha = tl.exp(m_i - m_safe)
++    l_i = l_i * alpha + tl.sum(p, 1)
++    vb = tl.load(VB + g.to(tl.int64) * R * D + krow[:, None] * D + d[None, :], mask=in_block[:, None], other=0.0)
++    acc = acc * alpha[:, None] + tl.dot(p.to(tl.bfloat16), vb)
++    out = (acc / l_i[:, None]).to(tl.bfloat16)
++    tl.store(O + qrow[:, None] * (G * HKV * D) + head * D + d[None, :], out, mask=live[:, None])
++
++
  def block_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, keys: Sequence[torch.Tensor],
                      values: Sequence[torch.Tensor], length: int, window: int, scale: float,
 -                    causal: bool = False) -> torch.Tensor:
@@ -563,7 +668,26 @@ index 633c0e4..ebb20bc 100644
 +        table, lens = dev[:2 * streams], dev[2 * streams:].to(torch.int32)
      out = torch.empty((rows, heads * dim), dtype=torch.bfloat16, device=q.device)
      group = heads // kv_heads
-     _block_attention[(streams, kv_heads)](q, k, v, table, lens, out, scale, window, rows, G=group, HKV=kv_heads,
+-    _block_attention[(streams, kv_heads)](q, k, v, table, lens, out, scale, window, rows, G=group, HKV=kv_heads,
+-                                          L=length, LP=max(16, triton.next_power_of_2(length)), D=dim,
+-                                          BN=64, CAUSAL=causal, num_warps=4, num_stages=2)
++    lp = max(16, triton.next_power_of_2(length))
++    if SPLITS <= 1:
++        _block_attention[(streams, kv_heads)](q, k, v, table, lens, out, scale, window, rows, G=group, HKV=kv_heads,
++                                              L=length, LP=lp, D=dim, BN=64, CAUSAL=causal, num_warps=4, num_stages=2)
++        return out
++    m = group * lp
++    pm = torch.empty((streams, kv_heads, SPLITS, m), dtype=torch.float32, device=q.device)
++    pl = torch.empty_like(pm)
++    pa = torch.empty((streams, kv_heads, SPLITS, m, dim), dtype=torch.float32, device=q.device)
++    _context_split[(streams, kv_heads, SPLITS)](q, table, lens, pm, pl, pa, scale, window, rows, G=group,
++                                                HKV=kv_heads, L=length, LP=lp, D=dim, BN=64, SPLITS=SPLITS,
++                                                num_warps=4, num_stages=2)
++    _block_merge[(streams, kv_heads, group)](q, k, v, pm, pl, pa, out, scale, rows, G=group, HKV=kv_heads, L=length,
++                                             LP=lp, D=dim, CAUSAL=causal, SPLITS=SPLITS, num_warps=4)
+     return out
+ 
+ 
 diff --git i/src/tensorfold/families/qwen3_5/cuda/engine.py w/src/tensorfold/families/qwen3_5/cuda/engine.py
 index 6029ae1..69ef79a 100644
 --- i/src/tensorfold/families/qwen3_5/cuda/engine.py

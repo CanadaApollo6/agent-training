@@ -47,6 +47,8 @@ def main() -> None:
     ap.add_argument("--prompts", default=",".join(p[0] for p in PROMPTS))
     ap.add_argument("--reps", type=int, default=1)
     ap.add_argument("--out", default="")
+    ap.add_argument("--prefix-tokens", type=int, default=0,
+                    help="put this many tokens of the repo's READMEs before each task (a long conversation's context)")
     ap.add_argument("--branch", default="", help="draft_tree.POLICY branch values to sweep (1 = chains)")
     ap.add_argument("--serial", action="store_true", help="also decode greedy serially and check drafted == serial")
     ap.add_argument("--sync", default="1", help="draft_decode sync_stages values to sweep (0: no timing syncs)")
@@ -75,9 +77,15 @@ def main() -> None:
 
     wanted = a.prompts.split(",")
     prompts = []
+    prefix = ""
+    if a.prefix_tokens:                                                  # frozen text: the READMEs as of this commit
+        root = Path(__file__).resolve().parents[2]
+        docs = "\n\n".join(p.read_text() for p in sorted(root.glob("*/**/README.md"))[:200])
+        prefix = tok.decode(tok.encode(docs, add_special_tokens=False).ids[:a.prefix_tokens])
+        prefix = "Project notes for context:\n\n" + prefix + "\n\nNow the task.\n\n"
     for name, text in PROMPTS:
         if name in wanted:
-            rendered = template.render([{"role": "user", "content": text}], tools=None, enable_thinking=True,
+            rendered = template.render([{"role": "user", "content": prefix + text}], tools=None, enable_thinking=True,
                                        extra={"reasoning_effort": "medium"})
             prompts.append((name, tok.encode(rendered, add_special_tokens=False).ids))
 
@@ -162,7 +170,7 @@ def main() -> None:
                     r, trace = run(rows, name, ids, temp, sync=sync)
                     n = len(r.tokens) - 1
                     rec = {
-                        "rows": rows, "branch": branch, "sync": int(sync), "prompt": name, "temp": temp, "rep": rep, "tokens": n,
+                        "rows": rows, "branch": branch, "sync": int(sync), "prompt": name, "prompt_tokens": len(ids), "temp": temp, "rep": rep, "tokens": n,
                         "tok_s": round(n / r.seconds, 1), "rounds": r.rounds,
                         "tok_per_round": round(n / r.rounds, 2),
                         "copy_rounds": sum(t["source"] == "copy" for t in trace),

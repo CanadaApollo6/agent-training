@@ -733,3 +733,22 @@ TENSORFOLD_ROWS=8 TENSORFOLD_GRAPHS=1 TENSORFOLD_KV_BITS=4 TENSORFOLD_ONE_BUFFER
 The 132K-token recall prompt still answers right; peak card memory 24.07 GB (23.82 before), prompt reading 587 tok/s.
 The "off" column is also faster than the October 7 record: the 4-bit cache's Triton rotation and the merged MLP launch
 help the normal path too.
+
+**Long context (20K tokens of the repo's READMEs before each task, `round_bench.py --prefix-tokens 20000`):**
+
+| tok/s, 20K context | code | chat | agent | mean |
+|---|---|---|---|---|
+| Normal, width 12 (TensorFold's default) | 138 | 146 | 140 | 141 |
+| Normal, width 8 | 140 | 146 | 153 | 146 |
+| Width 8 + replay | 148 | 155 | 158 | 154 |
+| + split drafter attention | 151 | 159 | 159 | **156** |
+
+The 20K context adds 2.8 ms to a verify (25.5 vs 22.7 ms). Attention at 20K (`PROFILE=1`): `_shared` 2.5 ms a round,
+`_tail` 1.2, drafter `_block_attention` 0.89 (0.11 on short prompts), `_merge` 0.56. The cache a round reads is
+~0.37 GB, ~0.4 ms at full bandwidth, so long-context attention runs far below the card.
+
+**Drafter attention split 16 ways** (`draft_attention.py`, `SPLITS`): one program per kv head was 8 programs walking
+up to 2,047 context keys each. Now 16 slices run side by side and a second kernel merges them in slice order, then
+adds the block's own keys. Same values up to rounding (drafter rounding only moves acceptance, never output); a full
+window takes 53 instead of 186 us a layer. Short prompts gain too (160.9 -> 163.1 mean): the drafter's window fills
+during a 512-token reply.
