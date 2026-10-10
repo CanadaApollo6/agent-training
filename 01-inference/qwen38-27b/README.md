@@ -1100,8 +1100,11 @@ New daily setup:
 ```bash
 TENSORFOLD_ROWS=16 TENSORFOLD_ROWS_BY_CONTEXT=16:50000,8 TENSORFOLD_GRAPHS=1 TENSORFOLD_KV_BITS=4 \
   TENSORFOLD_ONE_BUFFER=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TF_DRAFT_PACKED=1 TF_BUDGET_GIB=200 \
-  LONG="100000" ./bench_tf.sh kv4r-262k-r16 --context 262144
+  LONG="100000" ./bench_tf.sh kv4r-262k-sched --context 262144
 ```
+
+With it (`results/bench-kv4r-262k-sched.json`, attn4-tiles in): code 220.7 greedy / 226.5 sampled, chat 144.2 /
+145.0 (8 rows the same day: 214.4 / 224.8, 139.9 / 142.2); the 132K recall prompt answers right, peak 24.07 GB.
 
 ### Long-context attention at 16 rows: why it doubles, and 2 tiles a block (`attn4-tiles.patch`)
 

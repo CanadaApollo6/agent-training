@@ -46,15 +46,15 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "Tried making long-context attention cheaper at 16 rows: it can't be made to win at 100K. The math per guess is fixed and the card is at its 420 W power cap, so 16 rows costs twice the attention of 8 (391 to 736 us a layer at 100K). Took one free tweak (2 tiles a block, same bits, ~0.5%). Found why 12 rows never wins: it pads to the same work as 16. The schedule (16 rows under 50K, 8 after) stays the right setup.",
- "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 214 tok/s and chat 117 → 140-144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, and a faster GDN step kernel.",
+ "next_text": "New daily setting verified on the server: TENSORFOLD_ROWS=16 TENSORFOLD_ROWS_BY_CONTEXT=16:50000,8. Code 214 → 221, chat 140 → 144 tok/s (greedy, short prompts); 132K recall right, peak 24.07 GB, the same as before. Long-context attention can't make 16 rows win past 50K (the card is at its power cap). Remaining small lever: lighter partial-result merge (1-2% at 100K, needs a quality check).",
+ "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 221 tok/s and chat 117 → 144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, a faster GDN step kernel, a faster draft model, and 16 guesses a round under 50K context (8 above).",
  "headline_numbers": [
   {
-   "value": "169 → 214",
+   "value": "169 → 221",
    "label": "Server, code tok/s (262K window)"
   },
   {
-   "value": "117 → 140–144",
+   "value": "117 → 144",
    "label": "Server, chat tok/s"
   },
   {
