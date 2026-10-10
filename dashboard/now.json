@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "Tokens accepted per round: with today's faster kernels, 16 rows a round now beats 8. Round bench over 11 prompts (1024 tokens, greedy, 32K window): 8 rows 200 tok/s, 12 rows 210, 16 rows 214 (+6.6%). 16 rows accepts 5.67 tokens a round vs 4.72 and checking costs 23.2 vs 20.4 ms. Output identical, 0 mismatches. Tree-tuning, copy-from-context and per-depth score tweaks all gave nothing. Next: check 16 rows at long context and the full 262K window before switching the daily setup.",
+ "next_text": "Rows a round: 16 beats 8 on short contexts (200 to 214 tok/s over 11 prompts) but loses at 100K context (146 to 130), because long-context attention costs twice as much at 16 rows. Break-even is near 20K tokens of context. 16 rows fits the full 262K window (24.07 GB, recall right). Daily stays at 8 rows for now. Next: pick the row count from the context length each round (16 short, fewer long), then try making long-context attention share work across rows.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 214 tok/s and chat 117 → 140-144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, and a faster GDN step kernel.",
  "headline_numbers": [
   {
