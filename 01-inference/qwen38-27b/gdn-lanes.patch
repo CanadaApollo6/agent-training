@@ -1,0 +1,398 @@
+diff --git a/src/tensorfold/cuda/kernels/gdn.cu b/src/tensorfold/cuda/kernels/gdn.cu
+index e859382..aee4511 100644
+--- a/src/tensorfold/cuda/kernels/gdn.cu
++++ b/src/tensorfold/cuda/kernels/gdn.cu
+@@ -5,69 +5,95 @@
+ #include <cuda_bf16.h>
+ #include <cuda_runtime.h>
+ 
++
+ namespace {
+ 
+ constexpr int DK = 128;
++constexpr int LG = 8;                                     // lanes a value row: 16 state elements a lane
++constexpr int E = DK / LG;
+ 
+-__device__ __forceinline__ float warp_sum(float x) {
+-#pragma unroll
+-    for (int m = 16; m; m >>= 1) x += __shfl_xor_sync(0xffffffffu, x, m);
+-    return x;
+-}
++// This lane's 16 elements of a 128-wide row: 4 runs of 4 at c * 32 + j * 4 (8 lanes read 128 contiguous bytes a run).
++__device__ __forceinline__ int run_at(int c, int j) { return c * 32 + j * 4; }
+ 
+-__device__ __forceinline__ void load4(const __nv_bfloat16* p, float (&x)[4]) {
++__device__ __forceinline__ void load4(const __nv_bfloat16* p, float* x) {
+     const uint2 w = *reinterpret_cast<const uint2*>(p);
+     const __nv_bfloat162 a = *reinterpret_cast<const __nv_bfloat162*>(&w.x);
+     const __nv_bfloat162 b = *reinterpret_cast<const __nv_bfloat162*>(&w.y);
+     x[0] = __low2float(a); x[1] = __high2float(a); x[2] = __low2float(b); x[3] = __high2float(b);
+ }
+ 
+-__device__ __forceinline__ void load4(const float* p, float (&x)[4]) {
++__device__ __forceinline__ void load4(const float* p, float* x) {
+     const float4 w = *reinterpret_cast<const float4*>(p);
+     x[0] = w.x; x[1] = w.y; x[2] = w.z; x[3] = w.w;
+ }
+ 
+-// A node's inputs for one warp: its key head's q and k (this lane's 4 elements), R values, the gates.
++template <typename T>
++__device__ __forceinline__ void load_row(const T* row, int j, float (&x)[E]) {
++#pragma unroll
++    for (int c = 0; c < 4; ++c) load4(row + run_at(c, j), x + 4 * c);
++}
++
++__device__ __forceinline__ void store_row(float* row, int j, const float (&x)[E]) {
++#pragma unroll
++    for (int c = 0; c < 4; ++c)
++        *reinterpret_cast<float4*>(row + run_at(c, j)) = make_float4(x[4 * c], x[4 * c + 1], x[4 * c + 2], x[4 * c + 3]);
++}
++
++// The lane's 16 products, added as a balanced tree (a fixed order); the row's sum then takes 3 butterfly steps.
++__device__ __forceinline__ float dot16(const float (&a)[E], const float (&b)[E]) {
++    float p[E];
++#pragma unroll
++    for (int i = 0; i < E; ++i) p[i] = a[i] * b[i];
++#pragma unroll
++    for (int w = 1; w < E; w *= 2)
++#pragma unroll
++        for (int i = 0; i < E; i += 2 * w) p[i] = p[i] + p[i + w];
++    return p[0];
++}
++
++__device__ __forceinline__ float row_sum(float x) {
++#pragma unroll
++    for (int m = LG / 2; m; m >>= 1) x += __shfl_xor_sync(0xffffffffu, x, m);
++    return x;
++}
++
++// A node's inputs for one lane: its key head's q and k (the lane's 16 elements), its R rows' values, the gates.
+ template <typename QK, int R>
+ struct Inputs {
+-    float q[4], k[4], v[R], g, beta;
++    float q[E], k[E], v[R], g, beta;
+ 
+     __device__ __forceinline__ void load(const QK* qp, const QK* kp, const __nv_bfloat16* vp, const float* gp,
+-                                         const float* bp, int node, int key_head, int head, int value0, int hk,
+-                                         int hv, int dv, int lane, bool with_q) {
+-        const size_t key = (static_cast<size_t>(node) * hk + key_head) * DK + lane * 4;
+-        if (with_q) load4(qp + key, q);
+-        load4(kp + key, k);
+-        const size_t val = (static_cast<size_t>(node) * hv + head) * dv + value0;
++                                         const float* bp, int node, int key_head, int head, int row0, int hk,
++                                         int hv, int dv, int j, bool with_q) {
++        const size_t key = (static_cast<size_t>(node) * hk + key_head) * DK;
++        if (with_q) load_row(qp + key, j, q);
++        load_row(kp + key, j, k);
++        const size_t val = (static_cast<size_t>(node) * hv + head) * dv + row0;
+ #pragma unroll
+-        for (int r = 0; r < R; ++r) v[r] = value0 + r < dv ? __bfloat162float(vp[val + r]) : 0.0f;
++        for (int r = 0; r < R; ++r) v[r] = row0 + r < dv ? __bfloat162float(vp[val + r]) : 0.0f;
+         g = gp[node * hv + head];
+         beta = bp[node * hv + head];
+     }
+ };
+ 
+ // One step for one value row: ``s`` holds the parent's state on entry and the node's on exit.
+-__device__ __forceinline__ void step(float (&s)[4], const float (&k)[4], float v, float g, float beta) {
+-    float mem = 0.0f;
++__device__ __forceinline__ void step(float (&s)[E], const float (&k)[E], float v, float g, float beta) {
+ #pragma unroll
+-    for (int i = 0; i < 4; ++i) {
+-        s[i] = s[i] * g;
+-        mem = mem + s[i] * k[i];
+-    }
+-    const float delta = (v - warp_sum(mem)) * beta;
++    for (int i = 0; i < E; ++i) s[i] = s[i] * g;
++    const float delta = (v - row_sum(dot16(s, k))) * beta;
+ #pragma unroll
+-    for (int i = 0; i < 4; ++i) s[i] = s[i] + k[i] * delta;
++    for (int i = 0; i < E; ++i) s[i] = s[i] + k[i] * delta;
+ }
+ 
+-// Lane r stores value row value0 + r's output (every lane holds every row's sum after the butterfly).
++// Lane j < R of the row group stores row row0 + j's output (every lane of the group holds every row's sum).
+ template <int R>
+-__device__ __forceinline__ void store_y(__nv_bfloat16* y, const float (&out)[R], int node, int head, int value0,
+-                                        int hv, int dv, int lane) {
+-    if (lane < R && value0 + lane < dv) {
++__device__ __forceinline__ void store_y(__nv_bfloat16* y, const float (&out)[R], int node, int head, int row0,
++                                        int hv, int dv, int j) {
++    if (j < R && row0 + j < dv) {
+         float o = out[0];
+ #pragma unroll
+-        for (int r = 1; r < R; ++r) o = lane == r ? out[r] : o;
+-        y[(static_cast<size_t>(node) * hv + head) * dv + value0 + lane] = __float2bfloat16_rn(o);
++        for (int r = 1; r < R; ++r) o = j == r ? out[r] : o;
++        y[(static_cast<size_t>(node) * hv + head) * dv + row0 + j] = __float2bfloat16_rn(o);
+     }
+ }
+ 
+@@ -85,6 +111,7 @@ struct Pending {
+ };
+ 
+ // Entries (node, source, dest): source -1 committed, -2 the node just run, else a slot; dest -1 none, else a slot.
++// A warp is 4 row groups of 8 lanes, each group R value rows (row0 = its first).
+ template <typename QK, int SLOTS, int R, int WARPS, bool CHAIN>
+ __global__ void __launch_bounds__(32 * WARPS) tree_kernel(
+         const QK* __restrict__ q, const QK* __restrict__ k, const __nv_bfloat16* __restrict__ v,
+@@ -93,53 +120,51 @@ __global__ void __launch_bounds__(32 * WARPS) tree_kernel(
+         int nodes, __nv_bfloat16* __restrict__ y, int hk, int hv, int dv, Pending<QK> pending, float* final_state,
+         const long long* __restrict__ final_table) {
+     extern __shared__ float4 smem[];
+-    int* order = reinterpret_cast<int*>(smem + WARPS * SLOTS * R * 32);
+-    const int warp = threadIdx.x >> 5, lane = threadIdx.x & 31;
++    constexpr int SLOT = R * 32 * (E / 4);                // float4s a warp's slot holds
++    int* order = reinterpret_cast<int*>(smem + WARPS * SLOTS * SLOT);
++    const int warp = threadIdx.x >> 5, lane = threadIdx.x & 31, j = lane % LG;
+     const int head = blockIdx.y, stream = blockIdx.z;
+-    const int value0 = (blockIdx.x * WARPS + warp) * R;
++    const int row0 = ((blockIdx.x * WARPS + warp) * (32 / LG) + lane / LG) * R;
+     const int key_head = head / (hv / hk);
+     const int begin = starts ? starts[stream] : 0, end = starts ? starts[stream + 1] : nodes;
+     if (!CHAIN) {
+         for (int i = threadIdx.x; i < 3 * (end - begin); i += 32 * WARPS) order[i] = plan[3 * begin + i];
+         __syncthreads();
+     }
+-    if (value0 >= dv) return;
++    if (((blockIdx.x * WARPS + warp) * (32 / LG)) * R >= dv) return;     // the whole warp: its shuffles stay full
+     const float* s0 = table ? reinterpret_cast<const float*>(table[stream]) : state;
+-    float cur[R][4];
++    float cur[R][E];
+ #pragma unroll
+     for (int r = 0; r < R; ++r) {
+-        const int row = value0 + r < dv ? value0 + r : value0;
+-        load4(s0 + (static_cast<size_t>(head) * dv + row) * DK + lane * 4, cur[r]);
++        const int row = row0 + r < dv ? row0 + r : 0;
++        load_row(s0 + (static_cast<size_t>(head) * dv + row) * DK, j, cur[r]);
+     }
+     if (pending.k != nullptr) {
+         // the last commit's rows as replay steps them; each thread writes back only the elements it loaded
+         const int n = pending.counts[stream * pending.count_stride];
+         const int* rows = pending.rows + stream * pending.row_stride;
+         Inputs<QK, R> nx;
+-        if (n > 0) nx.load(nullptr, pending.k, pending.v, pending.g, pending.beta, rows[0], key_head, head, value0, hk, hv, dv,
+-                           lane, false);
+-        for (int j = 0; j < n; ++j) {
++        if (n > 0) nx.load(nullptr, pending.k, pending.v, pending.g, pending.beta, rows[0], key_head, head, row0, hk, hv, dv,
++                           j, false);
++        for (int i = 0; i < n; ++i) {
+             const Inputs<QK, R> in = nx;
+-            if (j + 1 < n)
+-                nx.load(nullptr, pending.k, pending.v, pending.g, pending.beta, rows[j + 1], key_head, head, value0, hk, hv, dv,
+-                        lane, false);
++            if (i + 1 < n)
++                nx.load(nullptr, pending.k, pending.v, pending.g, pending.beta, rows[i + 1], key_head, head, row0, hk, hv,
++                        dv, j, false);
+ #pragma unroll
+             for (int r = 0; r < R; ++r) step(cur[r], in.k, in.v[r], in.g, in.beta);
+         }
+         if (n > 0) {
+             float* committed = const_cast<float*>(s0);
+ #pragma unroll
+-            for (int r = 0; r < R; ++r) {
+-                if (value0 + r >= dv) break;
+-                *reinterpret_cast<float4*>(committed + (static_cast<size_t>(head) * dv + value0 + r) * DK + lane * 4) =
+-                    make_float4(cur[r][0], cur[r][1], cur[r][2], cur[r][3]);
+-            }
++            for (int r = 0; r < R; ++r)
++                if (row0 + r < dv) store_row(committed + (static_cast<size_t>(head) * dv + row0 + r) * DK, j, cur[r]);
+         }
+     }
+-    float4* slots = smem + warp * SLOTS * R * 32;
++    float4* slots = smem + warp * SLOTS * SLOT;
+     const int count = end - begin;
+     Inputs<QK, R> next;
+-    if (count > 0) next.load(q, k, v, g, beta, CHAIN ? begin : order[0], key_head, head, value0, hk, hv, dv, lane, true);
++    if (count > 0) next.load(q, k, v, g, beta, CHAIN ? begin : order[0], key_head, head, row0, hk, hv, dv, j, true);
+     // Each node's read-out sum goes through the next node's butterfly (same order), so a step waits on one, not two.
+     float pend[R];
+     int pend_node = -1;
+@@ -148,63 +173,60 @@ __global__ void __launch_bounds__(32 * WARPS) tree_kernel(
+         const int node = CHAIN ? begin + e : order[3 * e];
+         const int source = CHAIN ? (e == 0 ? -1 : -2) : order[3 * e + 1], dest = CHAIN ? -1 : order[3 * e + 2];
+         if (e + 1 < count)
+-            next.load(q, k, v, g, beta, CHAIN ? begin + e + 1 : order[3 * e + 3], key_head, head, value0, hk, hv, dv,
+-                      lane, true);
+-        float s[R][4], mem[R];
++            next.load(q, k, v, g, beta, CHAIN ? begin + e + 1 : order[3 * e + 3], key_head, head, row0, hk, hv, dv,
++                      j, true);
++        float s[R][E], mem[R];
+ #pragma unroll
+         for (int r = 0; r < R; ++r) {
+             if (source >= 0 && SLOTS > 0) {
+-                const float4 t = slots[(source * R + r) * 32 + lane];
+-                s[r][0] = t.x; s[r][1] = t.y; s[r][2] = t.z; s[r][3] = t.w;
++#pragma unroll
++                for (int c = 0; c < E / 4; ++c) {
++                    const float4 t = slots[((source * R + r) * (E / 4) + c) * 32 + lane];
++                    s[r][4 * c] = t.x; s[r][4 * c + 1] = t.y; s[r][4 * c + 2] = t.z; s[r][4 * c + 3] = t.w;
++                }
+             } else {
+ #pragma unroll
+-                for (int i = 0; i < 4; ++i) s[r][i] = cur[r][i];
++                for (int i = 0; i < E; ++i) s[r][i] = cur[r][i];
+             }
+-            mem[r] = 0.0f;
+ #pragma unroll
+-            for (int i = 0; i < 4; ++i) {
+-                s[r][i] = s[r][i] * in.g;
+-                mem[r] = mem[r] + s[r][i] * in.k[i];
+-            }
++            for (int i = 0; i < E; ++i) s[r][i] = s[r][i] * in.g;
++            mem[r] = dot16(s[r], in.k);
+         }
+ #pragma unroll
+-        for (int m = 16; m; m >>= 1) {
++        for (int m = LG / 2; m; m >>= 1) {
+ #pragma unroll
+             for (int r = 0; r < R; ++r) {
+                 mem[r] += __shfl_xor_sync(0xffffffffu, mem[r], m);
+                 if (pend_node >= 0) pend[r] += __shfl_xor_sync(0xffffffffu, pend[r], m);
+             }
+         }
+-        if (pend_node >= 0) store_y(y, pend, pend_node, head, value0, hv, dv, lane);
++        if (pend_node >= 0) store_y(y, pend, pend_node, head, row0, hv, dv, j);
+ #pragma unroll
+         for (int r = 0; r < R; ++r) {
+             const float delta = (in.v[r] - mem[r]) * in.beta;
+-            pend[r] = 0.0f;
+ #pragma unroll
+-            for (int i = 0; i < 4; ++i) {
+-                s[r][i] = s[r][i] + in.k[i] * delta;
+-                pend[r] = pend[r] + s[r][i] * in.q[i];
+-            }
++            for (int i = 0; i < E; ++i) s[r][i] = s[r][i] + in.k[i] * delta;
++            pend[r] = dot16(s[r], in.q);
+             if (SLOTS > 0 && dest >= 0)
+-                slots[(dest * R + r) * 32 + lane] = make_float4(s[r][0], s[r][1], s[r][2], s[r][3]);
+ #pragma unroll
+-            for (int i = 0; i < 4; ++i) cur[r][i] = s[r][i];
++                for (int c = 0; c < E / 4; ++c)
++                    slots[((dest * R + r) * (E / 4) + c) * 32 + lane] =
++                        make_float4(s[r][4 * c], s[r][4 * c + 1], s[r][4 * c + 2], s[r][4 * c + 3]);
++#pragma unroll
++            for (int i = 0; i < E; ++i) cur[r][i] = s[r][i];
+         }
+         pend_node = node;
+     }
+     if (pend_node >= 0) {
+ #pragma unroll
+-        for (int r = 0; r < R; ++r) pend[r] = warp_sum(pend[r]);
+-        store_y(y, pend, pend_node, head, value0, hv, dv, lane);
++        for (int r = 0; r < R; ++r) pend[r] = row_sum(pend[r]);
++        store_y(y, pend, pend_node, head, row0, hv, dv, j);
+     }
+     float* last = final_table ? reinterpret_cast<float*>(final_table[stream]) : final_state;
+     if (CHAIN && last != nullptr && count > 0) {
+ #pragma unroll
+-        for (int r = 0; r < R; ++r) {
+-            if (value0 + r >= dv) break;
+-            *reinterpret_cast<float4*>(last + (static_cast<size_t>(head) * dv + value0 + r) * DK + lane * 4) =
+-                make_float4(cur[r][0], cur[r][1], cur[r][2], cur[r][3]);
+-        }
++        for (int r = 0; r < R; ++r)
++            if (row0 + r < dv) store_row(last + (static_cast<size_t>(head) * dv + row0 + r) * DK, j, cur[r]);
+     }
+ }
+ 
+@@ -213,10 +235,10 @@ template <typename QK, int R, int WARPS>
+ __global__ void __launch_bounds__(32 * WARPS) replay_kernel(
+         const long long* __restrict__ table, int layers, const int* __restrict__ rows, int row_stride,
+         const int* __restrict__ counts, int count_stride, float* __restrict__ out, int hk, int hv, int dv) {
+-    const int warp = threadIdx.x >> 5, lane = threadIdx.x & 31;
++    const int warp = threadIdx.x >> 5, lane = threadIdx.x & 31, j = lane % LG;
+     const int head = blockIdx.y, stream = blockIdx.z / layers, layer = blockIdx.z % layers;
+-    const int value0 = (blockIdx.x * WARPS + warp) * R;
+-    if (value0 >= dv) return;
++    const int row0 = ((blockIdx.x * WARPS + warp) * (32 / LG) + lane / LG) * R;
++    if (((blockIdx.x * WARPS + warp) * (32 / LG)) * R >= dv) return;
+     const int key_head = head / (hv / hk);
+     const auto* k = reinterpret_cast<const QK*>(table[4 * layer]);
+     const auto* v = reinterpret_cast<const __nv_bfloat16*>(table[4 * layer + 1]);
+@@ -225,29 +247,26 @@ __global__ void __launch_bounds__(32 * WARPS) replay_kernel(
+     const auto* s0 = reinterpret_cast<const float*>(table[4 * layers + stream * layers + layer]);
+     // in place (no out): each thread stores exactly the elements it loaded, so blocks never overlap
+     float* dst = out ? out + (static_cast<size_t>(stream) * layers + layer) * hv * dv * DK : const_cast<float*>(s0);
+-    float s[R][4];
++    float s[R][E];
+ #pragma unroll
+     for (int r = 0; r < R; ++r) {
+-        const int row = value0 + r < dv ? value0 + r : value0;
+-        load4(s0 + (static_cast<size_t>(head) * dv + row) * DK + lane * 4, s[r]);
++        const int row = row0 + r < dv ? row0 + r : 0;
++        load_row(s0 + (static_cast<size_t>(head) * dv + row) * DK, j, s[r]);
+     }
+     const int* path = rows + stream * row_stride;
+     const int count = counts[stream * count_stride];
+     Inputs<QK, R> next;
+-    if (count > 0) next.load(nullptr, k, v, g, beta, path[0], key_head, head, value0, hk, hv, dv, lane, false);
+-    for (int j = 0; j < count; ++j) {
++    if (count > 0) next.load(nullptr, k, v, g, beta, path[0], key_head, head, row0, hk, hv, dv, j, false);
++    for (int i = 0; i < count; ++i) {
+         const Inputs<QK, R> in = next;
+-        if (j + 1 < count)
+-            next.load(nullptr, k, v, g, beta, path[j + 1], key_head, head, value0, hk, hv, dv, lane, false);
++        if (i + 1 < count)
++            next.load(nullptr, k, v, g, beta, path[i + 1], key_head, head, row0, hk, hv, dv, j, false);
+ #pragma unroll
+         for (int r = 0; r < R; ++r) step(s[r], in.k, in.v[r], in.g, in.beta);
+     }
+ #pragma unroll
+-    for (int r = 0; r < R; ++r) {
+-        if (value0 + r >= dv) break;
+-        *reinterpret_cast<float4*>(dst + (static_cast<size_t>(head) * dv + value0 + r) * DK + lane * 4) =
+-            make_float4(s[r][0], s[r][1], s[r][2], s[r][3]);
+-    }
++    for (int r = 0; r < R; ++r)
++        if (row0 + r < dv) store_row(dst + (static_cast<size_t>(head) * dv + row0 + r) * DK, j, s[r]);
+ }
+ 
+ template <typename QK, int SLOTS, int R, int WARPS, bool CHAIN>
+@@ -256,8 +275,9 @@ void launch_tree(const at::Tensor& q, const at::Tensor& k, const at::Tensor& v,
+                  const at::Tensor& plan, int nodes, int streams, int max_rows, at::Tensor& y, Pending<QK> pend,
+                  float* final_state, const long long* final_table) {
+     const int hk = q.size(1), hv = v.size(1), dv = v.size(2);
+-    const dim3 grid((dv + R * WARPS - 1) / (R * WARPS), hv, streams);
+-    const size_t shared = sizeof(float4) * WARPS * SLOTS * R * 32 + (CHAIN ? 0 : sizeof(int) * 3 * max_rows);
++    constexpr int ROWS = R * (32 / LG) * WARPS;           // value rows a block
++    const dim3 grid((dv + ROWS - 1) / ROWS, hv, streams);
++    const size_t shared = sizeof(float4) * WARPS * SLOTS * R * 32 * (E / 4) + (CHAIN ? 0 : sizeof(int) * 3 * max_rows);
+     auto kernel = tree_kernel<QK, SLOTS, R, WARPS, CHAIN>;
+     if (shared > 48 * 1024) cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, shared);
+     kernel<<<grid, 32 * WARPS, shared, at::cuda::getCurrentCUDAStream()>>>(
+@@ -282,16 +302,16 @@ void dispatch_tree(int slots, const at::Tensor& q, const at::Tensor& k, const at
+                    const at::Tensor& beta, const float* state, const long long* table, const int* starts,
+                    const at::Tensor& plan, int nodes, int streams, int max_rows, at::Tensor& y, Pending<QK> pend,
+                    float* final_state, const long long* final_table) {
+-    // no slots: every window is a chain in row order, no plan to read; more slots, fewer rows a warp to cap memory
++    // no slots: every window is a chain in row order, no plan to read; more slots, fewer rows a block to cap memory
+ #define TREE(S, R, W, C) launch_tree<QK, S, R, W, C>(q, k, v, g, beta, state, table, starts, plan, nodes, streams, \
+                                                      max_rows, y, pend, final_state, final_table)
+ #define TREE_(S, R, W) TREE(S, R, W, false)
+-    if (slots == 0) TREE(0, 8, 4, true);
+-    else if (slots <= 2) TREE_(2, 4, 4);
+-    else if (slots <= 4) TREE_(4, 2, 4);
+-    else if (slots <= 8) TREE_(8, 2, 4);
+-    else if (slots <= 16) TREE_(16, 2, 2);
+-    else TREE_(32, 2, 1);
++    if (slots == 0) TREE(0, 2, 4, true);
++    else if (slots <= 2) TREE_(2, 2, 2);
++    else if (slots <= 4) TREE_(4, 2, 2);
++    else if (slots <= 8) TREE_(8, 2, 1);
++    else if (slots <= 16) TREE_(16, 2, 1);
++    else TREE_(32, 1, 1);
+ #undef TREE_
+ #undef TREE
+ }
+@@ -319,8 +339,8 @@ void gdn_tree_cuda(const at::Tensor& q, const at::Tensor& k, const at::Tensor& v
+ 
+ void gdn_replay_cuda(const at::Tensor& table, int layers, int streams, const at::Tensor& rows,
+                      const at::Tensor& counts, const at::Tensor& out, int hk, int hv, int dv, bool fp32_keys) {
+-    constexpr int R = 8, WARPS = 4;
+-    const dim3 grid((dv + R * WARPS - 1) / (R * WARPS), hv, layers * streams);
++    constexpr int R = 2, WARPS = 4, ROWS = R * (32 / LG) * WARPS;
++    const dim3 grid((dv + ROWS - 1) / ROWS, hv, layers * streams);
+     auto stream = at::cuda::getCurrentCUDAStream();
+     const auto* t = reinterpret_cast<const long long*>(table.data_ptr<int64_t>());
+     const int rs = static_cast<int>(rows.stride(0)), cs = static_cast<int>(counts.stride(0));

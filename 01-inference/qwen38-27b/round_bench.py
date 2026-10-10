@@ -157,7 +157,7 @@ def main() -> None:
         gpu_us = sum(getattr(e, "self_device_time_total", 0) for e in prof.key_averages())
         print(f"profiled: {len(r.tokens) - 1} tokens, {r.rounds} rounds, wall {r.seconds * 1000:.0f} ms, "
               f"GPU kernel time {gpu_us / 1000:.0f} ms ({gpu_us / 1000 / (r.seconds * 1000):.0%} of wall)", flush=True)
-        rows_ = sorted(prof.key_averages(), key=lambda e: -getattr(e, "self_device_time_total", 0))[:30]
+        rows_ = sorted(prof.key_averages(), key=lambda e: -getattr(e, "self_device_time_total", 0))[:50]
         for e in rows_:
             t = getattr(e, "self_device_time_total", 0)
             if t:

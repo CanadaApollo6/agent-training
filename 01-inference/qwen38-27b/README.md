@@ -927,3 +927,38 @@ kernel variant shared one "shared memory configured" flag, which only worked bec
 Graphed matmuls a round 17.62 -> 17.31 ms (read floor 16.59); a verify 20.19 -> 19.92 ms. End to end that's ~1%, inside
 the noise: the 262K server measured code 205 / chat 144 greedy and 216 / 131 sampled, the same as before
 (`results/bench-kv4r-262k-inblock.json`). The remaining 0.7 ms over the floor is spread over every shape (2–3 us a call).
+
+### GDN step kernel: 8 lanes a value row
+
+The verify window's GDN kernel (`tree`) took 0.83 ms a round. Timed alone at the 27B's shapes, 8 chained nodes ran
+18.9 us; dropping its shuffles brought that to 11.4 us. Each value row lived on a whole warp (4 state elements a lane),
+so every step's two dot products ended in 5 butterfly levels of shuffles.
+
+Now a row lives on 8 lanes with 16 elements each: a lane adds its 16 products as a balanced tree, then 3 shuffle levels
+finish the row, and a warp works on 4 rows' groups at once. The tree, chain, replay (commit) and pending-fold paths share
+one step, so a node's state in the window is bit for bit the replay along its path (`tests/cuda/test_gdn.py`, 44 tests,
+incl. 128-node trees, fp32 keys, many streams). The bits differ from the old kernel, but not the accuracy: against an
+fp64 reference over 64 steps both have the same state error (1.4e-8 mean), and the outputs' error is the bf16 rounding
+alone. `gdn-lanes.patch`.
+
+| us a call (hk 16, hv 48, dv 128) | Before | 8 lanes a row |
+|---|---|---|
+| Chain, 8 nodes | 18.9 | **11.2** |
+| Chain, 16 nodes | 35.3 | **19.4** |
+| Tree with a branch, 8 nodes | 15.7 | **11.9** |
+
+Model, rows 8, greedy, `TIMING=1` (`results/rounds/gdn-lanes-ctx0.json`): verify 19.92 -> 19.64–19.75 ms, commit
+1.04 -> 0.86–0.89 ms (the replay uses the same layout); drafted == serial (0 mismatches, `GRAPH_CHECK=1`).
+
+Daily 262K server (`results/bench-kv4r-262k-gdnlanes.json`):
+
+| tok/s | Before | 8 lanes a row |
+|---|---|---|
+| Code, greedy | 205 | **214** |
+| Code, sampled | 216 | **225** |
+| Chat, greedy | 144 | 140 |
+| Chat, sampled | 131 | **142** |
+
+A round is ~0.4 ms (2%) shorter. Because the state's last bits changed, the greedy replies take a different path after
+a while and accept a different number of tokens a round (code 4.65 -> 4.41, chat 4.44 -> 4.26 in the round bench), so
+single-prompt tok/s moves either way by more than the kernel saves: read this step as "about 2% faster a round".
