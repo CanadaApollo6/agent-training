@@ -276,3 +276,23 @@ The optimizer starts fresh, because the pilot's checkpoints stayed on its job.
 - **Go/no-go for the full run:**
   - Go if the pool keeps climbing past the pilot's late 50% and the held-out score holds or rises.
   - Stop RL if both flatten.
+
+**Continuation result (2026-10-09): still a small drift, not the climb a full run needs. No go on the ~$400 run as set up.**
+Run `ornith35b-sd-cont-1009-1701`: 12 steps in 3 h 09 min, ~$135. Weights are in sd-out as `ornith35b-sd-cont-1009-1701-bf16`
+(17.0% of weights changed from the pilot's). Results are in `results/cont-*`.
+
+| Check | Result |
+|---|---|
+| Practice pool, pilot's 30-min scale, per task (`pilot/compare_runs.py`) | base 43.8% → pilot end 48.4% → cont start 49.2% → cont end 51.7% (10 tasks with enough late attempts). Task by task it's an even split: 3 up, 3 down. |
+| Practice pool within the run, 60-min scale (`pilot/pool_progress.py … 61`) | 54% → 54% → 56% of all attempts (early, mid, late); per task −2.3 points of all attempts, +4.3 of finished. |
+| Held-out 20 × 3 in pi (`pilot/heldout_compare.py`) | base 32/46 (70%), pilot 34/45 (76%), cont 37/50 (74%). Per task over the 17 tasks all three cover: 72.5%, 68.6%, 75.5%. Run on the pre-upgrade verifiers (aa924e7d), same as the pilot's test. |
+| Shortcuts (`pilot/hack_scan_cont.json`) | None. No upstream fetch on fix-ocaml-gc with GitHub blocked; every other hit is ordinary work. |
+| Lost attempts | 31 Prime sandbox terminations (pi raises them as HarnessError, so the SandboxError retry rule never fires) and 26 timeouts even at 60 min. |
+
+The held-out counts are recounted with one rule across all three runs: usable means it didn't end in a
+Provider/Harness/Sandbox error. That moves the pilot's earlier 32/48 and 34/46 by 1–3 runs.
+
+Verdict: 24 steps (~$250) moved the practice pool ~8 points and left held-out within noise (±7 points at ~47 runs).
+That's not worth $400 for more of the same. If RL continues, the better test is the harness thesis: the same setup in
+prime_agent (R1s-SD follows its tool rules in 3 of 54 runs, so there is room to learn), with a HarnessError retry rule
+and the Rust 0.10.0 patch applied inside the job.

@@ -1,0 +1,8 @@
+base   solved 32/46 usable (70%), 60 logged; stops {'agent_completed': 38, 'HarnessError': 12, 'max_turns': 8, 'SandboxError': 2}
+pilot  solved 34/45 usable (76%), 60 logged; stops {'agent_completed': 40, 'HarnessError': 13, 'SandboxError': 2, 'max_turns': 5}
+cont   solved 37/50 usable (74%), 60 logged; stops {'agent_completed': 43, 'HarnessError': 9, 'agent_timeout': 2, 'max_turns': 5, 'SandboxError': 1}
+base   per-task mean over 17 common tasks: 72.5%
+pilot  per-task mean over 17 common tasks: 68.6%
+cont   per-task mean over 17 common tasks: 75.5%
+base -> cont: up ['build-pov-ray', 'git-multibranch', 'kv-store-grpc'], down ['pytorch-model-cli', 'sqlite-db-truncate']
+pilot -> cont: up ['pytorch-model-cli', 'rstan-to-pystan'], down ['sqlite-db-truncate']
