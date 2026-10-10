@@ -47,23 +47,23 @@
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
  "next_text": "New today: a leaner 4-bit matmul kernel. Matmuls in a round 18.5 to 17.7 ms (a plain memory read of the same weights is 16.6). Daily 262K server: code 183 to 193, chat 128 to 135 tok/s greedy; the 132K recall test still right. The long-context attention kernel is checked too: at 100K context drafted output equals plain decoding, 125-132 tok/s. Next: the 5120-wide projections still sit ~6 us above the memory ceiling each.",
- "headline_text": "Qwen 27B speed on your 3090, now in the server: your daily setup (4-bit cache, full 262K window) went 169 \u2192 183 tok/s on code and 117 \u2192 126 on chat, with answers identical to one-word-at-a-time decoding. Turn it on with TENSORFOLD_ROWS=8 TENSORFOLD_GRAPHS=1. With 20K tokens of context it's 158 vs 141 for TensorFold's default.",
+ "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 \u2192 193 tok/s and chat 117 \u2192 135 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, and a leaner 4-bit matmul kernel.",
  "headline_numbers": [
   {
-   "value": "169 \u2192 183",
+   "value": "169 \u2192 193",
    "label": "Server, code tok/s (262K window)"
   },
   {
-   "value": "117 \u2192 126",
+   "value": "117 \u2192 135",
    "label": "Server, chat tok/s"
   },
   {
-   "value": "141 \u2192 158",
-   "label": "At 20K context (test script)"
+   "value": "18.5 \u2192 17.7 ms",
+   "label": "Matmuls a round (memory floor 16.6)"
   },
   {
    "value": "Identical",
-   "label": "Output vs plain decoding"
+   "label": "Output vs plain decoding (also at 100K)"
   }
  ],
  "pilot": {
