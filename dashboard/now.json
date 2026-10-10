@@ -44,68 +44,53 @@
   "context": "Context: now stored in 4 bits (mixed with a fixed rotation first so rare large values don't wreck precision). The window is the model's full 262K tokens, up from 80K this morning; a 132K-token prompt ran with recall right, in 23.8 GB, at full speed (chat 103\u2013114, code 144\u2013147 tok/s). Intelligence check: predictions drift KL 0.002\u20130.006 from 16-bit, perplexity within 0.5%; 8-bit drifted less (0.0003\u20130.0008) but only fits 144K.",
   "next": "Done on your 3090: 102 chat / 143-192 code tok/s, full 262K window in 4-bit, math gap closed at medium effort. As an agent in prime_agent, untrained (full-precision on a rented H200): 33 of 60 vs R1s-SD's 31, a tie on solves, but it finishes in half the turns, never thinks itself into the reply cap, and follows prime_agent's tool rules without coaching (39 of 47 runs vs 3 of 54)."
  },
- "extra_today_dollars": 127,
- "extra_today_note": "(~$118 RL pilot, ~$9 held-out test)",
- "next_text": "Continuation running (job 6ac95652, cap 230 min, ~$120-150). Go for the full run if practice tasks keep climbing past 50% and held-out holds or rises; stop RL if both flatten.",
- "headline_text": "RL continuation halfway: 6 of 12 steps, on pace to finish around 8:15 p.m. Step scores 0.58, 0.45, 0.75, 0.52, 1.00, 0.47 (noisy: some steps trained on only 6-8 attempts). About a third of attempts in the busy steps are lost: 31 to Prime shutting sandboxes down, 26 to the 60-min limit.",
+ "extra_today_dollars": 268,
+ "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
+ "next_text": "RL on R1s-SD in pi: stop here. Next option (your call, not tonight): an RL pilot in prime_agent (Rust 0.10.0) to test the harness thesis directly, ~$120-150.",
+ "headline_text": "RL continuation done: 24 training steps in total (~$250 with the pilot). Practice tasks drifted up slowly (44% to 52% per task); held-out stayed within noise (base 70%, pilot 76%, now 74%). Not worth $400 for more of the same.",
  "headline_numbers": [
   {
-   "value": "6 / 12",
-   "label": "Continuation steps done (6:43 p.m.)"
+   "value": "44 \u2192 52%",
+   "label": "Practice tasks, base \u2192 24 steps"
   },
   {
-   "value": "50%",
-   "label": "Pilot's late practice score, to beat"
+   "value": "37 / 50",
+   "label": "Held-out now (base 32/46, pilot 34/45)"
   },
   {
-   "value": "34 / 46",
-   "label": "Pilot held-out, to hold or beat"
+   "value": "0",
+   "label": "Shortcuts, GitHub blocked"
   },
   {
-   "value": "\u2264 $155",
-   "label": "Continuation cap"
+   "value": "~$268",
+   "label": "GPU spend today"
   }
  ],
  "pilot": {
-  "title": "RL pilot on R1s-SD: small gain everywhere, none proven",
-  "intro": "12 steps on 16 Terminal-Bench 2 practice tasks in the pi harness, 8 H200s on Hugging Face (2h44m). Held-out: 20 tasks, 3 tries each, base vs trained, on one H200 each.",
+  "title": "RL on R1s-SD, pilot + continuation (24 steps): small drift, no go on the full run",
+  "intro": "Pilot 12 steps from base, continuation 12 more from the pilot's weights with GitHub blocked and 60-min attempts. Held-out: same 20 tasks x 3 tries, one counting rule for all three.",
   "rows": [
    [
-    "Practice tasks solved (steps 1-3 vs 7-12)",
-    "44%",
-    "50%"
+    "Practice tasks solved per task (30-min scale)",
+    "43.8% (base)",
+    "48.4% pilot \u00b7 51.7% after 24 steps"
    ],
    [
-    "Practice tasks that went up / down",
+    "Held-out solved (usable runs)",
+    "32 of 46 (70%)",
+    "34/45 pilot (76%) \u00b7 37/50 after 24 steps (74%)"
+   ],
+   [
+    "Shortcuts",
     "",
-    "10 up, 5 down"
-   ],
-   [
-    "Held-out tasks solved",
-    "32 of 48 (67%)",
-    "34 of 46 (74%)"
-   ],
-   [
-    "Held-out reply length, median",
-    "13.1K tokens",
-    "9.8K tokens"
-   ],
-   [
-    "Held-out runs hitting the turn limit",
-    "8",
-    "5"
+    "1 in pilot (OCaml download) \u00b7 0 with GitHub blocked"
    ],
    [
     "Weights changed",
     "",
-    "16% (vision and routers untouched)"
-   ],
-   [
-    "Shortcuts found",
-    "",
-    "1: downloaded OCaml's own source to copy a fix"
+    "16% pilot \u00b7 17% more in continuation"
    ]
   ],
-  "note": "Lost data: 15-31% of practice attempts per step hit the 30-min limit and were dropped, and 12-14 held-out runs per side were lost to Prime sandbox shutdowns. The training job's own held-out test failed (a server setting), so the test was rerun outside. Before any longer run: block GitHub downloads on tasks with an upstream fix, give attempts 45-60 min, and fix the in-job test."
+  "note": "Lost attempts stayed high: Prime sandbox shutdowns (not retried: pi reports them as harness errors) and timeouts even at 60 min. If RL continues, the better test is the same setup in prime_agent, where R1s-SD follows the tool rules in 3 of 54 runs, so it has room to learn."
  }
 }
