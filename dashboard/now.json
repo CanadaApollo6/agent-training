@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "New: the GDN step kernel (the model's linear-attention layers) now spreads each row over 8 threads instead of 32, so it waits on 3 rounds of thread-to-thread passing instead of 5. Alone: 18.9 to 11.2 us for 8 steps. A round is ~2% shorter (check 19.9 to 19.6 ms, save 1.04 to 0.87 ms). Server: code 205 to 214, chat sampled 131 to 142, chat greedy 144 to 140. The last bits of the math changed (accuracy the same), so the replies take a different path and single-prompt numbers move by more than the gain. Next pieces: norms and glue (~0.6 ms a round), attention (0.27 ms) and the 2.2 ms drafter.",
+ "next_text": "New: a faster GDN step kernel (18.9 to 11.2 us for 8 steps; a round ~2% shorter; server code 205 to 214). Then the add + normalize step: it's already at its floor alone (2.35 us vs 1.23 for a plain copy), and folding it or the MLP activation into the matmuls made them slower (every column tile redoes the work; 60 to 98 us). Not kept. Next: the 2.2 ms draft model.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 214 tok/s and chat 117 → 140-144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: 8 rows a round plus graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, and a faster GDN step kernel.",
  "headline_numbers": [
   {
