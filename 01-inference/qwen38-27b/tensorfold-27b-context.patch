@@ -1,5 +1,5 @@
 diff --git i/src/tensorfold/cuda/kernels/attention.py w/src/tensorfold/cuda/kernels/attention.py
-index 798958b..2f775bb 100644
+index 798958b..bc57945 100644
 --- i/src/tensorfold/cuda/kernels/attention.py
 +++ w/src/tensorfold/cuda/kernels/attention.py
 @@ -11,6 +11,9 @@ import torch
@@ -93,18 +93,20 @@ index 798958b..2f775bb 100644
      return out
  
  
-@@ -259,7 +267,9 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+@@ -259,7 +267,11 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
          raise ValueError("unsupported attention shape")
      if any(x.dtype != torch.bfloat16 or not x.is_cuda or not x.is_contiguous() for x in (q, k_nodes, v_nodes)):
          raise ValueError("q and node keys and values must be contiguous CUDA bf16 tensors")
 -    origin = base(q.device)
 +    origin = base(q.device) if kvq.BITS == 16 else base(q.device).view(torch.int8)
-+    q, k_nodes, v_nodes = kvq.rotate(q), kvq.rotate(k_nodes), kvq.rotate(v_nodes)   # into a 4-bit cache's rotated space
++    # into a 4-bit cache's rotated space; the window's own keys and values round-trip through the cache's format, so
++    # a row reads its path as serial decoding later reads those rows from the cache (drafted == serial)
++    q, k_nodes, v_nodes = kvq.rotate(q), kvq.roundtrip(k_nodes), kvq.roundtrip(v_nodes)
 +    r = kvq.width(d)
      if not math.isfinite(scale) or scale <= 0:
          raise ValueError("scale must be positive and finite")
      g = h // hk
-@@ -268,11 +278,12 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+@@ -268,11 +280,12 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
      partial_l = torch.empty_like(partial_m)
      if p.items.shape[0]:
          _shared[(p.items.shape[0], hk)](q, origin, origin, offs, p.streams, p.items, partial_o, partial_m, partial_l, w,
@@ -122,10 +124,10 @@ index 798958b..2f775bb 100644
 +    return kvq.rotate(out)
 diff --git i/src/tensorfold/cuda/kernels/kvq.py w/src/tensorfold/cuda/kernels/kvq.py
 new file mode 100644
-index 0000000..6599612
+index 0000000..975f6de
 --- /dev/null
 +++ w/src/tensorfold/cuda/kernels/kvq.py
-@@ -0,0 +1,155 @@
+@@ -0,0 +1,176 @@
 +"""A quantized attention cache, packed per (row, key head) into int8 elements.
 +
 +``TENSORFOLD_KV_BITS``: 16 (default, bf16 rows), 8 or 4. A packed cache keeps the bf16 cache's (rows, kv heads,
@@ -247,6 +249,27 @@ index 0000000..6599612
 +        raise ValueError("a quantized cache store takes contiguous int8 rows of the packed width")
 +    if n:
 +        (_quant if BITS == 8 else _quant4)[(n * hk,)](x.contiguous(), dst, D=d, R=width(d), num_warps=2)
++
++
++def roundtrip(x: torch.Tensor) -> torch.Tensor:
++    """Uncommitted keys or values (n, kv heads, D) as the attention kernels will read them once committed: stored
++    and loaded back (rotated for a 4-bit cache), with ``load_rows``'s arithmetic. A verify window's rows then see their
++    path's keys exactly as serial decoding sees them from the cache, so drafted replies equal serial ones."""
++
++    if BITS == 16:
++        return x
++    n, hk, d = x.shape
++    rows = torch.empty((n, hk, width(d)), dtype=torch.int8, device=x.device)
++    store(rows, x)
++    if BITS == 4:
++        raw = rows[..., :d // 2].view(torch.uint8).int()
++        q = torch.stack([raw & 15, raw >> 4], -1).flatten(-2).float()
++        scales = rows[..., d // 2:].contiguous().view(torch.float16).float()
++        y = (q.unflatten(-1, (d // GROUP, GROUP)) - 7.5) * (scales * 0.125)[..., None]
++        return y.flatten(-2).to(torch.bfloat16).contiguous()
++    codes = rows[..., :d].float()
++    scales = rows[..., d:].contiguous().view(torch.float16).float()
++    return (codes.unflatten(-1, (d // GROUP, GROUP)) * scales[..., None]).flatten(-2).to(torch.bfloat16).contiguous()
 +
 +
 +def rotate(x: torch.Tensor) -> torch.Tensor:

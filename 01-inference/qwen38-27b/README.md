@@ -615,3 +615,35 @@ found the sampler and the draft accept rule exact.
 | Mixed 3/4-bit weights (EXL3 3.0 held 19/20 on the math probe) | ~3–4 GB | faster decoding: every token reads all the weights |
 
 Each further step gets the same checks: `kv_kl.py` plus the 20-problem math probe.
+
+## Speed hill-climb (2026-10-09)
+
+Goal (Riel, 2026-10-09): push Qwen3.8-27B's decode speed on the 3090 the way R1s was pushed. TensorFold 1.0.4's
+native engine runs the 27B on Macs only, so the work stays on 0.3.6.3 with our patches.
+
+**Bench:** [`round_bench.py`](round_bench.py) loads the engine in-process and runs three fixed prompts (code, chat,
+an agent-style bug fix) with thinking on at medium effort, 512 tokens, greedy. It reports tok/s, tokens per round and
+ms per stage. `--serial` also decodes one token at a time and checks drafted == serial. `PROFILE=1` prints GPU kernel
+time by name. It deletes torch's leftover build-lock files at start, which otherwise hang the next start.
+
+**Where a round goes** (12 rows, 4-bit cache, code prompt; `PROFILE=1`):
+
+| Part | ms per round |
+|---|---|
+| 4-bit matmuls (`qmm_kernel` + `qmm_seg_kernel`) | 25.3 |
+| GDN tree, attention tail, norms, other GPU work | ~6 |
+| GPU idle (host) | ~5 |
+| Round, wall | 36.6 |
+
+The matmuls read ~14 GB a round. At the 3090's practical ~850 GB/s that is ~16.5 ms, so they run at ~64% of
+bandwidth: the biggest lever. Plain decoding (one row) costs about the same per step as a 12-row verify (28 vs 29 ms).
+
+**The 4-bit cache broke drafted == serial.** Width 16 changed greedy text against width 12 with the 4-bit cache
+(first difference at token 4–232), but not with the 16-bit cache. A verify window's rows read their path's keys and
+values at bf16, while serial decoding reads them back from the 4-bit cache. Fix (`kvq.roundtrip`, in
+`tensorfold-27b-context.patch`): the window's own keys and values go through the cache's store and load arithmetic
+before attention. Now drafted == serial on all three prompts at widths 12 and 16 (`results/rounds/kv4-roundtrip.json`).
+Quality is unchanged in kind: committed tokens were always read from the 4-bit cache.
+
+**Width 16 vs 12** (exact now, same text): 147 vs 147 code, 164 vs 156 chat, 182 vs 188 agent. Verify costs +1.1 ms
+a round, eating most of the extra accepted tokens. Width stays 12.

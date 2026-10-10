@@ -1,0 +1,79 @@
+{
+ "args": {
+  "model": "Vontra/Qwen3.8-27B-MLX-4bit",
+  "drafter": "z-lab/Qwen3.8-27B-DFlash2",
+  "rows": "12,16",
+  "tokens": 512,
+  "temps": "0",
+  "context": 32768,
+  "prompts": "code,agent",
+  "reps": 1,
+  "out": "../../qwen38-27b/results/rounds/rows-kv16.json"
+ },
+ "results": [
+  {
+   "rows": 12,
+   "prompt": "code",
+   "temp": 0.0,
+   "rep": 0,
+   "tokens": 511,
+   "tok_s": 156.5,
+   "rounds": 97,
+   "tok_per_round": 5.27,
+   "copy_rounds": 0,
+   "draft_ms": 3.46,
+   "verify_ms": 28.04,
+   "sample_ms": 0.18,
+   "commit_ms": 1.94,
+   "width_mean": 12
+  },
+  {
+   "rows": 12,
+   "prompt": "agent",
+   "temp": 0.0,
+   "rep": 0,
+   "tokens": 511,
+   "tok_s": 167.8,
+   "rounds": 92,
+   "tok_per_round": 5.55,
+   "copy_rounds": 2,
+   "draft_ms": 3.25,
+   "verify_ms": 27.81,
+   "sample_ms": 0.16,
+   "commit_ms": 1.84,
+   "width_mean": 12
+  },
+  {
+   "rows": 16,
+   "prompt": "code",
+   "temp": 0.0,
+   "rep": 0,
+   "tokens": 511,
+   "tok_s": 110.3,
+   "rounds": 88,
+   "tok_per_round": 5.81,
+   "copy_rounds": 0,
+   "draft_ms": 3.87,
+   "verify_ms": 46.72,
+   "sample_ms": 0.2,
+   "commit_ms": 1.79,
+   "width_mean": 16
+  },
+  {
+   "rows": 16,
+   "prompt": "agent",
+   "temp": 0.0,
+   "rep": 0,
+   "tokens": 511,
+   "tok_s": 164.3,
+   "rounds": 91,
+   "tok_per_round": 5.62,
+   "copy_rounds": 3,
+   "draft_ms": 3.19,
+   "verify_ms": 28.98,
+   "sample_ms": 0.24,
+   "commit_ms": 1.72,
+   "width_mean": 16
+  }
+ ]
+}
