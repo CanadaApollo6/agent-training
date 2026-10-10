@@ -1077,5 +1077,28 @@ prompts; `results/rounds/rows-8-16-ctx100k.json`: code with 100K tokens of READM
 ~15 ms a round per 100K keys), because attn4 takes at most 48 (row, head) pairs a block and does the same work per
 pair. A straight line through both points puts the break-even near 20K tokens of context. The 262K server at 16 rows
 fits (peak 24.07 GB, same as 8) and the 132K recall prompt answers right; its two short prompts went code 214 -> 220
-greedy, chat 140 -> 144 (`results/bench-kv4r-262k-r16.json`). The daily setup stays at 8 rows until the row count
-follows the context length.
+greedy, chat 140 -> 144 (`results/bench-kv4r-262k-r16.json`).
+
+**Rows follow the context length** ([`rows-by-context.patch`](rows-by-context.patch), TensorFold's `decode.py`):
+`TENSORFOLD_ROWS_BY_CONTEXT=16:50000,8` checks 16 rows a round while the context is under 50,000 tokens and 8 after
+(`TENSORFOLD_ROWS` stays the most, 16). Graphs are kept per width already, so switching costs nothing. Where the
+switch goes (code with READMEs before it, 512 tokens, greedy; `results/rounds/rows-8-12-16-ctx{20,50}k.json`):
+
+| tok/s | 8 rows | 12 rows | 16 rows |
+|---|---|---|---|
+| ~1K context, 11 prompts | 200.3 | 209.6 | **213.5** |
+| 20K, code / agent | 158.3 / 197.4 | 162.7 / 199.3 | **163.8 / 199.6** |
+| 50K, code | 158.7 | 156.7 | 157.5 |
+| 100K, code | **146.0** | | 130.1 |
+
+12 rows never wins clearly, and 8 and 16 tie near 50K. Starting at 49,845 tokens and crossing the switch mid-reply
+(`round_bench.py --schedules "none;16:50000,8"`, `results/rounds/schedule-cross50k.json`), the schedule's output is
+token-for-token the fixed 16-row run's (itself equal to serial), 0 graph mismatches, 163.2 vs 153.3 tok/s.
+
+New daily setup:
+
+```bash
+TENSORFOLD_ROWS=16 TENSORFOLD_ROWS_BY_CONTEXT=16:50000,8 TENSORFOLD_GRAPHS=1 TENSORFOLD_KV_BITS=4 \
+  TENSORFOLD_ONE_BUFFER=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True TF_DRAFT_PACKED=1 TF_BUDGET_GIB=200 \
+  LONG="100000" ./bench_tf.sh kv4r-262k-r16 --context 262144
+```

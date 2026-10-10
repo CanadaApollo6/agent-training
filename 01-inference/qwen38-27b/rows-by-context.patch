@@ -1,0 +1,46 @@
+--- a/src/tensorfold/families/qwen3_5/cuda/decode.py
++++ b/src/tensorfold/families/qwen3_5/cuda/decode.py
+@@ -22,6 +22,26 @@
+ ONE_BUFFER = os.environ.get("TENSORFOLD_ONE_BUFFER") == "1"
+ 
+ 
++def _rows_schedule(text: str) -> list[tuple[int, int]]:
++    """"16:20000,12:50000,8": 16 rows below 20000 context tokens, 12 below 50000, then 8 (rows, below) steps."""
++    steps = []
++    for part in filter(None, text.replace(" ", "").split(",")):
++        rows, _, below = part.partition(":")
++        steps.append((int(rows), int(below) if below else 1 << 62))
++    return steps
++
++
++# long-context attention grows with the rows a round, so long contexts check fewer rows (README: rows a round)
++ROWS_BY_CONTEXT = _rows_schedule(os.environ.get("TENSORFOLD_ROWS_BY_CONTEXT", ""))
++
++
++def rows_for(context: int, rows: int) -> int:
++    for step, below in ROWS_BY_CONTEXT:
++        if context < below:
++            return min(step, rows)
++    return rows
++
++
+ def clone_state(st: State) -> State:
+     """The committed tensors are immutable; commits replace their list entries."""
+ 
+@@ -221,13 +241,14 @@
+     stopped = False
+     while len(out) < count and (not stop_eos or out[-1] not in w.config.eos) and not stopped:
+         stage = time.perf_counter()
+-        copied = copies.propose(context, max_rows - 1) if copies is not None else []
++        rows_now = rows_for(len(context), max_rows)
++        copied = copies.propose(context, rows_now - 1) if copies is not None else []
+         if copied:
+             guesses = copied
+             parents = list(range(-1, len(guesses) - 1))
+         elif draft is not None:
+             guesses, parents = draft.propose_tree(
+-                out[-1], len(context), tree_rows - 1, sampling)
++                out[-1], len(context), min(tree_rows, rows_now) - 1, sampling)
+         else:                                # no draft model: one row a round unless the context offers a copy
+             guesses, parents = [], []
+         tokens = [out[-1]] + guesses

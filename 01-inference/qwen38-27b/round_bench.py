@@ -74,6 +74,8 @@ def main() -> None:
     ap.add_argument("--serial", action="store_true", help="also decode greedy serially and check drafted == serial")
     ap.add_argument("--sync", default="1", help="draft_decode sync_stages values to sweep (0: no timing syncs)")
     ap.add_argument("--graphs", action="store_true", help="replay verify windows from CUDA graphs (graphs27)")
+    ap.add_argument("--schedules", default="", help="';'-separated TENSORFOLD_ROWS_BY_CONTEXT values to sweep "
+                    "('none' = fixed rows), e.g. 'none;16:20000,8'")
     a = ap.parse_args()
 
     # torch leaves its build lock files behind, and the next start waits on them forever (run one TensorFold at a time)
@@ -228,7 +230,13 @@ def main() -> None:
     from tensorfold.families.qwen3_5.cuda import draft_tree
     branches = [int(b) for b in a.branch.split(",")] if a.branch else [draft_tree.POLICY["branch"]]
     syncs = [s == "1" for s in a.sync.split(",")]
-    for rows, branch, sync in [(r, b, s) for r in rows_list for b in branches for s in syncs]:
+    import tensorfold.families.qwen3_5.cuda.decode as dec_mod
+    schedules = a.schedules.split(";") if a.schedules else [None]
+    timed_rows = [max(rows_list)] if a.schedules else rows_list         # schedules: warm every width, time the widest
+    for rows, branch, sync, sched in [(r, b, s, c) for r in timed_rows for b in branches for s in syncs
+                                      for c in schedules]:
+        if sched is not None:
+            dec_mod.ROWS_BY_CONTEXT = dec_mod._rows_schedule("" if sched == "none" else sched)
         draft_tree.POLICY["branch"] = branch
         for name, ids in prompts:
             for temp in temps:
@@ -238,7 +246,7 @@ def main() -> None:
                     r, trace = run(rows, name, ids, temp, sync=sync)
                     n = len(r.tokens) - 1
                     rec = {
-                        "rows": rows, "branch": branch, "sync": int(sync), "prompt": name, "prompt_tokens": len(ids), "temp": temp, "rep": rep, "tokens": n,
+                        "rows": rows, **({"schedule": sched} if sched is not None else {}), "branch": branch, "sync": int(sync), "prompt": name, "prompt_tokens": len(ids), "temp": temp, "rep": rep, "tokens": n,
                         "tok_s": round(n / r.seconds, 1), "rounds": r.rounds,
                         "tok_per_round": round(n / r.rounds, 2),
                         "copy_rounds": sum(t["source"] == "copy" for t in trace),
