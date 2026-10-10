@@ -1,8 +1,16 @@
 diff --git i/src/tensorfold/cuda/kernels/attention.py w/src/tensorfold/cuda/kernels/attention.py
-index 798958b..bc57945 100644
+index 798958b..fe9f4b7 100644
 --- i/src/tensorfold/cuda/kernels/attention.py
 +++ w/src/tensorfold/cuda/kernels/attention.py
-@@ -11,6 +11,9 @@ import torch
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import math
++import os
+ from dataclasses import dataclass
+ from functools import lru_cache
+ from typing import Sequence
+@@ -11,10 +12,15 @@ import torch
  import triton
  import triton.language as tl
  
@@ -12,17 +20,45 @@ index 798958b..bc57945 100644
  TILE = 64
  CHUNK = 512
  MAX_NODES = 128
-@@ -52,7 +55,7 @@ def _tile(q, k, v, m, l, o, valid, scale: tl.constexpr):
+-QUERY_TILE = 16
++QUERY_TILE = int(os.environ.get("TENSORFOLD_QUERY_TILE", "16"))     # (row, head) pairs a shared-chunk program takes
++SHARED_WARPS = int(os.environ.get("TENSORFOLD_SHARED_WARPS", "4"))
++SHARED_STAGES = int(os.environ.get("TENSORFOLD_SHARED_STAGES", "1"))
+ 
+ 
+ @triton.jit
+@@ -52,8 +58,10 @@ def _tile(q, k, v, m, l, o, valid, scale: tl.constexpr):
  
  @triton.jit
  def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: tl.constexpr, D: tl.constexpr,
 -            G: tl.constexpr, CH: tl.constexpr, SCALE: tl.constexpr):
-+            G: tl.constexpr, CH: tl.constexpr, SCALE: tl.constexpr, R: tl.constexpr, QBITS: tl.constexpr):
-     """Item (stream, first pair, chunk): 16 (row, head) pairs of one stream against one chunk of committed keys."""
+-    """Item (stream, first pair, chunk): 16 (row, head) pairs of one stream against one chunk of committed keys."""
++            G: tl.constexpr, CH: tl.constexpr, SCALE: tl.constexpr, R: tl.constexpr, QBITS: tl.constexpr,
++            QT: tl.constexpr):
++    """Item (stream, first pair, chunk): QT (row, head) pairs of one stream against one chunk of committed keys (the
++    tile's shape never depends on the window's rows, so neither do a row's bits)."""
  
      item = tl.program_id(0)
-@@ -79,8 +82,9 @@ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: t
-         o = tl.zeros((16, D), tl.float32)
+     hk = tl.program_id(1)
+@@ -66,7 +74,7 @@ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: t
+     if (chunk + 1) * CH <= p:                 # a plan padded for a longer context (a graph's) skips missing chunks
+         koff = tl.load(OFF + s * 2)
+         voff = tl.load(OFF + s * 2 + 1)
+-        rr = first + tl.arange(0, 16)
++        rr = first + tl.arange(0, QT)
+         ok = rr < rows * G
+         node = start + rr // G
+         head = hk * G + rr % G
+@@ -74,13 +82,14 @@ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: t
+         key = chunk * CH + tl.arange(0, 64)
+         q = tl.load(Q + (node[:, None] * H + head[:, None]) * D + d[None, :], mask=ok[:, None],
+                     other=0).to(tl.bfloat16)
+-        m = tl.full((16,), float("-inf"), tl.float32)
+-        l = tl.zeros((16,), tl.float32)
+-        o = tl.zeros((16, D), tl.float32)
++        m = tl.full((QT,), float("-inf"), tl.float32)
++        l = tl.zeros((QT,), tl.float32)
++        o = tl.zeros((QT, D), tl.float32)
          for t in range(CH // 64):
              ki = key + t * 64
 -            kk = tl.load(KC + koff + (ki[:, None] * HK + hk) * D + d[None, :]).to(tl.bfloat16)
@@ -33,7 +69,7 @@ index 798958b..bc57945 100644
              m, l, o = _tile(q, kk, vv, m, l, o, ki < p, SCALE)
          base = (chunk * W + node) * H + head
          tl.store(PO + base[:, None] * D + d[None, :], o, mask=ok[:, None])
-@@ -90,7 +94,8 @@ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: t
+@@ -90,7 +99,8 @@ def _shared(Q, KC, VC, OFF, STREAM, ITEMS, PO, PM, PL, W, H: tl.constexpr, HK: t
  
  @triton.jit
  def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H: tl.constexpr, HK: tl.constexpr,
@@ -43,7 +79,7 @@ index 798958b..bc57945 100644
      """Row, head group, tail chunk: the last committed keys and the row's own path."""
  
      node = tl.program_id(0)
-@@ -110,18 +115,19 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
+@@ -110,18 +120,19 @@ def _tail(Q, KN, VN, KC, VC, OFF, STREAM, ROWS, PATHS, DEPTHS, PO, PM, PL, W, H:
          l = tl.zeros((16,), tl.float32)
          o = tl.zeros((16, D), tl.float32)
          key = chunk * CH + tl.arange(0, 64)
@@ -68,7 +104,63 @@ index 798958b..bc57945 100644
              m, l, o = _tile(q, kk, vv, m, l, o, committed | on_path, SCALE)
          base = (chunk * W + node) * H + hk * G + gg
          tl.store(PO + base[:, None] * D + d[None, :], o, mask=gg[:, None] < G)
-@@ -233,18 +239,20 @@ def _base(index: int) -> torch.Tensor:
+@@ -156,6 +167,35 @@ def _merge(PO, PM, PL, OUT, STREAM, ROWS, W, H: tl.constexpr, D: tl.constexpr, G
+     tl.store(OUT + (node * H + head[:, None]) * D + d[None, :], result.to(tl.bfloat16), mask=gg[:, None] < G)
+ 
+ 
++@triton.jit
++def _merge_head(PO, PM, PL, OUT, STREAM, ROWS, W, H: tl.constexpr, D: tl.constexpr, DB: tl.constexpr):
++    """``_merge`` for one (row, head, DB values): the same arithmetic per value, 6 x D/DB times the programs."""
++
++    node = tl.program_id(0)
++    head = tl.program_id(1)
++    d = tl.program_id(2) * DB + tl.arange(0, DB)
++    nch = tl.load(STREAM + tl.load(ROWS + node) * 4 + 3)
++    m = float("-inf")
++    l = 0.0
++    o = tl.zeros((DB,), tl.float32)
++    for chunk in range(nch):
++        base = (chunk * W + node) * H + head
++        cm = tl.load(PM + base)
++        cl = tl.load(PL + base)
++        co = tl.load(PO + base * D + d)
++        active = cl > 0.0
++        next_m = tl.where(active, tl.maximum(m, cm), m)
++        a = tl.where(active, tl.where(m == float("-inf"), 0.0, tl.exp(m - next_m)), 1.0)
++        b = tl.where(active, tl.exp(cm - next_m), 0.0)
++        o = o * a + co * b
++        l = l * a + cl * b
++        m = next_m
++    tl.store(OUT + (node * H + head) * D + d, (o / l).to(tl.bfloat16))
++
++
++MERGE_DB = int(os.environ.get("TENSORFOLD_MERGE_DB", "128"))    # 0: TensorFold's merge, a program a (row, kv head)
++
++
+ @dataclass
+ class Plan:
+     """A window's attention layout, shared by every attention layer of a forward."""
+@@ -184,8 +224,8 @@ def plan_host(parents: Sequence[Sequence[int]], lengths: Sequence[int], group: i
+         rows += [s] * w
+         streams += [start, w, p, nch]
+         glob += [-1 if x < 0 else x + start for x in local]
+-        for first in range(0, w * group, QUERY_TILE):
+-            for chunk in range(p // CHUNK):
++        for chunk in range(p // CHUNK):         # a chunk's query tiles side by side: they read its keys from L2
++            for first in range(0, w * group, QUERY_TILE):
+                 items += [s, first, chunk]
+         start += w
+     return rows + streams + items + glob, len(items) // 3, most
+@@ -196,7 +236,7 @@ def padded_host(parents: Sequence[int], context: int, group: int) -> tuple[list[
+ 
+     flat, _, _ = plan_host([parents], [0], group)            # rows, the stream's row (refreshed per replay), parents
+     w = len(parents)
+-    items = [x for first in range(0, w * group, QUERY_TILE) for chunk in range(context // CHUNK)
++    items = [x for chunk in range(context // CHUNK) for first in range(0, w * group, QUERY_TILE)
+              for x in (0, first, chunk)]
+     return flat[:w + 4] + items + flat[w + 4:], len(items) // 3, -(-(context + w) // CHUNK)
+ 
+@@ -233,18 +273,20 @@ def _base(index: int) -> torch.Tensor:
  
  
  def offsets(caches: Sequence[tuple[torch.Tensor, torch.Tensor]], device) -> list[int]:
@@ -93,7 +185,7 @@ index 798958b..bc57945 100644
      return out
  
  
-@@ -259,7 +267,11 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+@@ -259,7 +301,11 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
          raise ValueError("unsupported attention shape")
      if any(x.dtype != torch.bfloat16 or not x.is_cuda or not x.is_contiguous() for x in (q, k_nodes, v_nodes)):
          raise ValueError("q and node keys and values must be contiguous CUDA bf16 tensors")
@@ -106,21 +198,26 @@ index 798958b..bc57945 100644
      if not math.isfinite(scale) or scale <= 0:
          raise ValueError("scale must be positive and finite")
      g = h // hk
-@@ -268,11 +280,12 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
+@@ -268,11 +314,16 @@ def attention(q: torch.Tensor, k_nodes: torch.Tensor, v_nodes: torch.Tensor, off
      partial_l = torch.empty_like(partial_m)
      if p.items.shape[0]:
          _shared[(p.items.shape[0], hk)](q, origin, origin, offs, p.streams, p.items, partial_o, partial_m, partial_l, w,
 -                                        H=h, HK=hk, D=d, G=g, CH=CHUNK, SCALE=scale, num_warps=4, num_stages=1)
 +                                        H=h, HK=hk, D=d, G=g, CH=CHUNK, SCALE=scale, R=r, QBITS=kvq.BITS,
-+                                        num_warps=4, num_stages=1)
++                                        QT=QUERY_TILE, num_warps=SHARED_WARPS, num_stages=SHARED_STAGES)
      tails = 1 + -(-MAX_NODES // CHUNK)
      _tail[(w, hk, tails)](q, k_nodes, v_nodes, origin, origin, offs, p.streams, p.rows, p.paths, p.depths,
                            partial_o, partial_m, partial_l, w, H=h, HK=hk, D=d, G=g, CH=CHUNK, MAXD=MAX_NODES,
 -                          SCALE=scale, num_warps=4, num_stages=1)
 +                          SCALE=scale, R=r, QBITS=kvq.BITS, num_warps=4, num_stages=1)
      out = torch.empty_like(q)
-     _merge[(w, hk)](partial_o, partial_m, partial_l, out, p.streams, p.rows, w, H=h, D=d, G=g, num_warps=4)
+-    _merge[(w, hk)](partial_o, partial_m, partial_l, out, p.streams, p.rows, w, H=h, D=d, G=g, num_warps=4)
 -    return out
++    if MERGE_DB:
++        _merge_head[(w, h, d // MERGE_DB)](partial_o, partial_m, partial_l, out, p.streams, p.rows, w, H=h, D=d,
++                                           DB=MERGE_DB, num_warps=1)
++    else:
++        _merge[(w, hk)](partial_o, partial_m, partial_l, out, p.streams, p.rows, w, H=h, D=d, G=g, num_warps=4)
 +    return kvq.rotate(out)
 diff --git i/src/tensorfold/cuda/kernels/kvq.py w/src/tensorfold/cuda/kernels/kvq.py
 new file mode 100644

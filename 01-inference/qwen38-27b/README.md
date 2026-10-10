@@ -752,3 +752,24 @@ up to 2,047 context keys each. Now 16 slices run side by side and a second kerne
 adds the block's own keys. Same values up to rounding (drafter rounding only moves acceptance, never output); a full
 window takes 53 instead of 186 us a layer. Short prompts gain too (160.9 -> 163.1 mean): the drafter's window fills
 during a 512-token reply.
+
+**Long-context attention, where the time goes** ([`attn_bench.py`](attn_bench.py): attention alone on a synthetic 4-bit
+cache, no model load; [`attn_proto.py`](attn_proto.py): kernel variants against TensorFold's). Per layer, 8 rows:
+
+| Context | `_shared` (full 512-key chunks) | `_merge` | `_tail` | All, graph-timed |
+|---|---|---|---|---|
+| 20K | 157 us | 36 | 27 | 258 us |
+| 100K | 731 us | 157 | 60 | 986 us |
+
+At 100K that is ~16 ms a round on top of short-prompt decoding: roughly 40% slower. What didn't help `_shared`:
+chunk-major item order (L2 already serves the repeated reads), 32- or 64-pair query tiles, 16/32-key tiles, more
+warps or pipeline stages, smaller chunks (256 and 128 are slower: more partials to merge), and a nibble-split layout
+that skips re-interleaving the 4-bit codes (correct, but slower). With one row it is still 142 us at 20K, and the
+16-bit cache (3.5x the bytes) is faster than the 4-bit one, so it is not memory-bound; it runs at ~40% of the card's
+bf16 matrix peak with the softmax work in between. A faster one needs a purpose-built kernel.
+
+**Merge per head** (`_merge_head`, `TENSORFOLD_MERGE_DB=128`; 0 restores TensorFold's): the merge ran a program per
+(row, kv head), 32 programs looping over every chunk. Now a program per (row, head, 128 values): the same arithmetic
+per value, identical bits (checked at 700/20K/100K context, 1/8/12 rows). 100K: 1,017 -> 875 us a layer (-2.3 ms a
+round); 20K: 290 -> 267. Decode at 20K: 157.9 tok/s mean (from 156.4), drafted == serial
+(`results/rounds/merge-ctx20k.json`).
