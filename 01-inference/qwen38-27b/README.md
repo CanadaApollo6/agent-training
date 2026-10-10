@@ -773,3 +773,43 @@ bf16 matrix peak with the softmax work in between. A faster one needs a purpose-
 per value, identical bits (checked at 700/20K/100K context, 1/8/12 rows). 100K: 1,017 -> 875 us a layer (-2.3 ms a
 round); 20K: 290 -> 267. Decode at 20K: 157.9 tok/s mean (from 156.4), drafted == serial
 (`results/rounds/merge-ctx20k.json`).
+
+**A CUDA attention kernel for the 4-bit cache** ([`attn4/attn4.cu`](attn4/attn4.cu), copied into TensorFold as
+`kernels/attn4.cu`; on for a 4-bit cache with head dim 256, `TENSORFOLD_ATTN4=0` restores the Triton kernels). Why
+the Triton kernel was slow: the 3090 converts integers to floats at 1/8 of its float rate, and `_shared` did 256
+int-to-float and 132 float-to-bf16 conversions a thread per 64-key tile, then staged every tile through shared memory.
+The new kernel decodes with no conversions. A 4-bit code becomes a bf16 number by placing its bits (0x3F80 | c << 3
+is 1 + c/16), and two packed bf16 multiply-adds give (c - 7.5)/16 exactly and then times the scale. Each lane reads
+its packed bytes straight into its matrix-multiply inputs: the head's 256 values are assigned to MMA slots so a
+lane's share is one contiguous run of a cache row. A block of four warps takes one 512-key chunk for up to 48
+(row, head) pairs. Each warp scores 8 of every 32 keys for all rows, the block agrees on each row's maximum and sum
+through shared memory, and each warp keeps a quarter of the 256 output values. A key is loaded and decoded once
+for all 48 rows.
+
+Bits differ from the Triton kernels (the scale is rounded to bf16 before multiplying; output moves ~3e-4). Exactness
+is unchanged: a row's arithmetic doesn't depend on the tiling, and the tail (last chunk plus the row's own path) runs
+the same steps as full chunks. `attn4/attn4_test.py` checks drafted against serial at 6 context lengths × chain and
+tree: all bit-identical.
+
+| Per layer, 8 rows | Triton | CUDA |
+|---|---|---|
+| 20K, full chunks | 157 us | 98 us |
+| 20K, whole attention | 239 us | 136 us |
+| 100K, full chunks | 731 us | 392 us |
+| 100K, whole attention | 838 us | 441 us |
+
+In the model at 20K context (`round_bench.py --prefix-tokens 20000 --graphs --serial`, rows 8, greedy), drafted ==
+serial on all three prompts, zero graph mismatches. A verify takes 22.75 ms (25.2 before), the same as on short
+prompts. A round is 1.9–2.3 ms shorter (code 29.4 -> 27.6 ms, chat 29.4 -> 27.8, agent 29.8 -> 27.5). tok/s: code
+152 -> 158, agent 162 -> 164. Chat 160 -> 140 because the new bits change the greedy reply and its drafts were
+accepted less often (3.9 vs 4.7 tokens a round); acceptance follows the text, not the kernel
+(`results/rounds/attn4-ctx20k.json`).
+
+How it got there (100K, full chunks): one warp per 16 rows, 629 us; prefetching the next keys, 445; two warps
+splitting each tile's values (139 instead of 250 registers), about the same; a block sharing keys across 48 rows,
+439; capping registers at 168 so 3 blocks fit an SM, 408; ordering blocks so working ones launch first, 392. Things
+that didn't matter: the dequant arithmetic (removing it entirely: no change), the matrix math alone (removing it:
+-7%). In-kernel cycle counters show each step waiting on its own chain: score math, softmax, value math. With 2–3
+warps an SM partition, one warp's softmax only partly hides behind another's math. The tensor cores are fine: 82
+TFLOPS with realistic data at 280 W. This kernel hits the 420 W power cap at 1.8 GHz. It now runs at ~65% of matrix
+peak (Triton ~40%).

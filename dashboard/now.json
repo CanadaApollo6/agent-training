@@ -46,24 +46,24 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "RL on R1s-SD in pi: stop here. Next option (your call, not tonight): an RL pilot in prime_agent (Rust 0.10.0) to test the harness thesis directly, ~$120-150.",
- "headline_text": "RL continuation done: 24 training steps in total (~$250 with the pilot). Practice tasks drifted up slowly (44% to 52% per task); held-out stayed within noise (base 70%, pilot 76%, now 74%). Not worth $400 for more of the same.",
+ "next_text": "In progress: a purpose-built long-context attention kernel. Alone it takes attention per layer from 239 to 136 us at 20K context and 838 to 441 us at 100K (~6 ms a round less at 100K), with drafted rows bit-identical to serial ones. Now checking it inside the model (20K-context decode, drafted vs serial). Next lever after it: the 4-bit matmul kernel (~10%).",
+ "headline_text": "Qwen 27B speed on your 3090, now in the server: your daily setup (4-bit cache, full 262K window) went 169 \u2192 183 tok/s on code and 117 \u2192 126 on chat, with answers identical to one-word-at-a-time decoding. Turn it on with TENSORFOLD_ROWS=8 TENSORFOLD_GRAPHS=1. With 20K tokens of context it's 158 vs 141 for TensorFold's default.",
  "headline_numbers": [
   {
-   "value": "44 \u2192 52%",
-   "label": "Practice tasks, base \u2192 24 steps"
+   "value": "169 \u2192 183",
+   "label": "Server, code tok/s (262K window)"
   },
   {
-   "value": "37 / 50",
-   "label": "Held-out now (base 32/46, pilot 34/45)"
+   "value": "117 \u2192 126",
+   "label": "Server, chat tok/s"
   },
   {
-   "value": "0",
-   "label": "Shortcuts, GitHub blocked"
+   "value": "141 \u2192 158",
+   "label": "At 20K context (test script)"
   },
   {
-   "value": "~$268",
-   "label": "GPU spend today"
+   "value": "Identical",
+   "label": "Output vs plain decoding"
   }
  ],
  "pilot": {
