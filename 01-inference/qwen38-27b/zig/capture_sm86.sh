@@ -3,7 +3,7 @@
 # then the Zig engine's serial and drafted replies checked against 0.6.6's. Work dir ~/.cache/tf066; about 5 minutes of GPU.
 set -euo pipefail
 R=$(cd "$(dirname "$0")/../../.." && pwd)                 # agent-training
-Z=$R/01-inference/tools/TensorFold-zig                     # pr-608 + pr608-sm86-gemv-rows.patch, built with -Dsm=86
+Z=$R/01-inference/tools/TensorFold-zig                     # pr-608 + pr608-sm86.patch, built with -Dsm=86
 W=~/.cache/tf066; mkdir -p $W/tmp $W/out
 M=$(ls -d ~/.cache/huggingface/hub/models--Vontra--Qwen3.8-27B-MLX-4bit/snapshots/*)
 D=$(ls -d ~/.cache/huggingface/hub/models--z-lab--Qwen3.8-27B-DFlash2/snapshots/*)

@@ -1153,8 +1153,13 @@ CUDA engine in Zig and was built and checked on a GB10 (sm_121). Everything here
   - The patch is for the reference copy only.
 - The PR's matmul uses thread-block clusters (sm_90+) whenever it splits K. A 3090 fails with
   `CUDA_ERROR_INVALID_CLUSTER_SIZE`.
-  - `pr608-sm86-gemv-rows.patch` sends split-K matmuls on pre-sm_90 cards to the PR's own `lane_gemv`.
-  - It runs 16 rows a launch. A row's bits never depend on the other rows, so the bits are the same.
+  - First stand-in: the PR's own `lane_gemv`, 16 rows a launch. A row's bits never depend on the other rows.
+  - Now: `pr608-sm86.patch` (everything on top of the PR) adds `zig/kernels/cuda/qmm_lane.cu`, our 3090 stack's
+    `qmm.cu` device code with `qmm-lean.patch` and `qmm-inblock.patch`, ATen dropped, with C entry points.
+    - Up to 16 rows it uses the segmented launch: weights as the mma's A, 2 or 4 K slices side by side in a block.
+    - Wider rounds take row tiles with fp32 partials and a slice-order reduce, 128 rows a turn.
+    - It keeps 0.6.6's K slices per weight. Our Python stack's "one slice when the launch fills the card" rule changes
+      bits, so it is left out.
 
 **Exactness against 0.6.6 on the same 3090** (greedy, 128 tokens):
 
@@ -1167,20 +1172,21 @@ CUDA engine in Zig and was built and checked on a GB10 (sm_121). Everything here
 The round counts are a gap: upstream's contract has them equal on the GB10. A 1-round difference means the drafter's
 proposals differ in a few bits on this card. The replies are still exact, because every proposal is verified.
 
-**Speed, drafted, one stream, 128-token replies** (`zig/results/`):
+**Speed, drafted, one stream, 128-token replies** (`zig/results/`, two runs within 1%). All replies are still equal to
+0.6.6's (8 of 8, `zig-*-qmmlane.log`):
 
-| Prompt | Python 0.6.6 | Zig engine |
-|---|---|---|
-| code | 191 tok/s | 165 tok/s |
-| long (4.7K prompt) | 159 | 122 |
-| facts | 103 | 88 |
-| story | 75 | 67 |
+| Prompt | Python 0.6.6 | Zig, `lane_gemv` stand-in | Zig, our 3090 matmul |
+|---|---|---|---|
+| code | 191 tok/s | 165 | **264** |
+| long (4.7K prompt) | 159 | 122 | **198** |
+| facts | 103 | 88 | **141** |
+| story | 75 | 67 | **108** |
+| drafts off | 32 ms/token | 42 | **24** |
 
-The Zig engine is 13-23% behind 0.6.6 here. The likely cause is the stand-in matmul: 0.6.6 runs `qmm.cu` on this card,
-with a fixed-order fp32 reduce instead of clusters. These are short-reply numbers with a bf16 context store, so they
-aren't comparable with our daily 221/144 (4-bit store, our kernels).
+These are short-reply numbers from the check tool, with a bf16 context store. They aren't the server benchmark behind
+our daily 221/144 (4-bit store, 262K window), so they can't be compared with it directly.
 
 Next:
-1. Port 0.6.6's sm_86 matmul (`qmm_kernel` + `reduce_kernel`) and find the drafter's 1-round gap.
+1. Find the drafter's 1-round gap.
 2. Run the native server for real tok/s.
 3. Then port our pieces one at a time: the 4-bit context store, faster matmul/drafter, GDN, commit, graphs, rows schedule.
