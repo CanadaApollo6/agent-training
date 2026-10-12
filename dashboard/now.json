@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "Zig engine (TensorFold 1.x, PR #608) on the 3090. Drafted code is now 275 tok/s, up from 264 (Python 0.6.6: 191), and replies are still exactly equal. The 4-bit context store is in as an opt-in flag; a 61K prompt fits. Timing showed the main model's checking pass is ~90% of each round, and it's GPU-bound. So I merged matmuls that read the same input into one launch, saving ~1 ms of 25 per round. Next gap: the matmuls run at 56-80% of the card's memory speed, ~5 ms per round above the floor.",
+ "next_text": "Zig engine (TensorFold 1.x, PR #608) on the 3090. Replies still exactly equal Python 0.6.6's (8 of 8). New today: a timing tool for the matmuls. Real ceiling on your card is ~830 GB/s, not the 936 on paper, and the big matmuls already reach ~88% of it. Merging launches and dropping the K split on shared inputs took the main model's check from 25.1 to ~23.8 ms per round. Measurements are noisy while the browser uses the GPU, so settings now get compared alternately inside one run. Next: the MLP's 16-row matmul (8.2 ms, the largest step), then the native server for numbers next to the daily 221/144.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 221 tok/s and chat 117 → 144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, a faster GDN step kernel, a faster draft model, and 16 guesses a round under 50K context (8 above).",
  "headline_numbers": [
   {

@@ -1,0 +1,21 @@
+# after "shared-input weights that fill the card run unsplit"
+# serial (run) vs 0.6.6 results.json
+story: prompt 29, 128 tokens sha 081098bc7b81 in 2.98s MATCH
+code: prompt 30, 128 tokens sha 605e360aac92 in 2.96s MATCH
+facts: prompt 28, 128 tokens sha a2a09ee4a2f8 in 2.97s MATCH
+long: prompt 4722, 128 tokens sha c99358b42165 in 6.97s MATCH
+# drafted vs 0.6.6 draft.json
+story: 128 tokens sha 081098bc7b81, rounds 42 accepted 85, 115.0 tok/s MATCH; python rounds 43 accepted 84
+code: 128 tokens sha 605e360aac92, rounds 17 accepted 110, 273.7 tok/s MATCH; python rounds 17 accepted 110
+facts: 128 tokens sha a2a09ee4a2f8, rounds 31 accepted 96, 153.6 tok/s MATCH; python rounds 32 accepted 95
+long: 128 tokens sha c99358b42165, rounds 21 accepted 106, 203.9 tok/s MATCH; python rounds 20 accepted 107
+# 4-bit store: new serial reference (serial-kv4.json re-saved; story and facts moved vs the old one, story now equals bf16's reply)
+story: prompt 29, 128 tokens sha 081098bc7b81 in 2.97s DIFFER at token 21 (python sha 1c248cc48f8a)
+code: prompt 30, 128 tokens sha 1ecafbfde86f in 2.94s MATCH
+facts: prompt 28, 128 tokens sha e169e86b9fff in 2.95s DIFFER at token 8 (python sha af3551144d00)
+long: prompt 4722, 128 tokens sha c99358b42165 in 7.09s MATCH
+# 4-bit drafted vs the new serial reference
+story: 128 tokens sha 081098bc7b81, rounds 42 accepted 85, 115.1 tok/s MATCH
+code: 128 tokens sha 1ecafbfde86f, rounds 16 accepted 111, 299.6 tok/s MATCH
+facts: 128 tokens sha e169e86b9fff, rounds 28 accepted 99, 171.9 tok/s MATCH
+long: 128 tokens sha c99358b42165, rounds 21 accepted 106, 211.7 tok/s MATCH

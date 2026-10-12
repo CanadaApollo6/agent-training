@@ -1237,7 +1237,38 @@ Weights are grouped by their own K split, so every output keeps the same bits as
 | Drafted check, code prompt | 264 tok/s | **275 tok/s** |
 | Exactness | 8 of 8 | 8 of 8 (drafted and serial equal 0.6.6) |
 
+**The card's real ceiling.** The 936 GB/s on the spec sheet is not reachable here:
+- Under load the memory runs at 9501 MHz (912 GB/s).
+- A plain read kernel reaches 770–795 GB/s.
+- The model's word head (one 715 MB matmul) reaches 831 GB/s, so the practical ceiling is about 830.
+
+`tf-qwen27-cuda mm` times each matmul group over all layers (`zig-mm-sweep.log`). At 1–8 rows the big ones are close
+to the ceiling: MLP gate + up ~732 GB/s, down ~724. Back to back, the 16-row MLP matmuls hit the card's 420 W power
+cap and slow down (gate + up 8.8 → 9.6–11.5 ms). Inside the model, other steps sit between them and the same work
+takes 8.2 ms. So isolated timings mislead for these. The real test is the model itself.
+
+The machine was busy during these runs: the browser held the GPU and a full CPU core. A single drafted run then
+varied by ±3 ms a round. `TF_QWEN27_TUNES` with `draft` alternates settings prompt by prompt inside one run, so the
+other load lands on every setting alike.
+
+**Shared inputs that fill the card run unsplit.** In those launches GDN's in-projections (10240 + 6144 + 48 + 48
+columns) and attention's q, k and v (12288 + 1024 + 1024) had split their K in 2 or 8. The split only exists to fill
+the card. Together these weights already fill it, so now each takes the whole K in one launch.
+
+| 15 alternating repeats (`zig-ab-unsplit.log`) | Split (before) | Unsplit |
+|---|---|---|
+| Verify, ms a round: story / code / facts / long (median) | 27.97 / 24.58 / 24.49 / 26.24 | **26.48 / 23.85 / 23.86 / 25.39** |
+| Same, fastest of 15 | 24.08 / 24.45 / 24.12 / 25.92 | **23.64 / 23.75 / 23.30 / 25.14** |
+| Replies | — | same tokens |
+
+The sums run in a different order, so the bits inside change. The tokens still equal 0.6.6's: 8 of 8, serial and
+drafted. At 4 bits, a fresh serial reference matches drafted on 4 of 4 (`zig-unsplit-checks.log`). The new 4-bit story
+reply now equals the bf16 one.
+
+Tried, no clear gain: 3 or 4 pipeline stages everywhere, other split targets (96, 384), and parking slices in memory
+instead of side by side.
+
 Next:
-1. The matmuls run at 56–80% of peak bandwidth: ~5 ms a round above the floor, the biggest gap left.
+1. MLP gate + up at 16 rows (8.2 ms, the largest single step) and the out-projections (~60% of the ceiling).
 2. Run the native server for real tok/s.
 3. Port GDN lanes (~2%, changes the last bits), fast commit, and the rows schedule. Find the drafter's 1-round gap.

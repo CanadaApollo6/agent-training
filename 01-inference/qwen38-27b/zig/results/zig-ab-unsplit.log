@@ -1,0 +1,11 @@
+# TF_QWEN27_REPS=15 TF_QWEN27_TUNES="|sk@...=1" TF_QWEN27_PROFILE=1 tf-qwen27-cuda draft: each prompt alternating default and unsplit input projections
+story  default                                  verify  27.97 ms (range 24.08-29.72),   94.9 tok/s, rounds 42, sha 081098bc7b81
+story  sk@10240x5120=1,sk@6144x5120=1,sk@48x5120=1,sk@1024x5120=1 verify  26.48 ms (range 23.64-28.73),  100.5 tok/s, rounds 42, sha 081098bc7b81
+code   default                                  verify  24.58 ms (range 24.45-28.75),  268.3 tok/s, rounds 17, sha 605e360aac92
+code   sk@10240x5120=1,sk@6144x5120=1,sk@48x5120=1,sk@1024x5120=1 verify  23.85 ms (range 23.75-27.66),  275.4 tok/s, rounds 17, sha 605e360aac92
+facts  default                                  verify  24.49 ms (range 24.12-29.01),  143.3 tok/s, rounds 32, sha a2a09ee4a2f8
+facts  sk@10240x5120=1,sk@6144x5120=1,sk@48x5120=1,sk@1024x5120=1 verify  23.86 ms (range 23.30-29.70),  151.5 tok/s, rounds 31, sha a2a09ee4a2f8
+long   default                                  verify  26.24 ms (range 25.92-27.08),  202.7 tok/s, rounds 21, sha c99358b42165
+long   sk@10240x5120=1,sk@6144x5120=1,sk@48x5120=1,sk@1024x5120=1 verify  25.39 ms (range 25.14-26.00),  218.9 tok/s, rounds 20, sha c99358b42165
+sum of verify ms, median 103.29, fastest 98.57: default
+sum of verify ms, median 99.59, fastest 95.82: sk@10240x5120=1,sk@6144x5120=1,sk@48x5120=1,sk@1024x5120=1
