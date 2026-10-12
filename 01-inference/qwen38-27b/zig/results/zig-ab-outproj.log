@@ -1,0 +1,16 @@
+# TF_QWEN27_REPS=9 TF_QWEN27_TUNES A/B on code + facts: finer K splits for the out-projections and down (all slower)
+code   default                                  verify  23.60 ms (range 23.44-23.69),  279.7 tok/s, rounds 17, sha 605e360aac92
+code   sk@5120x6144=8                           verify  24.44 ms (range 24.26-24.56),  270.9 tok/s, rounds 17, sha 605e360aac92
+code   sk@5120x17408=8                          verify  25.55 ms (range 25.47-25.72),  259.3 tok/s, rounds 17, sha 605e360aac92
+code   sk@5120x6144=8,sk@5120x17408=8           verify  26.52 ms (range 26.33-26.55),  250.8 tok/s, rounds 17, sha 605e360aac92
+code   sk@5120x6144=2                           verify  23.96 ms (range 23.83-24.02),  275.6 tok/s, rounds 17, sha 605e360aac92
+facts  default                                  verify  24.29 ms (range 23.50-24.67),  148.7 tok/s, rounds 31, sha a2a09ee4a2f8
+facts  sk@5120x6144=8                           verify  25.15 ms (range 24.37-25.80),  144.0 tok/s, rounds 31, sha a2a09ee4a2f8
+facts  sk@5120x17408=8                          verify  26.29 ms (range 25.37-26.81),  147.8 tok/s, rounds 29, sha 830433777a9c
+facts  sk@5120x6144=8,sk@5120x17408=8           verify  27.31 ms (range 26.39-27.93),  128.9 tok/s, rounds 32, sha 6ee901caf94f
+facts  sk@5120x6144=2                           verify  24.49 ms (range 23.79-25.06),  152.6 tok/s, rounds 30, sha 44fc388b1054
+sum of verify ms, median 47.89, fastest 46.94: default
+sum of verify ms, median 49.60, fastest 48.63: sk@5120x6144=8
+sum of verify ms, median 51.84, fastest 50.84: sk@5120x17408=8
+sum of verify ms, median 53.83, fastest 52.72: sk@5120x6144=8,sk@5120x17408=8
+sum of verify ms, median 48.45, fastest 47.63: sk@5120x6144=2

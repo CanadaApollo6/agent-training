@@ -1268,7 +1268,39 @@ reply now equals the bf16 one.
 Tried, no clear gain: 3 or 4 pipeline stages everywhere, other split targets (96, 384), and parking slices in memory
 instead of side by side.
 
+**The 16-row MLP matmul is already near the card's limit.** Measured in the model (`TF_QWEN27_PROFILE=ops`, quiet
+machine), gate + up takes 8.15 ms a round for 6.42 GB of weights: 788 GB/s. The word head uses the same kernel at the
+same 16 rows and reaches 836 GB/s, so gate + up is at ~94% of what this card does. A sync and clock read between
+operations cost 0.16 us (an `empty` op), so these per-op times are real. The slower numbers from `mm` come from
+running 64 of these launches back to back into the 420 W power cap. In the model, other steps sit between them.
+
+Timing probes (`TF_QWEN27_TUNE probe=1..3`: the 16-row kernel without its mmas, without loading the input rows, or
+without both; wrong outputs) put the tensor-core work and the input reads at ~0.9 ms of 9.4 in `mm`. They can't be
+timed in the model: wrong outputs make the drafter stop guessing, so a round checks fewer rows.
+
+| In the model, 16 rows | ms a round | GB/s | Left vs the head's 836 GB/s |
+|---|---|---|---|
+| MLP gate + up | 8.15 | 788 | ~0.45 ms |
+| MLP down | 4.39 | 731 | ~0.55 ms |
+| GDN in-projections | 3.25 | 702 | ~0.5 ms |
+| GDN + attention out-projections | 2.0 | ~567 | ~0.65 ms |
+| Attention in | 0.93 | 710 | ~0.15 ms |
+
+Tried for the out-projections and down, all slower (`TF_QWEN27_TUNES` A/B, 9 alternating repeats):
+
+| Setting | Verify ms a round, code / facts |
+|---|---|
+| Default (out-proj and down split K 4, side by side) | **23.60 / 24.29** |
+| Out-projections split 8 (parked) | 24.44 / 25.15 |
+| Down split 8 (parked) | 25.55 / 26.29 |
+| Both | 26.52 / 27.31 |
+| Out-projections split 2 | 23.96 / 24.49 |
+
+Parking partial sums in memory costs more than the extra blocks gain. What's left (~2.3 ms a round, ~10%) needs new
+kernel shapes: narrower column tiles for the out-projections (80 blocks on 82 SMs today, 24 groups each), and two
+column tiles a warp for gate + up (half the input reads).
+
 Next:
-1. MLP gate + up at 16 rows (8.2 ms, the largest single step) and the out-projections (~60% of the ceiling).
+1. New kernel shapes for the out-projections (~0.4 ms) and gate + up (~0.2–0.4 ms), or run the native server first.
 2. Run the native server for real tok/s.
 3. Port GDN lanes (~2%, changes the last bits), fast commit, and the rows schedule. Find the drafter's 1-round gap.
