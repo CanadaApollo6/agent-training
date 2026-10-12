@@ -1,0 +1,28 @@
+[tensorfold] CUDA rank 0 startup estimate 16.47 GiB within 17.88 GiB; native 262144, allocated prompt/reply window 16384, cache slots 16396
+[tensorfold] building CUDA extension tensorfold_qmm_v5 (first start after an install or update; later starts reuse it)
+[tensorfold] building CUDA extension tensorfold_gdn_v2 (first start after an install or update; later starts reuse it)
+[tensorfold] building CUDA extension tensorfold_prefill_attention_v1 (first start after an install or update; later starts reuse it)
+{"startup_s": 77.24, "context": 16384, "eos": [248046, 248044], "prompt_rows": 2048, "torch": "2.14.1+cu130", "gpu": "NVIDIA GeForce RTX 3090"}
+In file included from /home/riels/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/include/python3.12/Python.h:12,
+                 from /home/riels/Projects/Personal/Research/agent-training/01-inference/envs/tf066/.venv/lib/python3.12/site-packages/triton/backends/nvidia/driver.c:9:
+/home/riels/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/include/python3.12/pyconfig.h:1877:9: warning: ‘_POSIX_C_SOURCE’ redefined
+ 1877 | #define _POSIX_C_SOURCE 200809L
+      |         ^~~~~~~~~~~~~~~
+In file included from /usr/include/bits/libc-header-start.h:33,
+                 from /usr/include/stdlib.h:26,
+                 from /home/riels/Projects/Personal/Research/agent-training/01-inference/envs/tf066/.venv/lib/python3.12/site-packages/triton/backends/nvidia/include/cuda.h:56,
+                 from /home/riels/Projects/Personal/Research/agent-training/01-inference/envs/tf066/.venv/lib/python3.12/site-packages/triton/backends/nvidia/driver.c:1:
+/usr/include/features.h:319:10: note: this is the location of the previous definition
+  319 | # define _POSIX_C_SOURCE        202405L
+      |          ^~~~~~~~~~~~~~~
+serial story: 128 tokens sha 081098bc7b81 prefill 0.208s 31.984 ms/token same True
+serial code: 128 tokens sha 605e360aac92 prefill 0.214s 32.366 ms/token same True
+serial facts: 128 tokens sha a2a09ee4a2f8 prefill 0.221s 32.792 ms/token same True
+serial long: 128 tokens sha c99358b42165 prefill 4.632s 33.533 ms/token same True
+/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-zig/zig/tests/cuda/qwen27/capture.py:102: FutureWarning: `torch.distributed.reduce_op` is deprecated, please use `torch.distributed.ReduceOp` instead
+  if isinstance(fn, JITFunction):
+done
+
+real	2m14.579s
+user	3m26.556s
+sys	0m19.250s

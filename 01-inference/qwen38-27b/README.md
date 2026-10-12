@@ -1136,3 +1136,51 @@ tiles at 8, 12 and 16 rows, `attn4_test.py` exact). Shared kernel, interleaved p
 | 12 rows, 3 tiles -> 2 | 169 -> 163 us | 374 -> 363 us | 683-706 -> 683-694 us |
 
 About 0.2 ms a round at 16 rows (0.5-0.7%), too small to see in the round bench.
+
+## TensorFold 1.x's Zig engine on the 3090 (2026-10-12)
+
+Goal: carry this 3090 work onto TensorFold 1.x's native Zig engine. Start from upstream PR #608, which adds the 27B's
+CUDA engine in Zig and was built and checked on a GB10 (sm_121). Everything here is local; nothing has been sent upstream.
+
+**Setup** (`zig/`):
+- `tools/TensorFold-zig`: worktree on `pr-608` (99bcc5b2), built with Zig 0.17.0:
+  `zig build -Dnvcc=/opt/cuda/bin/nvcc -Dsm=86`. It builds clean in about a minute.
+- The 27B engine needs a *captured Triton glue set*: the cubins Python 0.6.6 launches for the small glue kernels.
+  - This set has to be recorded on the 3090 itself (`capture_sm86.sh`). The recording uses `tools/TensorFold-066`
+    (tag v0.6.6) in `envs/tf066` (torch 2.14.1, Triton 3.8; upstream recorded with 3.7.1).
+- 0.6.6 refuses any card below sm_89 because of one FP8 prompt kernel. The 27B never launches that kernel by default.
+  - `tf066-sm86-oracle.patch` lowers the floor to 8.6 and makes that kernel trap below 8.9.
+  - The patch is for the reference copy only.
+- The PR's matmul uses thread-block clusters (sm_90+) whenever it splits K. A 3090 fails with
+  `CUDA_ERROR_INVALID_CLUSTER_SIZE`.
+  - `pr608-sm86-gemv-rows.patch` sends split-K matmuls on pre-sm_90 cards to the PR's own `lane_gemv`.
+  - It runs 16 rows a launch. A row's bits never depend on the other rows, so the bits are the same.
+
+**Exactness against 0.6.6 on the same 3090** (greedy, 128 tokens):
+
+| Check | Result |
+|---|---|
+| Serial, drafts off (story, code, facts, 4722-token prompt) | 4 of 4 replies equal token for token |
+| Drafted with DFlash2 | 4 of 4 replies equal (and equal to serial) |
+| Drafted rounds | 2 of 4 prompts equal; story 42 vs 43, long 21 vs 20 (1 round off) |
+
+The round counts are a gap: upstream's contract has them equal on the GB10. A 1-round difference means the drafter's
+proposals differ in a few bits on this card. The replies are still exact, because every proposal is verified.
+
+**Speed, drafted, one stream, 128-token replies** (`zig/results/`):
+
+| Prompt | Python 0.6.6 | Zig engine |
+|---|---|---|
+| code | 191 tok/s | 165 tok/s |
+| long (4.7K prompt) | 159 | 122 |
+| facts | 103 | 88 |
+| story | 75 | 67 |
+
+The Zig engine is 13-23% behind 0.6.6 here. The likely cause is the stand-in matmul: 0.6.6 runs `qmm.cu` on this card,
+with a fixed-order fp32 reduce instead of clusters. These are short-reply numbers with a bf16 context store, so they
+aren't comparable with our daily 221/144 (4-bit store, our kernels).
+
+Next:
+1. Port 0.6.6's sm_86 matmul (`qmm_kernel` + `reduce_kernel`) and find the drafter's 1-round gap.
+2. Run the native server for real tok/s.
+3. Then port our pieces one at a time: the 4-bit context store, faster matmul/drafter, GDN, commit, graphs, rows schedule.

@@ -1,0 +1,18 @@
+[project]
+name = "env-tf066"
+version = "0.1.0"
+description = "TensorFold 0.6.6 (tools/TensorFold-066) on the 3090: oracle for capturing the Zig engine's Triton glue set"
+requires-python = ">=3.12,<3.13"
+dependencies = ["torch", "tensorfold", "safetensors", "ninja"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+tensorfold = { path = "../../tools/TensorFold-066", editable = true }
+torch = { index = "pytorch-cu130" }
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
