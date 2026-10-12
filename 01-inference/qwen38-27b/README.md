@@ -1346,3 +1346,61 @@ Next:
 2. Find the slow first token (0.2 s vs Python's 0.05).
 3. New kernel shapes for the out-projections (~0.4 ms) and gate + up (~0.2–0.4 ms).
 4. Port GDN lanes (~2%, changes the last bits), fast commit, and the rows schedule.
+
+### The native server at 262K, and a fast first token (2026-10-12)
+
+Both limits from the run above are fixed (TensorFold-zig `8944e7aa`, in `zig/pr608-sm86.patch`).
+
+**Window.** Four changes free the room for one 262K chat (4.72 GiB with 4-bit storage):
+
+| Change | Frees |
+|---|---|
+| Work buffers sized by `--parallel` (1 chat of 16 rows, not 16 chats) | the 32K limit itself |
+| Prompt read in 1024-token chunks, not 4096 | ~1.0 GiB |
+| Word table (0.67 GiB) kept in system RAM, read over PCIe only for prompt tokens | 0.67 GiB |
+| Spare memory the server holds back: 0.5 GiB, not 1 (`TENSORFOLD_MEMORY_RESERVE_GIB=0.5`) | 0.5 GiB |
+
+The server picks the smaller chunks and the RAM word table on its own for any window past 128K. The spare-memory
+setting stays a launch flag, because it depends on what else is on the card (the desktop holds ~1.4 GB). Loaded:
+model 15.29 GiB, 1 chat of 4.72 GiB, 5.0 GiB left (`zig/results/serve-zig-262k.log`). Cost: reading a 28K prompt
+takes 30.1 s instead of 27.3 s (~10% slower).
+
+Long-prompt check (`zig/needle.py`, `zig/results/needle-zig-262k.log`): a 77K-token prompt with one fact buried in the
+middle. Read in 98 s (786 tok/s), right answer, peak 20.2 GB, GPU 77 °C.
+
+**First token.** The prompt pass used one matmul kind for every prompt length. It works in 128-row tiles, so a
+14-token prompt paid nearly the full cost of a 128-token one: ~200 ms, mostly the MLP and GDN projections. The decode
+matmuls (the ones built for 16-row rounds) beat it up to ~192 rows:
+
+| Prompt rows | 32 | 64 | 128 | 192 | 256 | 384 |
+|---|---|---|---|---|---|---|
+| Prompt matmul, ms | 215 | 199 | 205 | 287 | 293 | 395 |
+| Decode matmuls, ms | 54 | 88 | 159 | 246 | 317 | 470 |
+
+The server now sends prompt chunks of up to 192 rows to the decode matmuls (`TF_QWEN27_PROMPT_DENSE_ROWS`, 0 turns
+it off). The check tool keeps the old path, and its suite is still exact: serial 4/4, drafted 4/4, shared rounds 3/3,
+4-bit store 4/4, RAM word table 4/4. The two matmul kinds don't add in the same order, though. On 6 chat prompts of
+37–264 tokens, 5 replies were identical and 1 (89 tokens) differed. Same quality, but not always bit-identical to
+0.6.6.
+
+Server at 262K (`zig/results/ttft-zig-262k.log`, `zig/results/bench-zig-kv4-262k.json`):
+
+| | Zig, 32K this morning | Zig, 262K now |
+|---|---|---|
+| First token, 14-token prompt | 204 ms | **29–33 ms** |
+| First token, ~1000 tokens | ~890 ms | 803 ms |
+| First token, ~4000 tokens | ~3640 ms | 3290 ms |
+| Code, greedy tok/s | 193.6 | **230.3** |
+| Chat, greedy tok/s | 136.0 | **158.7** |
+| Code, sampled tok/s | 211.8 | 227.7 |
+| Chat, sampled tok/s | 143.9 | 153.1 |
+
+Decode also came out 8–19% faster than this morning's run. The cause isn't pinned down. The buffers now fit one
+chat, and the drafter's width tuning runs against that, so it may be a real gain, or it may be the machine's state.
+Python wasn't rerun, so the gap to it is provisional. This is above Python's best recorded numbers (221 / 144 from
+10-10).
+
+Next:
+1. Rerun the daily Python and Zig back to back to confirm the decode gain and recheck Python's 10–20% drop.
+2. New kernel shapes for the out-projections and gate + up.
+3. Port GDN lanes, fast commit, and the rows schedule.
