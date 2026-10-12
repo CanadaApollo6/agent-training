@@ -1,0 +1,20 @@
+info: DFlash2 drafts every stream: /home/riels/.cache/huggingface/hub/models--z-lab--Qwen3.8-27B-DFlash2/snapshots/50307d4c4cde6860d4eee73e2547cd786fe8e8a4
+[tensorfold] CUDA sm_86 device 0 (NVIDIA GeForce RTX 3090): model 18.12 GiB; 1 stream at once, 0.78 GiB each at a 32768-token window, of 1.7 GiB left after a 1.0 GiB reserve; prompts in 4096-row chunks, no prompt cache; glue kernels captured at /home/riels/.cache/tf066/aot-sm86-multi
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8093/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 32768; loaded in 15.7s)
+[tensorfold] thinking on (the chat template's default): replies reason in reasoning_content before the answer in content, and max_tokens counts both. --no-thinking turns it off; a request can send chat_template_kwargs {"enable_thinking": false}
+[tensorfold] done cmpl-97647459f828bf616a5c0d7cf5d80cb2 prompt=14 cached=0 thinking=False effort=none tokens=256 sha=f97e04e3fb6e finish=length rounds=45 accepted=213/630
+[tensorfold] done cmpl-027165db0889755ff4b9b4a80a470d8a prompt=14 cached=0 thinking=False effort=none tokens=256 sha=f97e04e3fb6e finish=length rounds=45 accepted=213/632
+[tensorfold] done cmpl-4f9029a3a781444786ad434255bf550a prompt=14 cached=0 thinking=False effort=none tokens=256 sha=4e0a0a5f5689 finish=length rounds=30 accepted=228/431
+[tensorfold] done cmpl-ce5ae88f33907f8608e996640bd570a4 prompt=14 cached=0 thinking=False effort=none tokens=256 sha=b0e01d152137 finish=length rounds=46 accepted=219/651
+[tensorfold] done chatcmpl-3a7248cc3c1c5f5b0cbbb7302c9d20ac prompt=31 cached=0 thinking=False effort=none tokens=256 sha=d8aa9de4dafc finish=length rounds=64 accepted=192/843
+[tensorfold] done chatcmpl-9b6628adc26b0849e6642a6f7f4098bd prompt=31 cached=0 thinking=False effort=none tokens=256 sha=d8aa9de4dafc finish=length rounds=64 accepted=192/844
+[tensorfold] done chatcmpl-c5aa9ee5f60711a44bf8c32cb09aec4d prompt=31 cached=0 thinking=False effort=none tokens=256 sha=40b2fe39b5a7 finish=length rounds=75 accepted=182/1012
+[tensorfold] done chatcmpl-b9d451acab9c9be58f71f82cb3b314b8 prompt=31 cached=0 thinking=False effort=none tokens=256 sha=4c86c3e59d22 finish=length rounds=63 accepted=192/784
+[tensorfold] done cmpl-4d00eaa924512b12b48a0c25d24daa8a prompt=14 cached=0 thinking=False effort=none tokens=256 sha=2b28aa2108de finish=length rounds=48 accepted=210/670
+[tensorfold] done cmpl-bdf6563736f8614eb13fead628901d76 prompt=14 cached=0 thinking=False effort=none tokens=256 sha=2b28aa2108de finish=length rounds=48 accepted=210/670
+[tensorfold] done cmpl-84231504376ea2ca8ee4b4859d39a18c prompt=14 cached=0 thinking=False effort=none tokens=256 sha=2b28aa2108de finish=length rounds=48 accepted=210/669
+[tensorfold] done cmpl-ddd8922981c5360205320ac0e671f786 prompt=14 cached=0 thinking=False effort=none tokens=256 sha=2b28aa2108de finish=length rounds=48 accepted=210/669
+[tensorfold] done chatcmpl-73cfbbd2c4d9429dd810eedea3902fdd prompt=31 cached=0 thinking=False effort=none tokens=256 sha=ed88f3ab2292 finish=length rounds=70 accepted=186/925
+[tensorfold] done chatcmpl-073cc721f85ba11652ff3c6043d7440a prompt=31 cached=0 thinking=False effort=none tokens=256 sha=ed88f3ab2292 finish=length rounds=70 accepted=186/926
+[tensorfold] done chatcmpl-ad2ea020583d8ad95ac20d3fc1d73110 prompt=31 cached=0 thinking=False effort=none tokens=256 sha=ed88f3ab2292 finish=length rounds=70 accepted=186/927
+[tensorfold] done chatcmpl-2c0b7c0941c13fdd4851b082b8d4756b prompt=31 cached=0 thinking=False effort=none tokens=256 sha=ed88f3ab2292 finish=length rounds=70 accepted=186/929

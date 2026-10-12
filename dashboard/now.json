@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "Zig engine (TensorFold 1.x, PR #608) on the 3090, replies still exactly equal to Python 0.6.6. The 16-guess MLP matmul is already at ~94% of what your card can read (788 vs 836 GB/s, the best any step reaches). Its slow isolated timings came from the 420 W power cap. Four other split settings for the remaining matmuls were all slower. What's left in the matmuls is ~2.3 ms per round (~10%), and it needs new kernel shapes. Next: those shapes, or the native server benchmark first.",
+ "next_text": "Zig engine's own server (TensorFold 1.x) now runs Qwen 27B on your 3090. Same day, back to back: greedy code ties Python (193 vs 197 tok/s), chat is ahead (133–136 vs 127), and sampled is ahead by 16–23% (code 205–212 vs 176, chat 144 vs 118). Python measured 10–20% below its own number from two days ago, cause unknown. Outputs are still token-for-token Python 0.6.6's. Limits: it only fits a 32K window so far, because its buffers are sized for 16 parallel chats, and the first token takes 0.2 s vs 0.05. Next: size buffers for one chat to reach 262K.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 221 tok/s and chat 117 → 144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, a faster GDN step kernel, a faster draft model, and 16 guesses a round under 50K context (8 above).",
  "headline_numbers": [
   {

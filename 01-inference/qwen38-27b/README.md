@@ -1300,7 +1300,49 @@ Parking partial sums in memory costs more than the extra blocks gain. What's lef
 kernel shapes: narrower column tiles for the out-projections (80 blocks on 82 SMs today, 24 groups each), and two
 column tiles a warp for gate + up (half the input reads).
 
+### The native server, benchmarked (2026-10-12)
+
+`tensorfold-native serve` with the 4-bit store (`TF_QWEN27_KV_BITS=4`), `--parallel 1`, and TensorFold's bench
+(`bench_openai.py`, 256 tokens, medians of 3). Three fixes were needed before it would load:
+
+- **The server's kernels were never recorded.** The server runs every request through the shared-round path (the one
+  that batches streams). That path's glue kernels (`MULTI=1`) are a separate recording, `capture_multi.py`, which we
+  had never run. `capture_sm86.sh` now runs it with 3 streams: 0.6.6's memory gate refuses the default 6 on 24 GB.
+  The set grows from 27 to 41 kernels. Check (`tf-qwen27-cuda multi`, `results/zig-multi-check.log`): all 3 replies
+  token-for-token 0.6.6's, same rounds. 46 drafter windows differ, but no output token does.
+- **Misaligned staging.** The shared round packed its per-round tables back to back, so one pointer landed off 16
+  bytes at some window sizes and matched no recorded kernel. Each table now starts on 16 bytes. A 16-byte-aligned
+  launch may also fall back to a kernel recorded without that hint (never the reverse).
+- **Window size.** The server sizes its work buffers for 16 streams of 16 rows, whatever `--parallel` says. One of them
+  (attention partial sums) grows with the window: ~1.6 GB at 131K. With 4-bit storage, 131K needs 2.47 GB a stream
+  and 0.61 GB is left, so 131K and 262K don't load yet. These numbers are at a 32K window, which doesn't change speed
+  on short prompts.
+
+Serial and drafted checks are still 4/4 exact against 0.6.6 with the new kernel set.
+
+Run order: Zig, then the daily Python server, then Zig again, back to back (`results/bench-kv4r-262k-sched-1012.json`,
+`zig/results/bench-zig-kv4-32k{,-b}.json`):
+
+| tok/s | Daily Python, 2 days ago | Daily Python, today | Zig server, today (run 1 / run 2) |
+|---|---|---|---|
+| Code, greedy | 220.7 | 197.1 | 193.6 / 193.4 |
+| Chat, greedy | 144.2 | 126.6 | **136.0 / 133.0** |
+| Code, sampled | 226.5 | 176.3 | **211.8 / 205.1** |
+| Chat, sampled | 145 | 117.6 | **143.9 / 144.5** |
+| First token | 0.04 s | 0.05–0.10 s | 0.20 s |
+
+Head to head on the same day, the Zig server ties Python on greedy code and wins elsewhere: chat +5–7% greedy,
+sampled +16–23%. Zig gave the same numbers before and after the Python run. Python measured 10–20% below its own
+number from two days ago, cause unknown (recheck before trusting either Python figure). Zig's first token is ~4x slower
+(0.2 s on a 14-token prompt).
+
+Where Zig's time goes (server log, `zig/results/serve-zig-32k.log`): code greedy is 48 rounds at ~27.5 ms, 5.3 tokens
+a round. The check tool's single-stream loop gives the same speed on these two prompts (195 / 128 tok/s), so the
+shared path costs nothing for one stream. Wiring the single-stream loop in as the server's lone driver (as Nemotron
+does) would gain nothing.
+
 Next:
-1. New kernel shapes for the out-projections (~0.4 ms) and gate + up (~0.2–0.4 ms), or run the native server first.
-2. Run the native server for real tok/s.
-3. Port GDN lanes (~2%, changes the last bits), fast commit, and the rows schedule. Find the drafter's 1-round gap.
+1. Fit the 262K window: size the server's buffers by `--parallel` (one stream needs 16 rows, not 256).
+2. Find the slow first token (0.2 s vs Python's 0.05).
+3. New kernel shapes for the out-projections (~0.4 ms) and gate + up (~0.2–0.4 ms).
+4. Port GDN lanes (~2%, changes the last bits), fast commit, and the rows schedule.

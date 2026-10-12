@@ -1,0 +1,6 @@
+loaded in 3.7s, weights 14.11 GiB
+round 1 stream 0: first window that differs from Python's (tree 16 rows, python tree 16)
+stream 0: 96 tokens sha c79901eca244 rounds 10 accepted 85 MATCH; python rounds 10 accepted 85
+stream 1: 90 tokens sha 05db9704a01a rounds 30 accepted 59 MATCH; python rounds 30 accepted 59
+stream 2: 96 tokens sha 2b82f6a76da2 rounds 27 accepted 68 MATCH; python rounds 27 accepted 68
+30 rounds (python 30), 46 windows differ from Python's, 0 replies differ; 135.9 tok/s

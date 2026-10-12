@@ -1681,6 +1681,60 @@ index a92416ce..1d7eb630 100644
  /// One stream of the multi check: its state, drafting, context (prompt and reply) and reply.
  const MultiStream = struct {
      seq: qwen.state.Seq,
+diff --git c/zig/src/cuda/aot.zig w/zig/src/cuda/aot.zig
+index b8e58d2e..fce864b3 100644
+--- c/zig/src/cuda/aot.zig
++++ w/zig/src/cuda/aot.zig
+@@ -122,7 +122,12 @@ pub const Set = struct {
+     pub fn find(self: *const Set, function: []const u8, args: []const Arg, consts: []const Const) !*const Variant {
+         for (self.variants) |*v| {
+             if (!std.mem.eql(u8, v.spec.@"fn", function)) continue;
+-            if (matches(v.spec, args, consts)) return v;
++            if (matches(v.spec, args, consts, false)) return v;
++        }
++        // else one compiled without assuming 16-byte alignment where these are aligned: the same code, valid for any value
++        for (self.variants) |*v| {
++            if (!std.mem.eql(u8, v.spec.@"fn", function)) continue;
++            if (matches(v.spec, args, consts, true)) return v;
+         }
+         std.log.err("no captured Triton variant of {s} for this launch:", .{function});
+         for (args) |a| switch (a.value) {
+@@ -167,7 +172,8 @@ fn lookup(args: []const Arg, name: []const u8) ?Arg {
+     return null;
+ }
+ 
+-fn matches(k: KernelJson, args: []const Arg, consts: []const Const) bool {
++/// `relaxed`: an argument divisible by 16 may also take a variant that doesn't assume it (never the reverse).
++fn matches(k: KernelJson, args: []const Arg, consts: []const Const, relaxed: bool) bool {
+     for (consts) |c| {
+         const got = k.consts.map.get(c.name) orelse return false;
+         if (c.int) |x| if (got.int == null or got.int.? != x) return false;
+@@ -189,11 +195,13 @@ fn matches(k: KernelJson, args: []const Arg, consts: []const Const) bool {
+                 const p = param.?;
+                 if (!std.mem.eql(u8, p.type, "i32")) return false;
+                 if (!p.nospec and x == 1) return false;
+-                if (p.div16 != (!p.nospec and @mod(x, 16) == 0)) return false;
++                const div16 = !p.nospec and @mod(x, 16) == 0;
++                if (p.div16 != div16 and !(relaxed and div16 and !p.div16)) return false;
+             },
+             .ptr => |x| {
+                 const p = param orelse return false;
+-                if (!std.mem.eql(u8, p.type, x.ty) or p.div16 != (x.addr % 16 == 0)) return false;
++                const div16 = x.addr % 16 == 0;
++                if (!std.mem.eql(u8, p.type, x.ty) or (p.div16 != div16 and !(relaxed and div16 and !p.div16))) return false;
+             },
+             .f32 => {
+                 const p = param orelse return false;
+@@ -201,7 +209,8 @@ fn matches(k: KernelJson, args: []const Arg, consts: []const Const) bool {
+             },
+             .u64 => |x| {
+                 const p = param orelse return false;
+-                if (!std.mem.eql(u8, p.type, "u64") or p.div16 != (x % 16 == 0)) return false;
++                const div16 = x % 16 == 0;
++                if (!std.mem.eql(u8, p.type, "u64") or (p.div16 != div16 and !(relaxed and div16 and !p.div16))) return false;
+             },
+         }
+         runtime += 1;
 diff --git c/zig/src/cuda/kernels.zig w/zig/src/cuda/kernels.zig
 index ac6c0262..d3acb22e 100644
 --- c/zig/src/cuda/kernels.zig
@@ -2388,7 +2442,7 @@ index 0397ea70..33153ac6 100644
          var n: usize = 1;
          path[0] = 0;
 diff --git c/zig/src/families/qwen27/cuda/round.zig w/zig/src/families/qwen27/cuda/round.zig
-index 2b2d4e26..4be625f2 100644
+index 2b2d4e26..27d6b9a1 100644
 --- c/zig/src/families/qwen27/cuda/round.zig
 +++ w/zig/src/families/qwen27/cuda/round.zig
 @@ -58,13 +58,24 @@ pub fn parentsOf(p: Part, buf: []i32) []const i32 {
@@ -2430,6 +2484,49 @@ index 2b2d4e26..4be625f2 100644
  }
  
  /// Every stream's host plans: positions (pos + depth), the GDN schedule (nodes offset by its start), conv windows.
+@@ -179,24 +190,35 @@ pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch,
+         try t.paths(s.attn_plan + (W + 4 + 3 * n_items) * 4, s.paths, s.depths, W);
+         return r;
+     }
+-    // multi_tree_forward: positions, stream ids, plan entries, starts, ids, windows, attention's plan in one copy
++    // multi_tree_forward: positions, stream ids, plan entries and starts, ids, windows, attention's plan in one copy, each
++    // part from a 16-byte boundary (the captured Triton variants are specialized on their pointers' alignment)
++    const pad = struct {
++        fn to16(gpa_: std.mem.Allocator, list: *std.ArrayList(i32)) !usize {
++            while (list.items.len % 4 != 0) try list.append(gpa_, 0);
++            return list.items.len;
++        }
++    }.to16;
+     try host.appendSlice(gpa, h.pos.items);
++    const at_sids = try pad(gpa, &host);
+     for (parts, 0..) |p, k| for (p.tokens) |_| try host.append(gpa, @intCast(k));
++    const at_plan = try pad(gpa, &host);
+     try host.appendSlice(gpa, h.entries.items);
+     for (r.starts_host[0 .. S + 1]) |x| try host.append(gpa, @intCast(x));
++    const at_ids = try pad(gpa, &host);
+     for (parts) |p| for (p.tokens) |tok| try host.append(gpa, @intCast(tok));
++    const at_windows = try pad(gpa, &host);
+     try host.appendSlice(gpa, h.windows.items);
+-    const at_attn = host.items.len;
++    const at_attn = try pad(gpa, &host);
+     const n_items = try attnPlan(gpa, &host, parts, group);
+     try ops.upload(s.round, std.mem.sliceAsBytes(host.items));
+     try ops.s.synchronize();
+     const base = s.round;
+     r.pos = base;
+-    r.sids = base + W * 4;
+-    r.plan = base + 2 * W * 4;
+-    r.starts = base + 5 * W * 4;
+-    r.ids = base + (5 * W + S + 1) * 4;
+-    r.windows = base + (6 * W + S + 1) * 4;
++    r.sids = base + at_sids * 4;
++    r.plan = base + at_plan * 4;
++    r.starts = r.plan + 3 * W * 4;
++    r.ids = base + at_ids * 4;
++    r.windows = base + at_windows * 4;
+     const ab = base + at_attn * 4;
+     r.attn = .{ .rows = ab, .streams = ab + W * 4, .items = ab + (W + 4 * S) * 4, .n_items = n_items, .paths = s.paths, .depths = s.depths, .width = W };
+     // the state pointer table and cache offsets, one copy each; every stream's conv rows stacked by layer
 diff --git c/zig/src/families/qwen27/cuda/shape.zig w/zig/src/families/qwen27/cuda/shape.zig
 index b018dc22..2440d333 100644
 --- c/zig/src/families/qwen27/cuda/shape.zig
@@ -2467,7 +2564,7 @@ index b018dc22..2440d333 100644
      pub fn inner(g: Geometry) usize {
          return @max(g.vInner(), g.qInner());
 diff --git c/zig/src/families/qwen27/cuda/state.zig w/zig/src/families/qwen27/cuda/state.zig
-index 4cbe06c0..9baccde1 100644
+index 4cbe06c0..57571cd1 100644
 --- c/zig/src/families/qwen27/cuda/state.zig
 +++ w/zig/src/families/qwen27/cuda/state.zig
 @@ -45,7 +45,7 @@ pub const Seq = struct {
@@ -2516,3 +2613,12 @@ index 4cbe06c0..9baccde1 100644
  pub const AttnRecord = struct { k: u64, v: u64 };
  
  /// The forward's device buffers, sized for `rows` rows a call (a decode window, or a prompt chunk).
+@@ -276,7 +275,7 @@ pub const Scratch = struct {
+         s.taps = try A.take(R * 5 * g.hidden * bf);
+         s.replay_table = try A.take(g.layers * (4 + max_streams) * 8);
+         s.replay_rows = try A.take(max_streams * (W + 1) * 4);
+-        s.round = try A.take((6 * W + max_streams + 1 + W * c.conv_taps + W + 4 * max_streams + 3 * items * max_streams + W) * 4);
++        s.round = try A.take((6 * W + max_streams + 1 + W * c.conv_taps + W + 4 * max_streams + 3 * items * max_streams + W + 32) * 4); // + each part's 16-byte padding
+         s.tables = try A.take(g.layers * max_streams * 8);
+         s.conv_cat = try A.take(g.layers * max_streams * (c.conv_taps - 1) * g.convDim() * bf);
+         for (0..g.layers) |i| {
