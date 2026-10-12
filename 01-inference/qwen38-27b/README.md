@@ -1186,7 +1186,27 @@ proposals differ in a few bits on this card. The replies are still exact, becaus
 These are short-reply numbers from the check tool, with a bf16 context store. They aren't the server benchmark behind
 our daily 221/144 (4-bit store, 262K window), so they can't be compared with it directly.
 
+**The 4-bit context store** (`TF_QWEN27_KV_BITS=4`, off by default; `zig/kernels/cuda/kv4.cu` in the patch):
+- It uses our Python stack's format: 144 bytes per position and key head, instead of 512. Across all 16 attention
+  layers that is 18 KiB per position, down from 64 KiB.
+- Decode uses our `attn4` kernel, and prompts use upstream's prompt-attention kernel with a 4-bit loader.
+- It is off by default because it isn't exact against bf16 (upstream's rule).
+
+| Check (4-bit on) | Result |
+|---|---|
+| bf16 path after the change | still 8 of 8 equal to 0.6.6 (`zig-*-kv16-regress.log`) |
+| Drafted vs serial | 4 of 4 replies equal (`zig-draft-kv4.log` against `serial-kv4.json`) |
+| Reply quality | Fluent. The first word change comes after 8-55 tokens (e.g. "frayed" becomes "fraying"). The 4.7K-prompt reply equals bf16's for all 128 tokens. |
+
+| Long context, drafts off | bf16 store | 4-bit store |
+|---|---|---|
+| 28K-token prompt: decode | ~30.7 ms/token | **~26.3 ms/token** |
+| 28K-token prompt: prompt time | 27.3 s | 28.5 s |
+| 61K-token prompt | out of memory | fits, ~26.4 ms/token |
+
+The decode times are rough: (time for 129 tokens − time for 1 token) / tokens, from one run each (`zig-long*.log`).
+
 Next:
 1. Find the drafter's 1-round gap.
 2. Run the native server for real tok/s.
-3. Then port our pieces one at a time: the 4-bit context store, faster matmul/drafter, GDN, commit, graphs, rows schedule.
+3. Port the remaining pieces one at a time: the faster drafter, GDN lanes, fast commit, graphs, and the rows schedule.

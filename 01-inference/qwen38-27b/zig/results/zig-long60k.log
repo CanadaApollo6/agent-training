@@ -1,0 +1,12 @@
+bits 16 max 1
+error: cuMemAlloc: CUDA_ERROR_OUT_OF_MEMORY (2) out of memory
+error: OutOfDeviceMemory
+bits 16 max 129
+error: cuMemAlloc: CUDA_ERROR_OUT_OF_MEMORY (2) out of memory
+error: OutOfDeviceMemory
+bits 4 max 1
+loaded in 3.5s, weights 14.11 GiB
+long60k: prompt 61386, 1 tokens sha 1a4a084d5fec in 71.68s
+bits 4 max 129
+loaded in 4.8s, weights 14.11 GiB
+long60k: prompt 61386, 129 tokens sha 085c10b02029 in 75.06s

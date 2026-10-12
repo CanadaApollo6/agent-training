@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "New daily setting verified on the server: TENSORFOLD_ROWS=16 TENSORFOLD_ROWS_BY_CONTEXT=16:50000,8. Code 214 → 221, chat 140 → 144 tok/s (greedy, short prompts); 132K recall right, peak 24.07 GB, the same as before. Long-context attention can't make 16 rows win past 50K (the card is at its power cap). Remaining small lever: lighter partial-result merge (1-2% at 100K, needs a quality check).",
+ "next_text": "Zig engine (TensorFold 1.x, PR #608) on the 3090: our matmul is ported. Drafted code is 264 tok/s vs Python 0.6.6's 191, with replies still exactly equal. The 4-bit context store is now in too, as an opt-in flag. It cuts memory per token from 64 to 18 KiB, so a 61K prompt fits where bf16 runs out of memory. At 28K context it decodes ~14% faster (26 vs 31 ms/token), and drafted replies equal serial ones. Next: the drafter speedups, GDN lanes, fast commit, graphs, then the native server for numbers like the daily 221/144.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 221 tok/s and chat 117 → 144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, a faster GDN step kernel, a faster draft model, and 16 guesses a round under 50K context (8 above).",
  "headline_numbers": [
   {
