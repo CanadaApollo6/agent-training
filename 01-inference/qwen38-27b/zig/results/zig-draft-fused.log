@@ -1,0 +1,11 @@
+# TF_QWEN27_PROFILE=1 tf-qwen27-cuda draft, one segmented launch per shared input (abca8c96), vs 0.6.6's draft.json
+story: 128 tokens sha 081098bc7b81, rounds 42 accepted 85, 111.7 tok/s MATCH; python rounds 43 accepted 84
+  ms a round: draft 2.38, verify 23.99 (queued in 0.81), picks 0.20, commit+absorb 0.68
+code: 128 tokens sha 605e360aac92, rounds 17 accepted 110, 274.8 tok/s MATCH; python rounds 17 accepted 110
+  ms a round: draft 2.36, verify 24.10 (queued in 0.79), picks 0.19, commit+absorb 0.71
+facts: 128 tokens sha a2a09ee4a2f8, rounds 32 accepted 95, 147.3 tok/s MATCH; python rounds 32 accepted 95
+  ms a round: draft 2.32, verify 23.92 (queued in 0.78), picks 0.20, commit+absorb 0.70
+long: 128 tokens sha c99358b42165, rounds 21 accepted 106, 207.0 tok/s MATCH; python rounds 20 accepted 107
+  ms a round: draft 2.72, verify 25.76 (queued in 0.85), picks 0.16, commit+absorb 0.76
+# before (dd06e939): story draft 2.37 verify 25.10 (queued 0.92); code draft 2.35 verify 25.24 (queued 0.94), 264 tok/s
+# serial (run) after: story/code/facts/long all MATCH 0.6.6's results.json

@@ -1,0 +1,4 @@
+# TF_QWEN27_PROFILE=ops tf-qwen27-cuda draft (bf16 store), verify forward by operation, ms a round, synced after each op
+# (each sync adds a few us, so the ops sum ~1.5 ms over the plain verify time). code prompt.
+before (one launch a weight): stage 0.06 embed 0.01 norm 1.25 gdn_proj 4.35 gdn_pre 0.64 gdn_tree 1.13 gated_norm 0.33 gdn_out 1.43 attn_proj 1.01 attn_prep 0.00 attention 0.98 gate_mul 0.18 attn_out 0.51 gate_up 8.52 swiglu 1.07 down 4.31 tap 0.07 head 0.84
+after (one launch per shared input): stage 0.10 embed 0.01 norm 1.31 gdn_proj 3.84 gdn_pre 0.67 gdn_tree 1.20 gated_norm 0.38 gdn_out 1.45 attn_proj 1.09 attn_prep 0.00 attention 0.79 gate_mul 0.11 attn_out 0.51 gate_up 8.24 swiglu 0.79 down 4.35 tap 0.04 head 0.84

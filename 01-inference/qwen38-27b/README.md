@@ -1206,7 +1206,38 @@ our daily 221/144 (4-bit store, 262K window), so they can't be compared with it 
 
 The decode times are rough: (time for 129 tokens − time for 1 token) / tokens, from one run each (`zig-long*.log`).
 
+**Where a drafted round goes** (`TF_QWEN27_PROFILE=1`, bf16 store, short prompts): draft 2.35 ms, verify 25.1 ms,
+picks 0.13 ms, commit + absorb 0.67 ms. The verify is the main model on 16 rows and takes about 90% of the round.
+The CPU queues all its launches in 0.9 ms, so the time is GPU work, not launch overhead. CUDA graphs would save
+little, and so would a faster drafter (about 1% of the round).
+
+The verify by operation (`TF_QWEN27_PROFILE=ops` syncs after each one; `zig-verify-ops.log`), against a weight-read
+floor at 936 GB/s:
+
+| Verify op (ms a round) | Measured | Weight-read floor | Share of peak |
+|---|---|---|---|
+| MLP gate + up | 8.52 | 6.86 | 80% |
+| MLP down | 4.31 | 3.43 | 80% |
+| GDN in-projections (qkv, z, b, a) | 4.35 | 2.43 | 56% |
+| GDN out-projection | 1.43 | 0.91 | 64% |
+| Attention q, k, v | 1.01 | 0.81 | 80% |
+| Attention out | 0.51 | 0.30 | 59% |
+| Head | 0.84 | 0.76 | 90% |
+| Everything else (norms, GDN, attention, activations) | ~5.5 | — | each sync adds a few us |
+
+**One launch per shared input** (`denseMany`): weights that read the same input now share one launch of the 3090
+matmul's segmented kernel. These are GDN's four in-projections, attention's q, k and v, and the MLP's gate and up.
+Weights are grouped by their own K split, so every output keeps the same bits as its own launch.
+
+| | Before | After |
+|---|---|---|
+| GDN in-projections | 4.35 ms | **3.84 ms** |
+| MLP gate + up | 8.52 ms | **8.24 ms** |
+| Verify (plain, code prompt) | 25.2 ms | **24.1 ms** |
+| Drafted check, code prompt | 264 tok/s | **275 tok/s** |
+| Exactness | 8 of 8 | 8 of 8 (drafted and serial equal 0.6.6) |
+
 Next:
-1. Find the drafter's 1-round gap.
+1. The matmuls run at 56–80% of peak bandwidth: ~5 ms a round above the floor, the biggest gap left.
 2. Run the native server for real tok/s.
-3. Port the remaining pieces one at a time: the faster drafter, GDN lanes, fast commit, graphs, and the rows schedule.
+3. Port GDN lanes (~2%, changes the last bits), fast commit, and the rows schedule. Find the drafter's 1-round gap.

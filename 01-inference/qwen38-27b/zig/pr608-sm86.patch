@@ -1378,7 +1378,7 @@ index 00000000..87532527
 +
 +} // namespace qmm_frag
 diff --git c/zig/src/cli/qwen27_cuda.zig w/zig/src/cli/qwen27_cuda.zig
-index a92416ce..0c69eb7f 100644
+index a92416ce..2ee99dc0 100644
 --- c/zig/src/cli/qwen27_cuda.zig
 +++ w/zig/src/cli/qwen27_cuda.zig
 @@ -5,7 +5,7 @@ const cuda = @import("cuda");
@@ -1430,6 +1430,23 @@ index a92416ce..0c69eb7f 100644
      return if (mismatches == 0) 0 else 1;
  }
  
+@@ -302,6 +311,16 @@ fn runDrafted(gpa: std.mem.Allocator, a: std.mem.Allocator, io: std.Io, e: *qwen
+             verdict = try std.fmt.allocPrint(a, " {s}; python rounds {d} accepted {d}", .{ if (same) "MATCH" else "DIFFER", want_v.object.get("rounds").?.integer, want_v.object.get("accepted").?.integer });
+         }
+         std.debug.print("{s}: {d} tokens sha {s}, rounds {d} accepted {d}, {d:.1} tok/s{s}\n", .{ name, out.items.len, try sha12(a, out.items), stats.rounds, stats.accepted, @as(f64, @floatFromInt(out.items.len)) / secs, verdict });
++        if (stats.ms[1] > 0) {
++            const r: f64 = @floatFromInt(stats.rounds);
++            var line: std.ArrayList(u8) = .empty;
++            for (std.enums.values(qwen.forward.Op), 0..) |op, j| {
++                try line.print(a, " {s} {d:.2}", .{ @tagName(op), qwen.forward.prof_ms[j] / r });
++                qwen.forward.prof_ms[j] = 0;
++            }
++            std.debug.print("  verify ops, ms a round (synced each):{s}\n", .{line.items});
++            std.debug.print("  ms a round: draft {d:.2}, verify {d:.2} (queued in {d:.2}), picks {d:.2}, commit+absorb {d:.2}\n", .{ stats.ms[0] / r, stats.ms[1] / r, stats.queued / r, stats.ms[2] / r, stats.ms[3] / r });
++        }
+     }
+     return if (bad == 0) 0 else 1;
+ }
 diff --git c/zig/src/cuda/kernels.zig w/zig/src/cuda/kernels.zig
 index ac6c0262..d3acb22e 100644
 --- c/zig/src/cuda/kernels.zig
@@ -1443,20 +1460,111 @@ index ac6c0262..d3acb22e 100644
  pub const affine4_pack: []const u8 = if (available) &Blob("fatbin_affine4_pack").bytes else &.{};
  pub const qwen_ops: []const u8 = if (available) &Blob("fatbin_qwen_ops").bytes else &.{};
  pub const sample: []const u8 = if (available) &Blob("fatbin_sample").bytes else &.{};
+diff --git c/zig/src/families/qwen27/cuda.zig w/zig/src/families/qwen27/cuda.zig
+index 3532c69c..c2a77179 100644
+--- c/zig/src/families/qwen27/cuda.zig
++++ w/zig/src/families/qwen27/cuda.zig
+@@ -5,7 +5,8 @@ pub const kernels = @import("cuda/kernels.zig");
+ pub const triton = @import("cuda/triton.zig");
+ pub const weights = @import("cuda/weights.zig");
+ pub const state = @import("cuda/state.zig");
+-pub const Forward = @import("cuda/forward.zig").Forward;
++pub const forward = @import("cuda/forward.zig");
++pub const Forward = forward.Forward;
+ pub const Part = @import("cuda/forward.zig").Part;
+ pub const engine = @import("cuda/engine.zig");
+ pub const Engine = engine.Engine;
 diff --git c/zig/src/families/qwen27/cuda/forward.zig w/zig/src/families/qwen27/cuda/forward.zig
-index 4e4964be..466a4fb4 100644
+index 4e4964be..1a753943 100644
 --- c/zig/src/families/qwen27/cuda/forward.zig
 +++ w/zig/src/families/qwen27/cuda/forward.zig
-@@ -114,9 +114,21 @@ pub const Forward = struct {
+@@ -13,6 +13,18 @@ pub const Part = rnd.Part;
+ /// The target layers DFlash2 reads (dflash_config.target_layer_ids).
+ pub const tap_layers = [_]usize{ 5, 19, 33, 47, 61 };
+ 
++/// TF_QWEN27_PROFILE's breakdown of verify rounds: synced ms by operation (a sync after each, so a few us extra each).
++pub const Op = enum { stage, embed, norm, gdn_proj, gdn_pre, gdn_tree, gated_norm, gdn_out, attn_proj, attn_prep, attention, gate_mul, attn_out, gate_up, swiglu, down, tap, head };
++pub var prof_on: bool = false;
++pub var prof_ms: [std.enums.values(Op).len]f64 = @splat(0);
++var prof_mark: f64 = 0;
++
++fn nowMs() f64 {
++    var ts: std.c.timespec = undefined;
++    _ = std.c.clock_gettime(.MONOTONIC, &ts);
++    return @as(f64, @floatFromInt(ts.sec)) * 1e3 + @as(f64, @floatFromInt(ts.nsec)) / 1e6;
++}
++
+ pub const Forward = struct {
+     gpa: std.mem.Allocator,
+     w: *const wts.Weights,
+@@ -46,6 +58,14 @@ pub const Forward = struct {
+         try f.ops.s.synchronize(); // the host copy must outlive the async upload
+     }
+ 
++    fn tick(f: *Forward, op: Op) !void {
++        if (!prof_on) return;
++        try f.ops.s.synchronize();
++        const t = nowMs();
++        prof_ms[@intFromEnum(op)] += t - prof_mark;
++        prof_mark = t;
++    }
++
+     /// add_rmsnorm into the scratch's other residual buffer; returns the residual stream's new home.
+     fn norm(f: *Forward, x: u64, r: ?u64, weight: u64, rows: usize) !u64 {
+         const out = if (r == null) x else if (x == f.s.x) f.s.h else f.s.x;
+@@ -85,55 +105,82 @@ pub const Forward = struct {
+         const s = f.s;
+         const g_ = f.g();
+         const w = f.w;
++        if (prof_on) {
++            try f.ops.s.synchronize();
++            prof_mark = nowMs();
++        }
+         const r = try rnd.stage(f.gpa, f.ops, f.t, s, g_, parts);
+         const W = r.rows;
++        try f.tick(.stage);
+         try f.t.embed(r.ids, w.embed.w, w.embed.s, w.embed.b, s.x, W, g_.hidden);
++        try f.tick(.embed);
+         var x = s.x;
+         var pending: ?u64 = null;
+         var lin: usize = 0;
+         var att: usize = 0;
+         for (w.layers, 0..) |layer, i| {
+             x = try f.norm(x, pending, layer.input_norm, W);
++            try f.tick(.norm);
+             switch (layer.mixer) {
+                 .delta => |d| {
+                     const rec = s.records[i];
+-                    try f.ops.dense(s.y, s.xs, d.qkv, rec.qkv, W);
+-                    try f.ops.dense(s.y, s.xs, d.z, s.z, W);
+-                    try f.ops.dense(s.y, s.xs, d.b, s.b, W);
+-                    try f.ops.dense(s.y, s.xs, d.a, s.a, W);
++                    try f.ops.denseMany(s.y, s.xs, &.{ d.qkv, d.z, d.b, d.a }, &.{ rec.qkv, s.z, s.b, s.a }, W);
++                    try f.tick(.gdn_proj);
+                     const sid: ?u64 = if (r.multi) r.sids else null;
+                     try f.t.gdnPre(rec.qkv, r.conv(parts, s, g_, i, lin), d.conv, r.windows, sid, s.a, s.b, d.a_log, d.dt_bias, rec.q, rec.k, rec.v, rec.g, rec.beta, W, f.gdnShape());
++                    try f.tick(.gdn_pre);
+                     const state = if (r.multi) 0 else parts[0].seq.rec[i];
+                     const table = if (r.multi) r.table(lin) else 0;
+                     try f.ops.gdnTree(rec.q, rec.k, rec.v, rec.g, rec.beta, state, table, if (r.multi) r.starts else 0, r.plan, s.yr, W, r.streams, r.slots, r.most, f.heads());
++                    try f.tick(.gdn_tree);
+                     try f.t.gatedNorm(s.yr, s.z, d.norm, s.gated, s.gated_xs, W, g_.linear_v_heads, c.linear_dim, c.eps);
++                    try f.tick(.gated_norm);
+                     try f.ops.dense(s.gated, s.gated_xs, d.out, s.r, W);
++                    try f.tick(.gdn_out);
+                     lin += 1;
+                 },
+                 .attention => |a| {
                      const rec = s.attn_records[i];
-                     try f.ops.dense(s.y, s.xs, a.q, s.qg, W);
-                     try f.ops.dense(s.y, s.xs, a.k, s.key, W);
+-                    try f.ops.dense(s.y, s.xs, a.q, s.qg, W);
+-                    try f.ops.dense(s.y, s.xs, a.k, s.key, W);
 -                    try f.ops.dense(s.y, s.xs, a.v, rec.v, W);
 -                    try f.t.attnPrep(s.qg, s.key, a.q_norm, a.k_norm, r.pos, w.inv_freq, s.q_rot, rec.k, W, f.attnShape(), c.eps);
 -                    try f.t.attention(s.q_rot, rec.k, rec.v, s.origin, r.offsets(i, att), r.attn, .{ .o = s.part_o, .m = s.part_m, .l = s.part_l }, s.attn, f.attnShape());
++                    try f.ops.denseMany(s.y, s.xs, &.{ a.q, a.k, a.v }, &.{ s.qg, s.key, if (c.kv4()) s.prompt_values else rec.v }, W);
++                    try f.tick(.attn_proj);
 +                    if (c.kv4()) {
 +                        // the window's keys and values packed as the cache keeps them, attended in rotated space
-+                        try f.ops.dense(s.y, s.xs, a.v, s.prompt_values, W);
 +                        try f.t.attnPrep(s.qg, s.key, a.q_norm, a.k_norm, r.pos, w.inv_freq, s.q_rot, s.prompt_keys, W, f.attnShape(), c.eps);
 +                        try f.ops.kv4Quant(s.prompt_keys, rec.k, W * g_.kv_heads);
 +                        try f.ops.kv4Quant(s.prompt_values, rec.v, W * g_.kv_heads);
@@ -1465,14 +1573,40 @@ index 4e4964be..466a4fb4 100644
 +                        try f.ops.attention4(s.q_rot, s.origin, r.offsets(i, att), p.streams, p.items, p.n_items, p.rows, p.paths, p.depths, rec.k, rec.v, s.part_o, s.part_m, s.part_l, s.attn, W, g_.query_heads, g_.kv_heads, tri.max_nodes, tri.chunk);
 +                        try f.ops.kv4Rotate(s.attn, s.attn, W * g_.qInner());
 +                    } else {
-+                        try f.ops.dense(s.y, s.xs, a.v, rec.v, W);
 +                        try f.t.attnPrep(s.qg, s.key, a.q_norm, a.k_norm, r.pos, w.inv_freq, s.q_rot, rec.k, W, f.attnShape(), c.eps);
 +                        try f.t.attention(s.q_rot, rec.k, rec.v, s.origin, r.offsets(i, att), r.attn, .{ .o = s.part_o, .m = s.part_m, .l = s.part_l }, s.attn, f.attnShape());
 +                    }
++                    try f.tick(.attention);
                      try f.t.gateMul(s.attn, s.qg, s.gated, s.gated_xs, W, g_.query_heads, c.head_dim);
++                    try f.tick(.gate_mul);
                      try f.ops.dense(s.gated, s.gated_xs, a.o, s.r, W);
++                    try f.tick(.attn_out);
                      att += 1;
-@@ -172,7 +184,7 @@ pub const Forward = struct {
+                 },
+             }
+             x = try f.norm(x, s.r, layer.post_norm, W);
+-            try f.ops.dense(s.y, s.xs, layer.gate, s.gate, W);
+-            try f.ops.dense(s.y, s.xs, layer.up, s.up, W);
++            try f.tick(.norm);
++            try f.ops.denseMany(s.y, s.xs, &.{ layer.gate, layer.up }, &.{ s.gate, s.up }, W);
++            try f.tick(.gate_up);
+             try f.t.swiglu(s.gate, s.up, s.act, s.act_xs, W, g_.intermediate);
++            try f.tick(.swiglu);
+             try f.ops.dense(s.act, s.act_xs, layer.down, s.pending, W);
++            try f.tick(.down);
+             pending = s.pending;
+             try f.tapLayer(i, x, W);
++            try f.tick(.tap);
+         }
+         const spare = if (x == s.x) s.h else s.x;
+         try f.t.addRmsnorm(x, pending, w.norm, spare, s.last_h, s.last_xs, W, g_.hidden, c.eps);
+         if (f.dump) |*d| try f.saveRows(d, spare, s.last_h, W);
+         try f.ops.dense(s.last_h, s.last_xs, w.head, s.logits, W);
++        try f.tick(.head);
+     }
+ 
+     /// commit_streams after a round over `parts`: each stream keeps the window rows of its accepted path.
+@@ -172,7 +219,7 @@ pub const Forward = struct {
          try f.ops.gdnReplay(s.replay_table, layers, S, s.replay_rows, width + 1, s.replay_rows + width * 4, width + 1, f.heads());
          const row = g_.convDim() * bf;
          const keep = c.conv_taps - 1;
@@ -1481,7 +1615,7 @@ index 4e4964be..466a4fb4 100644
          // conv rows: the last three of [committed | accepted rows]; old ones saved first, then written with the rest
          var save: std.ArrayList(kern.Copy) = .empty;
          defer save.deinit(f.gpa);
-@@ -235,7 +247,7 @@ pub const Forward = struct {
+@@ -235,7 +282,7 @@ pub const Forward = struct {
          try f.t.embed(s.ids, w.embed.w, w.embed.s, w.embed.b, s.x, W, g_.hidden);
          var x = s.x;
          var pending: ?u64 = null;
@@ -1490,7 +1624,7 @@ index 4e4964be..466a4fb4 100644
          const row = g_.convDim() * bf;
          const keep = c.conv_taps - 1;
          for (w.layers, 0..) |layer, i| {
-@@ -262,10 +274,21 @@ pub const Forward = struct {
+@@ -262,10 +309,21 @@ pub const Forward = struct {
                  .attention => |a| {
                      try f.ops.prefillDense(s.y, a.q, s.qg, W);
                      try f.ops.prefillDense(s.y, a.k, s.key, W);
@@ -1515,7 +1649,7 @@ index 4e4964be..466a4fb4 100644
                      try f.t.gateMul(s.attn, s.qg, s.gated, s.gated_xs, W, g_.query_heads, c.head_dim);
                      try f.ops.prefillDense(s.gated, a.o, s.r, W);
                  },
-@@ -306,8 +329,11 @@ pub const Forward = struct {
+@@ -306,8 +364,11 @@ pub const Forward = struct {
          const W = starts[S];
          if (W > s.rows) return error.ChunkTooLong;
          const keep = c.conv_taps - 1;
@@ -1528,7 +1662,7 @@ index 4e4964be..466a4fb4 100644
          {
              // ids, positions, each row's stream and its conv window: [the streams' kept rows; every prompt row]
              const host = try f.gpa.alloc(i32, W * (3 + c.conv_taps));
-@@ -356,8 +382,8 @@ pub const Forward = struct {
+@@ -356,8 +417,8 @@ pub const Forward = struct {
                  for (pieces, 0..) |p, k| {
                      const o = starts[k];
                      const n = p.ids.len;
@@ -1539,7 +1673,7 @@ index 4e4964be..466a4fb4 100644
                  }
              }
          }
-@@ -395,10 +421,17 @@ pub const Forward = struct {
+@@ -395,10 +456,17 @@ pub const Forward = struct {
                      try f.ops.prefillDense(s.y, a.k, s.key, W);
                      try f.ops.prefillDense(s.y, a.v, s.prompt_values, W);
                      try f.t.attnPrep(s.qg, s.key, a.q_norm, a.k_norm, s.pos, w.inv_freq, s.q_rot, s.prompt_keys, W, f.attnShape(), c.eps);
@@ -1559,7 +1693,7 @@ index 4e4964be..466a4fb4 100644
                      try f.ops.prefillDense(s.gated, a.o, s.r, W);
                  },
 diff --git c/zig/src/families/qwen27/cuda/kernels.zig w/zig/src/families/qwen27/cuda/kernels.zig
-index 4b486922..ef7b1145 100644
+index 4b486922..90ce895f 100644
 --- c/zig/src/families/qwen27/cuda/kernels.zig
 +++ w/zig/src/families/qwen27/cuda/kernels.zig
 @@ -30,7 +30,12 @@ pub const GemvPart = extern struct { w: u64, scales: u64, biases: u64, out: u64,
@@ -1692,7 +1826,7 @@ index 4b486922..ef7b1145 100644
          for (&k.mods) |*m| m.unload();
      }
  };
-@@ -167,6 +229,7 @@ pub const Ops = struct {
+@@ -167,13 +229,45 @@ pub const Ops = struct {
      /// qmm.matmul on sm_12x: x (rows, k) bf16 with group sums xs -> out (rows, n) bf16, qmm_group's bits.
      pub fn dense(o: Ops, x: u64, xs: u64, q: QLinear, out: u64, rows: usize) !void {
          const sk = splitK(q.n, q.k);
@@ -1700,15 +1834,45 @@ index 4b486922..ef7b1145 100644
          if (rows > 16) return o.wideTile(x, xs, q, out, rows, sk);
          // Python's clusters, a CTA a K slice; lane_gemv (byte-equal) when TF_QWEN27_GEMV_ROWS asks for it
          return if (sk > 1 and rows <= o.k.gemv_rows) o.gemv(x, xs, q, out, rows, sk) else o.cluster(x, xs, q, out, rows, sk);
-@@ -174,6 +237,7 @@ pub const Ops = struct {
+     }
  
++    /// Several weights over the same input: up to 16 rows on the 3090 path, one segmented launch for each K split they share
++    /// (each weight's own split, so every output is the one its own launch gives); else each alone.
++    pub fn denseMany(o: Ops, x: u64, xs: u64, qs: []const QLinear, outs: []const u64, rows: usize) !void {
++        if (o.k.clusters or rows > 16 or (o.k.gemv_rows > 0 and rows <= o.k.gemv_rows)) {
++            for (qs, outs) |q, out| try o.dense(x, xs, q, out, rows);
++            return;
++        }
++        var done: u8 = 0;
++        for (qs, 0..) |q0, i| {
++            if (done & (@as(u8, 1) << @intCast(i)) != 0) continue;
++            const sk = splitK(q0.n, q0.k);
++            var segs: Segs = std.mem.zeroes(Segs);
++            var blocks: usize = 0;
++            var sync: usize = 0;
++            var part: u64 = o.k.part.ptr;
++            for (qs[i..], outs[i..], i..) |q, out, j| {
++                if (splitK(q.n, q.k) != sk or q.k != q0.k or segs.count == 4) continue;
++                done |= @as(u8, 1) << @intCast(j);
++                const tiles = (q.n + 63) / 64;
++                segs.s[@intCast(segs.count)] = .{ .w = q.w, .scales = q.s, .biases = q.b, .out = out, .part = if (sk > 1) part else 0, .n = int(q.n), .npad = int(q.npad), .sk = int(sk), .blocks = int(tiles * sk), .sync = int(sync) };
++                segs.count += 1;
++                blocks += tiles * sk;
++                sync += tiles;
++                part += sk * rows * q.n * 4;
++            }
++            if (sk > 1 and sync > sync_counters) return error.TooManyTiles;
++            try o.segLaunch(x, xs, segs, blocks, sk, rows, q0.k);
++        }
++    }
++
      /// qmm.matmul at a K split the caller names (matmul_rows takes the stacked weight's for each part).
      pub fn denseSplit(o: Ops, x: u64, xs: u64, q: QLinear, out: u64, rows: usize, sk: usize) !void {
 +        if (!o.k.clusters and !(sk > 1 and rows <= o.k.gemv_rows)) return o.lane3090(x, xs, q, out, rows, sk);
          if (rows > 16) return o.wideTile(x, xs, q, out, rows, sk);
          return if (sk > 1 and rows <= o.k.gemv_rows) o.gemv(x, xs, q, out, rows, sk) else o.cluster(x, xs, q, out, rows, sk);
      }
-@@ -198,6 +262,58 @@ pub const Ops = struct {
+@@ -198,6 +292,62 @@ pub const Ops = struct {
          try cuda.launch.launch(o.k.gemv, cfg, o.s, &a);
      }
  
@@ -1730,6 +1894,10 @@ index 4b486922..ef7b1145 100644
 +        var segs: Segs = std.mem.zeroes(Segs);
 +        segs.count = 1;
 +        segs.s[0] = .{ .w = q.w, .scales = q.s, .biases = q.b, .out = out, .part = if (sk > 1) o.k.part.ptr else 0, .n = int(q.n), .npad = int(q.npad), .sk = int(sk), .blocks = int(blocks), .sync = 0 };
++        return o.segLaunch(x, xs, segs, blocks, sk, rows, q.k);
++    }
++
++    fn segLaunch(o: Ops, x: u64, xs: u64, segs: Segs, blocks: usize, sk: usize, rows: usize, k: usize) !void {
 +        // qmm_seg_cuda: past 4 blocks an SM, 3 stages; 2 or 4 slices side by side in a block
 +        const st: u32 = if (blocks > 4 * o.k.sms) 3 else 4;
 +        const g: u32 = if (sk == 2 or sk == 4) @intCast(sk) else 1;
@@ -1739,7 +1907,7 @@ index 4b486922..ef7b1145 100644
 +        a.add(xs);
 +        a.add(segs);
 +        a.add(o.k.sync.ptr);
-+        for ([_]usize{ rows, q.k, q.k }) |v| a.add(int(v));
++        for ([_]usize{ rows, k, k }) |v| a.add(int(v));
 +        const smem = if (g > 1) g * st * seg_stage else @max(st * seg_stage, 4096);
 +        try cuda.launch.launch(f, .{ .grid = .{ .x = u(blocks / g) }, .block = .{ .x = 128 * g }, .shared = smem }, o.s, &a);
 +    }
@@ -1767,7 +1935,7 @@ index 4b486922..ef7b1145 100644
      /// qmm_group's tile 2 with one K slice: a CTA a column tile.
      fn cluster(o: Ops, x: u64, xs: u64, q: QLinear, out: u64, rows: usize, sk: usize) !void {
          const tiles = (q.n + 63) / 64;
-@@ -309,6 +425,65 @@ pub const Ops = struct {
+@@ -309,6 +459,65 @@ pub const Ops = struct {
          try o.go(o.k.pattn, .{ (rows + block_rows - 1) / block_rows, kv_heads * (g / hpc), 1 }, 256, pattn_smem, &a);
      }
  
@@ -1833,6 +2001,79 @@ index 4b486922..ef7b1145 100644
      /// torch.argmax(rows of bf16 logits) as int32: the first maximum, a NaN first.
      pub fn argmax(o: Ops, logits: u64, vocab: usize, ld: usize, out: u64, rows: usize) !void {
          var a: cuda.Args = .{};
+diff --git c/zig/src/families/qwen27/cuda/lone.zig w/zig/src/families/qwen27/cuda/lone.zig
+index 0397ea70..33153ac6 100644
+--- c/zig/src/families/qwen27/cuda/lone.zig
++++ w/zig/src/families/qwen27/cuda/lone.zig
+@@ -9,7 +9,8 @@ const kern = @import("kernels.zig");
+ const dr = @import("draft.zig");
+ const dl = @import("draft_load.zig");
+ const Engine = @import("engine.zig").Engine;
+-const Forward = @import("forward.zig").Forward;
++const fw = @import("forward.zig");
++const Forward = fw.Forward;
+ const Part = @import("forward.zig").Part;
+ const Lanes = @import("lanes.zig").Cuda;
+ 
+@@ -68,7 +69,19 @@ pub fn nextCopyRows(rows: usize, whole: bool, tree_rows: usize, max_rows: usize)
+     return if (whole) @min(max_rows, @max(rows, first) * 2) else @max(first, @min(rows, max_rows) / 2);
+ }
+ 
+-pub const Stats = struct { rounds: usize = 0, drafted: usize = 0, accepted: usize = 0 };
++pub const Stats = struct {
++    rounds: usize = 0,
++    drafted: usize = 0,
++    accepted: usize = 0,
++    queued: f64 = 0, // the verify forward's host time to queue its launches (profile only)
++    ms: [4]f64 = @splat(0), // TF_QWEN27_PROFILE=1: synced ms in drafting, the verify forward, picks, commit + absorb
++};
++
++fn nowMs() f64 {
++    var ts: std.c.timespec = undefined;
++    _ = std.c.clock_gettime(.MONOTONIC, &ts);
++    return @as(f64, @floatFromInt(ts.sec)) * 1e3 + @as(f64, @floatFromInt(ts.nsec)) / 1e6;
++}
+ 
+ /// prefill_state with a drafter: the prompt in even chunks, its last `window` rows' taps into the context.
+ pub fn prefill(e: *Engine, seq: *st.Seq, ctx: *dr.Context, d: *dr.DFlash2, prompt: []const u32) !void {
+@@ -108,8 +121,22 @@ pub fn decode(e: *Engine, seq: *st.Seq, ctx: *dr.Context, d: *dr.DFlash2, prompt
+     var path: [st.max_rows]u32 = undefined;
+     var f = e.forward();
+     f.taps = e.scratch.taps;
++    const profile = std.c.getenv("TF_QWEN27_PROFILE") != null;
++    // =ops: also each verify operation's synced time (forward.prof_ms), which slows the round a little
++    const ops = if (std.c.getenv("TF_QWEN27_PROFILE")) |v| std.mem.eql(u8, std.mem.span(v), "ops") else false;
++    var mark: f64 = 0;
++    const lap = struct {
++        fn at(on: bool, ff: *Forward, m: *f64, slot: *f64) !void {
++            if (!on) return;
++            try ff.ops.s.synchronize();
++            const t = nowMs();
++            if (m.* > 0) slot.* += t - m.*;
++            m.* = t;
++        }
++    }.at;
+     while (out.items.len < count and !e.w.isEos(out.items[out.items.len - 1])) {
+         const last = out.items[out.items.len - 1];
++        try lap(profile, &f, &mark, &stats.ms[3]);
+         tokens[0] = last;
+         parents[0] = -1;
+         var rows: usize = 1;
+@@ -129,8 +156,14 @@ pub fn decode(e: *Engine, seq: *st.Seq, ctx: *dr.Context, d: *dr.DFlash2, prompt
+             rows += p.tokens.len;
+         }
+         const part = [_]Part{.{ .seq = seq, .tokens = tokens[0..rows], .parents = parents[0..rows] }};
++        try lap(profile, &f, &mark, &stats.ms[0]);
++        fw.prof_on = ops;
+         try f.round(&part);
++        fw.prof_on = false;
++        if (profile) stats.queued += nowMs() - mark;
++        try lap(profile, &f, &mark, &stats.ms[1]);
+         try f.picks(rows, &sampled);
++        try lap(profile, &f, &mark, &stats.ms[2]);
+         // the path: from the root, each next token the child whose token the target drew
+         var n: usize = 1;
+         path[0] = 0;
 diff --git c/zig/src/families/qwen27/cuda/round.zig w/zig/src/families/qwen27/cuda/round.zig
 index 2b2d4e26..4be625f2 100644
 --- c/zig/src/families/qwen27/cuda/round.zig
