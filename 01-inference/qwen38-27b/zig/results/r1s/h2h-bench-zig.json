@@ -4,13 +4,13 @@
   "prompt": "fibonacci-raw",
   "temperature": 1.0,
   "tokens": 256,
-  "decode_tps_median": 375.81706554022287,
+  "decode_tps_median": 426.2626510699326,
   "decode_tps_all": [
-   358.05,
-   375.82,
-   403.79
+   409.24,
+   426.26,
+   446.86
   ],
-  "ttft_s_median": 0.019714953999994123,
+  "ttft_s_median": 0.01992952399996284,
   "sample": "\n\n<think>\nThe user wants me to write a short Python function that computes the Fibonacci sequence and explain it. Let me create a clean, well-documented functio"
  },
  {
@@ -18,13 +18,13 @@
   "prompt": "gpu-chat-no-think",
   "temperature": 1.0,
   "tokens": 256,
-  "decode_tps_median": 293.4962342861977,
+  "decode_tps_median": 329.3839487443272,
   "decode_tps_all": [
-   287.5,
-   319.35,
-   293.5
+   322.41,
+   345.93,
+   329.38
   ],
-  "ttft_s_median": 0.02798953699999629,
+  "ttft_s_median": 0.028166741000859474,
   "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nA GPU (Graphics Processing Unit) is essentially a **huge collection of tiny workers** (called \"cores\") that "
  },
  {
@@ -32,13 +32,13 @@
   "prompt": "fibonacci-raw",
   "temperature": 0.0,
   "tokens": 256,
-  "decode_tps_median": 442.5378341083381,
+  "decode_tps_median": 485.47124771119036,
   "decode_tps_all": [
-   442.54,
-   443.34,
-   441.77
+   486.94,
+   485.13,
+   485.47
   ],
-  "ttft_s_median": 0.018983400999957212,
+  "ttft_s_median": 0.019795277999946848,
   "sample": "\n\nHere is a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a "
  },
  {
@@ -46,13 +46,13 @@
   "prompt": "gpu-chat-no-think",
   "temperature": 0.0,
   "tokens": 256,
-  "decode_tps_median": 333.2793943505791,
+  "decode_tps_median": 365.9091449570408,
   "decode_tps_all": [
-   334.43,
-   333.26,
-   333.28
+   365.91,
+   359.39,
+   366.05
   ],
-  "ttft_s_median": 0.028428238000003603,
+  "ttft_s_median": 0.02861009299977013,
   "sample": "# How Matrix Multiplication Uses a GPU\n\n## The Core Idea\n\nA GPU (Graphics Processing Unit) is a chip packed with thousands of tiny processors. Unlike a CPU (the"
  }
 ]

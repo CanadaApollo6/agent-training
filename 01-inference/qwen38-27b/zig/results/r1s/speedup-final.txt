@@ -1,0 +1,29 @@
+R1s on the Zig engine vs the Python 0.6.0 port, 2026-10-13 (fork r1s-moe ca1e59a0). Fresh head to head, one engine at
+a time, same prompts (h2h-python-vs-zig-final.txt; Python ran first from 51 C, Zig second, warmer).
+
+test (tok/s; prefill s)        Python   Zig this morning   Zig now
+raw T=1                        397      376                426
+chat T=1                       321      293                329
+raw greedy                     454      443                485
+chat greedy                    367      333                366
+prefill 21K                    3.49     3.66               3.44
+prefill 52K                    11.83    11.86              11.49
+reply after 45K (drafts on)    254      200                252
+
+Replies identical before and after every change (CLI prompts.json x4 and prompts-long.json x2 MATCH, server conc.py SAME x3).
+
+What changed today (fork commits):
+1475d5f1 CUDA graphs for one-stream verify rounds (default on, TF_QWEN27_GRAPHS=0 off): ~650 launches a round -> replays.
+d87bd50f graphs in pieces of four layers: one 500-node launch blocked the host ~110 us with the GPU idle; now ~13 us.
+163ca7da greedy picks split across slices: one-block argmax was 32-53 us a pick (79,591-column draft head took the
+         scalar path); now ~7 us, same comparator, identical picks. Round 6.62 -> 6.45 ms.
+ca1e59a0 prompt-row router logits from a shared-memory tile: 360 ms of a 21K prefill (Python 25 ms) from L2 re-reads;
+         same lanes/order/shuffle tree, bit-identical logits. Prefill 21K 3.72 -> 3.44 s.
+
+Measured and dropped:
+- Pinned / kernel-based uploads: no gain. The ~160 us pause after about half of the verify rounds is a GPU context
+  switch to the desktop apps sharing the 3090 (nsys --gpuctxsw: all 100 slow gaps had one, none of the 83 fast ones).
+  That is a cost of sharing the GPU with the desktop, not the engine's; Python pays it too.
+- Graphing the MTP draft chain: the host already queues its kernels ahead of the GPU, so nothing to gain.
+
+Remaining per-round GPU busy: ~94% (6.05 of 6.45 ms) in the CLI.
