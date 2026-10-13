@@ -1,0 +1,20 @@
+== python
+63
+{"label": "python", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 396.7392532869675, "decode_tps_all": [396.74, 395.19, 413.65], "ttft_s_median": 0.03253942899999629}
+{"label": "python", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 318.6984146778585, "decode_tps_all": [329.18, 307.72, 318.7], "ttft_s_median": 0.0326125900000136}
+{"label": "python", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 443.6730703845207, "decode_tps_all": [453.22, 443.67, 432.53], "ttft_s_median": 0.03219926799999939}
+{"label": "python", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 361.9700070289493, "decode_tps_all": [360.78, 361.97, 364.15], "ttft_s_median": 0.03292613200000005}
+{"prompt_tokens": 20707, "prefill_s": 3.41, "prefill_tps": 6076, "answer": "2472", "expected": 2472}
+{"prompt_tokens": 52392, "prefill_s": 11.99, "prefill_tps": 4371, "answer": "6536", "expected": 6536}
+draft off: prompt 44978 tokens, prefill 8.7s, decode 92 tok/s, reply 0b35a0a9ba70
+draft on : prompt 44978 tokens, prefill 9.6s, decode 254 tok/s, reply 0b35a0a9ba70
+== zig
+57
+{"label": "zig", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 375.81706554022287, "decode_tps_all": [358.05, 375.82, 403.79], "ttft_s_median": 0.019714953999994123}
+{"label": "zig", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 293.4962342861977, "decode_tps_all": [287.5, 319.35, 293.5], "ttft_s_median": 0.02798953699999629}
+{"label": "zig", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 442.5378341083381, "decode_tps_all": [442.54, 443.34, 441.77], "ttft_s_median": 0.018983400999957212}
+{"label": "zig", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 333.2793943505791, "decode_tps_all": [334.43, 333.26, 333.28], "ttft_s_median": 0.028428238000003603}
+{"prompt_tokens": 20707, "prefill_s": 3.66, "prefill_tps": 5662, "answer": "2472", "expected": 2472}
+{"prompt_tokens": 52392, "prefill_s": 11.86, "prefill_tps": 4418, "answer": "6536", "expected": 6536}
+draft off: prompt 44978 tokens, prefill 9.6s, decode 155 tok/s, reply 2864888e59a1
+draft on : prompt 44978 tokens, prefill 9.8s, decode 200 tok/s, reply 2864888e59a1

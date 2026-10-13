@@ -4,13 +4,13 @@
   "prompt": "fibonacci-raw",
   "temperature": 1.0,
   "tokens": 256,
-  "decode_tps_median": 410.68170221002794,
+  "decode_tps_median": 396.7392532869675,
   "decode_tps_all": [
-   409.04,
-   410.68,
-   419.4
+   396.74,
+   395.19,
+   413.65
   ],
-  "ttft_s_median": 0.031028516008518636,
+  "ttft_s_median": 0.03253942899999629,
   "sample": "\n\n<think>\nThe user wants me to write a short Python function that computes the Fibonacci sequence and explain it. Let me create a clean, well-documented functio"
  },
  {
@@ -18,13 +18,13 @@
   "prompt": "gpu-chat-no-think",
   "temperature": 1.0,
   "tokens": 256,
-  "decode_tps_median": 327.37328190044224,
+  "decode_tps_median": 318.6984146778585,
   "decode_tps_all": [
-   343.71,
-   316.15,
-   327.37
+   329.18,
+   307.72,
+   318.7
   ],
-  "ttft_s_median": 0.030783845984842628,
+  "ttft_s_median": 0.0326125900000136,
   "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nA GPU (Graphics Processing Unit) is essentially a chip packed with *thousands* of tiny worker cores. Unlike "
  },
  {
@@ -32,13 +32,13 @@
   "prompt": "fibonacci-raw",
   "temperature": 0.0,
   "tokens": 256,
-  "decode_tps_median": 478.8241772420152,
+  "decode_tps_median": 443.6730703845207,
   "decode_tps_all": [
-   480.46,
-   478.82,
-   478.52
+   453.22,
+   443.67,
+   432.53
   ],
-  "ttft_s_median": 0.03041462297551334,
+  "ttft_s_median": 0.03219926799999939,
   "sample": "\n\nHere is a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a "
  },
  {
@@ -46,13 +46,13 @@
   "prompt": "gpu-chat-no-think",
   "temperature": 0.0,
   "tokens": 256,
-  "decode_tps_median": 385.33584699624447,
+  "decode_tps_median": 361.9700070289493,
   "decode_tps_all": [
-   385.34,
-   383.27,
-   386.29
+   360.78,
+   361.97,
+   364.15
   ],
-  "ttft_s_median": 0.03110535000450909,
+  "ttft_s_median": 0.03292613200000005,
   "sample": "# Matrix Multiplication on a GPU\n\n## The Basic Idea\n\nMatrix multiplication combines two matrices into a third one. If you have a matrix **A** (with dimensions *"
  }
 ]

@@ -1,0 +1,19 @@
+R1s Zig vs Python 0.6.0 port after the driver reboot (same prompts, one engine at a time), then today's fixes
+
+Head to head (tok/s; prefill s):      Python   Zig before   Zig now
+raw text T=1                          397      376
+chat T=1                              319      293
+raw text greedy                       444      443
+chat greedy                           362      333          (server: ~330 under nsys)
+prefill 21K / 52K                     3.4/12.0 3.7/11.9
+reply after a 45K prompt (drafts on)  254      200          264 (CLI, 42K)
+
+Fix 1, the MTP head's attention (split-key kernel for <=16 rows): was 21% of a 42K reply (0.76 ms a call,
+prefill_attention on 8 blocks); 42K drafted 216 -> 264 tok/s; short-context calls 26 -> 14 us.
+Fix 2, the draft chain on the device: no host round trip a draft; small or no change (CLI 411 -> 419 on one prompt).
+Tried and reverted: router weights in registers (prefill 7.9 -> 9.4 s at 42K, decode 8.1 -> 7.75 us).
+
+Why short chat is still ~8% behind: the server's GPU is busy 87% of a round (Python's port: 96%, CUDA graphs).
+~650 launches a round at ~1.5 us of CPU each keep pace with the tiny kernels, so the GPU waits on launches
+(~0.45 ms a round) plus ~0.37 ms of driver time between rounds. Our own host code is ~1% of CPU samples.
+GPU work a round matches Python's (experts 2.2 ms, dense ~2.1 ms, small kernels ~1.5 ms).
