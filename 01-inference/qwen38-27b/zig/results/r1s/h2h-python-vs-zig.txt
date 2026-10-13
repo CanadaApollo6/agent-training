@@ -1,0 +1,189 @@
+== python
+{"label": "python", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 410.68170221002794, "decode_tps_all": [409.04, 410.68, 419.4], "ttft_s_median": 0.031028516008518636}
+{"label": "python", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 327.37328190044224, "decode_tps_all": [343.71, 316.15, 327.37], "ttft_s_median": 0.030783845984842628}
+{"label": "python", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 478.8241772420152, "decode_tps_all": [480.46, 478.82, 478.52], "ttft_s_median": 0.03041462297551334}
+{"label": "python", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 385.33584699624447, "decode_tps_all": [385.34, 383.27, 386.29], "ttft_s_median": 0.03110535000450909}
+{"prompt_tokens": 20707, "prefill_s": 3.29, "prefill_tps": 6299, "answer": "2472", "expected": 2472}
+{"prompt_tokens": 52392, "prefill_s": 11.21, "prefill_tps": 4673, "answer": "6536", "expected": 6536}
+draft off: prompt 44978 tokens, prefill 8.4s, decode 87 tok/s, reply 0b35a0a9ba70
+draft on : prompt 44978 tokens, prefill 9.1s, decode -32 tok/s, reply 0b35a0a9ba70
+== zig
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/uv/python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 1347, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
+Traceback (most recent call last):
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1335, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              encode_chunked=req.has_header('Transfer-encoding'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1398, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1444, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1393, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1153, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1097, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1063, in connect
+    self.sock = self._create_connection(
+                ~~~~~~~~~~~~~~~~~~~~~~~^
+        (self.host,self.port), self.timeout, self.source_address)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/socket.py", line 883, in create_connection
+    raise exceptions[0]
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/socket.py", line 868, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/speed-hillclimb/tensorfold/longctx.py", line 18, in <module>
+    for raw in urllib.request.urlopen(req, timeout=3600):
+               ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 187, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 489, in open
+    response = self._open(req, data)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 506, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 466, in _call_chain
+    result = func(*args)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1364, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1338, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
+Traceback (most recent call last):
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1335, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              encode_chunked=req.has_header('Transfer-encoding'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1398, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1444, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1393, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1153, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1097, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1063, in connect
+    self.sock = self._create_connection(
+                ~~~~~~~~~~~~~~~~~~~~~~~^
+        (self.host,self.port), self.timeout, self.source_address)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/socket.py", line 883, in create_connection
+    raise exceptions[0]
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/socket.py", line 868, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/speed-hillclimb/tensorfold/longctx.py", line 18, in <module>
+    for raw in urllib.request.urlopen(req, timeout=3600):
+               ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 187, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 489, in open
+    response = self._open(req, data)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 506, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 466, in _call_chain
+    result = func(*args)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1364, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1338, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
+Traceback (most recent call last):
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1335, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              encode_chunked=req.has_header('Transfer-encoding'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1398, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1444, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1393, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1153, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1097, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/http/client.py", line 1063, in connect
+    self.sock = self._create_connection(
+                ~~~~~~~~~~~~~~~~~~~~~~~^
+        (self.host,self.port), self.timeout, self.source_address)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/socket.py", line 883, in create_connection
+    raise exceptions[0]
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/socket.py", line 868, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/qwen38-27b/zig/long_check.py", line 5, in <module>
+    model = json.load(urllib.request.urlopen(url + "/v1/models"))["data"][0]["id"]
+                      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 187, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 489, in open
+    response = self._open(req, data)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 506, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 466, in _call_chain
+    result = func(*args)
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1364, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/.local/share/mise/installs/python/latest/lib/python3.15/urllib/request.py", line 1338, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
+== zig
+{"label": "zig", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 407.0198831240674, "decode_tps_all": [383.74, 407.02, 419.17], "ttft_s_median": 0.018688794982153922}
+{"label": "zig", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 303.5812342316057, "decode_tps_all": [301.08, 326.94, 303.58], "ttft_s_median": 0.027114040043670684}
+{"label": "zig", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 457.94351790167224, "decode_tps_all": [457.94, 456.99, 458.08], "ttft_s_median": 0.01899224304361269}
+{"label": "zig", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 345.50990214719036, "decode_tps_all": [342.39, 346.25, 345.51], "ttft_s_median": 0.7162587880156934}
+{"prompt_tokens": 20707, "prefill_s": 4.09, "prefill_tps": 5060, "answer": "2472", "expected": 2472}
+{"prompt_tokens": 52392, "prefill_s": 12.02, "prefill_tps": 4358, "answer": "6536", "expected": 6536}
+draft off: prompt 44978 tokens, prefill 9.8s, decode 143 tok/s, reply 2864888e59a1
+draft on : prompt 44978 tokens, prefill 10.2s, decode 237 tok/s, reply 2864888e59a1
