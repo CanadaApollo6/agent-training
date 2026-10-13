@@ -1,0 +1,12 @@
+R1s MTP drafting at long context, Zig engine, RTX 3090 (greedy, 256 new tokens, code-reading prompt)
+Head cache now slides a 4096-key window: 2*4096 + one chunk of slots (24 MB a stream) instead of the whole context (512 MB at 262K).
+Sliding vs full cache (CLI, 17K and 42K prompts): identical replies, rounds, drafts and acceptance (exact).
+
+prompt      plain decode   MTP drafts   gain    reply
+17,356      166 tok/s      221 tok/s    +33%    MATCH serial
+41,678      163 tok/s      220 tok/s    +35%    MATCH serial
+215,052     79 tok/s       101 tok/s    +28%    same (server, draft:false vs on)
+Acceptance on this prompt d1/d2/d3: 0.72/0.62/0.55 (chat prompts: 0.83/0.69/0.67)
+
+Server --context 262144 --parallel 1: model 15.17 GiB, stream 5.08 GiB, fits with 1.2 GiB to spare.
+Prefill at 215K: ~118 s (1024-row chunks at 262K); a separate hill.

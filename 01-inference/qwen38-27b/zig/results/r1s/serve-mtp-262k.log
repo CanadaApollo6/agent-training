@@ -1,0 +1,14 @@
+info: the model's MTP head drafts every stream (a step 0.29 ms)
+[tensorfold] CUDA sm_86 device 0 (NVIDIA GeForce RTX 3090): model 15.17 GiB; 1 stream at once, 5.08 GiB each at a 262144-token window, of 6.3 GiB left after a 1.0 GiB reserve; prompts in 1024-row chunks, no prompt cache; own glue kernels
+[tensorfold] serving r1s at http://127.0.0.1:8095/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 262144; loaded in 4.3s)
+[tensorfold] thinking on (the chat template's default): replies reason in reasoning_content before the answer in content, and max_tokens counts both. --no-thinking turns it off; a request can send chat_template_kwargs {"enable_thinking": false}
+[tensorfold] 127.0.0.1 "GET /v1/models HTTP/1.1" 200 -
+[tensorfold] 127.0.0.1 "GET /v1/models HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-79491f4db1a0e292dfb9e22dd54b88eb prompt=215052 cached=0 thinking=False effort=none tokens=1 sha=d4735e3a265e finish=length rounds=0 accepted=0/0
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-f4f00564d9c07e8fe5c6bb6981bdb10d prompt=215052 cached=0 thinking=False effort=none tokens=256 sha=30daa0f058b0 finish=length rounds=255 accepted=0/0
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-5ad4a30b9aba1c9635d718b0f80b562f prompt=215052 cached=0 thinking=False effort=none tokens=1 sha=d4735e3a265e finish=length rounds=0 accepted=0/0
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-9b13d3c4aa122640366b25db29c2b36d prompt=215052 cached=0 thinking=False effort=none tokens=256 sha=30daa0f058b0 finish=length rounds=96 accepted=159/237
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
