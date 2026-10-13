@@ -1,0 +1,22 @@
+R1s on the Zig engine with CUDA graphs (fork r1s-moe 1475d5f1), 2026-10-13.
+One-stream verify rounds (embed through head) are captured once per stream and shape, then replayed. On by default; TF_QWEN27_GRAPHS=0 is the off switch.
+
+Exactness: CLI draft prompts.json MATCH x4, prompts-long.json (14K/40K) MATCH x2, server conc.py SAME x3 (6066bcac34ea 8738976e89d9 60b5fcaf6b7c).
+
+CLI drafted tok/s, graphs off -> on (same run, back to back):
+  iso 378 -> 414, transistor 335 -> 366, train 436 -> 471
+  long14k 246 -> 260, long40k 263 -> 276
+
+Server 45K long_check drafted, alternating runs (GPU warming 60 -> 68 C):
+  off 229, on 242, off 224, on 233   (replies identical)
+
+Head to head (r1s_graphs.sh; Python numbers from h2h-python-vs-zig-after-reboot.txt):
+  test                Python 0.6.0   Zig before   Zig + graphs
+  raw T=1             397            376          415
+  chat T=1            319            293          316
+  raw greedy          444            443          472
+  chat greedy         362            333          352
+  prefill 21K (s)     3.41           3.66         3.72
+  prefill 52K (s)     11.99          11.86        12.27
+  long 45K drafted    254            200          245
+Zig run started at 59 C. Prefill does not use graphs; its spread is run-to-run noise.
