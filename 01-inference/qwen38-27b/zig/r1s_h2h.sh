@@ -15,9 +15,10 @@ run() {  # tag port model
 # Python port
 cd $A/envs/tensorfold060
 TENSORFOLD_CUDA_RESERVE_GIB=1 TF_GPU_ONLY_BUDGET=1 uv run python $H/serve_kernels.py new serve ~/models/ornith/r1s --name ornith --context 65536 --port 8090 --prompt-cache-gib 0 > ~/.cache/r1s-h2h/py.log 2>&1 &
+PY=$!
 up 8090 || { tail -20 ~/.cache/r1s-h2h/py.log; exit 1; }
 run python 8090 ornith
-for p in $(pgrep -f "python .*serve_kernels.py new serve"); do kill $p 2>/dev/null; done
+kill $PY; wait $PY 2>/dev/null
 for i in $(seq 30); do nvidia-smi --query-compute-apps=pid --format=csv,noheader | grep -q . || break; sleep 1; done
 # Zig engine
 cd $TF
