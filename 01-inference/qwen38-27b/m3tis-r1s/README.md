@@ -65,7 +65,9 @@ These numbers come from the files in this repo, started with `./m3tis-serve.sh`:
 
 - **First token:** 17–25 ms on short prompts.
 - **Recall:** every long prompt hid a number in its middle, and the model found it each time, including at 199K.
-- **Memory:** the card peaked at 17.2 GB with the full 262K window, including ~1.3 GB used by the desktop.
+- **Memory:** the card peaked at 17.2 GB with the full 262K window, including ~1.3 GB used by the desktop. The server
+  wants ~21.3 GiB free at the 262K window (weights, its working space and a 1 GiB reserve), or ~18.8 GiB at
+  `CONTEXT=131072`. If other programs use the card, it says how much is missing and suggests a smaller window.
 - **Measured on a desktop in use,** so expect a few percent more on an idle machine.
 
 ## Is it still the same model?

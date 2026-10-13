@@ -24,3 +24,8 @@ prompt 2: solo 60b5fcaf6b7c draft-off 60b5fcaf6b7c concurrent 60b5fcaf6b7c SAME
 79, 17233 MiB
 draft off: prompt 44978 tokens, prefill 9.8s, decode 186 tok/s, reply 2864888e59a1
 draft on : prompt 44978 tokens, prefill 10.1s, decode 274 tok/s, reply 2864888e59a1
+
+Published 2026-10-13: https://huggingface.co/CanadaApollo6/Ornith-1.5-35B-A3B-M3TiS-3090 (upload commit 2b60cc24, card fix 82f19799).
+Fresh hf download: all 27 files md5-identical to the staged bundle (plus HF's .gitattributes). Its launcher at 262K refused to
+start (clear message) while another job held 2.4 GB of the card; at CONTEXT=131072: conc SAME x3 with the same hashes.
+Speed in that run (122-139 tok/s) is not comparable: the other job was using the GPU at the same time.
