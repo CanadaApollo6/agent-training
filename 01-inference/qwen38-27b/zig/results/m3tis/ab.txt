@@ -1,0 +1,18 @@
+bundle r1 fibonacci-raw 213.2
+bundle r1 gpu-chat-no-think 145.1
+  temp 71, 418.40 W, 1785 MHz
+pool r1 fibonacci-raw 208.9
+pool r1 gpu-chat-no-think 143.5
+  temp 73, 418.36 W, 1770 MHz
+prepool r1 fibonacci-raw 211.5
+prepool r1 gpu-chat-no-think 141.9
+  temp 73, 417.49 W, 1755 MHz
+bundle r2 fibonacci-raw 209.7
+bundle r2 gpu-chat-no-think 147.8
+  temp 74, 418.35 W, 1845 MHz
+pool r2 fibonacci-raw 208.1
+pool r2 gpu-chat-no-think 146.4
+  temp 74, 413.51 W, 1815 MHz
+prepool r2 fibonacci-raw 207.5
+prepool r2 gpu-chat-no-think 145.6
+  temp 74, 418.05 W, 1800 MHz
