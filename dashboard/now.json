@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "Back to back with Python: the Zig server is faster on greedy code +7% (235 vs 220) and chat +12% (160 vs 144), ties on sampled code. Python's drop two days ago was the machine. First upstream PR is open: RTX 3090 support for TensorFold's 27B engine (machinegenieorg/TensorFold#3, against PR #608's branch), all exactness checks pass. Building it turned up one more alignment bug, now fixed. The fix also made the check tool ~12% faster (code 272 → 307 tok/s). Catch: 262K didn't load today because the desktop used 0.5 GB more of the card. Next: trim ~0.3 GB from the engine, then PRs B (matmul) and C (4-bit cache, issue first), and the HF name.",
+ "next_text": "262K now fits with room to spare: the engine gave every weight tensor its own GPU allocation, and rounding each to whole 2 MB pages wasted 1.1 GB. Packing them into shared blocks freed it. 262K loads with the default reserve (5.7 GiB left for the stream vs 5.0 before), recalled a code planted in a 192K-token prompt, and all exactness checks match. Next: the M3TiS model card and release bundle for HF (needs Riel's OK before upload), then PRs B (matmul) and C (4-bit cache, issue first).",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 221 tok/s and chat 117 → 144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, a faster GDN step kernel, a faster draft model, and 16 guesses a round under 50K context (8 above).",
  "headline_numbers": [
   {

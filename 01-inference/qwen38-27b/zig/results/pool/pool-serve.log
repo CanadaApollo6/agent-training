@@ -1,0 +1,10 @@
+info: DFlash2 drafts every stream: /home/riels/.cache/huggingface/hub/models--z-lab--Qwen3.8-27B-DFlash2/snapshots/50307d4c4cde6860d4eee73e2547cd786fe8e8a4
+[tensorfold] CUDA sm_86 device 0 (NVIDIA GeForce RTX 3090): model 15.34 GiB; 1 stream at once, 4.72 GiB each at a 262144-token window, of 5.7 GiB left after a 1.0 GiB reserve; prompts in 1024-row chunks, no prompt cache; glue kernels captured at /home/riels/.cache/tf066/aot-sm86
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8093/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 262144; loaded in 8.9s)
+[tensorfold] thinking on (the chat template's default): replies reason in reasoning_content before the answer in content, and max_tokens counts both. --no-thinking turns it off; a request can send chat_template_kwargs {"enable_thinking": false}
+[tensorfold] 127.0.0.1 "GET /v1/models HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-219e32a7f2d4194624c1ed1d367058a5 prompt=23 cached=0 thinking=False effort=none tokens=153 sha=7e8bea53c0fb finish=stop rounds=15 accepted=138/217
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] 127.0.0.1 "GET /v1/models HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-a40e9a96c1be7a14283fcb35e40ea427 prompt=192356 cached=0 thinking=False effort=none tokens=11 sha=3483f351164c finish=stop rounds=4 accepted=7/53
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -

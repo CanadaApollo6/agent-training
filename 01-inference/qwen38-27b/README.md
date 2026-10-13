@@ -1449,3 +1449,27 @@ Next PRs:
 - C: the 4-bit store. Open an issue first, because it changes arithmetic. Then move the "past 128K" rule there and
   make it depend on available memory: on a 96 GB card it would only slow prompts.
 - D: fast short prompts. Hold until a quality check.
+
+### 262K fits with room to spare: one allocation per tensor was wasting 1.1 GB (2026-10-13)
+
+The server used ~1 GB more of the card than its own count said, and the extra showed up while the main model's
+weights loaded. Cause: the loaders asked the GPU for a separate allocation for every tensor, ~2,200 of them. The GPU
+hands out large allocations in whole 2 MB pages, so each of the ~900 large tensors wasted part of a page. Over the
+27B that adds up to ~1.1 GB. A 3 MB scale table, for example, took 4 MB.
+
+Fix: both loaders (main model and drafter) now carve tensors out of shared 128 MB blocks, filling the first gap each
+one fits. A simulation over the real tensor sizes put the leftover at ~70 MB. Nothing about the math changes.
+
+| 262K window, 4-bit store | Before | After |
+|---|---|---|
+| Card left for the stream at load | 5.0 GiB after a 0.5 GiB reserve | **5.7 GiB after the default 1.0 GiB reserve** |
+| Server peak on a long prompt | 20.2 GB (77K prompt) | **19.6 GB (192K prompt)** |
+| Recall of a code planted mid-prompt | ✓ at 77K | ✓ at 192K |
+
+262K no longer needs `TENSORFOLD_MEMORY_RESERVE_GIB=0.5`. With the desktop at ~1.4 GB the card still had ~3 GB
+free at the peak, so a 2 GB desktop also fits. Exactness: serial, drafted, 3-at-once and 4-bit store checks all match,
+same as before (`zig/results/pool/`). Commit `c7c3f7c8` on `pr608-sm86`, in `zig/pr608-sm86.patch`. The change is
+general (any card, any model size), so it's a candidate for its own small upstream PR.
+
+Side note: a 192K-token prompt took 7 minutes (449 tok/s), against 786 tok/s at 77K. Very long prompts slow down as
+attention grows. That's worth a look later, but it's not a release blocker.

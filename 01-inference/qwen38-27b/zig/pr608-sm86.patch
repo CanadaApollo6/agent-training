@@ -1776,6 +1776,32 @@ index 3532c69c..c2a77179 100644
  pub const Part = @import("cuda/forward.zig").Part;
  pub const engine = @import("cuda/engine.zig");
  pub const Engine = engine.Engine;
+diff --git c/zig/src/families/qwen27/cuda/draft_load.zig w/zig/src/families/qwen27/cuda/draft_load.zig
+index 8f9b0a74..7fd577b4 100644
+--- c/zig/src/families/qwen27/cuda/draft_load.zig
++++ w/zig/src/families/qwen27/cuda/draft_load.zig
+@@ -114,11 +114,10 @@ const Loader = struct {
+     scales: std.ArrayList(u16) = .empty,
+     biases: std.ArrayList(u16) = .empty,
+     staging: ?cuda.DeviceBuffer = null,
++    pool: @import("weights.zig").Pool = .{},
+ 
+     fn alloc(L: *Loader, len: usize) !u64 {
+-        const b = try cuda.DeviceBuffer.alloc(L.ops.k.d, len);
+-        try L.w.buffers.append(L.gpa, b);
+-        return b.ptr;
++        return L.pool.take(L.gpa, L.ops.k.d, &L.w.buffers, len);
+     }
+ 
+     fn raw(L: *Loader, t: Tensor) !u64 {
+@@ -206,6 +205,7 @@ pub fn load(gpa: std.mem.Allocator, io: std.Io, ops: kern.Ops, dir: []const u8,
+         L.scales.deinit(gpa);
+         L.biases.deinit(gpa);
+         if (L.staging) |*b| b.free();
++        L.pool.deinit(gpa);
+     }
+     var ck = try core.Checkpoint.openModel(gpa, io, dir);
+     defer ck.close();
 diff --git c/zig/src/families/qwen27/cuda/drafts.zig w/zig/src/families/qwen27/cuda/drafts.zig
 index 02e36595..08ad3fc9 100644
 --- c/zig/src/families/qwen27/cuda/drafts.zig
@@ -3080,7 +3106,7 @@ index 4cbe06c0..ec03a5f0 100644
              if (c.linear(i)) {
                  s.records[i] = .{
 diff --git c/zig/src/families/qwen27/cuda/weights.zig w/zig/src/families/qwen27/cuda/weights.zig
-index 5c796bd4..943d6183 100644
+index 5c796bd4..f2c66b5d 100644
 --- c/zig/src/families/qwen27/cuda/weights.zig
 +++ w/zig/src/families/qwen27/cuda/weights.zig
 @@ -19,6 +19,9 @@ pub const Attention = struct { q: QLinear, k: QLinear, v: QLinear, o: QLinear, q
@@ -3107,7 +3133,58 @@ index 5c796bd4..943d6183 100644
          w.gpa.free(w.layers);
          w.* = undefined;
      }
-@@ -84,6 +90,15 @@ const Loader = struct {
+@@ -51,6 +57,36 @@ pub const Weights = struct {
+     }
+ };
+ 
++/// Weight tensors packed first fit into 128 MiB blocks: a cuMemAlloc each rounds every tensor up to whole 2 MiB pages (~1 GiB over the 27B).
++pub const Pool = struct {
++    pub const block: usize = 128 << 20;
++    const Gap = struct { at: u64, left: usize };
++    gaps: std.ArrayList(Gap) = .empty,
++
++    /// `len` device bytes, 256-byte aligned; the blocks go on `buffers`, which own them.
++    pub fn take(p: *Pool, gpa: std.mem.Allocator, d: *const cuda.Driver, buffers: *std.ArrayList(cuda.DeviceBuffer), len: usize) !u64 {
++        const n = std.mem.alignForward(usize, len, 256);
++        if (n == 0) return 0;
++        for (p.gaps.items) |*g| if (g.left >= n) {
++            const at = g.at;
++            g.at += n;
++            g.left -= n;
++            return at;
++        };
++        var b = try cuda.DeviceBuffer.alloc(d, @max(n, block));
++        {
++            errdefer b.free();
++            try buffers.append(gpa, b);
++        }
++        if (n < block) try p.gaps.append(gpa, .{ .at = b.ptr + n, .left = block - n });
++        return b.ptr;
++    }
++
++    pub fn deinit(p: *Pool, gpa: std.mem.Allocator) void {
++        p.gaps.deinit(gpa);
++    }
++};
++
+ const Loader = struct {
+     gpa: std.mem.Allocator,
+     ops: kern.Ops,
+@@ -58,11 +94,10 @@ const Loader = struct {
+     src: *source.Source,
+     scratch: cuda.DeviceBuffer,
+     host: std.ArrayList(u8) = .empty,
++    pool: Pool = .{},
+ 
+     fn alloc(L: *Loader, len: usize) !u64 {
+-        const b = try cuda.DeviceBuffer.alloc(L.ops.k.d, len);
+-        try L.w.buffers.append(L.gpa, b);
+-        return b.ptr;
++        return L.pool.take(L.gpa, L.ops.k.d, &L.w.buffers, len);
+     }
+ 
+     /// Device scratch of at least `len` bytes; growing waits for the stream so pending packs keep their inputs.
+@@ -84,6 +119,15 @@ const Loader = struct {
          return L.host.items;
      }
  
@@ -3123,7 +3200,15 @@ index 5c796bd4..943d6183 100644
      fn raw(L: *Loader, t: Tensor) !u64 {
          const ptr = try L.alloc(t.bytes.len);
          try L.src.upload(ptr, t.bytes);
-@@ -226,10 +241,12 @@ pub fn load(gpa: std.mem.Allocator, io: std.Io, ops: kern.Ops, dir: []const u8,
+@@ -204,6 +248,7 @@ pub fn load(gpa: std.mem.Allocator, io: std.Io, ops: kern.Ops, dir: []const u8,
+         ops.s.synchronize() catch {};
+         L.scratch.free();
+         L.host.deinit(gpa);
++        L.pool.deinit(gpa);
+     }
+     // the vision tower and the MTP head stay on disk, as weights._Tensors skips them
+     var ck = try core.Checkpoint.openModelPrefix(gpa, io, dir, prefix);
+@@ -226,10 +271,12 @@ pub fn load(gpa: std.mem.Allocator, io: std.Io, ops: kern.Ops, dir: []const u8,
          layer.down = try L.tile(&ck, try join(&nb, p, "mlp.down_proj"), g.hidden, g.intermediate);
          layer.post_norm = try L.vector(&ck, try join(&nb, p, "post_attention_layernorm.weight"), g.hidden);
      }
