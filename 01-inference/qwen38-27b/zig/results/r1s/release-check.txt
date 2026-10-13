@@ -1,0 +1,26 @@
+M3TiS #2 release check (zig/r1s_release_check.sh): the staged bundle's own launcher, default 262K window, one user.
+First run (binary at ca1e59a0): the drafted 45K reply died after 7 tokens, InvalidQwenWindows (MTP head slide then a
+rejected draft rewound below the head's origin). Fixed in fork edfb771d; CLI MATCH x4 + long MATCH x2 after the fix.
+The first run's 200K line was a 265K-token prompt (over the window); the rerun uses 150000 filler units = 199K tokens.
+
+Rerun, fixed binary:
+== loaded
+45, 17143 MiB
+{"object": "list", "data": [{"id": "bundle", "object": "model", "created": 1791932971, "owned_by": "tensorfold", "context_length": 262144, "max_model_len": 262144}]}
+== conc (same replies)
+prompt 0: solo 6066bcac34ea draft-off 6066bcac34ea concurrent 6066bcac34ea SAME
+prompt 1: solo 8738976e89d9 draft-off 8738976e89d9 concurrent 8738976e89d9 SAME
+prompt 2: solo 60b5fcaf6b7c draft-off 60b5fcaf6b7c concurrent 60b5fcaf6b7c SAME
+== bench
+{"label": "release", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 480.0497372198883, "decode_tps_all": [459.06, 480.05, 499.71], "ttft_s_median": 0.01724103299966373}
+{"label": "release", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 366.7122698059182, "decode_tps_all": [360.0, 391.85, 366.71], "ttft_s_median": 0.024981346999993548}
+{"label": "release", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 544.9233797868764, "decode_tps_all": [544.99, 544.92, 544.18], "ttft_s_median": 0.017516326000986737}
+{"label": "release", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 403.4188989141623, "decode_tps_all": [403.42, 409.75, 390.5], "ttft_s_median": 0.024956002000180888}
+{"prompt_tokens": 20707, "prefill_s": 3.7, "prefill_tps": 5591, "answer": "2472", "expected": 2472}
+67, 17223 MiB
+{"prompt_tokens": 52392, "prefill_s": 12.17, "prefill_tps": 4304, "answer": "6536", "expected": 6536}
+73, 17229 MiB
+{"prompt_tokens": 198633, "prefill_s": 95.37, "prefill_tps": 2083, "answer": "9941", "expected": 9941}
+79, 17233 MiB
+draft off: prompt 44978 tokens, prefill 9.8s, decode 186 tok/s, reply 2864888e59a1
+draft on : prompt 44978 tokens, prefill 10.1s, decode 274 tok/s, reply 2864888e59a1
