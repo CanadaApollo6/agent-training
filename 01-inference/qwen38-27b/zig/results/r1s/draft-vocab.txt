@@ -1,0 +1,7 @@
+R1s MTP drafting head over the 79,591-token draft vocabulary (same list as Python R1s), Zig engine, RTX 3090
+                         full head (248K)    draft vocab (79.6K)
+MTP step (server calib)  0.52 ms             0.29 ms
+CLI 4 prompts, tok/s     362-463             362-489   (all MATCH serial)
+server 512-tok replies   406/321/263         446/350/281 (conc.py 3/3 SAME)
+acceptance d1/d2/d3      0.85/0.71/0.65      0.83/0.69/0.67
+Fallback: TF_QWEN27_DRAFT_VOCAB=0 scores every token.
