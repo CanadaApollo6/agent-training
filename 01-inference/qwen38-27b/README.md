@@ -1488,3 +1488,28 @@ Measured with the released bundle at 262K, with a video playing on the same card
 without drafts (`zig/results/m3tis/`). Two back-to-back A/Bs (`ab.txt`, `ab2.txt`) found these all at the same
 speed: the release build, today's weight pool, the build from before the attention-plan fix, and 131K vs 262K. The
 gap to last night's 235 is the desktop sharing the card, not the code.
+
+### Upstream: PRs B and the weight pool, and the 4-bit cache issue (2026-10-13)
+
+With Riel's OK, three more items are up. The PRs sit on `machinegenieorg/TensorFold`, the fork that holds #608's
+branch; the issue is on the main repo, `ashhart/TensorFold`.
+
+| Item | What | Exact vs 0.6.6? | Receipt |
+|---|---|---|---|
+| [PR #4](https://github.com/machinegenieorg/TensorFold/pull/4) (B) | The 3090 decode matmul plus one launch for weights sharing an input | Yes: every row's logits byte-equal | Served code 131.6 → 202.0, chat 90.0 → 136.0 tok/s at 32K, tokens identical |
+| [PR #5](https://github.com/machinegenieorg/TensorFold/pull/5) | Weight tensors packed into 128 MiB blocks | Yes | 3.0 → 3.9 GiB left for streams at 32K |
+| [Issue #799](https://github.com/ashhart/TensorFold/issues/799) (C) | Opt-in 4-bit cache: proposed gate | No (opt-in) | KL table, recall, the two weak spots |
+
+What it took:
+- **A new byte-level reference.** `capture_windows.py` on 0.6.6 hashes every row's logits. Its `--wide` cases
+  don't fit 24 GB, so the narrow 27 cases ran, and the check tool runs out of memory at case 19 (16 streams).
+- **A bisect.** The full branch's logits differed on every row. The matmul and the combined launch are
+  byte-equal; the later rule that runs big shared launches unsplit changes K splits, so the bits. It's left out
+  of B (worth ~2-3%) and raised in the issue.
+- **Upstream's rules, applied to A as well** (force-pushed): commits on Riel's GitHub noreply address, no tool
+  co-author lines, every comment one line of ≤120 columns (`lean_check.py` back at the branch's 542). B uses the
+  existing `qmm_frag.cuh` instead of a copy.
+- PR C itself waits for the maintainers to agree on the gate. Gate item 3, teacher-forced fidelity on the Zig
+  engine, needs a new tool; the Python-stack numbers are what's published so far.
+
+Results: `zig/results/prB/`, `zig/results/prPool/`, bodies in `zig/pr*-body.md` and `zig/issueC-body.md`.

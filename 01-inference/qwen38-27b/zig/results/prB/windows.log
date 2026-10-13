@@ -1,0 +1,23 @@
+loaded in 7.8s, weights 14.11 GiB
+case 0: chain, 1 streams
+case 1: chain, 1 streams
+case 2: chain, 1 streams
+case 3: chain, 1 streams
+case 4: chain, 1 streams
+case 5: chain, 1 streams
+case 6: chain, 1 streams
+case 7: chain, 1 streams
+case 8: chain, 1 streams
+case 9: chain, 1 streams
+case 10: chain, 1 streams
+case 11: chain, 1 streams
+case 12: chain, 1 streams
+case 13: chain, 1 streams
+case 14: chain, 1 streams
+case 15: chain, 1 streams
+case 16: shared, 2 streams
+case 17: shared, 4 streams
+case 18: shared, 8 streams
+case 19: shared, 16 streams
+error: cuMemAlloc: CUDA_ERROR_OUT_OF_MEMORY (2) out of memory
+error: OutOfDeviceMemory

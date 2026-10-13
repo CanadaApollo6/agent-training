@@ -1,0 +1,21 @@
+info: DFlash2 drafts every stream: /home/riels/.cache/huggingface/hub/models--z-lab--Qwen3.8-27B-DFlash2/snapshots/50307d4c4cde6860d4eee73e2547cd786fe8e8a4
+[tensorfold] CUDA sm_86 device 0 (NVIDIA GeForce RTX 3090): model 16.82 GiB; 1 stream at once, 2.22 GiB each at a 32768-token window, of 3.1 GiB left after a 1.0 GiB reserve; prompts in 4096-row chunks, no prompt cache; glue kernels captured at /home/riels/.cache/tf066/aot-sm86
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8097/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 32768; loaded in 9.5s)
+[tensorfold] thinking on (the chat template's default): replies reason in reasoning_content before the answer in content, and max_tokens counts both. --no-thinking turns it off; a request can send chat_template_kwargs {"enable_thinking": false}
+[tensorfold] 127.0.0.1 "GET /v1/models HTTP/1.1" 200 -
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] done cmpl-37057ceb83eeb1eb0a03e919598e8cc4 prompt=14 cached=0 thinking=False effort=none tokens=256 sha=a10c9b848ed9 finish=length rounds=44 accepted=214/660
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] done cmpl-803a299f5931ead9a45e4f777c8cf9d1 prompt=14 cached=0 thinking=False effort=none tokens=256 sha=a10c9b848ed9 finish=length rounds=44 accepted=214/660
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] done cmpl-efa7c085aa9c83fe3d0ebe445db846da prompt=14 cached=0 thinking=False effort=none tokens=256 sha=a10c9b848ed9 finish=length rounds=44 accepted=214/660
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] done cmpl-46e00b5f3ef0a074811f65ce4c8e6eb6 prompt=14 cached=0 thinking=False effort=none tokens=256 sha=a10c9b848ed9 finish=length rounds=44 accepted=214/660
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-277372c229ceb27eb27f52ccdd9934d6 prompt=31 cached=0 thinking=False effort=none tokens=256 sha=a06fab348fbe finish=length rounds=64 accepted=193/960
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-9ff7d6146af039f2943862b7242fabbc prompt=31 cached=0 thinking=False effort=none tokens=256 sha=a06fab348fbe finish=length rounds=64 accepted=193/960
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-23d344af23229c8b8f447c0cdbd00198 prompt=31 cached=0 thinking=False effort=none tokens=256 sha=a06fab348fbe finish=length rounds=64 accepted=193/960
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-e99d3efbf68fb34f14793d1139b1af3e prompt=31 cached=0 thinking=False effort=none tokens=256 sha=a06fab348fbe finish=length rounds=64 accepted=193/960
