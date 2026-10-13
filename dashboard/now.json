@@ -46,7 +46,7 @@
  },
  "extra_today_dollars": 268,
  "extra_today_note": "(~$118 pilot, ~$9 + ~$6 held-out tests, ~$135 continuation)",
- "next_text": "262K now fits with room to spare: the engine gave every weight tensor its own GPU allocation, and rounding each to whole 2 MB pages wasted 1.1 GB. Packing them into shared blocks freed it. 262K loads with the default reserve (5.7 GiB left for the stream vs 5.0 before), recalled a code planted in a 192K-token prompt, and all exactness checks match. Next: the M3TiS model card and release bundle for HF (needs Riel's OK before upload), then PRs B (matmul) and C (4-bit cache, issue first).",
+ "next_text": "M3TiS is public: CanadaApollo6/Qwen3.8-27B-M3TiS-3090 on Hugging Face (server + 3090 kernels + launcher + card, pointing at the existing 4-bit weights), source on your GitHub fork. Measured with the released files at 262K while a video played: 208 code / 147 chat tok/s greedy, 45 without the draft model. Next: PRs B (matmul) and C (4-bit cache, issue first) upstream, and the weight-pool fix as its own small PR if you OK it.",
  "headline_text": "Qwen 27B speed on your 3090, daily setup (4-bit cache, full 262K window): code 169 → 221 tok/s and chat 117 → 144 since this morning, with answers identical to one-word-at-a-time decoding. Today's steps: graph replay, a CUDA attention kernel for long contexts, a leaner 4-bit matmul kernel, a faster save step, a faster GDN step kernel, a faster draft model, and 16 guesses a round under 50K context (8 above).",
  "headline_numbers": [
   {

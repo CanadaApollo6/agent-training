@@ -1473,3 +1473,18 @@ general (any card, any model size), so it's a candidate for its own small upstre
 
 Side note: a 192K-token prompt took 7 minutes (449 tok/s), against 786 tok/s at 77K. Very long prompts slow down as
 attention grows. That's worth a look later, but it's not a release blocker.
+
+### M3TiS: the first public release (2026-10-13)
+
+Published under Riel's accounts:
+- Hugging Face: [CanadaApollo6/Qwen3.8-27B-M3TiS-3090](https://huggingface.co/CanadaApollo6/Qwen3.8-27B-M3TiS-3090)
+- Source: [CanadaApollo6/TensorFold `m3tis-qwen27-3090`](https://github.com/CanadaApollo6/TensorFold/tree/m3tis-qwen27-3090), commit `c7c3f7c8`
+
+The bundle (9 MB) holds the server, built for any Linux with glibc 2.28+ and an AVX2 CPU, the precompiled 3090
+kernels, a launcher that downloads the existing 4-bit weights and the DFlash2 drafter, and the card
+(`m3tis/README.md`). A fresh download matches the local bundle file for file.
+
+Measured with the released bundle at 262K, with a video playing on the same card: 208 code / 147 chat greedy, 45
+without drafts (`zig/results/m3tis/`). Two back-to-back A/Bs (`ab.txt`, `ab2.txt`) found these all at the same
+speed: the release build, today's weight pool, the build from before the attention-plan fix, and 131K vs 262K. The
+gap to last night's 235 is the desktop sharing the card, not the code.
