@@ -1,0 +1,8 @@
+model 16.80 GiB; 1 stream at once, 0.72 GiB each at a 8192-token window, of 2.4 GiB left after a 1.0 GiB reserve
+prompt 0: solo 97574faef886 draft-off 97574faef886 concurrent 97574faef886 SAME
+prompt 1: solo 5e3b807e00bf draft-off 5e3b807e00bf concurrent 5e3b807e00bf SAME
+prompt 2: solo c0f719073e6e draft-off c0f719073e6e concurrent c0f719073e6e SAME
+model 16.94 GiB; 3 streams at once, 0.72 GiB each at a 8192-token window, of 2.3 GiB left after a 1.0 GiB reserve
+prompt 0: solo 97574faef886 draft-off 97574faef886 concurrent 97574faef886 SAME
+prompt 1: solo 5e3b807e00bf draft-off 5e3b807e00bf concurrent 5e3b807e00bf SAME
+prompt 2: solo c0f719073e6e draft-off c0f719073e6e concurrent c0f719073e6e SAME

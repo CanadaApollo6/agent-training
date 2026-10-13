@@ -1,0 +1,16 @@
+ctx131072: did not load
+tensorfold: the CUDA memory budget fits no stream: one at a 131072-token window takes 8.22 GiB, and 2.35 GiB is left after the model's 16.89 GiB and the 1.0 GiB reserve; lower --context, or free device memory
+ctx98304: did not load
+tensorfold: the CUDA memory budget fits no stream: one at a 98304-token window takes 6.22 GiB, and 2.38 GiB is left after the model's 16.87 GiB and the 1.0 GiB reserve; lower --context, or free device memory
+ctx65536: did not load
+tensorfold: the CUDA memory budget fits no stream: one at a 65536-token window takes 4.22 GiB, and 2.40 GiB is left after the model's 16.85 GiB and the 1.0 GiB reserve; lower --context, or free device memory
+par3: did not load
+tensorfold: --parallel 3 needs 6.66 GiB for its streams at a 32768-token window, and the CUDA memory budget leaves 2.25 GiB: serve --parallel 1, or lower --context
+"prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 166.7163257929135
+ttft_s_median": 0.185
+"prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 94.37890602082575
+ttft_s_median": 0.187
+"prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 139.7936740540604
+ttft_s_median": 0.187
+"prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 96.00715518380667
+ttft_s_median": 0.188

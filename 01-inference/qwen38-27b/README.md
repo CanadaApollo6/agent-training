@@ -1401,6 +1401,51 @@ Python wasn't rerun, so the gap to it is provisional. This is above Python's bes
 10-10).
 
 Next:
-1. Rerun the daily Python and Zig back to back to confirm the decode gain and recheck Python's 10–20% drop.
+1. ~~Rerun the daily Python and Zig back to back to confirm the decode gain and recheck Python's 10–20% drop.~~ Done below.
 2. New kernel shapes for the out-projections and gate + up.
 3. Port GDN lanes, fast commit, and the rows schedule.
+
+### Back to back with Python, and the first upstream PR (2026-10-13)
+
+**Speed, minutes apart** (`results/bench-kv4r-262k-sched-1013.json`, `zig/results/bench-zig-131k-1013.json`,
+`zig/results/b2b-1013.log`):
+
+| tok/s | Daily Python (262K) | Zig server (131K) |
+|---|---|---|
+| Code, greedy | 219.8 | **234.6** (+7%) |
+| Chat, greedy | 143.6 | **160.3** (+12%) |
+| Code, sampled | 228.8 | 228.0 |
+| Chat, sampled | 145.2 | 152.2 (+5%) |
+
+Python is back at its 10-10 numbers, so 10-12's 10–20% drop was the machine, not the code. The Zig server ran at
+131K because 262K didn't load this time. The desktop held 2.0 GB of the card instead of 1.5 GB, which left 4.46 GiB
+for a 4.72 GiB stream. Window size doesn't change speed on short prompts. **262K on this card needs the desktop
+under ~1.7 GB, or ~0.3 GB more trimmed from the engine.** A candidate: the drafter (1.23 GiB) may carry its own copy
+of tables it could share with the main model. Not checked yet.
+
+**PR A: RTX 3090 support, opened against #608's branch**
+([machinegenieorg/TensorFold#3](https://github.com/machinegenieorg/TensorFold/pull/3), branch `sm86-support` on
+the CanadaApollo6 fork, text in `zig/prA-body.md`). It's the part of our patch that changes no arithmetic, four commits:
+- the pre-sm_90 split-K fallback;
+- both 16-byte staging fixes;
+- the work buffers sized by `--parallel`, with the two env settings.
+
+It targets #608's branch, not main, so reviewers see only our ~130 lines. A pull request to main would also carry
+#608's 5,400 lines and its conflicts. Another contributor opened theirs against #608's branch the same way.
+
+Building A alone turned up one more bug, now fixed on both branches. The attention plan had one table that didn't
+start on 16 bytes, so with full-precision storage the server failed on its first request (`_tail`'s `STREAM`
+pointer). Our 4-bit runs never used that kernel. With the fix, the check tool's drafted code went 272 → 307 tok/s
+(4-bit store 292 → 327). The likely reason is that aligned pointers now get the faster recorded kernels. This is not
+yet measured on the server.
+
+A alone on the 3090 (`zig/results/prA/`): serial 4/4, drafted 4/4, multi 3/3 and RAM word table 4/4, all exact vs
+0.6.6. Served replies alone, with drafts off, and 3 at once are all equal. `zig build test` passes. Before A, the
+server couldn't load even a 32K window on 24 GB: 2.22 GiB needed, 1.14 GiB left. With A it loads 32K at full
+precision, at 140 code / 96 chat tok/s greedy.
+
+Next PRs:
+- B: the matmul port. Exact, so no issue needed first.
+- C: the 4-bit store. Open an issue first, because it changes arithmetic. Then move the "past 128K" rule there and
+  make it depend on available memory: on a 96 GB card it would only slow prompts.
+- D: fast short prompts. Hold until a quality check.

@@ -2770,7 +2770,7 @@ index 6e3f362f..b41a8c54 100644
      return .{
          .backend = own.lanes.backend(),
 diff --git c/zig/src/families/qwen27/cuda/round.zig w/zig/src/families/qwen27/cuda/round.zig
-index 2b2d4e26..d1715bb7 100644
+index 2b2d4e26..060bb914 100644
 --- c/zig/src/families/qwen27/cuda/round.zig
 +++ w/zig/src/families/qwen27/cuda/round.zig
 @@ -33,7 +33,7 @@ pub const Round = struct {
@@ -2782,9 +2782,11 @@ index 2b2d4e26..d1715bb7 100644
      }
  
      /// Layer `i`'s attention cache offsets: tree_forward's (one stream, by layer) or the packed (layer, streams) rows.
-@@ -58,13 +58,24 @@ pub fn parentsOf(p: Part, buf: []i32) []const i32 {
+@@ -57,14 +57,26 @@ pub fn parentsOf(p: Part, buf: []i32) []const i32 {
+ /// attention.plan_host: rows, (first, rows, keys, slots) per stream, items, then window parents (global rows).
  fn attnPlan(gpa: std.mem.Allocator, out: *std.ArrayList(i32), parts: []const Part, group: usize) !usize {
      for (parts, 0..) |p, s| for (p.tokens) |_| try out.append(gpa, @intCast(s));
++    while (out.items.len % 4 != 0) try out.append(gpa, 0); // each part from 16 bytes, as planAt places them
      var start: usize = 0;
 +    // a 4-bit cache: the fork's plan_host (each stream's chunks through its last key, an item per chunk and tile)
 +    const kv4 = c.kv4();
@@ -2809,11 +2811,26 @@ index 2b2d4e26..d1715bb7 100644
          const w = p.tokens.len;
          const folded = tri.groups(p.seq.pos, w);
          const loose = p.seq.pos / tri.chunk - folded * tri.group_chunks;
-@@ -86,9 +97,9 @@ fn attnPlan(gpa: std.mem.Allocator, out: *std.ArrayList(i32), parts: []const Par
+@@ -77,6 +89,7 @@ fn attnPlan(gpa: std.mem.Allocator, out: *std.ArrayList(i32), parts: []const Par
+             }
+         }
+     }
++    while (out.items.len % 4 != 0) try out.append(gpa, 0);
+     start = 0;
+     var buf: [tree.max_nodes]i32 = undefined;
+     for (parts) |p| {
+@@ -86,9 +99,16 @@ fn attnPlan(gpa: std.mem.Allocator, out: *std.ArrayList(i32), parts: []const Par
      return n_items;
  }
  
 -/// Each stream's key and value caches as bf16 element offsets from the scratch's origin.
++/// attnPlan's parts in i32s from its start (the start on 16 bytes): rows, then streams, items and parents each from 16 bytes.
++const PlanAt = struct { streams: usize, items: usize, parents: usize };
++fn planAt(W: usize, S: usize, n_items: usize) PlanAt {
++    const rows = std.mem.alignForward(usize, W, 4);
++    return .{ .streams = rows, .items = rows + 4 * S, .parents = rows + 4 * S + std.mem.alignForward(usize, 3 * n_items, 4) };
++}
++
 +/// Each stream's key and value caches as bf16 element offsets from the scratch's origin (bytes for a 4-bit cache).
  fn offsetOf(s: *const st.Scratch, ptr: u64) i64 {
 -    return @divExact(@as(i64, @bitCast(ptr -% s.origin)), bf);
@@ -2821,7 +2838,7 @@ index 2b2d4e26..d1715bb7 100644
  }
  
  /// Every stream's host plans: positions (pos + depth), the GDN schedule (nodes offset by its start), conv windows.
-@@ -117,7 +128,7 @@ fn plans(gpa: std.mem.Allocator, parts: []const Part, starts: []const usize, mul
+@@ -117,7 +137,7 @@ fn plans(gpa: std.mem.Allocator, parts: []const Part, starts: []const usize, mul
  
  /// Uploads the round's inputs and runs attention's _paths; the caller's layer loop reads the returned Round.
  pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch, g: c.Geometry, parts: []const Part) !Round {
@@ -2830,7 +2847,7 @@ index 2b2d4e26..d1715bb7 100644
      var W: usize = 0;
      var r: Round = undefined;
      r.starts_host[0] = 0;
-@@ -128,7 +139,7 @@ pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch,
+@@ -128,7 +148,7 @@ pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch,
          W += p.tokens.len;
          r.starts_host[k + 1] = W;
      }
@@ -2839,8 +2856,15 @@ index 2b2d4e26..d1715bb7 100644
      r.rows = W;
      r.streams = parts.len;
      r.multi = parts.len > 1;
-@@ -179,24 +190,35 @@ pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch,
-         try t.paths(s.attn_plan + (W + 4 + 3 * n_items) * 4, s.paths, s.depths, W);
+@@ -175,30 +195,43 @@ pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch,
+         r.starts = s.plan + 3 * W * 4;
+         r.tables = 0;
+         r.offs = s.offs;
+-        r.attn = .{ .rows = s.attn_plan, .streams = s.attn_plan + W * 4, .items = s.attn_plan + (W + 4) * 4, .n_items = n_items, .paths = s.paths, .depths = s.depths, .width = W };
+-        try t.paths(s.attn_plan + (W + 4 + 3 * n_items) * 4, s.paths, s.depths, W);
++        const at = planAt(W, 1, n_items);
++        r.attn = .{ .rows = s.attn_plan, .streams = s.attn_plan + at.streams * 4, .items = s.attn_plan + at.items * 4, .n_items = n_items, .paths = s.paths, .depths = s.depths, .width = W };
++        try t.paths(s.attn_plan + at.parents * 4, s.paths, s.depths, W);
          return r;
      }
 -    // multi_tree_forward: positions, stream ids, plan entries, starts, ids, windows, attention's plan in one copy
@@ -2880,9 +2904,13 @@ index 2b2d4e26..d1715bb7 100644
 +    r.ids = base + at_ids * 4;
 +    r.windows = base + at_windows * 4;
      const ab = base + at_attn * 4;
-     r.attn = .{ .rows = ab, .streams = ab + W * 4, .items = ab + (W + 4 * S) * 4, .n_items = n_items, .paths = s.paths, .depths = s.depths, .width = W };
+-    r.attn = .{ .rows = ab, .streams = ab + W * 4, .items = ab + (W + 4 * S) * 4, .n_items = n_items, .paths = s.paths, .depths = s.depths, .width = W };
++    const at = planAt(W, S, n_items);
++    r.attn = .{ .rows = ab, .streams = ab + at.streams * 4, .items = ab + at.items * 4, .n_items = n_items, .paths = s.paths, .depths = s.depths, .width = W };
      // the state pointer table and cache offsets, one copy each; every stream's conv rows stacked by layer
-@@ -211,7 +233,7 @@ pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch,
+     var ptrs: std.ArrayList(u64) = .empty;
+     defer ptrs.deinit(gpa);
+@@ -211,7 +244,7 @@ pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch,
              for (parts) |p| try offs.appendSlice(gpa, &.{ offsetOf(s, p.seq.keys[i]), offsetOf(s, p.seq.values[i]) });
              continue;
          }
@@ -2891,6 +2919,14 @@ index 2b2d4e26..d1715bb7 100644
          for (parts, 0..) |p, k| {
              try ptrs.append(gpa, p.seq.rec[i]);
              try stack.append(gpa, .{ .dst = cat + k * keep * g.convDim() * bf, .src = p.seq.conv[i], .bytes = keep * g.convDim() * bf });
+@@ -225,6 +258,6 @@ pub fn stage(gpa: std.mem.Allocator, ops: kern.Ops, t: tri.Tri, s: *st.Scratch,
+     try ops.s.synchronize();
+     r.tables = s.tables;
+     r.offs = s.offs;
+-    try t.paths(ab + (W + 4 * S + 3 * n_items) * 4, s.paths, s.depths, W);
++    try t.paths(ab + at.parents * 4, s.paths, s.depths, W);
+     return r;
+ }
 diff --git c/zig/src/families/qwen27/cuda/shape.zig w/zig/src/families/qwen27/cuda/shape.zig
 index b018dc22..2440d333 100644
 --- c/zig/src/families/qwen27/cuda/shape.zig
@@ -2928,7 +2964,7 @@ index b018dc22..2440d333 100644
      pub fn inner(g: Geometry) usize {
          return @max(g.vInner(), g.qInner());
 diff --git c/zig/src/families/qwen27/cuda/state.zig w/zig/src/families/qwen27/cuda/state.zig
-index 4cbe06c0..8f1ebde6 100644
+index 4cbe06c0..ec03a5f0 100644
 --- c/zig/src/families/qwen27/cuda/state.zig
 +++ w/zig/src/families/qwen27/cuda/state.zig
 @@ -45,7 +45,7 @@ pub const Seq = struct {
@@ -3015,6 +3051,15 @@ index 4cbe06c0..8f1ebde6 100644
          const bf = 2;
          const chunks = (capacity + W + tri.chunk - 1) / tri.chunk;
          // attention.plan_host: a query tile's items per committed chunk and folded group
+@@ -263,7 +270,7 @@ pub const Scratch = struct {
+         s.prompt_values = try A.take(R * g.kvInner() * bf);
+         s.windows = try A.take(R * c.conv_taps * 4);
+         s.plan = try A.take(R * 3 * 4);
+-        s.attn_plan = try A.take((W + 4 + 3 * items + W) * 4);
++        s.attn_plan = try A.take((W + 4 + 3 * items + W + 6) * 4); // + its parts' 16-byte padding
+         s.paths = try A.take(W * tri.max_nodes * 4);
+         s.depths = try A.take(W * 4);
+         s.offs = try A.take(g.layers * max_streams * 2 * 8);
 @@ -271,14 +278,14 @@ pub const Scratch = struct {
          s.part_m = try A.take(chunks * W * g.query_heads * 4);
          s.part_l = try A.take(chunks * W * g.query_heads * 4);
@@ -3027,7 +3072,7 @@ index 4cbe06c0..8f1ebde6 100644
          s.replay_table = try A.take(g.layers * (4 + max_streams) * 8);
          s.replay_rows = try A.take(max_streams * (W + 1) * 4);
 -        s.round = try A.take((6 * W + max_streams + 1 + W * c.conv_taps + W + 4 * max_streams + 3 * items * max_streams + W) * 4);
-+        s.round = try A.take((6 * W + max_streams + 1 + W * c.conv_taps + W + 4 * max_streams + 3 * items * max_streams + W + 32) * 4); // + each part's 16-byte padding
++        s.round = try A.take((6 * W + max_streams + 1 + W * c.conv_taps + W + 4 * max_streams + 3 * items * max_streams + W + 40) * 4); // + each part's 16-byte padding
          s.tables = try A.take(g.layers * max_streams * 8);
 -        s.conv_cat = try A.take(g.layers * max_streams * (c.conv_taps - 1) * g.convDim() * bf);
 +        s.conv_cat = try A.take(g.layers * s.streams() * (c.conv_taps - 1) * g.convDim() * bf);

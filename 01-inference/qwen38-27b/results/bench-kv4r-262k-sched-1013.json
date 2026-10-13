@@ -1,0 +1,58 @@
+[
+ {
+  "label": "kv4r-262k-sched-1013",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 228.78361118968073,
+  "decode_tps_all": [
+   210.09,
+   307.32,
+   228.78
+  ],
+  "ttft_s_median": 0.028766088013071567,
+  "sample": "\n\n<think>\nThe user wants a short Python function that computes the Fibonacci sequence, along with an explanation. Let me think about what would be most useful:\n"
+ },
+ {
+  "label": "kv4r-262k-sched-1013",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 256,
+  "decode_tps_median": 145.15583051077255,
+  "decode_tps_all": [
+   156.25,
+   145.16,
+   138.55
+  ],
+  "ttft_s_median": 0.02838602301198989,
+  "sample": "### Part 1: How Matrix Multiplication Uses a GPU (Plain English)\n\nImagine you have a giant spreadsheet (Matrix A) and another giant spreadsheet (Matrix B). You "
+ },
+ {
+  "label": "kv4r-262k-sched-1013",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 219.82263677840248,
+  "decode_tps_all": [
+   220.6,
+   219.82,
+   219.24
+  ],
+  "ttft_s_median": 0.028389543993398547,
+  "sample": "\n\n<think>\nThe user wants a short Python function that computes the Fibonacci sequence, along with an explanation. Let me think about what would be most useful:\n"
+ },
+ {
+  "label": "kv4r-262k-sched-1013",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 256,
+  "decode_tps_median": 143.6383528304879,
+  "decode_tps_all": [
+   143.64,
+   143.79,
+   143.06
+  ],
+  "ttft_s_median": 0.028150200960226357,
+  "sample": "### Part 1: How GPU Matrix Multiplication Works (In Plain English)\n\nTo understand how a GPU handles matrix multiplication, it helps to first understand why a st"
+ }
+]

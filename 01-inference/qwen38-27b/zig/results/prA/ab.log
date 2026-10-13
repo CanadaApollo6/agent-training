@@ -1,0 +1,18 @@
+== old 02:51:54
+ab-old: did not load
+tensorfold: the CUDA memory budget fits no stream: one at a 32768-token window takes 2.22 GiB, and 1.14 GiB is left after the model's 18.10 GiB and the 1.0 GiB reserve; lower --context, or free device memory
+== new 02:52:11
+model 16.82 GiB
+"prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 168.10761359901898
+"prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 94.72255118780188
+"prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 140.93980843935768
+"prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 96.2542901925743
+== old 02:53:02
+ab-old: did not load
+tensorfold: the CUDA memory budget fits no stream: one at a 32768-token window takes 2.22 GiB, and 1.14 GiB is left after the model's 18.10 GiB and the 1.0 GiB reserve; lower --context, or free device memory
+== new 02:53:19
+model 16.82 GiB
+"prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 167.33413650182305
+"prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 94.67151421202264
+"prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 140.1831767945438
+"prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 96.22203198139128
