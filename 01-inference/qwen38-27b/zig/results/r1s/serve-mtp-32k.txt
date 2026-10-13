@@ -1,0 +1,6 @@
+R1s native server, 32K, --parallel 4, drafts on (fork r1s-moe c8ddfb9b)
+conc.py: 3/3 SAME (solo = draft-off = concurrent)
+512 tokens in 1.26s = 406 tok/s (code)
+512 tokens in 1.59s = 321 tok/s (explain)
+512 tokens in 1.95s = 263 tok/s (story)
+MTP head step 0.52 ms (full vocab)
