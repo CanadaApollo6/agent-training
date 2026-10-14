@@ -1,0 +1,17 @@
+[project]
+name = "env-lfm25"
+version = "0.1.0"
+description = "LFM2.5-24B-A2B reference (transformers layers, layer-streamed bf16 and 4-bit dequant) for the Zig engine port"
+requires-python = ">=3.12,<3.13"
+dependencies = ["torch", "transformers>=5.0", "safetensors", "numpy", "tokenizers", "jinja2"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu130" }
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
