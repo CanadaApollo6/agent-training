@@ -162,6 +162,9 @@ def expert(W, p, e):
     return tuple(W.get(p + f"feed_forward.experts.{e}.{n}") for n in ("w1", "w3", "w2"))
 
 
+DUMP = []  # debugging: each norm's output row 0 (operator_norm, ffn_norm by layer, then the final norm)
+
+
 @torch.no_grad()
 def forward(W, ids, route_log=None):
     cfg = W.cfg
@@ -173,10 +176,13 @@ def forward(W, ids, route_log=None):
     for i, kind in enumerate(cfg["layer_types"]):
         p = f"model.layers.{i}."
         x = rms(h, W.get(p + "operator_norm.weight"), eps)
+        DUMP.append(x[0].float().cpu())
         h = h + (attn_layer(W, p, x, cfg) if kind == "full_attention" else conv_layer(W, p, x))
         x = rms(h, W.get(p + "ffn_norm.weight"), eps)
+        DUMP.append(x[0].float().cpu())
         h = h + (dense_mlp(W, p, x) if i < cfg["num_dense_layers"] else moe(W, p, x, cfg, route_log))
     h = rms(h, W.get("model.embedding_norm.weight"), eps)
+    DUMP.append(h[0].float().cpu())
     return (h.float() @ emb.float().T)  # tied head, fp32 logits
 
 
@@ -196,8 +202,13 @@ def main():
     ap.add_argument("--greedy", type=int, default=0)
     ap.add_argument("--out")
     ap.add_argument("--routes")
+    ap.add_argument("--dump", help="each norm's row 0 (fp32 [norms, hidden]) to this .npy")
+    ap.add_argument("--embed4", action="store_true", help="the tied table from mlx4/embed4.safetensors (the Zig engine's)")
     a = ap.parse_args()
     W = Weights(a.weights)
+    if a.embed4:
+        with safe_open(str(ROOT / "mlx4/embed4.safetensors"), "pt", device=DEV) as f:
+            W.emb = dequant(*(f.get_tensor(f"model.embed_tokens.{n}") for n in ("weight", "scales", "biases")))
     if a.ids:
         ids = json.loads(Path(a.ids).read_text())
         tok = None
@@ -222,6 +233,10 @@ def main():
         if a.routes:
             torch.save(torch.stack(log), a.routes)  # [38 MoE layers, T, 4]
         print(f"saved {len(ids)} positions")
+    if a.dump:
+        DUMP.clear()
+        forward(W, ids[:1])
+        np.save(a.dump, torch.stack(DUMP).numpy())
 
 
 if __name__ == "__main__":

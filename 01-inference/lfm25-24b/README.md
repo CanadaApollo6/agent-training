@@ -18,5 +18,10 @@ build that runs it as fast as the 3090 allows, as a possible M3TiS release.
 ## Results
 
 - [llama.cpp baseline](results/llamacpp-baseline.md): 270 tok/s decode on QAD-Q4_0, 48% of the 566 tok/s ceiling.
+- [Draft expert spread](results/draft-expert-spread.md): a 4-row draft check reads about 2x one token's bytes.
+- [Zig engine port](results/zig-port.md): matches the reference (KL 0.024); 198 tok/s before tuning.
+
+Tools: `ref.py` (reference, teacher-forced logits), `compare_logits.py` (KL and top-1 of two dumps),
+`make_embed4.py` (the 4-bit tied table), `prompts.json` (code, chat and tool-use prompts as token ids).
 
 Local files (not in git): `~/models/lfm25-24b/{bf16,gguf,mlx4}`; llama.cpp built in `01-inference/tools/llama.cpp`.
