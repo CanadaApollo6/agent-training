@@ -758,3 +758,18 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     in RAM (~32 GB), which is tight with this PC's 32 GB. An 8-bit text encoder (~9 GB) avoids that.
   - **For us:** off the agent curriculum, but the easiest of these four to run locally. Wait for ComfyUI support or
     community quants, or try it in diffusers with an 8-bit encoder.
+- [FLUX 3 Image Klein](https://huggingface.co/collections/black-forest-labs/flux-3-image-klein) (Black Forest Labs,
+  2026-10-13; FLUX Kommunity License v1.0, non-commercial, which is fine for personal use; gated with automatic
+  approval): a 5.6B image model for text-to-image, editing and up to 10 reference images.
+  - Four repos: the distilled model (16 steps, no guidance; "the checkpoint behind the BFL API"), an undistilled
+    **base** model (50 steps) released for LoRA training and fine-tuning, a ComfyUI repackage, and an optional
+    prompt upsampler (a Qwen3.5-9B fine-tune, Apache 2.0) that rewrites short prompts before drawing.
+  - Sizes in bf16: transformer 11.1 GB, Qwen3-VL-4B text encoder 8.9 GB, VAE 0.3 GB. The ComfyUI repo has int8
+    versions (5.8 GB transformer, 4.9 GB encoder) made for GPUs without FP8, naming the RTX 30 series. The FP8
+    and NVFP4 files don't help here: the 3090 has no FP8 and NVFP4 needs Blackwell.
+  - Memory, measured by BFL on a B200 at 1024²: 31 GB in bf16. No 3090 or speed figures and no benchmark numbers.
+  - The 3090: int8 in ComfyUI fits easily (~11 GB of weights). Full bf16 likely fits with the text encoder offloaded
+    between prompts. The upsampler (18.8 GB bf16, 9.8 GB int8) can't sit beside it; run it first or skip it.
+  - **For us:** the best image pick of the two (vs Qwen-Image-2.1-Turbo above). It's half the size, has an official
+    30-series build, and ships a base checkpoint, so LoRA training on the 3090 is realistic. A small, low-heat
+    project; a LoRA run is the one to time and keep under the 15-minute rule.
