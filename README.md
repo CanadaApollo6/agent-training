@@ -721,7 +721,7 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   text-to-speech for scenes with up to 16 speakers, voice cloning from one clip, inline emotion tags (`[sighs]`),
   about 80 languages.
   - The text backbone is a 35B-A3B MoE with the same shape as Ornith 1.5 35B-A3B / Qwen3.5-35B-A3B (40 layers, 256
-    experts, 8 active, hybrid linear/full attention, the same 248K-token vocabulary), plus a small 4-layer audio
+    experts, 8 active, hybrid linear/full attention, Qwen's vocabulary plus ~4K audio tokens), plus a small 4-layer audio
     decoder. Weights are 44.6 GB (FP8 experts, bf16 rest).
   - Served with SGLang-Omni. Its only numbers are speed on an H200 (first audio 89 ms; 7.6x faster than real time
     for one stream). No quality numbers in the card, and no fine-tuning code.
