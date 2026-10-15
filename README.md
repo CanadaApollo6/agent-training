@@ -789,4 +789,4 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     what our Ornith 9B ladder was reaching for: at 2 bits, plain rounding (IQ2_M) dropped to 43/80 against Q8's 66.
     Running Qwen3.5-9B Q8 against Bonsai 2 9B on the same reasoning probe measures how much PrismML's training
     keeps at 9B, and tells us whether trained ternary is worth doing for Ornith 9B. It's a few minutes on the 3090.
-    Qwen3.5-9B is also on Prime Hosted Training, so a tuned 9B could in principle be retrained and re-ternarized.
+    PrismML hasn't released its training recipe, so we can't ternarize our own fine-tunes this way yet.
