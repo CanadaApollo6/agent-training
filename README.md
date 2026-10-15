@@ -725,13 +725,13 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     decoder. Weights are 44.6 GB (FP8 experts, bf16 rest).
   - Served with SGLang-Omni. Its only numbers are speed on an H200 (first audio 89 ms; 7.6x faster than real time
     for one stream). No quality numbers in the card, and no fine-tuning code.
-  - License: Fish Audio Community License. Free for research and personal use. Commercial use only under $500K
-    annual revenue, and installing it for a client counts that client's revenue too. Offering it as a TTS API needs
-    a separate license.
-  - The 3090: doesn't fit as shipped. Because the backbone is the Ornith 35B shape, the same 3-bit expert tricks
-    that put Ornith 35B on the 3090 would likely apply, but the audio decoder is custom code nobody has ported.
-  - **For us:** off the main curriculum. Interesting as proof that a Qwen3.5-MoE LLM backbone can be turned into a
-    speech model. Not usable for Smart Data clients like CareSource (revenue cap).
+  - License: Fish Audio Community License. Free for research and personal use, which is all Riel wants it for.
+  - The 3090: doesn't fit as shipped (FP8 experts, and the 3090 has no FP8 hardware anyway). The backbone has the
+    Ornith 35B shape, so the expert quantization that put Ornith 35B on the 3090 should carry over: ~4 bits is about
+    20 GB, ~3 bits about 14 GB. The audio decoder and codec are small but custom; no llama.cpp or TensorFold support.
+  - **For us:** a personal project that reuses the Ornith quantization skills. First step: run it on a pod in
+    SGLang-Omni to hear the quality, then decide whether a 3090 port is worth it. Quality has to be checked by ear,
+    since the card gives no quality numbers.
 - [humanizer](https://huggingface.co/jialinyyzz/humanizer) (jialinyyzz; Apache 2.0; 75K downloads): Gemma 4 12B,
   fully fine-tuned to rewrite AI-written drafts (English and Chinese) so they read as human-written, keeping numbers,
   names and quotes. GGUFs from 12.7 GB (Q8_0) down to 3.9 GB, so it runs easily on the 3090.
@@ -752,6 +752,9 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     bf16. On a 24 GB card the text encoder must be offloaded or quantized. No official quants and no speed numbers.
   - diffusers only, and it needs diffusers from git main. No benchmark numbers in the card, and no LoRA-training
     guide.
-  - License: Qwen Research License, **non-commercial only**.
-  - **For us:** off-curriculum (images, not agents). It's a fine personal project for the 3090 once ComfyUI or
-    nunchaku quants appear, but not something to build Smart Data work on.
+  - License: Qwen Research License, non-commercial, which is fine for personal use.
+  - The 3090: the text encoder runs once per prompt and the transformer runs 8 times, so the two can take turns on
+    the GPU. The bf16 transformer (14.2 GB) fits on its own. diffusers' model offload does that swap but keeps both
+    in RAM (~32 GB), which is tight with this PC's 32 GB. An 8-bit text encoder (~9 GB) avoids that.
+  - **For us:** off the agent curriculum, but the easiest of these four to run locally. Wait for ComfyUI support or
+    community quants, or try it in diffusers with an 8-bit encoder.
