@@ -695,3 +695,63 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     credentials. The index file is itself PHI, though, and needs the same handling as the source data. For a
     Songbird agent or a Module 4 environment, it is a ready-made "look up this customer's history" tool. Before
     using it on client data, benchmark it on a real export against SQL plus an embedding search.
+- [Nemotron 3.5 Bolt 74B-A9B 24GB](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB) (NVIDIA,
+  2026-10-15; OpenMDW-1.1, commercial use allowed;
+  [GGUF](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF),
+  [BF16](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-BF16)): a vision-language agent model cut down
+  from Nemotron 3.5 Super VL 120B-A12B and shipped at 2 bits.
+  - Mamba-2/attention hybrid MoE: 88 layers, of which only 8 are attention, so the context cache stays small. 512
+    experts, 9 active (the parent used 22), 256K context.
+  - How it was shrunk: a router searched expert counts and widths per layer for a budget under 24 GB at 128K
+    context, then 120B tokens of distillation from the parent. All experts are IQ2_XXS (2.06 bits) trained with
+    quantization in the loop (QAD); Mamba projections are NVFP4, embeddings and output Q8_0.
+  - NVIDIA's numbers, Bolt at 2 bits against BF16 rivals: Terminal-Bench 2.1 51.0 (Qwen3.6-35B-A3B 44.4, Nemotron
+    3.5 Lightning 23.5), MCP-Atlas 52.2 (51.2), BrowseComp 66.8 (48.7), GPQA Diamond 86.4 (83.4). No Qwen3.8-27B or
+    Ornith rows, and no speed figures.
+  - The 3090: the GGUF is 22.0 GB plus a 1.7 GB vision file. NVIDIA's smallest recipe is 28 GB, and the vLLM path
+    needs Blackwell kernels (the card contradicts itself on Ampere). Text-only at short context, without the DFlash
+    drafter, it might just fit in llama.cpp. Untested.
+  - **For us:** two things. As a model, it's the strongest agent claim yet at this memory size, so it belongs in
+    the harness grid next to R1s and Qwen3.8-27B, first on a pod (48 GB A6000 at full context), then a 3090 fit
+    test. As a method, it's the Ornith quantization project done by NVIDIA at scale: 2-bit experts trained with
+    quantization in the loop, beating a BF16 model with a third of its parameters. It backs the R1s direction and
+    gives a reference point for "bigger model at 2 bits vs smaller at 4". Fine-tuning would start from the BF16
+    checkpoint (~150 GB), so pods only.
+- [Fish Audio Drama 3](https://huggingface.co/fishaudio/drama-3) (Fish Audio, 2026-10; arXiv 2610.18010):
+  text-to-speech for scenes with up to 16 speakers, voice cloning from one clip, inline emotion tags (`[sighs]`),
+  about 80 languages.
+  - The text backbone is a 35B-A3B MoE with the same shape as Ornith 1.5 35B-A3B / Qwen3.5-35B-A3B (40 layers, 256
+    experts, 8 active, hybrid linear/full attention, the same 248K-token vocabulary), plus a small 4-layer audio
+    decoder. Weights are 44.6 GB (FP8 experts, bf16 rest).
+  - Served with SGLang-Omni. Its only numbers are speed on an H200 (first audio 89 ms; 7.6x faster than real time
+    for one stream). No quality numbers in the card, and no fine-tuning code.
+  - License: Fish Audio Community License. Free for research and personal use. Commercial use only under $500K
+    annual revenue, and installing it for a client counts that client's revenue too. Offering it as a TTS API needs
+    a separate license.
+  - The 3090: doesn't fit as shipped. Because the backbone is the Ornith 35B shape, the same 3-bit expert tricks
+    that put Ornith 35B on the 3090 would likely apply, but the audio decoder is custom code nobody has ported.
+  - **For us:** off the main curriculum. Interesting as proof that a Qwen3.5-MoE LLM backbone can be turned into a
+    speech model. Not usable for Smart Data clients like CareSource (revenue cap).
+- [humanizer](https://huggingface.co/jialinyyzz/humanizer) (jialinyyzz; Apache 2.0; 75K downloads): Gemma 4 12B,
+  fully fine-tuned to rewrite AI-written drafts (English and Chinese) so they read as human-written, keeping numbers,
+  names and quotes. GGUFs from 12.7 GB (Q8_0) down to 3.9 GB, so it runs easily on the 3090.
+  - Training pipeline, well documented: SFT on 28.6K (AI draft → human original) pairs, DPO on 3.9K pairs picked for
+    fact fidelity, then 500 GRPO steps with a GLM-5.3 judge and a penalty for copying. The data is public
+    (`jialinyyzz/humanizer-data`).
+  - Its headline: one AI detector (Originality.ai) flags 11 of 210 English rewrites. One run, one date, the author's
+    own test set. Fact fidelity is judged only by an LLM (376/420 clean). The baseline (a prompt skill on Sonnet,
+    60/60 flagged) is weak.
+  - **For us:** the model's job, getting past AI detectors, isn't one of our goals. The recipe is what's worth
+    studying: a complete SFT → DPO → GRPO pipeline on a 12B, with an LLM-judge reward plus a rule-based penalty
+    against the obvious hack (copying the input). That's the shape of a Module 3/4 post-training run on a model
+    that fits the 3090, with public data to rerun it.
+- [Qwen-Image-2.1-Turbo](https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo) (Qwen, 2026-10-09): the official
+  8-step version of Qwen-Image-2.1, text-to-image and image editing from one checkpoint. It's the official version of
+  the community viggle-turbo distill above.
+  - Parts: a ~7B diffusion transformer (14.2 GB), a Qwen3-VL text encoder (17.5 GB) and a VAE: about 32 GB in
+    bf16. On a 24 GB card the text encoder must be offloaded or quantized. No official quants and no speed numbers.
+  - diffusers only, and it needs diffusers from git main. No benchmark numbers in the card, and no LoRA-training
+    guide.
+  - License: Qwen Research License, **non-commercial only**.
+  - **For us:** off-curriculum (images, not agents). It's a fine personal project for the 3090 once ComfyUI or
+    nunchaku quants appear, but not something to build Smart Data work on.
