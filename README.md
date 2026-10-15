@@ -773,3 +773,20 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   - **For us:** the best image pick of the two (vs Qwen-Image-2.1-Turbo above). It's half the size, has an official
     30-series build, and ships a base checkpoint, so LoRA training on the 3090 is realistic. A small, low-heat
     project; a LoRA run is the one to time and keep under the 15-minute rule.
+- [Bonsai 2 Small](https://huggingface.co/collections/prism-ml/bonsai-2-small) (PrismML; Apache 2.0; GGUF repos
+  2026-09-23, MLX 2026-10-01): ternary versions of **Qwen3.5-9B, 4B and 2B**, the smaller siblings of the Bonsai 2
+  27B we measured (see the sudoingx entry above and the reasoning probe in the Ornith work).
+  - Same method as the 27B: weights in {-1, 0, +1} with an FP16 scale per group and a Hadamard rotation folded in.
+    9B sizes: PTQ1_0 2.00 GB (~1.78 bits), PQ2_0 2.42 GB, Q2_0 2.56 GB. The 4B's PQ2_0 is 1.15 GB, the 2B's 0.52 GB.
+    Vision tower included, 262K context, thinking on by default.
+  - MTP heads (9B, 4B) and DFlash2 drafters ship with them. The cards say MTP helps on copy-heavy work and is about
+    even or slower on chat.
+  - Needs the PrismML llama.cpp fork (we already have its prebuilt CUDA build in 01-inference/tools); mainline
+    llama.cpp only loads Q2_0.
+  - **No benchmarks, speed or memory numbers in any card**, and nothing on how they were trained. The 27B's 98.2% of
+    FP16 can't be assumed here: small models usually lose more at low bits.
+  - **For us:** the 9B is the most useful. Qwen3.5-9B has the same architecture as Ornith 1.5 9B, so Bonsai 2 9B is
+    what our Ornith 9B ladder was reaching for: at 2 bits, plain rounding (IQ2_M) dropped to 43/80 against Q8's 66.
+    Running Qwen3.5-9B Q8 against Bonsai 2 9B on the same reasoning probe measures how much PrismML's training
+    keeps at 9B, and tells us whether trained ternary is worth doing for Ornith 9B. It's a few minutes on the 3090.
+    Qwen3.5-9B is also on Prime Hosted Training, so a tuned 9B could in principle be retrained and re-ternarized.
