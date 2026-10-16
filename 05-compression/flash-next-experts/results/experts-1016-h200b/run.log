@@ -1,0 +1,62 @@
+
+Loading weights:   0%|          | 0/1500 [00:00<?, ?it/s][A
+Loading weights:   3%|▎         | 41/1500 [00:01<00:59, 24.40it/s][A
+Loading weights:   4%|▍         | 66/1500 [00:06<02:34,  9.27it/s][A
+Loading weights:   6%|▋         | 94/1500 [00:07<01:48, 12.98it/s][A
+Loading weights:  10%|▉         | 149/1500 [00:08<01:03, 21.41it/s][A
+Loading weights:  12%|█▏        | 180/1500 [00:09<01:00, 21.73it/s][A
+Loading weights:  15%|█▍        | 221/1500 [00:10<00:49, 25.71it/s][A
+Loading weights:  17%|█▋        | 253/1500 [00:12<00:51, 24.36it/s][A
+Loading weights:  19%|█▉        | 284/1500 [00:13<00:50, 24.17it/s][A
+Loading weights:  21%|██        | 316/1500 [00:15<00:51, 22.81it/s][A
+Loading weights:  24%|██▍       | 365/1500 [00:16<00:41, 27.12it/s][A
+Loading weights:  26%|██▋       | 394/1500 [00:18<00:44, 24.75it/s][A
+Loading weights:  29%|██▊       | 431/1500 [00:19<00:38, 27.57it/s][A
+Loading weights:  31%|███       | 461/1500 [00:20<00:38, 26.95it/s][A
+Loading weights:  33%|███▎      | 490/1500 [00:21<00:40, 24.76it/s][A
+Loading weights:  36%|███▌      | 533/1500 [00:22<00:34, 28.02it/s][A
+Loading weights:  37%|███▋      | 562/1500 [00:24<00:36, 25.79it/s][A
+Loading weights:  40%|████      | 600/1500 [00:25<00:32, 27.51it/s][A
+Loading weights:  42%|████▏     | 630/1500 [00:26<00:34, 25.42it/s][A
+Loading weights:  44%|████▍     | 667/1500 [00:28<00:32, 25.63it/s][A
+Loading weights:  47%|████▋     | 702/1500 [00:29<00:29, 26.91it/s][A
+Loading weights:  50%|████▉     | 749/1500 [00:30<00:24, 30.37it/s][A
+Loading weights:  52%|█████▏    | 780/1500 [00:32<00:26, 27.49it/s][A
+Loading weights:  55%|█████▍    | 821/1500 [00:33<00:23, 29.51it/s][A
+Loading weights:  57%|█████▋    | 852/1500 [00:34<00:24, 26.67it/s][A
+Loading weights:  59%|█████▉    | 892/1500 [00:35<00:21, 28.58it/s][A
+Loading weights:  61%|██████▏   | 922/1500 [00:37<00:22, 26.08it/s][A
+Loading weights:  64%|██████▎   | 956/1500 [00:38<00:20, 26.90it/s][A
+Loading weights:  66%|██████▌   | 989/1500 [00:40<00:20, 25.43it/s][A
+Loading weights:  69%|██████▉   | 1037/1500 [00:41<00:15, 29.31it/s][A
+Loading weights:  71%|███████   | 1067/1500 [00:42<00:16, 27.04it/s][A
+Loading weights:  74%|███████▍  | 1109/1500 [00:43<00:13, 29.81it/s][A
+Loading weights:  76%|███████▌  | 1140/1500 [00:45<00:13, 27.45it/s][A
+Loading weights:  96%|█████████▌| 1443/1500 [00:46<00:00, 95.79it/s][ALoading weights: 100%|██████████| 1500/1500 [00:46<00:00, 32.51it/s]
+20:37:40 loaded in 56s: 48 MoE layers x 512 experts, first device cuda:1
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+20:38:52 calib window 0: 8192 tokens, 114 tok/s
+20:45:45 calib window 10: 90112 tokens, 186 tok/s
+20:52:39 calib window 20: 172032 tokens, 191 tok/s
+20:58:52 pass 1 done: 244306 tokens in 1272s
+21:01:36 heldout window 0 (terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd): freq50 KL 0.4959 agree 0.917, reap50 KL 0.4886 agree 0.924, freq25 KL 0.2162 agree 0.948, 164s
+21:04:20 heldout window 1 (terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd): freq50 KL 0.555 agree 0.865, reap50 KL 0.5015 agree 0.864, freq25 KL 0.2522 agree 0.909, 328s
+21:07:04 heldout window 2 (terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd): freq50 KL 0.4659 agree 0.869, reap50 KL 0.4367 agree 0.864, freq25 KL 0.2189 agree 0.911, 493s
+21:09:48 heldout window 3 (terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd): freq50 KL 0.4706 agree 0.848, reap50 KL 0.4459 agree 0.845, freq25 KL 0.2279 agree 0.894, 657s
+21:12:33 heldout window 4 (terminal-bench-4--ornith35b-q8h-a1--prime_agent--160b1eff): freq50 KL 1.151 agree 0.756, reap50 KL 1.046 agree 0.760, freq25 KL 0.788 agree 0.804, 821s
+21:15:17 heldout window 5 (terminal-lego--ornith35b-r1s-sd-tlhard1--prime_agent--d8aac7dd): freq50 KL 0.9688 agree 0.783, reap50 KL 0.8846 agree 0.784, freq25 KL 0.6603 agree 0.829, 985s
+21:18:01 heldout window 6 (terminal-lego--ornith35b-r1s-sd-tlpilot--prime_agent--d5f93c56): freq50 KL 1.037 agree 0.762, reap50 KL 0.9583 agree 0.762, freq25 KL 0.6462 agree 0.820, 1149s
+21:20:45 heldout window 7 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 1.005 agree 0.763, reap50 KL 0.9664 agree 0.760, freq25 KL 0.6149 agree 0.821, 1313s
+21:23:30 heldout window 8 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 0.932 agree 0.769, reap50 KL 0.9063 agree 0.764, freq25 KL 0.5631 agree 0.828, 1478s
+21:26:14 heldout window 9 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 0.8869 agree 0.773, reap50 KL 0.8735 agree 0.768, freq25 KL 0.5272 agree 0.834, 1642s
+21:28:58 heldout window 10 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 0.8443 agree 0.777, reap50 KL 0.8403 agree 0.770, freq25 KL 0.4955 agree 0.838, 1806s
+21:31:31 heldout window 11 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 0.7989 agree 0.784, reap50 KL 0.8011 agree 0.776, freq25 KL 0.4655 agree 0.844, 1959s
+21:32:53 control window 0 (HuggingFaceFW/fineweb-edu:sample-10BT): freq50 KL 0.7404 agree 0.665, 82s
+21:34:15 control window 1 (HuggingFaceFW/fineweb-edu:sample-10BT): freq50 KL 0.8826 agree 0.645, 164s
+21:35:37 control window 2 (HuggingFaceFW/fineweb-edu:sample-10BT): freq50 KL 0.9914 agree 0.616, 246s
+21:36:33 control window 3 (HuggingFaceFW/fineweb-edu:sample-10BT): freq50 KL 1.087 agree 0.577, 302s
+21:37:55 control window 4 (wikimedia/wikipedia:20231101.zh): freq50 KL 1.445 agree 0.526, 384s
+21:39:17 control window 5 (wikimedia/wikipedia:20231101.es): freq50 KL 1.606 agree 0.505, 466s
+21:40:39 control window 6 (wikimedia/wikipedia:20231101.ru): freq50 KL 1.748 agree 0.491, 548s
+21:41:26 control window 7 (wikimedia/wikipedia:20231101.ru): freq50 KL 1.77 agree 0.492, 594s
+21:41:26 done

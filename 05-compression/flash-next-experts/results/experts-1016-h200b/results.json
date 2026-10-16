@@ -1,0 +1,175 @@
+{
+ "heldout": {
+  "summary": {
+   "freq50": {
+    "tokens": 97680,
+    "kl": 0.7989103417382877,
+    "top1_agree": 0.7839271089271089,
+    "ppl_full": 5.4921495561272575,
+    "ppl_pruned": 6.285393890791664
+   },
+   "reap50": {
+    "tokens": 97680,
+    "kl": 0.8011214125971634,
+    "top1_agree": 0.7756142506142506,
+    "ppl_full": 5.4921495561272575,
+    "ppl_pruned": 5.462626429360068
+   },
+   "freq25": {
+    "tokens": 97680,
+    "kl": 0.465469901255171,
+    "top1_agree": 0.8436220311220312,
+    "ppl_full": 5.4921495561272575,
+    "ppl_pruned": 5.992486644575347
+   }
+  },
+  "by_source": {
+   "terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd|freq50": {
+    "tokens": 32764,
+    "kl": 0.4705535734024346,
+    "top1_agree": 0.8483091197655964,
+    "ppl_full": 3.1329915773467283,
+    "ppl_pruned": 3.613686422708062
+   },
+   "terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd|reap50": {
+    "tokens": 32764,
+    "kl": 0.4458817469667652,
+    "top1_agree": 0.8447076059089245,
+    "ppl_full": 3.1329915773467283,
+    "ppl_pruned": 3.409912051083381
+   },
+   "terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd|freq25": {
+    "tokens": 32764,
+    "kl": 0.2278559954666186,
+    "top1_agree": 0.8942131607862288,
+    "ppl_full": 3.1329915773467283,
+    "ppl_pruned": 3.2258272433627604
+   },
+   "terminal-bench-4--ornith35b-q8h-a1--prime_agent--160b1eff|freq50": {
+    "tokens": 8191,
+    "kl": 3.8716637890005035,
+    "top1_agree": 0.38591136613356125,
+    "ppl_full": 38.106675368102906,
+    "ppl_pruned": 102.98451962319608
+   },
+   "terminal-bench-4--ornith35b-q8h-a1--prime_agent--160b1eff|reap50": {
+    "tokens": 8191,
+    "kl": 3.446729505182899,
+    "top1_agree": 0.4187522890977903,
+    "ppl_full": 38.106675368102906,
+    "ppl_pruned": 52.11838279793594
+   },
+   "terminal-bench-4--ornith35b-q8h-a1--prime_agent--160b1eff|freq25": {
+    "tokens": 8191,
+    "kl": 3.028438195075006,
+    "top1_agree": 0.44341350262483215,
+    "ppl_full": 38.106675368102906,
+    "ppl_pruned": 92.28199487398976
+   },
+   "terminal-lego--ornith35b-r1s-sd-tlhard1--prime_agent--d8aac7dd|freq50": {
+    "tokens": 8191,
+    "kl": 0.0592036712389408,
+    "top1_agree": 0.9179587351971676,
+    "ppl_full": 2.1450619113516627,
+    "ppl_pruned": 2.1747007729513093
+   },
+   "terminal-lego--ornith35b-r1s-sd-tlhard1--prime_agent--d8aac7dd|reap50": {
+    "tokens": 8191,
+    "kl": 0.07735247560188369,
+    "top1_agree": 0.9061164692955683,
+    "ppl_full": 2.1450619113516627,
+    "ppl_pruned": 2.1941084627382246
+   },
+   "terminal-lego--ornith35b-r1s-sd-tlhard1--prime_agent--d8aac7dd|freq25": {
+    "tokens": 8191,
+    "kl": 0.021691823497591054,
+    "top1_agree": 0.9565376632889757,
+    "ppl_full": 2.1450619113516627,
+    "ppl_pruned": 2.1536560465302483
+   },
+   "terminal-lego--ornith35b-r1s-sd-tlpilot--prime_agent--d5f93c56|freq50": {
+    "tokens": 8191,
+    "kl": 1.4446106180575957,
+    "top1_agree": 0.6356977170064705,
+    "ppl_full": 37.62967470890582,
+    "ppl_pruned": 60.094414968958105
+   },
+   "terminal-lego--ornith35b-r1s-sd-tlpilot--prime_agent--d5f93c56|reap50": {
+    "tokens": 8191,
+    "kl": 1.4003900922184505,
+    "top1_agree": 0.6299597118788914,
+    "ppl_full": 37.62967470890582,
+    "ppl_pruned": 31.55431555911318
+   },
+   "terminal-lego--ornith35b-r1s-sd-tlpilot--prime_agent--d5f93c56|freq25": {
+    "tokens": 8191,
+    "kl": 0.5619393545343331,
+    "top1_agree": 0.7607129776584056,
+    "ppl_full": 37.62967470890582,
+    "ppl_pruned": 38.85347445809846
+   },
+   "deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2|freq50": {
+    "tokens": 40343,
+    "kl": 0.4607937922987264,
+    "top1_agree": 0.8153335151079494,
+    "ppl_full": 4.787724871486599,
+    "ppl_pruned": 4.380188711282139
+   },
+   "deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2|reap50": {
+    "tokens": 40343,
+    "kl": 0.5777537435218587,
+    "top1_agree": 0.795032595493642,
+    "ppl_full": 4.787724871486599,
+    "ppl_pruned": 4.270809525195899
+   },
+   "deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2|freq25": {
+    "tokens": 40343,
+    "kl": 0.20859048370269798,
+    "top1_agree": 0.8776987333614258,
+    "ppl_full": 4.787724871486599,
+    "ppl_pruned": 4.790116384003578
+   }
+  }
+ },
+ "control": {
+  "summary": {
+   "freq50": {
+    "tokens": 58431,
+    "kl": 1.7703879676397496,
+    "top1_agree": 0.49167394020297445,
+    "ppl_full": 6.064376843538001,
+    "ppl_pruned": 27.98533882955613
+   }
+  },
+  "by_source": {
+   "HuggingFaceFW/fineweb-edu:sample-10BT|freq50": {
+    "tokens": 30082,
+    "kl": 1.0872114318600123,
+    "top1_agree": 0.577089289275979,
+    "ppl_full": 6.9476374991562375,
+    "ppl_pruned": 16.862641020164798
+   },
+   "wikimedia/wikipedia:20231101.zh|freq50": {
+    "tokens": 8191,
+    "kl": 2.7609253153232207,
+    "top1_agree": 0.3378097912342815,
+    "ppl_full": 7.978692267039039,
+    "ppl_pruned": 99.6435700265895
+   },
+   "wikimedia/wikipedia:20231101.es|freq50": {
+    "tokens": 8191,
+    "kl": 2.3540340400763795,
+    "top1_agree": 0.4055670858259065,
+    "ppl_full": 6.806717366835395,
+    "ppl_pruned": 54.33974300704676
+   },
+   "wikimedia/wikipedia:20231101.ru|freq50": {
+    "tokens": 11967,
+    "kl": 2.4102459232779467,
+    "top1_agree": 0.4412133366758586,
+    "ppl_full": 3.2996586146928033,
+    "ppl_pruned": 26.6205812179977
+   }
+  }
+ }
+}

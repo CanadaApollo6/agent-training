@@ -808,3 +808,7 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     each token touches only a few rows. With ~6B active it would decode much faster than the 27B. The first test is
     a pod job: prune and 2-bit it, then score it against FP8 on our probes before any Zig work. The engine would
     also need the new n-gram layer and the 512-expert router.
+  - **Tested 2026-10-16** (05-compression/flash-next-experts, ~$54 on HF h200x8): masking half the experts, chosen
+    on our agent traces, moves next-token predictions by 0.80 KL (78% top-1 agreement) on held-out traces, about 6x
+    our whole 4-bit LFM2.5 build. Cutting only a quarter is still 0.47. Not an M3TiS candidate without a repair
+    training pass, which at this size is its own large project.

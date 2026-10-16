@@ -1,0 +1,26 @@
+20:37:40 loaded in 56s: 48 MoE layers x 512 experts, first device cuda:1
+20:38:52 calib window 0: 8192 tokens, 114 tok/s
+20:45:45 calib window 10: 90112 tokens, 186 tok/s
+20:52:39 calib window 20: 172032 tokens, 191 tok/s
+20:58:52 pass 1 done: 244306 tokens in 1272s
+21:01:36 heldout window 0 (terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd): freq50 KL 0.4959 agree 0.917, reap50 KL 0.4886 agree 0.924, freq25 KL 0.2162 agree 0.948, 164s
+21:04:20 heldout window 1 (terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd): freq50 KL 0.555 agree 0.865, reap50 KL 0.5015 agree 0.864, freq25 KL 0.2522 agree 0.909, 328s
+21:07:04 heldout window 2 (terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd): freq50 KL 0.4659 agree 0.869, reap50 KL 0.4367 agree 0.864, freq25 KL 0.2189 agree 0.911, 493s
+21:09:48 heldout window 3 (terminal-bench-2--ornith35b-r1s-cctb2-h2--claude_code--cc3e31bd): freq50 KL 0.4706 agree 0.848, reap50 KL 0.4459 agree 0.845, freq25 KL 0.2279 agree 0.894, 657s
+21:12:33 heldout window 4 (terminal-bench-4--ornith35b-q8h-a1--prime_agent--160b1eff): freq50 KL 1.151 agree 0.756, reap50 KL 1.046 agree 0.760, freq25 KL 0.788 agree 0.804, 821s
+21:15:17 heldout window 5 (terminal-lego--ornith35b-r1s-sd-tlhard1--prime_agent--d8aac7dd): freq50 KL 0.9688 agree 0.783, reap50 KL 0.8846 agree 0.784, freq25 KL 0.6603 agree 0.829, 985s
+21:18:01 heldout window 6 (terminal-lego--ornith35b-r1s-sd-tlpilot--prime_agent--d5f93c56): freq50 KL 1.037 agree 0.762, reap50 KL 0.9583 agree 0.762, freq25 KL 0.6462 agree 0.820, 1149s
+21:20:45 heldout window 7 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 1.005 agree 0.763, reap50 KL 0.9664 agree 0.760, freq25 KL 0.6149 agree 0.821, 1313s
+21:23:30 heldout window 8 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 0.932 agree 0.769, reap50 KL 0.9063 agree 0.764, freq25 KL 0.5631 agree 0.828, 1478s
+21:26:14 heldout window 9 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 0.8869 agree 0.773, reap50 KL 0.8735 agree 0.768, freq25 KL 0.5272 agree 0.834, 1642s
+21:28:58 heldout window 10 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 0.8443 agree 0.777, reap50 KL 0.8403 agree 0.770, freq25 KL 0.4955 agree 0.838, 1806s
+21:31:31 heldout window 11 (deep-swe-upstream--qwen38-27b-q8h-wt1--pi--d7f738b2): freq50 KL 0.7989 agree 0.784, reap50 KL 0.8011 agree 0.776, freq25 KL 0.4655 agree 0.844, 1959s
+21:32:53 control window 0 (HuggingFaceFW/fineweb-edu:sample-10BT): freq50 KL 0.7404 agree 0.665, 82s
+21:34:15 control window 1 (HuggingFaceFW/fineweb-edu:sample-10BT): freq50 KL 0.8826 agree 0.645, 164s
+21:35:37 control window 2 (HuggingFaceFW/fineweb-edu:sample-10BT): freq50 KL 0.9914 agree 0.616, 246s
+21:36:33 control window 3 (HuggingFaceFW/fineweb-edu:sample-10BT): freq50 KL 1.087 agree 0.577, 302s
+21:37:55 control window 4 (wikimedia/wikipedia:20231101.zh): freq50 KL 1.445 agree 0.526, 384s
+21:39:17 control window 5 (wikimedia/wikipedia:20231101.es): freq50 KL 1.606 agree 0.505, 466s
+21:40:39 control window 6 (wikimedia/wikipedia:20231101.ru): freq50 KL 1.748 agree 0.491, 548s
+21:41:26 control window 7 (wikimedia/wikipedia:20231101.ru): freq50 KL 1.77 agree 0.492, 594s
+21:41:26 done
