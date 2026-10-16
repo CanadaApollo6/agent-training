@@ -790,3 +790,21 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     Running Qwen3.5-9B Q8 against Bonsai 2 9B on the same reasoning probe measures how much PrismML's training
     keeps at 9B, and tells us whether trained ternary is worth doing for Ornith 9B. It's a few minutes on the 3090.
     PrismML hasn't released its training recipe, so we can't ternarize our own fine-tunes this way yet.
+- [Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next) (Qwen, 2026-08-24; Qwen Community License
+  1.0: MIT-style, with a separate license needed only for commercial API or coding-assistant businesses; FP8
+  version also published): a **125B-A6B** MoE with vision, plus a 51B n-gram embedding and a 4B MTP head
+  (360 GB in BF16).
+  - Shape: 48 layers (36 linear attention, 12 full), hidden 2560, **512 experts, top-10 plus a shared expert**,
+    expert width 640. Routed experts are ~121B of the 125B. The n-gram embedding is a 20M-row bigram/trigram lookup
+    table added at layer 2, which the card calls "more amenable to offloading than MoE". 262K context (1M in the
+    productized Qwen3.8-Flash), thinking on by default.
+  - Qwen's numbers vs Qwen3.8-27B: SWE-bench Pro 62.5 vs 61.7, DeepSWE 58.7 vs 42.2, Toolathlon 73.5 vs 67.1,
+    JobBench 55.7 vs 33.4, GPQA 91.7 vs 89.2. Small gains on most rows, large ones on the long agentic tasks.
+  - The 3090: the smallest community GGUFs are ~66 GB (ISTA-DASLab Q2_0) and 72.5 GB (unsloth UD-IQ1_S), more
+    than this PC's 24 GB VRAM plus 32 GB RAM. Even the experts alone at ~2 bits are ~32 GB.
+  - **For us (M3TiS):** only with a compression nobody has shipped. Pruning half the experts (512 → 256), then
+    2-bit experts, gives ~16 GB of experts + ~2.5 GB of everything else, which fits with room for long context
+    (only 12 layers keep a KV cache). The n-gram table would live in RAM at low bits or be read from disk, since
+    each token touches only a few rows. With ~6B active it would decode much faster than the 27B. The first test is
+    a pod job: prune and 2-bit it, then score it against FP8 on our probes before any Zig work. The engine would
+    also need the new n-gram layer and the 512-expert router.
