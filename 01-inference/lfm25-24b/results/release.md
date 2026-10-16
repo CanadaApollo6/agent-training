@@ -57,7 +57,7 @@ again). A fresh `hf download` into an empty folder matches the bundle file for f
 (`chmod +x`, `./m3tis-serve.sh`), it passes all seven `server_check.py` checks. Speeds were 3–8% under the release
 numbers because the card was warm from the session before.
 
-## Update staged: repetition penalty, and agent tasks (2026-10-16)
+## Update: repetition penalty, and agent tasks (2026-10-16, uploaded)
 
 The released server accepted `repetition_penalty` and ignored it. Liquid's `generation_config.json` asks for 1.05,
 and the agent smoke run looped ("00 00 …") until the reply cap. Fork commit 6aa76186 applies it the way llama.cpp
@@ -72,8 +72,9 @@ does:
 Checks on an A10 pod: 1.05 changes the greedy reply against 1.0, each setting repeats exactly, the seeded default
 is reproducible, and bad values get a 400.
 
-Staged bundle: `~/.cache/m3tis3/bundle2` (weights hard-linked, new server, card and SOURCE). Not uploaded; that needs
-Riel's OK. On the 3090 (`m3tis/bench.py` → `m3tis-bench-penalty.json`):
+Uploaded with Riel's OK as Hub commit dd4d0ae2. The server, card and SOURCE.md on the Hub match the staged files by
+sha256, and the weights are unchanged. The bundle is now `~/.cache/m3tis3/bundle`, and the first release's is in
+`bundle-v1`. On the 3090 (`m3tis/bench.py` → `m3tis-bench-penalty.json`):
 
 | tok/s | greedy (penalty 1, drafted) | T 0, penalty 1.05 | Liquid's settings | T 1.0 |
 |---|---|---|---|---|
