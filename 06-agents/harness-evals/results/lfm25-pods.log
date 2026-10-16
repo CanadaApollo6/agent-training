@@ -1,0 +1,15 @@
+2026-10-16 15:37:10 create lfm-m3tis-1 6937a5b771ab47a693917520db0e149e A10 lambda $1.29/h
+2026-10-16 15:43:35 create lfm-q8-ref d1ce936b601b48bebfd8b666bbab4f11 A100_40GB lambda asia-south-1 $1.99/h
+2026-10-16 16:03:23 create lfm-m3tis-2 652f25a83f1848f2b86c6e958b8abfd1 A10 lambda $1.29/h
+2026-10-16 16:03:23 create lfm-m3tis-3 f003ef2f9a754db39c8567e178c82cb9 A10 lambda $1.29/h
+2026-10-16 16:03:23 create lfm-m3tis-4 b0b87f79817e4d35be7c6f3a229cc2f1 A10 lambda $1.29/h
+2026-10-16 16:03:23 create lfm-m3tis-5 8e799ca80d9449db80030cc74618f719 A10 lambda $1.29/h
+2026-10-16 16:03:23 15:58 penalty binary 6aa76186 swapped onto lfm-m3tis-1; reference pod rebuilt with CUDA 12.8 toolkit, penalty 1.05
+2026-10-16 16:07:26 ips: m3tis-1 157.151.179.212, -2 129.158.255.171, -3 129.213.11.204, -4 129.213.160.135, -5 158.101.119.142, q8-ref 130.210.4.114
+2026-10-16 16:09:50 queues started: m3tis 5 servers (6 half-lanes), q8 4 slots (6 half-lanes)
+2026-10-16 16:49:32 terminate lfm-m3tis-2 652f25a83f1848f2b86c6e958b8abfd1
+2026-10-16 16:49:41 terminate lfm-m3tis-5 8e799ca80d9449db80030cc74618f719
+2026-10-16 17:01:34 terminate lfm-m3tis-4 b0b87f79817e4d35be7c6f3a229cc2f1
+2026-10-16 17:30:35 terminate lfm-m3tis-1 6937a5b771ab47a693917520db0e149e
+2026-10-16 17:36:26 terminate lfm-m3tis-3 f003ef2f9a754db39c8567e178c82cb9
+2026-10-16 18:09:33 terminate lfm-q8-ref d1ce936b601b48bebfd8b666bbab4f11

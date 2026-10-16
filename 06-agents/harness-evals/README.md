@@ -564,6 +564,55 @@ How the table counts runs:
 - Caveat: this is the full-precision 27B, not a 4-bit local build. R1s-SD's runs were its 3-bit local build on
   TensorFold.
 
+## LFM2.5-24B-A2B: M3TiS #3 vs Liquid's Q8_0 (2026-10-16)
+
+Does the released 3090 build ([M3TiS #3](https://huggingface.co/CanadaApollo6/LFM2.5-24B-A2B-M3TiS-3090): Liquid's
+MLX 4-bit weights, a 4-bit embedding table, TensorFold's Zig server) still do agent work like the base model? It ran
+against Liquid's Q8_0 GGUF on llama.cpp (a0e6dc7). Same pilot as above: pi, the 20 tasks of `tasks.txt`
+(qemu-startup dropped), 3 attempts, 60 turns, 60 minutes.
+
+- **Both builds use Liquid's recommended sampling:** temperature 0.1, top_k 50, repetition penalty 1.05 over the last
+  64 tokens. pi sends no sampling of its own, so the servers' defaults decide.
+- **The release didn't apply the penalty.** It accepted `repetition_penalty` but ignored it, and the smoke run looped
+  ("00 00 …") until the reply cap. The eval ran a fixed server (fork `lfm2` 6aa76186) that applies it as llama.cpp
+  does. The release on Hugging Face still has the old one.
+- **Hardware:** M3TiS on Prime A10s (sm_86, 24 GB; RunPod 3090s and A40s were out of stock), one server per
+  conversation, since the server serves one stream. Q8_0 (25 GB) on one A100 40 GB with 4 slots. The card
+  doesn't change answers, only speed.
+- Scripts: `serve_lfm_pod.sh` (`BIN=` swaps in a server build), `serve_lfm_q8_pod.sh`, `run_lfm_lane.sh`,
+  `run_lfm_queue.sh`, `lfm25_status.py`. Pods and times are in `results/lfm25-pods.log`. Total spend was about $12.50.
+
+| Build | Solved per attempt (of 19) | Mean | vs Q8, task by task | Median output tokens a task |
+|---|---|---|---|---|
+| Q8_0 | 7, 6, 4 | 5.7 (30%) | — | 12.6K |
+| M3TiS #3 | 3, 7, 5 | 5.0 (26%) | −3.5 points (worse on 3 tasks, better on 1), p = 0.75 | 16.2K |
+
+| Build | Solved-run tokens vs Q8 | 95% CI | Longer on | Output tokens per call (median run) |
+|---|---|---|---|---|
+| M3TiS #3 | 1.40× | 0.98–1.86 | 7 of 8 tasks | 349 (Q8: 328) |
+
+| Build | Gave a wrong answer | Hit 60 turns | Hit 60 min |
+|---|---|---|---|
+| Q8_0 | 19 | 21 | 0 |
+| M3TiS #3 | 18 | 24 | 0 |
+
+Full tables: `results/lfm25-tb2-compare.md`.
+
+- **Solves hold.** 5.0 vs 5.7 of 19 is within noise (p = 0.75). The tasks split the same way. Both solve
+  kv-store-grpc and modernize-scientific-stack every time. M3TiS did better on pypi-server (3/3 vs 1/3) and worse on
+  portfolio-optimization (1/3 vs 3/3).
+- **It takes longer to get there.** Solved runs used 1.40× Q8's tokens, and the CI just touches 1.0. Tokens per call
+  are about the same, so it's more turns, not wordier ones. That's the same pattern as Ornith's R1s (1.28×). The 4-bit
+  weights cost a little decision quality, and it shows as detours rather than lost solves.
+- **No loops with the penalty on.** 6 of 2,537 calls hit the reply cap (Q8: 2 of 2,237). The smoke run without it
+  looped within one task.
+- **LFM2.5 is a much weaker terminal agent than Ornith 35B here:** 5–6 of 19 vs 10 of 19 on the same pilot. That
+  fits its SWE-bench Verified (51 vs 66). Liquid pitches it for tool automation, not coding in a shell.
+- **A quiet lane isn't a hung lane.** The lane log prints nothing between "pi installed" and the task's end. One
+  Q8 task looked stuck for an hour, then passed at the time cap (kv-store-grpc, 11 turns). I stopped one M3TiS lane
+  that looked stuck on build-pov-ray and re-ran it from the start. That task failed all 6 times across both builds,
+  so the restart can't move the score. Next time, check the server's request log before calling a lane hung.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
@@ -573,6 +622,8 @@ How the table counts runs:
 - **Local build:** R1s (all experts 3-bit, imatrix-searched 4-bit always-on path, 15 GB) is the local build. It is
   within noise of Q8 on solves (10.0 vs 10.3 of 19). It writes 1.28× Q8's tokens on the same solved tasks, down from
   R1's 1.67×; the engine was ruled out, and fidelity closed most of the gap.
+- **LFM2.5-24B-A2B (M3TiS #3):** the 3090 build is within noise of Liquid's Q8_0 (5.0 vs 5.7 of 19) with the
+  repetition penalty on, at 1.40× the tokens per solve. The model itself is a weak terminal agent next to Ornith 35B.
 - **Proxy fixes:** keep the image fix; it is the clear win (30% → 47% on picture tasks). check is cheap and maybe
   helps; cutoff mostly turns cut-off failures into ordinary failures. Together about +5 points per task, not proven at
   2 tries. Prime sandbox terminations (half the reruns lost again) must be dealt with before RL on Prime sandboxes.
