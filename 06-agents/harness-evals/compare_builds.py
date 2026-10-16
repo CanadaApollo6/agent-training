@@ -1,12 +1,12 @@
 """Terminal-Bench 2 pilot, builds side by side: solves per attempt, per task, paired against a reference build.
 
-    uv run compare_builds.py [--ref q8] [--drop qemu-startup]
+    uv run compare_builds.py [--family ornith35b|lfm25] [--ref q8] [--drop qemu-startup]
 
 Tables: solves per attempt and per task, a paired test against the reference, length on shared solves (geometric mean
 of per-task median solved-run tokens, bootstrap CI), and how the failed runs ended.
 
-A build is a label prefix: its attempts are the output runs ``terminal-bench-2--ornith35b-<build>-a<N>--pi--*``. Runs
-set aside (renamed ``broken-*``) are skipped. Tasks that fail before the agent starts on every build (HarnessError) are
+A build is a label prefix: its attempts are the output runs ``terminal-bench-2--<family>-<build>-a<N>--pi--*``; an
+attempt split over several runs (one server a lane, each lane a share of the tasks) is their union. Runs set aside (renamed ``broken-*``) are skipped. Tasks that fail before the agent starts on every build (HarnessError) are
 dropped with ``--drop``. The paired test permutes build labels within each task: it asks whether the per-task solve
 rates differ by more than swapping labels would give.
 """
@@ -20,36 +20,45 @@ import statistics as st
 from pathlib import Path
 
 OUT = Path(__file__).parent / "outputs" / "primeintellect"
-BUILDS = {"q8": "Q8_0 (pod, llama.cpp)", "q4km": "Q4_K_M (pod, llama.cpp)",
-          "r2-c4s": "R2: gate/up 2-bit, down 3-bit (3090, TensorFold)",
-          "r1-c4s": "R1: all experts 3-bit (3090, TensorFold)",
-          "r1s-c4s": "R1s: R1 + imatrix-searched 4-bit always-on path (3090, TensorFold)"}
+FAMILIES = {
+    "ornith35b": {"q8": "Q8_0 (pod, llama.cpp)", "q4km": "Q4_K_M (pod, llama.cpp)",
+                  "r2-c4s": "R2: gate/up 2-bit, down 3-bit (3090, TensorFold)",
+                  "r1-c4s": "R1: all experts 3-bit (3090, TensorFold)",
+                  "r1s-c4s": "R1s: R1 + imatrix-searched 4-bit always-on path (3090, TensorFold)"},
+    "lfm25": {"q8": "Liquid's Q8_0 (pod, llama.cpp)",
+              "m3tis": "M3TiS #3: Liquid's MLX 4-bit + 4-bit table (sm_86 pod, TensorFold Zig)"},
+}
+BUILDS = FAMILIES["ornith35b"]
 
 
-def attempts(build):
+def attempts(build, family="ornith35b"):
     runs = {}
-    for d in sorted(glob.glob(str(OUT / f"terminal-bench-2--ornith35b-{build}-a*--pi--*"))):
-        m = re.search(rf"ornith35b-{re.escape(build)}-a(\d+)--", d)
+    for d in sorted(glob.glob(str(OUT / f"terminal-bench-2--{family}-{build}-a*--pi--*"))):
+        m = re.search(rf"{family}-{re.escape(build)}-a(\d+)(?:l\d+)?--", d)
         rows = {}
         for line in open(Path(d) / "traces.jsonl"):
             r = json.loads(line)
             t = r["traces"][0] if r.get("traces") else {}
             name = (t.get("task", {}).get("data", {}).get("name") or json.dumps(r.get("task")))
             name = name.split("/")[-1].strip('"')
-            score = (t.get("rewards", {}).get("solved", {}) or {}).get("score", 0.0)
+            rewards = t.get("rewards", {})  # older vf-eval names the reward "solved", newer "reward"
+            score = (rewards.get("solved") or rewards.get("reward") or {}).get("score", 0.0)
             rows[name] = {"solved": score >= 1.0, "turns": len(t.get("calls", [])), "out": r.get("num_output_tokens"),
                           "stop": t.get("stop_condition")}
-        runs[int(m[1])] = rows
+        runs.setdefault(int(m[1]), {}).update(rows)
     return runs
 
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--family", default="ornith35b", choices=FAMILIES)
     ap.add_argument("--ref", default="q8")
     ap.add_argument("--drop", nargs="*", default=["qemu-startup"])
     ap.add_argument("--perms", type=int, default=20000)
     args = ap.parse_args()
-    data = {b: attempts(b) for b in BUILDS}
+    global BUILDS
+    BUILDS = FAMILIES[args.family]
+    data = {b: attempts(b, args.family) for b in BUILDS}
     data = {b: a for b, a in data.items() if a}
     tasks = sorted({t for a in data.values() for run in a.values() for t in run} - set(args.drop))
     rate = {b: {t: st.mean(run.get(t, {"solved": False})["solved"] for run in a.values()) for t in tasks}
