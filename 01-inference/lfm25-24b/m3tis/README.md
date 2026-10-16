@@ -129,7 +129,8 @@ have not run agent-task evals on this build.
 
 ## What's different from upstream TensorFold
 
-The server is built from TensorFold PR [#608](https://github.com/machinegenieorg/TensorFold/pull/608)'s Zig engine. It
+The server is built from TensorFold PR [#608](https://github.com/machinegenieorg/TensorFold/pull/608)'s Zig engine
+(closed unmerged on 2026-10-15; nothing here is in upstream TensorFold yet). It
 carries the [first](https://huggingface.co/CanadaApollo6/Qwen3.8-27B-M3TiS-3090) and
 [second](https://huggingface.co/CanadaApollo6/Ornith-1.5-35B-A3B-M3TiS-3090) M3TiS releases' changes plus these,
 which add LFM2.5 to the engine (source: SOURCE.md):
