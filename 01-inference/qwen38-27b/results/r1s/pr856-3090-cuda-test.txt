@@ -1,0 +1,22 @@
+== info
+RESULT driver CUDA 13040, device NVIDIA GeForce RTX 3090, sm_86, 82 SMs, 24154 MiB total, 21872 MiB free, kernels embedded true
+== smoke
+PASS argument packing: by-value struct, bool, int8, double, int64
+error: cuModuleGetFunction: CUDA_ERROR_NOT_FOUND (500) named symbol not found
+error: kernel symbol not in module: tf_probe_missing
+PASS refusals: oversized block, absent kernel symbol
+== moe
+PASS moe router: 5 rows x 257 experts over 2048 inputs equal the host's fma chains
+PASS moe top-k: 7 rows' picks of 8 over 256 experts equal the host's (a tie, a flat row and a NaN included), weights within a bf16 step
+PASS moe combine: 3 rows of 4 slots equal the host's fma chains rounded to bf16
+PASS moe experts: 12 pairs over 6 SwiGLU experts (gate and up interleaved) within 9.78820025920868e-7 of the fp64 reference (largest sum 8.105843175202608e0)
+== glue
+PASS glue: 1242 of 1242 comparisons byte-equal to the host references (norms, router, top-k, conv, scan, attention, draw, several streams at once) and the shared-window kernels to the one-stream ones; every reference at least 16% nonzero
+== sample
+RESULT sample: 2880 draws, 0 differ from the host references (0 tf_gpu_sample, 0 tf_sample_full); shares within 1.1129905305924282e-5 of f64
+PASS sample: 2880 draws equal the Metal rule's host references
+== quant-ref
+RESULT nvfp4 experts prompt gate-up, 300 rows x 4 slots: largest difference 0.434 of its tolerance (element 221781)
+RESULT nvfp4 experts prompt down, 1200 pairs: largest difference 0.466 of its tolerance (element 319962)
+PASS experts fp8g and nvfp4 (decode, prompt): gate-up and down within float64 tolerance
+PASS quant-ref: every product within 0.483 of its float64 tolerance

@@ -1,0 +1,12 @@
+{"label": "", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 170.73159550599445, "decode_tps_all": [182.8, 169.99, 170.73], "ttft_s_median": 0.020079835987417027}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 129.9930991670344, "decode_tps_all": [112.47, 137.01, 129.99], "ttft_s_median": 0.05478926800424233}
+{"label": "", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 180.36850449926953, "decode_tps_all": [180.88, 180.07, 180.37], "ttft_s_median": 0.01922877598553896}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 167.10389334475673, "decode_tps_all": [165.14, 167.1, 167.38], "ttft_s_median": 0.05207600400899537}
+{"label": "", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 167.99594227168163, "decode_tps_all": [180.63, 168.0, 167.69], "ttft_s_median": 0.01983380998717621}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 137.69608629786012, "decode_tps_all": [122.53, 140.16, 137.7], "ttft_s_median": 0.05320349399698898}
+{"label": "", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 191.90414323481937, "decode_tps_all": [191.9, 190.69, 192.01], "ttft_s_median": 0.018333372980123386}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 162.222739910606, "decode_tps_all": [162.09, 162.22, 162.62], "ttft_s_median": 0.05208925201441161}
+{"label": "", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 104.03474340908748, "decode_tps_all": [104.03, 103.15, 105.83], "ttft_s_median": 0.016416070982813835}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 108.12027105267956, "decode_tps_all": [108.82, 108.12, 107.83], "ttft_s_median": 0.04854962701210752}
+{"label": "", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 111.78343330441933, "decode_tps_all": [111.78, 111.95, 110.61], "ttft_s_median": 0.015468680008780211}
+{"label": "", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 111.00476825193788, "decode_tps_all": [110.66, 111.28, 111.0], "ttft_s_median": 0.04799651401117444}
