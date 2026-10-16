@@ -1,0 +1,6 @@
+3-bit path vs widened 4-bit reference (same codes via widen_r1s.py), tf-qwen35-cuda over 300 README ids:
+step   == widened step (byte-equal, 148992000 bytes)
+window == widened window
+prompt == widened prompt
+3-bit: window == step, tree == step; 8.9 ms a step
+local adaptations: config rope_parameters.type -> rope_type; mtp-4bit keys mtp.* -> language_model.mtp.*

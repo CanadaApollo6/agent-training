@@ -1,0 +1,13 @@
+PASS experts3 decode: 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 prompt: 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 gate decode (128 by 256): worst column error 1.1436641216278076e-6 against fp64 (affine-4 on the same codes 1.1436641216278076e-6), rms 1.1859855964768421e-7
+PASS experts3 gate prompt (128 by 256): worst column error 4.129905626177788e-2 against fp64 (affine-4 on the same codes 4.129905626177788e-2), rms 4.880350837911101e-3
+PASS experts3 up decode (128 by 256): worst column error 1.1771917343139648e-6 against fp64 (affine-4 on the same codes 1.1771917343139648e-6), rms 1.2124791159099042e-7
+PASS experts3 up prompt (128 by 256): worst column error 3.706881403923035e-2 against fp64 (affine-4 on the same codes 3.706881403923035e-2), rms 5.130228832789475e-3
+PASS experts3 down decode (256 by 128): worst column error 6.705522537231445e-7 against fp64 (affine-4 on the same codes 6.705522537231445e-7), rms 5.881983534373184e-8
+PASS experts3 down prompt (256 by 128): worst column error 3.1102463603019714e-2 against fp64 (affine-4 on the same codes 3.1102463603019714e-2), rms 3.4220306701914314e-3
+PASS moe router: 5 rows x 257 experts over 2048 inputs equal the host's fma chains
+PASS moe top-k: 7 rows' picks of 8 over 256 experts equal the host's (a tie, a flat row and a NaN included), weights within a bf16 step
+PASS moe combine: 3 rows of 4 slots equal the host's fma chains rounded to bf16
+PASS moe experts: 12 pairs over 6 SwiGLU experts (gate and up interleaved) within 9.78820025920868e-7 of the fp64 reference (largest sum 8.105843175202608e0)
+PASS glue: 1242 of 1242 comparisons byte-equal to the host references (norms, router, top-k, conv, scan, attention, draw, several streams at once) and the shared-window kernels to the one-stream ones; every reference at least 16% nonzero
