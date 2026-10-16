@@ -54,18 +54,31 @@ def main():
     out["model.embed_tokens.biases"] = biases
     path = ROOT / "mlx4/embed4.safetensors"
     save_file(out, str(path))
-    raw = bytearray(path.read_bytes())
+    finish(path)
+    print(f"wrote {path} ({path.stat().st_size / 2**20:.0f} MiB)")
+
+
+# the LFM Open License (section 4(b)) asks that changed files say so
+NOTICE = ("Changed by CanadaApollo6 (M3TiS): LiquidAI/LFM2.5-24B-A2B's bf16 model.embed_tokens re-quantized to 4-bit "
+          "affine, group size 64 (make_embed4.py). LFM Open License v1.0, Liquid AI, Inc.")
+
+
+def finish(path):
+    """The header's bf16 dtypes and the change notice; again on a finished file changes nothing."""
+    raw = path.read_bytes()
     n = int.from_bytes(raw[:8], "little")
     hdr = json.loads(raw[8 : 8 + n])
     for k in ("model.embed_tokens.scales", "model.embed_tokens.biases"):
         hdr[k]["dtype"] = "BF16"
+    hdr["__metadata__"] = {"format": "mlx", "notice": NOTICE}
     text = json.dumps(hdr, separators=(",", ":")).encode()
-    text += b" " * (n - len(text))
-    assert len(text) == n
-    raw[8 : 8 + n] = text
-    path.write_bytes(bytes(raw))
-    print(f"wrote {path} ({path.stat().st_size / 2**20:.0f} MiB)")
-
+    text += b" " * (-len(text) % 8)
+    path.write_bytes(len(text).to_bytes(8, "little") + text + raw[8 + n :])
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    if sys.argv[1:] == ["--stamp"]:  # the notice on an existing file, no re-quantizing
+        finish(ROOT / "mlx4/embed4.safetensors")
+    else:
+        main()

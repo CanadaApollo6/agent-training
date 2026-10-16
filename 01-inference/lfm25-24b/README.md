@@ -22,8 +22,9 @@ build that runs it as fast as the 3090 allows, as a possible M3TiS release.
 - [Zig engine port](results/zig-port.md): matches the reference (KL 0.024); 198 tok/s before tuning.
 - [Tuning one-token decode](results/serial-tuning.md): 330 tok/s on short prompts (llama.cpp 270), 286 at 14.7K tokens of context.
 - [Prompt-lookup drafting](results/drafting.md): 345 on code, 354 on tool calls, 351 on a 14.7K-token rewrite; exact against plain greedy.
+- [Served, and staged as M3TiS #3](results/release.md): OpenAI server with tool calls; 334 greedy / 316 sampled; a long chat's next turn reads in 0.24 s, not 7.0 s.
 
 Tools: `ref.py` (reference, teacher-forced logits), `compare_logits.py` (KL and top-1 of two dumps),
-`make_embed4.py` (the 4-bit tied table), `prompts.json` (code, chat and tool-use prompts as token ids), `make_long_prompt.py` and `long_prompt.json` (a 14.7K-token code prompt), `draft_policy.py` (drafting policies replayed on outputs with measured costs).
+`make_embed4.py` (the 4-bit tied table), `prompts.json` (code, chat and tool-use prompts as token ids), `make_long_prompt.py` and `long_prompt.json` (a 14.7K-token code prompt), `draft_policy.py` (drafting policies replayed on outputs with measured costs), `server_check.py` (the server's end-to-end checks), `m3tis/` (the release card, launcher, notices and `bench.py`).
 
 Local files (not in git): `~/models/lfm25-24b/{bf16,gguf,mlx4}`; llama.cpp built in `01-inference/tools/llama.cpp`.

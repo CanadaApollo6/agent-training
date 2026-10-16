@@ -1,0 +1,213 @@
+[
+ {
+  "case": "code",
+  "mode": "greedy",
+  "tok_s": 334.3663440851331,
+  "all": [
+   334,
+   334,
+   334
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "code",
+  "mode": "liquid default (T 0.1, top_k 50)",
+  "tok_s": 316.1226212130789,
+  "all": [
+   317,
+   311,
+   316
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "code",
+  "mode": "T 1.0",
+  "tok_s": 309.824499469669,
+  "all": [
+   307,
+   310,
+   317
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "greedy",
+  "tok_s": 324.2590662568411,
+  "all": [
+   324,
+   324,
+   324
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "liquid default (T 0.1, top_k 50)",
+  "tok_s": 316.21537302818325,
+  "all": [
+   316,
+   316,
+   315
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "T 1.0",
+  "tok_s": 316.6438782735543,
+  "all": [
+   317,
+   317,
+   317
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "greedy",
+  "tok_s": 334.38253140385694,
+  "all": [
+   334,
+   334,
+   334
+  ],
+  "tokens": [
+   79,
+   79,
+   79
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "liquid default (T 0.1, top_k 50)",
+  "tok_s": 318.3377779068905,
+  "all": [
+   318,
+   318,
+   319
+  ],
+  "tokens": [
+   79,
+   79,
+   79
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "T 1.0",
+  "tok_s": 318.00609367336347,
+  "all": [
+   318,
+   316,
+   319
+  ],
+  "tokens": [
+   95,
+   118,
+   151
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ]
+ },
+ {
+  "case": "first token, code prompt, cold",
+  "s": 0.03392119100317359,
+  "all": [
+   0.03392119100317359,
+   0.033943621994694695,
+   0.03377683399594389
+  ]
+ },
+ {
+  "case": "long prompt (14713 tokens)",
+  "mode": "greedy",
+  "read_s": 7.018937385,
+  "tok_s": 346.8047285290457,
+  "all": [
+   347,
+   347,
+   347
+  ]
+ },
+ {
+  "case": "long prompt (14713 tokens)",
+  "mode": "liquid default (T 0.1, top_k 50)",
+  "read_s": 7.025244072,
+  "tok_s": 278.50605652126427,
+  "all": [
+   277,
+   279,
+   279
+  ]
+ }
+]

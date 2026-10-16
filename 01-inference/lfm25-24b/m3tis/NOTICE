@@ -1,0 +1,20 @@
+M3TiS · LFM2.5-24B-A2B · RTX 3090
+An independent build by CanadaApollo6, not affiliated with Liquid AI or the TensorFold authors.
+
+The model
+---------
+LFM2.5-24B-A2B, Copyright Liquid AI, Inc. https://huggingface.co/LiquidAI/LFM2.5-24B-A2B
+Licensed under the LFM Open License v1.0 (LICENSE). Commercial use is licensed only to entities below
+the license's threshold of US$10 million annual revenue (section 5).
+
+The weight files are LiquidAI/LFM2.5-24B-A2B-MLX-4bit's, unchanged, plus one changed file:
+  embed4.safetensors  the tied embedding / output head, re-quantized by CanadaApollo6 from Liquid's bf16
+                      model.embed_tokens to 4-bit affine, group size 64 (its header carries the same notice).
+README.md is this build's card, not Liquid's.
+
+The server
+----------
+bin/tensorfold-native is built from TensorFold (https://github.com/ashhart/TensorFold), Copyright 2026 TensorFold
+contributors, with changes by CanadaApollo6 (SOURCE.md). Licensed under the Apache License, Version 2.0
+(LICENSES/Apache-2.0.txt). TensorFold releases up to 0.5.0 were MIT-licensed, and code written before 0.6.0 keeps
+its MIT notice in LICENSES/MIT.txt. Third-party code and its licenses are listed in THIRD_PARTY_NOTICES.md.
