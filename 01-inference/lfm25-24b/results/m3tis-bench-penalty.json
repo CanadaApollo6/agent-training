@@ -1,0 +1,273 @@
+[
+ {
+  "case": "code",
+  "mode": "greedy",
+  "tok_s": 332.1342623493934,
+  "all": [
+   332,
+   330,
+   333
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "code",
+  "mode": "T 0 with the penalty",
+  "tok_s": 322.1106649401434,
+  "all": [
+   322,
+   323,
+   319
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "code",
+  "mode": "liquid default (T 0.1, top_k 50, repetition penalty 1.05)",
+  "tok_s": 316.5466417095678,
+  "all": [
+   317,
+   317,
+   316
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "code",
+  "mode": "T 1.0",
+  "tok_s": 316.0575264703266,
+  "all": [
+   316,
+   314,
+   316
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "greedy",
+  "tok_s": 323.73642958419276,
+  "all": [
+   322,
+   324,
+   324
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "T 0 with the penalty",
+  "tok_s": 321.5880548295777,
+  "all": [
+   322,
+   320,
+   322
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "liquid default (T 0.1, top_k 50, repetition penalty 1.05)",
+  "tok_s": 315.040635300563,
+  "all": [
+   315,
+   316,
+   315
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "T 1.0",
+  "tok_s": 316.74666586167973,
+  "all": [
+   317,
+   317,
+   317
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "greedy",
+  "tok_s": 335.62222238726036,
+  "all": [
+   337,
+   332,
+   336
+  ],
+  "tokens": [
+   79,
+   79,
+   79
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "T 0 with the penalty",
+  "tok_s": 322.79124709322343,
+  "all": [
+   325,
+   322,
+   323
+  ],
+  "tokens": [
+   79,
+   79,
+   79
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "liquid default (T 0.1, top_k 50, repetition penalty 1.05)",
+  "tok_s": 318.1135663229448,
+  "all": [
+   316,
+   318,
+   318
+  ],
+  "tokens": [
+   95,
+   79,
+   79
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "T 1.0",
+  "tok_s": 317.8363849967621,
+  "all": [
+   318,
+   318,
+   318
+  ],
+  "tokens": [
+   88,
+   114,
+   104
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ]
+ },
+ {
+  "case": "first token, code prompt, cold",
+  "s": 0.03387775702867657,
+  "all": [
+   0.03390663198661059,
+   0.033652718004304916,
+   0.03387775702867657
+  ]
+ },
+ {
+  "case": "long prompt (14713 tokens)",
+  "mode": "greedy",
+  "read_s": 7.018142579,
+  "tok_s": 347.4663917251154,
+  "all": [
+   347,
+   347,
+   347
+  ]
+ },
+ {
+  "case": "long prompt (14713 tokens)",
+  "mode": "liquid default (T 0.1, top_k 50, repetition penalty 1.05)",
+  "read_s": 7.104150952,
+  "tok_s": 277.0266405453021,
+  "all": [
+   278,
+   273,
+   277
+  ]
+ }
+]

@@ -2,7 +2,7 @@
 
 `bin/tensorfold-native` is built from TensorFold PR #608's Zig engine plus the M3TiS changes and the LFM2 port:
 
-- Source: https://github.com/CanadaApollo6/TensorFold/tree/lfm2 (commit 9115658a)
+- Source: https://github.com/CanadaApollo6/TensorFold/tree/lfm2 (commit 6aa76186)
 - Base: https://github.com/machinegenieorg/TensorFold/pull/608 (closed unmerged on 2026-10-15)
 
 Build (Zig 0.17.0, CUDA 13.4 nvcc), then `strip --strip-all`:

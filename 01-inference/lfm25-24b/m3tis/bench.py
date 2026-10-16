@@ -22,7 +22,9 @@ CASES = {
     "tool call": {"messages": [{"role": "user", "content": "What's the weather in Paris and in Tokyo?"}],
                   "tools": TOOLS, "max_tokens": 512},
 }
-MODES = {"greedy": {"temperature": 0}, "liquid default (T 0.1, top_k 50)": {}, "T 1.0": {"temperature": 1.0}}
+GREEDY = {"temperature": 0, "repetition_penalty": 1}  # no penalty, so it drafts
+LIQUID = "liquid default (T 0.1, top_k 50, repetition penalty 1.05)"
+MODES = {"greedy": GREEDY, "T 0 with the penalty": {"temperature": 0}, LIQUID: {}, "T 1.0": {"temperature": 1.0}}
 
 
 def post(path, body):
@@ -65,12 +67,12 @@ for case, body in CASES.items():
 ttft = []
 for i in range(4):
     other()
-    ttft.append(first_token({**CASES["code"], "temperature": 0, "max_tokens": 16}))
+    ttft.append(first_token({**CASES["code"], **GREEDY, "max_tokens": 16}))
 rows.append({"case": "first token, code prompt, cold", "s": statistics.median(ttft[1:]), "all": ttft[1:]})
 print(json.dumps(rows[-1]), flush=True)
 
 ids = json.loads((Path(__file__).resolve().parent.parent / "long_prompt.json").read_text())["long"]
-for mode, sampling in (("greedy", {"temperature": 0}), ("liquid default (T 0.1, top_k 50)", {})):
+for mode, sampling in (("greedy", GREEDY), (LIQUID, {})):
     runs = []
     for i in range(4):
         other()

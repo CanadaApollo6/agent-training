@@ -57,6 +57,42 @@ again). A fresh `hf download` into an empty folder matches the bundle file for f
 (`chmod +x`, `./m3tis-serve.sh`), it passes all seven `server_check.py` checks. Speeds were 3–8% under the release
 numbers because the card was warm from the session before.
 
+## Update staged: repetition penalty, and agent tasks (2026-10-16)
+
+The released server accepted `repetition_penalty` and ignored it. Liquid's `generation_config.json` asks for 1.05,
+and the agent smoke run looped ("00 00 …") until the reply cap. Fork commit 6aa76186 applies it the way llama.cpp
+does:
+- each distinct token among the last 64 (prompt and reply) has its logit divided by the penalty if positive, or
+  multiplied if negative;
+- this happens before top-k;
+- the default comes from `generation_config.json` or `--repetition-penalty`, and a request's own value wins;
+- 0 or less is refused;
+- a penalized reply doesn't draft, since drafted checks don't carry the penalty.
+
+Checks on an A10 pod: 1.05 changes the greedy reply against 1.0, each setting repeats exactly, the seeded default
+is reproducible, and bad values get a 400.
+
+Staged bundle: `~/.cache/m3tis3/bundle2` (weights hard-linked, new server, card and SOURCE). Not uploaded; that needs
+Riel's OK. On the 3090 (`m3tis/bench.py` → `m3tis-bench-penalty.json`):
+
+| tok/s | greedy (penalty 1, drafted) | T 0, penalty 1.05 | Liquid's settings | T 1.0 |
+|---|---|---|---|---|
+| code | 332 | 322 | 317 | 316 |
+| chat | 324 | 322 | 315 | 317 |
+| tool call | 336 | 323 | 318 | 318 |
+
+- The 14.7K rewrite runs at 347 greedy and 277 with Liquid's settings.
+- The first token takes 34 ms.
+- Liquid's settings cost nothing for the penalty (316/316/318 before).
+- `server_check.py` passes all seven checks.
+
+**Agent tasks** (`06-agents/harness-evals`, README "LFM2.5-24B-A2B"):
+- Terminal-Bench 2 pilot, 19 tasks × 3 attempts, pi harness, both builds at Liquid's settings.
+- This build solved 5.0 of 19 against 5.7 for Liquid's Q8_0 on llama.cpp: p = 0.75, within noise.
+- It took 1.40× the tokens per solve (CI 0.98–1.86).
+- With the penalty on, 6 of 2,537 calls hit the reply cap.
+
 ## Not done
 
-No agent-task evals on this build. The KL figure comes from 443 positions of one answer.
+The KL figure comes from 443 positions of one answer. `frequency_penalty` and `presence_penalty` are still accepted and
+ignored.

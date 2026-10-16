@@ -36,7 +36,9 @@ server.
   table at 4 bits instead of 6, because the server's kernels read 4-bit tables.
 - **Greedy replies draft from the text itself.** The model has no draft head, so the server guesses the next tokens by
   finding where the last few tokens appeared earlier, and the 24B checks every guess. This pays most when a reply
-  repeats its prompt, like rewriting code: 347 instead of 279 tokens/s on a 14.7K-token rewrite.
+  repeats its prompt, like rewriting code: 347 instead of 277 tokens/s on a 14.7K-token rewrite.
+- **It does agent work like Liquid's 8-bit build.** On 19 Terminal-Bench 2 tasks it solved 5.0 a run against 5.7 for
+  Liquid's Q8_0 GGUF, within noise (below).
 
 ## Quick start
 
@@ -51,24 +53,29 @@ It serves an OpenAI-compatible API at `http://127.0.0.1:8080/v1` (`/chat/complet
 `PORT=…` and `CONTEXT=…` change the port and window, and extra flags pass through to `tensorfold-native serve`
 (`--temperature 0`, `--no-thinking`, `--api-key`, …).
 
-Requests with no sampling settings use Liquid's (temperature 0.1, top_k 50). `"temperature": 0` in a request, or
-`./m3tis-serve.sh --temperature 0`, gives greedy replies, which are the ones that draft.
+Requests with no sampling settings use Liquid's: temperature 0.1, top_k 50, and a repetition penalty of 1.05 over the
+last 64 tokens, applied as llama.cpp does. `"temperature": 0, "repetition_penalty": 1` in a request, or
+`./m3tis-serve.sh --temperature 0 --repetition-penalty 1`, gives plain greedy replies, which are the ones that draft.
+`"temperature": 0` alone keeps the penalty, and a penalized reply doesn't draft.
 
 ## Measured on one RTX 3090 (2026-10-16)
 
 These numbers come from the files in this repo, started with `./m3tis-serve.sh`: the full 131K window, a single
 user, 512-token replies. Each figure is the median of 3 runs after a warm-up.
 
-| Tokens/s | Greedy | Liquid's settings (T 0.1, top_k 50) | T 1.0 |
-|---|---|---|---|
-| Code (write a Fibonacci function, with thinking) | **334** | 316 | 310 |
-| Chat (explain GPU matrix multiplication) | **324** | 316 | 317 |
-| Tool call (weather in two cities, 79 tokens) | **334** | 318 | 318 |
+| Tokens/s | Greedy (drafted) | Greedy with the penalty | Liquid's settings | T 1.0 |
+|---|---|---|---|---|
+| Code (write a Fibonacci function, with thinking) | **332** | 322 | 317 | 316 |
+| Chat (explain GPU matrix multiplication) | **324** | 322 | 315 | 317 |
+| Tool call (weather in two cities, 79 tokens) | **336** | 323 | 318 | 318 |
+
+Greedy is `temperature 0, repetition_penalty 1`. Liquid's settings are the defaults above (T 0.1, top_k 50, penalty
+1.05), and T 1.0 keeps the penalty.
 
 | Long prompt (14.7K tokens, rewrite this code) | |
 |---|---|
 | Read | 7.0 s (2,100 tokens/s) |
-| Reply speed | **347** tokens/s greedy (drafted), 279 with Liquid's settings |
+| Reply speed | **347** tokens/s greedy (drafted), 277 with Liquid's settings |
 | The next turn of the same conversation | 0.24 s to read, not 7.0 s: only the new tokens are read |
 
 - **First token:** 34 ms on a short prompt.
@@ -109,14 +116,25 @@ full vocabulary, lower is better), on 443 positions of a code answer:
 | **These files on this server** | **0.14** (0.137–0.145 across the speed work) |
 
 The 4-bit table costs about 0.017. The server's fp32 sums land slightly closer to bf16 than the reference maths, so
-the files on this server score about like Liquid's published build. This is a small sample from one answer, and we
-have not run agent-task evals on this build.
+the files on this server score about like Liquid's published build. This is a small sample from one answer.
+
+**Agent tasks: within noise of Liquid's 8-bit build.** We ran 19 Terminal-Bench 2 tasks with the pi
+coding agent as the harness, 3 attempts each, up to 60 turns and 60 minutes per task, with both
+builds at Liquid's settings. The reference was Liquid's Q8_0 GGUF on llama.cpp.
+
+| Build | Solved per attempt (of 19) | Mean | Tokens per solved task vs Q8_0 |
+|---|---|---|---|
+| Liquid's Q8_0, llama.cpp | 7, 6, 4 | 5.7 (30%) | — |
+| **These files on this server** | 3, 7, 5 | **5.0 (26%)** | 1.40× (95% CI 0.98–1.86) |
+
+The difference in solves is noise (paired by task, p = 0.75). The 4-bit build takes more turns to reach the same
+solves. This model is built for tool automation more than coding in a shell; Terminal-Bench is a hard test of the
+latter. Method and tables: [agent-training/06-agents/harness-evals](https://github.com/CanadaApollo6/agent-training/tree/main/06-agents/harness-evals).
 
 ## Limits
 
 - **One user at a time** (`--parallel 1`). A second request waits for the first.
-- **No repetition penalty.** Liquid's `generation_config.json` asks for 1.05. The server accepts
-  `repetition_penalty`, `frequency_penalty` and `presence_penalty` but does not apply them.
+- **`frequency_penalty` and `presence_penalty` are accepted but not applied.** `repetition_penalty` is applied.
 - **Slower prompt reading than llama.cpp,** about 2–3× (above).
 - **Text only.**
 
@@ -139,6 +157,8 @@ which add LFM2.5 to the engine (source: SOURCE.md):
 - Expert matmuls where warps split the work and add up once at the end, and a CUDA graph per token step.
 - Prompt-lookup drafting with a draft length that adapts to how often guesses are accepted.
 - State snapshots so a conversation's next turn resumes instead of re-reading, and Liquid's tool-call format.
+- Liquid's repetition penalty (1.05 over the last 64 tokens, from `generation_config.json`). Without it, long agent
+  runs could loop.
 
 ## Files
 
