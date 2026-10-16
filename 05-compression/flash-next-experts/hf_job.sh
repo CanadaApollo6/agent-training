@@ -20,7 +20,7 @@ submit)
     $HF buckets sync $S "hf://buckets/$USER_NS/flash-in/$RUN" > /dev/null
     echo "HF_TOKEN=$(cat ${HF_HOME:-$HOME/.cache/huggingface}/token)" | $HF jobs run --detach -q --secrets-file - \
         --flavor ${FLAVOR:-a100x8} --timeout ${TIMEOUT:-3h} --name "flash-$RUN" \
-        -e RUN=$RUN -e NS=$USER_NS -e LIMIT=${LIMIT:-} \
+        -e RUN=$RUN -e NS=$USER_NS -e LIMIT_CALIB=${LIMIT_CALIB:-} -e LIMIT_HELDOUT=${LIMIT_HELDOUT:-} -e LIMIT_CONTROL=${LIMIT_CONTROL:-} \
         -v "hf://buckets/$USER_NS/flash-in/$RUN:/inputs:ro" -v "hf://buckets/$USER_NS/flash-out:/out" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /inputs/hf_job.sh entry
     echo "run $RUN"

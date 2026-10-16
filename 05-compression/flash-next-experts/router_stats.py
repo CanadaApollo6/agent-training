@@ -50,21 +50,21 @@ def moe_forward(self, hidden_states):
     if st is not None:
         st["probmass"][self.layer_idx] += probs.sum(0)
         st["count"][self.layer_idx] += counts.float()
-        wsum, reap = st["wsum"][self.layer_idx], st["reap"][self.layer_idx]
     for e, n in enumerate(counts.tolist()):
         if n == 0:
             continue
         seg = slice(start, start + n)
         g, u = F.linear(xs[seg], ex.gate_up_proj[e]).chunk(2, dim=-1)
         y = F.linear(ex.act_fn(g) * u, ex.down_proj[e])
-        if st is not None:
-            ws = w_sorted[seg].float()
-            wsum[e] += ws.sum()
-            reap[e] += (ws * y.float().norm(dim=-1)).sum()
         outs.append(y * w_sorted[seg, None])
         start += n
+    weighted = torch.cat(outs)
+    if st is not None:  # REAP-style: routing weight times the expert's output size, i.e. the norm of each weighted output
+        e_sorted = flat_e[order]
+        st["wsum"][self.layer_idx].index_add_(0, e_sorted, w_sorted.float())
+        st["reap"][self.layer_idx].index_add_(0, e_sorted, weighted.float().norm(dim=-1))
     out = torch.zeros_like(x)
-    out.index_add_(0, tok, torch.cat(outs).to(out.dtype))
+    out.index_add_(0, tok, weighted.to(out.dtype))
     return (out + shared).reshape(b, s, h)
 
 
@@ -89,12 +89,14 @@ def add_stats(dst, src):
         dst[k] += torch.stack([row.cpu() for row in src[k]])
 
 
-def windows(data_dir, split, limit=None):
+def windows(data_dir, split):
+    """All windows of a split, or LIMIT_<SPLIT> of them spread evenly so every source is sampled."""
     d = np.load(f"{data_dir}/{split}.npz")
     ids, lens, src = d["ids"], d["lens"], d["src"]
     offs = np.concatenate([[0], np.cumsum(lens)])
-    n = len(lens) if limit is None else min(limit, len(lens))
-    for i in range(n):
+    limit = os.environ.get(f"LIMIT_{split.upper()}")
+    pick = range(len(lens)) if not limit else sorted(set(np.linspace(0, len(lens) - 1, int(limit)).round().astype(int)))
+    for i in pick:
         yield str(src[i]), torch.from_numpy(ids[offs[i]:offs[i + 1]].astype(np.int64))[None]
 
 
@@ -143,7 +145,6 @@ def main(model_dir, data_dir, out_dir):
         log.write(line + "\n")
         log.flush()
 
-    limit = int(os.environ["LIMIT"]) if os.environ.get("LIMIT") else None
     n_gpu = torch.cuda.device_count()
     kw = {"dtype": torch.bfloat16}
     if n_gpu:
@@ -160,7 +161,7 @@ def main(model_dir, data_dir, out_dir):
     # Pass 1: router statistics on the calibration split.
     calib = {k: torch.zeros(len(blocks), n_exp) for k in ("count", "wsum", "probmass", "reap")}
     t0, ntok = time.time(), 0
-    for i, (src, ids) in enumerate(windows(data_dir, "calib", limit)):
+    for i, (src, ids) in enumerate(windows(data_dir, "calib")):
         STATE["collect"] = new_stats(blocks, n_exp)
         hidden(model, ids, dev)
         add_stats(calib, STATE["collect"])
@@ -182,7 +183,7 @@ def main(model_dir, data_dir, out_dir):
         agg = {n: {"n": 0, "kl": 0.0, "agree": 0, "nll_full": 0.0, "nll_pruned": 0.0} for n in names}
         per_src = {}
         t0 = time.time()
-        for i, (src, ids) in enumerate(windows(data_dir, split, limit)):
+        for i, (src, ids) in enumerate(windows(data_dir, split)):
             STATE["keep"] = None
             STATE["collect"] = new_stats(blocks, n_exp)
             h0 = hidden(model, ids, dev)
