@@ -81,7 +81,7 @@ def page():
 td,th{{border:1px solid var(--border,#ddd);padding:2px 7px;text-align:center}}td.t{{text-align:left}}
 .y{{background:var(--success,#3a3);color:var(--success-foreground,#fff)}}.n{{background:var(--destructive-surface,#f8dada)}}
 .w{{color:var(--muted-foreground,#aaa)}}h2{{font-size:15px;margin:12px 0 4px}}</style>
-<h1 style="font-size:17px;margin:0 0 6px">LFM2.5-24B-A2B on Terminal-Bench 2 (pi harness) — live</h1>
+<h1 style="font-size:17px;margin:0 0 6px">LFM2.5-24B-A2B on Terminal-Bench 2 (pi harness)</h1>
 <p>Updated {datetime.now():%H:%M}. Both builds at Liquid's settings (T 0.1, top_k 50, repetition penalty 1.05).
 19 scored tasks × 3 attempts each. Pod spend so far: <b>${spend():.2f}</b>.</p>
 <h2>Solved / finished, per attempt</h2><table><tr><th>Build</th><th>a1</th><th>a2</th><th>a3</th></tr>{''.join(head)}</table>
