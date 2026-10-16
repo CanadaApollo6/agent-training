@@ -15,7 +15,7 @@ same reply. On a 14.7K-token history the next turn takes 0.24 s to read instead 
 
 ## The bundle
 
-Staged at `~/.cache/m3tis3/bundle` for `CanadaApollo6/LFM2.5-24B-A2B-M3TiS-3090` (not uploaded). Card, launcher,
+Staged at `~/.cache/m3tis3/bundle`; uploaded with Riel's OK to `CanadaApollo6/LFM2.5-24B-A2B-M3TiS-3090`. Card, launcher,
 NOTICE and SOURCE.md live in `m3tis/`. The server is built portable (glibc 2.28+, x86-64-v3, sm_86) and stripped
 to 10 MB. The weights are Liquid's MLX 4-bit files hard-linked unchanged, plus `embed4.safetensors`.
 `make_embed4.py --stamp` wrote a change notice into embed4's header, which the LFM Open License asks for
@@ -49,6 +49,13 @@ Full 131K window, one user, 512-token replies, a warm-up then the median of 3, s
 With drafts on vs off, greedy replies split at a near-tie: after about 950 characters on the code prompt and 360 on
 the long one. The tool-call reply was identical. This is the rounding difference `drafting.md` already proved: with
 both paths forced to round alike, they match token for token. The card says so.
+
+## After upload
+
+The repo holds all 20 files at their exact sizes (Liquid's shards were already on the Hub, so they weren't sent
+again). A fresh `hf download` into an empty folder matches the bundle file for file by sha256. Run as the card says
+(`chmod +x`, `./m3tis-serve.sh`), it passes all seven `server_check.py` checks. Speeds were 3–8% under the release
+numbers because the card was warm from the session before.
 
 ## Not done
 
