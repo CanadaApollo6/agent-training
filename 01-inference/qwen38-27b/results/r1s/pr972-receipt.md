@@ -26,10 +26,7 @@ On #803 I proposed per-projection fp64 references, an engine-vs-reference KL bar
 ## Receipt
 
 - Environment: RTX 3090 (24 GB, sm_86), Linux, driver 615.78, CUDA 13.4 `nvcc`, Zig 0.17.0, this branch at `967dd763`.
-- Checkpoint: `CanadaApollo6/Ornith-1.5-35B-A3B-M3TiS-3090` at `82f19799` (Qwen3.5-MoE 35B-A3B, 3-bit routed experts, 4-bit elsewhere, an MTP layer). Two local adaptations, neither touching weights:
-  - its `rope_parameters` spells `type` for `rope_type`, so the config was copied with the key renamed;
-  - its `mtp-4bit.safetensors` names tensors `mtp.*`, so they were re-keyed to `language_model.mtp.*` (same bytes).
-  - I'll fix both in the checkpoint rather than have the engine accept them.
+- Checkpoint: `CanadaApollo6/Ornith-1.5-35B-A3B-M3TiS-3090` (Qwen3.5-MoE 35B-A3B, 3-bit routed experts, 4-bit elsewhere, an MTP layer). The receipts ran at `82f19799` with two names corrected locally. `66da2f4e` publishes those names (`rope_parameters.rope_type`, and MTP tensors under `language_model.mtp.`), with the weights' bytes unchanged. This branch serves `66da2f4e` as downloaded, with `--drafter`.
 - Exactness:
   - `bench_concurrent.py --tokens 128 --reps 2 --alone --serial` with `--drafter <the checkpoint>`, code and chat, T=1 seeded and T=0:
     - `--levels 1,2` at `--parallel 2 --context 8192`: 36 of 36 equal;
