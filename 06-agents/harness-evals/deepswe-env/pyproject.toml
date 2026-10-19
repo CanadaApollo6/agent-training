@@ -12,7 +12,8 @@ package = false
 url = "https://hub.primeintellect.ai/primeintellect/deep-swe/install/simple/"
 
 [tool.uv.sources]
+deep-swe = { git = "https://github.com/PrimeIntellect-ai/prime-envs", rev = "6c62f7277215974176329880875c1265ffb1395f", subdirectory = "environments/swe/deep_swe" }  # 0.2.0, for verifiers without HarborEnv; the hub has only 0.1.0
 deep-swe-upstream = { path = "deep-swe-upstream", editable = true }
 terminal-bench-2 = { path = "terminal-bench-2", editable = true }
 terminal-bench-4 = { path = "terminal-bench-4", editable = true }
-verifiers = { path = "../vendor/verifiers" }  # main 50ccf5a8 + prime-agent Rust 0.10.0 (../vendor_verifiers.sh)
+verifiers = { git = "https://github.com/PrimeIntellect-ai/verifiers", rev = "17e66c082d78be0c8bb7e7b9d49281bd7fd6d46c" }  # as ../pyproject.toml

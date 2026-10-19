@@ -123,7 +123,8 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   - Its startup is the fastest of the harnesses compared (Claude Code, Codex, Pi, Hermes). The model was scripted
     and inference left out; the post itself warns that there is no common benchmark standard.
   - No Terminal-Bench or other agent scores, and nothing on small or open models, or on training in the harness.
-  - Our pinned verifiers (prime-rl 81052082) still installs the npm/TypeScript build.
+  - verifiers installs it from 17e66c08 (#2887, 2026-10-17; v0.4.0 itself still installs the TypeScript 0.9.5). The
+    harness evals and hf_rl_job.sh both pin that commit.
   - What it means here: lighter sandboxes when prime_agent is the RL harness. The memory drop is the part that
     counts at 64 attempts in flight; startup time is noise next to 7-minute attempts.
   - Verdict: relevant, not evidence. Prime is investing in prime_agent as a product (Riel's thesis,

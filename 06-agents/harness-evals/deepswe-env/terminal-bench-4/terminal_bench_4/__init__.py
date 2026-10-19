@@ -7,7 +7,7 @@ from the other 52.
 from typing import Literal
 
 import verifiers.v1 as vf
-from verifiers.v1.tasksets.harbor import HarborConfig, HarborEnv, HarborTask, HarborTaskset
+from verifiers.v1.tasksets.harbor import HarborConfig, HarborTask, HarborTaskset
 
 
 class TerminalBench4Config(HarborConfig):
@@ -18,6 +18,6 @@ class TerminalBench4Taskset(HarborTaskset, vf.Taskset[HarborTask, TerminalBench4
     pass
 
 
-# Exported so verifiers picks the Harbor env, which grades separate-verifier tasks in their own sandbox; without it
-# the run falls back to the single-agent env and every TB4 task fails with TaskError.
-__all__ = ["HarborEnv", "TerminalBench4Taskset"]
+# No HarborEnv export any more: verifiers #2833 removed it, and a Harbor task with a separate verifier now gets isolated
+# scoring by default (graded in its own sandbox, as HarborEnv did).
+__all__ = ["TerminalBench4Taskset"]

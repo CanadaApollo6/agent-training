@@ -77,7 +77,10 @@ env.agent.runtime.block = ["github.com", "*.github.com", "githubusercontent.com"
 env.agent.max_turns = 100
 env.agent.max_total_tokens = 400000   # cumulative over the attempt; pi's compaction keeps each call under max_model_len
 env.agent.timeout.rollout = 3600      # DROPPED from training if hit (prime-rl, not configurable); 1800 dropped 15-31% per step
-env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}]   # Prime-terminated sandboxes rerun; else dropped
+env.agent.retries.rules = [{type = "SandboxError", max_retries = 2}, {type = "HarnessError", message = "The sandbox has been terminated", max_retries = 2}]
+# Prime-terminated sandboxes rerun, else they're dropped. The second rule (added 2026-10-19, needs verifiers >= 0.4: message
+# rules, #2729) catches the ones that die mid-attempt: pi records them as "HarnessError: harness 'pi': APIError: process
+# stream RPC failed (not_found): The sandbox has been terminated" (verifiers 17e66c08 still does), so this run lost 31.
 
 [ckpt]                                # exported by hf_rl_job.sh (EXPORT=1) after training
 interval = 3                          # also at steps 3, 6 and 9, so a run stopped by RL_TIMEOUT still has weights to export

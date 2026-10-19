@@ -9,8 +9,8 @@ recipe applied to the tuned weights). Then R1s and R1s-SD were compared on the h
    served it. It skips the pilot tasks, which are held out.
 2. `select_data.py` keeps the two shortest solves per task: 71 rollouts, 122 samples, 5.65M tokens, 2.49M loss tokens.
    The harness mix is pi 33, prime_agent 20, Claude Code 18.
-3. `stage.sh` copies everything to an 8-GPU pod. `pod_train.sh setup|train|export|rebuild` runs prime-rl (pinned at
-   1bddcf6, plus `prime-rl-pretokenized.patch`) with `sft.toml`.
+3. `stage.sh` copies everything to an 8-GPU pod. `pod_train.sh setup|train|export|rebuild` runs prime-rl (round 1 at
+   1bddcf6, now pinned at v0.10.0, plus `prime-rl-pretokenized.patch`) with `sft.toml`.
 4. `finish_export.py` checks the bf16 export against the original. The frozen vision tower and routers must be
    bit-identical. Training moves only 0.1-0.2% RMS per tensor. It also rounds back to bf16 the DeltaNet tensors
    prime-rl keeps in fp32, and restores the MTP head.

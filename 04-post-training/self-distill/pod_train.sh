@@ -18,7 +18,7 @@ shift || true
 ARM=${ARM:-sd}
 SFX=$([ "$ARM" = sd ] || echo "-$ARM")
 read -r G0 G1 <<< "${GPUS:-0 1}"
-PRIME_RL_COMMIT=1bddcf6
+PRIME_RL_COMMIT=9e15490dcab1d506ce3462e69b8aa5dde45c6b3a   # v0.10.0; round 1 trained at 1bddcf6 (with impl = "custom")
 export PATH=$HOME/.local/bin:$PATH HF_HUB_ENABLE_HF_TRANSFER=1
 log() { echo "$(date +%T) $*" | tee -a $SD/pod.log; }
 # prime-rl's torch is built for CUDA 13 (driver >= 580); older drivers on datacenter GPUs run it through NVIDIA's

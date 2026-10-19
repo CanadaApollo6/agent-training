@@ -11,7 +11,8 @@
 # EXPORT=1 (needs MODEL_SRC and a [ckpt] in the config) turns the run's last checkpoint into bf16 weights after training,
 # measures how many weights changed (pilot/weights_moved.py) and uploads them to the sd-out bucket as <run>-bf16.
 # SCORING_REOPEN=1 patches verifiers to lift the runtime's network block after the agent stops, before the task's
-# collect hooks and test.sh run in the same sandbox (TB2's test.sh installs uv from GitHub).
+# collect hooks and test.sh run in the same sandbox (TB2's test.sh installs uv from GitHub). Since verifiers #2793/#2833
+# shared-box Harbor grading reopens egress itself before test.sh; this also covers the collect hooks.
 # RL_TIMEOUT=<duration> (e.g. 7h) stops training cleanly after that long, so a long run still leaves the job time to
 # export its latest checkpoint before TIMEOUT kills the job.
 #
@@ -19,7 +20,14 @@
 #   (inside the job) bash /inputs/hf_rl_job.sh entry
 set -euo pipefail
 HF="uvx --from huggingface_hub hf"
-PRIME_RL_COMMIT=81052082a9a2be5502b735a64a3c36092d5d096a   # pins verifiers 7ba657f2, renderers d43c4301
+# prime-rl v0.10.0 (its submodule pins verifiers e888a719, v0.4.0 + 12). Every run through the continuation used
+# PRIME_RL_COMMIT=81052082a9a2be5502b735a64a3c36092d5d096a VERIFIERS_COMMIT= (verifiers 7ba657f2, renderers d43c4301,
+# DPPO loss; v0.10.0's default is IPO).
+PRIME_RL_COMMIT=${PRIME_RL_COMMIT:-9e15490dcab1d506ce3462e69b8aa5dde45c6b3a}
+# verifiers checked out over the submodule's pin (empty keeps the pin): 17e66c08 is the first with the Rust prime-agent
+# 0.10.0 (#2887), the same verifiers the harness evals use. prime-rl v0.10.0's verifiers imports and the configs here
+# were checked against it.
+VERIFIERS_COMMIT=${VERIFIERS_COMMIT-17e66c082d78be0c8bb7e7b9d49281bd7fd6d46c}
 case ${1:-} in
 submit)
     cd "$(dirname "$0")"
@@ -33,7 +41,7 @@ submit)
     { echo "HF_TOKEN=$(cat ${HF_HOME:-$HOME/.cache/huggingface}/token)"
       echo "PRIME_API_KEY=$(python3 -c "import json,os; print(json.load(open(os.path.expanduser('~/.prime/config.json')))['api_key'])")"; } |
     $HF jobs run --detach -q --secrets-file - --flavor ${FLAVOR:-a100x8} --timeout ${TIMEOUT:-270m} --name "rl-$RUN" \
-        -e RUN=$RUN -e NS=$NS -e CONFIG=${CONFIG:-ornith9b-tb2-smoke.toml} -e PRIME_RL_COMMIT=$PRIME_RL_COMMIT \
+        -e RUN=$RUN -e NS=$NS -e CONFIG=${CONFIG:-ornith9b-tb2-smoke.toml} -e PRIME_RL_COMMIT=$PRIME_RL_COMMIT -e VERIFIERS_COMMIT=$VERIFIERS_COMMIT \
         -e MODEL_SRC=${MODEL_SRC:-} -e PI_CONTEXT_WINDOW=${PI_CONTEXT_WINDOW:-} -e EXPORT=${EXPORT:-} -e RL_TIMEOUT=${RL_TIMEOUT:-} -e SCORING_REOPEN=${SCORING_REOPEN:-} "${MOUNT[@]}" \
         -v "hf://buckets/$NS/rl-in/$RUN:/inputs:ro" -v "hf://buckets/$NS/rl-out:/out" \
         nvidia/cuda:13.0.1-devel-ubuntu22.04 bash /inputs/hf_rl_job.sh entry
@@ -54,7 +62,12 @@ entry)
     GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=url.https://github.com/.insteadOf GIT_CONFIG_VALUE_0=git@github.com: \
         git submodule update --init deps/verifiers deps/renderers deps/pydantic-config deps/prime-envs > /tmp/sub.log 2>&1 \
         || { say "submodules failed"; tail -20 /tmp/sub.log >> $OUT/job.log; exit 1; }
-    say "cloned prime-rl $(git rev-parse --short HEAD)"
+    if [ -n "${VERIFIERS_COMMIT:-}" ]; then
+        GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=url.https://github.com/.insteadOf GIT_CONFIG_VALUE_0=git@github.com: \
+            git -C deps/verifiers fetch -q origin && git -C deps/verifiers checkout -q $VERIFIERS_COMMIT \
+            || { say "verifiers checkout $VERIFIERS_COMMIT failed"; exit 1; }
+    fi
+    say "cloned prime-rl $(git rev-parse --short HEAD), verifiers $(git -C deps/verifiers rev-parse --short HEAD)"
     if [ -n "${PI_CONTEXT_WINDOW:-}" ]; then
         PI_PY=deps/verifiers/verifiers/v1/harnesses/pi/harness.py
         sed -i "s/^\( *\)\"input\": \[\"text\", \"image\"\],/&\n\1\"contextWindow\": $PI_CONTEXT_WINDOW,/" $PI_PY
@@ -63,8 +76,8 @@ entry)
     fi
     if [ -n "${SCORING_REOPEN:-}" ]; then
         RO=deps/verifiers/verifiers/v1/rollout.py
-        sed -i 's/^\( *\)assert runtime is not None$/&\n\1await runtime.prepare_execution(None)  # hf_rl_job.sh: reopen egress for scoring/' $RO
-        [ "$(grep -c 'await runtime.prepare_execution(None)  # hf_rl_job.sh' $RO)" = 1 ] && say "scoring reopen patched" \
+        sed -i 's/^\( *\)assert runtime is not None$/&\n\1await runtime.backend.prepare_execution(None)  # hf_rl_job.sh: reopen egress for scoring/' $RO
+        [ "$(grep -c 'await runtime.backend.prepare_execution(None)  # hf_rl_job.sh' $RO)" = 1 ] && say "scoring reopen patched" \
             || { say "scoring reopen patch failed"; exit 1; }
     fi
     uv sync --extra gpu --extra flash-attn --extra kernels --extra disagg --package prime-rl --package terminal-bench-2 > /tmp/sync.log 2>&1 \

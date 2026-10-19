@@ -16,7 +16,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import verifiers.v1 as vf
-from verifiers.v1.tasksets.harbor import HarborEnv, HarborTask, HarborTaskset
+from verifiers.v1.tasksets.harbor import HarborTask, HarborTaskset
 
 from deep_swe.taskset import DeepSWEConfig, DeepSWETask
 
@@ -66,4 +66,4 @@ class DeepSWEUpstreamTaskset(HarborTaskset, vf.Taskset[DeepSWETask, DeepSWEConfi
             yield DeepSWEUpstreamTask(data, task.config)
 
 
-__all__ = ["DeepSWEUpstreamTaskset", "HarborEnv"]
+__all__ = ["DeepSWEUpstreamTaskset"]  # no HarborEnv: see terminal_bench_4

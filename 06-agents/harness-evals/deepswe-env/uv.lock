@@ -325,13 +325,10 @@ wheels = [
 
 [[package]]
 name = "deep-swe"
-version = "0.1.0"
-source = { registry = "https://hub.primeintellect.ai/primeintellect/deep-swe/install/simple/" }
+version = "0.2.0"
+source = { git = "https://github.com/PrimeIntellect-ai/prime-envs?subdirectory=environments%2Fswe%2Fdeep_swe&rev=6c62f7277215974176329880875c1265ffb1395f#6c62f7277215974176329880875c1265ffb1395f" }
 dependencies = [
     { name = "verifiers", extra = ["harbor"] },
-]
-wheels = [
-    { url = "https://hub.primeintellect.ai/primeintellect/deep-swe/@f4017d3d/deep_swe-0.1.0-py3-none-any.whl", hash = "sha256:ea8c17aede5d58d45f8f01b8f56ec8863f95f5b6ffa27f53c923bbc6b8e6452b" },
 ]
 
 [[package]]
@@ -359,11 +356,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "deep-swe" },
+    { name = "deep-swe", git = "https://github.com/PrimeIntellect-ai/prime-envs?subdirectory=environments%2Fswe%2Fdeep_swe&rev=6c62f7277215974176329880875c1265ffb1395f" },
     { name = "deep-swe-upstream", editable = "deep-swe-upstream" },
     { name = "terminal-bench-2", editable = "terminal-bench-2" },
     { name = "terminal-bench-4", editable = "terminal-bench-4" },
-    { name = "verifiers", extras = ["harbor"], directory = "../vendor/verifiers" },
+    { name = "verifiers", extras = ["harbor"], git = "https://github.com/PrimeIntellect-ai/verifiers?rev=17e66c082d78be0c8bb7e7b9d49281bd7fd6d46c" },
 ]
 
 [[package]]
@@ -1508,7 +1505,7 @@ wheels = [
 
 [[package]]
 name = "renderers"
-version = "0.1.12.dev11"
+version = "0.1.12"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jinja2" },
@@ -1518,9 +1515,9 @@ dependencies = [
     { name = "prime-pydantic-config" },
     { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9f/fb/f8aa79a257dcf61f6345cc62cf8c77fe6e1a46acdc73e9907092945b491b/renderers-0.1.12.dev11.tar.gz", hash = "sha256:360233db7a9e8b9eef76a72f7d8fb4fe7a8037b65b0c91d721947ddec59d3fe6", size = 441505, upload-time = "2026-09-29T01:40:58.287Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/06/e3/4fd849811630c1df226f5501bec9f043c328594b3925bd2640fa29b17ba1/renderers-0.1.12.tar.gz", hash = "sha256:0e688605163cf891cfa3afa3ed5895dbb29360279bcf52ef1d893c74079df9e4", size = 437149, upload-time = "2026-10-12T20:42:31.173Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ae/f7/4c90e9bbcfda30870be0bbcaf0066eeabff085989045c0efad3b3692a21f/renderers-0.1.12.dev11-py3-none-any.whl", hash = "sha256:43713a7e48aa602e1533214d79583f6d896e2bed9245998f783bb5eb5a82ff9a", size = 242533, upload-time = "2026-09-29T01:40:56.865Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/34/6b652ef2cece3b2356f11a78bb31a1d52eacad35b37c534401e1a607298c/renderers-0.1.12-py3-none-any.whl", hash = "sha256:023edfc5c17583d4b9824a1a822027d2f1d63be0d8e197137a2145e0f786f37d", size = 250440, upload-time = "2026-10-12T20:42:29.437Z" },
 ]
 
 [package.optional-dependencies]
@@ -1996,7 +1993,8 @@ wheels = [
 
 [[package]]
 name = "verifiers"
-source = { directory = "../vendor/verifiers" }
+version = "0.4.1.dev36"
+source = { git = "https://github.com/PrimeIntellect-ai/verifiers?rev=17e66c082d78be0c8bb7e7b9d49281bd7fd6d46c#17e66c082d78be0c8bb7e7b9d49281bd7fd6d46c" }
 dependencies = [
     { name = "aiohttp" },
     { name = "anthropic" },
@@ -2027,72 +2025,6 @@ dependencies = [
 [package.optional-dependencies]
 harbor = [
     { name = "harbor" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiohttp", specifier = ">=3.14.1" },
-    { name = "anthropic", specifier = ">=1.0.0" },
-    { name = "e2b", marker = "extra == 'e2b'", specifier = ">=2.35.0,<3" },
-    { name = "gepa", specifier = ">=0.0.6" },
-    { name = "h11", specifier = ">=0.16.0" },
-    { name = "harbor", marker = "python_full_version >= '3.12' and extra == 'harbor'", specifier = "==0.24.0" },
-    { name = "httpx", specifier = ">=0.27.0" },
-    { name = "httpx2", specifier = ">=2.12.0" },
-    { name = "loguru", specifier = ">=0.7.0" },
-    { name = "math-verify", specifier = ">=0.8.0" },
-    { name = "mcp", specifier = "==2.0.0" },
-    { name = "modal", marker = "extra == 'modal'", specifier = ">=1.5.4" },
-    { name = "msgpack", specifier = ">=1.1.2" },
-    { name = "nltk", marker = "extra == 'ta'", specifier = ">=3.9.2" },
-    { name = "numpy", specifier = ">=2.1.0" },
-    { name = "openai", specifier = ">=2.54.0,<3.0.0" },
-    { name = "openenv", marker = "extra == 'openenv'", specifier = ">=0.4.1" },
-    { name = "prime-pydantic-config", extras = ["toml"], specifier = ">=0.4.3" },
-    { name = "prime-runs", specifier = ">=0.1.4" },
-    { name = "prime-sandboxes", specifier = ">=0.4.2" },
-    { name = "prime-tunnel", specifier = ">=0.1.13" },
-    { name = "pydantic", specifier = ">=2.12.3" },
-    { name = "pyzmq", specifier = ">=27.1.0" },
-    { name = "renderers", extras = ["multimodal"], specifier = ">=0.1.12.dev2" },
-    { name = "rich", specifier = ">=11.0.0" },
-    { name = "tenacity", specifier = ">=8.5.0" },
-    { name = "textarena", marker = "extra == 'ta'", specifier = "==0.7.4" },
-    { name = "tomli-w", specifier = ">=1.0.0" },
-    { name = "typing-extensions", specifier = ">=4.12.2" },
-    { name = "uvicorn", specifier = ">=0.52.0" },
-]
-provides-extras = ["e2b", "harbor", "modal", "openenv", "ta"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pre-commit", specifier = ">=2.19.0" },
-    { name = "pytest", specifier = ">=7.0.0,<9.1.0" },
-    { name = "pytest-asyncio", specifier = ">=0.21.0" },
-    { name = "pytest-cov", specifier = ">=4.0.0" },
-    { name = "pytest-xdist", specifier = ">=3.8.0" },
-    { name = "ruff", specifier = ">=0.16.0" },
-    { name = "ty", specifier = ">=0.0.63" },
-]
-examples = [
-    { name = "alphabet-sort", editable = "../vendor/verifiers/environments/alphabet_sort" },
-    { name = "bash-interception", editable = "../vendor/verifiers/environments/bash_interception" },
-    { name = "code-golf", editable = "../vendor/verifiers/environments/code_golf" },
-    { name = "color-codeword", editable = "../vendor/verifiers/environments/color_codeword" },
-    { name = "compact", editable = "../vendor/verifiers/environments/compact" },
-    { name = "deepwiki", editable = "../vendor/verifiers/environments/deepwiki" },
-    { name = "glossary", editable = "../vendor/verifiers/environments/glossary" },
-    { name = "grayscale-interception", editable = "../vendor/verifiers/environments/grayscale_interception" },
-    { name = "gsm8k", editable = "../vendor/verifiers/environments/gsm8k" },
-    { name = "interception", editable = "../vendor/verifiers/environments/interception" },
-    { name = "kuhn-poker", editable = "../vendor/verifiers/environments/kuhn_poker" },
-    { name = "openenv-wordle", editable = "../vendor/verifiers/environments/openenv_wordle" },
-    { name = "proposer-solver", editable = "../vendor/verifiers/environments/proposer_solver" },
-    { name = "reverse-text", editable = "../vendor/verifiers/environments/reverse_text" },
-    { name = "scratchpad", editable = "../vendor/verifiers/environments/scratchpad" },
-    { name = "web-search-interception", editable = "../vendor/verifiers/environments/web_search_interception" },
-    { name = "wiki-search", editable = "../vendor/verifiers/environments/wiki_search" },
-    { name = "wordle", editable = "../vendor/verifiers/environments/wordle" },
 ]
 
 [[package]]

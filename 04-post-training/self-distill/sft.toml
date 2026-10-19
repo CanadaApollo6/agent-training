@@ -8,7 +8,7 @@
 max_steps = 26
 
 [model]
-impl = "custom"
+# prime-rl v0.10.0 dropped model.impl (#3773): its own implementation is the only one now (this ran as impl = "custom")
 attn = "flash_attention_2"
 seq_len = 131072
 # context parallelism shards each 128K pack over the 8 GPUs; ulysses is the style that handles Gated DeltaNet layers
