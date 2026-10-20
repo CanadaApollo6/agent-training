@@ -1,0 +1,68 @@
+[
+ {
+  "label": "r1s-fork",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 128,
+  "decode_tps_median": 470.5858578269632,
+  "decode_tps_all": [
+   473.51,
+   467.66
+  ],
+  "ttft_s_median": 0.022271413999988,
+  "evidence": [
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "899553f93289",
+    "output_sha256": "343d8fd027a21ab88e695880a474d711d6cf4060e5ac8698e66adbdafd4df3ef"
+   },
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "899553f93289",
+    "output_sha256": "343d8fd027a21ab88e695880a474d711d6cf4060e5ac8698e66adbdafd4df3ef"
+   }
+  ],
+  "sample": "\n\nHere is a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a "
+ },
+ {
+  "label": "r1s-fork",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 128,
+  "decode_tps_median": 305.49377411434887,
+  "decode_tps_all": [
+   281.95,
+   329.03
+  ],
+  "ttft_s_median": 0.031485479499963276,
+  "evidence": [
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "1460678064eb",
+    "output_sha256": "b1d9743a60cd5cae0e8958db10947aa0e8da2b1119c44e80c5393423c618c012"
+   },
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "1460678064eb",
+    "output_sha256": "b1d9743a60cd5cae0e8958db10947aa0e8da2b1119c44e80c5393423c618c012"
+   }
+  ],
+  "sample": "# How Matrix Multiplication Uses a GPU\n\n## The Core Idea\n\nA GPU (Graphics Processing Unit) is a chip packed with thousands of tiny processors. Unlike a CPU (the"
+ }
+]

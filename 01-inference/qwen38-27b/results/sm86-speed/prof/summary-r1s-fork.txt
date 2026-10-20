@@ -1,0 +1,63 @@
+### r1s-fork: top kernels
+total GPU kernel ms 1809.8 kernels 171768
+ 18.3%    331.1ms n=   9440 avg=   35.1us med=   34.7 void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)1, (int)3>(const __nv_bfloat16 *, int, 
+ 17.4%    315.5ms n=  20977 avg=   15.0us med=   10.1 tf_qmm_seg_s4_t1_g1
+ 10.9%    197.0ms n=   1036 avg=  190.1us med=  121.5 tf_qmm_seg_s3_t1_g1
+ 10.7%    193.8ms n=  11560 avg=   16.8us med=   16.3 void qmoe::swap_kernel<(int)64, (int)1, (int)0, (int)2, (int)1, (int)3>(const __nv_bfloat16 *, int, 
+  4.9%     88.0ms n=  12553 avg=    7.0us med=    7.0 tf_qmoe_router
+  4.3%     77.2ms n=   8670 avg=    8.9us med=    8.8 void tf_gdn::tree_kernel<__nv_bfloat16, (int)0, (int)8, (int)4, (bool)1>(const T1 *, const T1 *, con
+  3.9%     69.9ms n=  27666 avg=    2.5us med=    2.3 tf_add_rms_rows_bf16h
+  3.3%     59.3ms n=    240 avg=  247.3us med=  242.3 void qmoe::prefill_kernel<(int)64, (int)2, (int)2, (int)2, (int)2, (int)4, (int)3>(const __nv_bfloat
+  3.2%     58.0ms n=   3637 avg=   16.0us med=   14.2 tf_qmm_seg_s4_t1_g2
+  3.0%     54.3ms n=   2120 avg=   25.6us med=   24.7 void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)2, (int)3>(const __nv_bfloat16 *, int, 
+  2.9%     52.4ms n=  12310 avg=    4.3us med=    4.0 void qmoe::select_kernel<(int)8>(const float *, int, int, int, int, int, int *, float *, int *, int 
+  2.5%     45.1ms n=    289 avg=  155.9us med=  154.6 void tf_gdn::replay_kernel<__nv_bfloat16, (int)8, (int)4>(const long long *, int, const int *, int, 
+  1.8%     32.4ms n=   5131 avg=    6.3us med=    5.9 tf_qmm_seg_s4_t1_g4
+  1.7%     31.2ms n=   8850 avg=    3.5us med=    3.2 tf_gdn_prep_128
+  1.5%     27.5ms n=   2890 avg=    9.5us med=    9.2 tf_tree_part_256_w1
+  1.4%     25.1ms n=    240 avg=  104.5us med=   87.8 void qmoe::prefill_kernel<(int)64, (int)1, (int)3, (int)2, (int)2, (int)4, (int)3>(const __nv_bfloat
+  1.3%     22.8ms n=   8850 avg=    2.6us med=    2.2 tf_gated_rms_rows_128
+  1.1%     19.7ms n=  11796 avg=    1.7us med=    1.6 tf_qmoe_combine_f32
+  0.8%     13.6ms n=   3703 avg=    3.7us med=    2.6 tf_qk_rows
+  0.5%      9.8ms n=    588 avg=   16.7us med=   17.2 tf_qmm_lane_m32
+  0.5%      9.5ms n=    514 avg=   18.5us med=   18.4 void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)4, (int)4>(const __nv_bfloat16 *, int, 
+  0.5%      8.7ms n=    750 avg=   11.6us med=    9.3 tf_window_part
+  0.4%      7.8ms n=   3703 avg=    2.1us med=    2.0 tf_gate_rows
+  0.4%      6.9ms n=   2890 avg=    2.4us med=    2.1 tf_tree_merge
+  0.4%      6.4ms n=    149 avg=   43.2us med=   41.2 void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)1, (int)4>(const __nv_bfloat16 *, int, 
+
+### r1s-fork: busy/launches
+kernels 171768 (in graphs 148257, graph launches 2890), memcpys 4819
+active span 2241.8 ms, busy 1810.7 ms, busy fraction 0.808, request gaps 0
+graph launch span median 0.45 ms, nodes median 51
+
+### r1s-fork: per verify graph launch
+graph node counts: [(51, 2312), (52, 289), (53, 289)]
+2312 launches of 51 nodes: kernel time 453 us, span 457 us
+     192.2 us      8x  swap_kernel
+     104.1 us      7x  tf_qmm_seg_s4_t1_g1
+      27.6 us      4x  tf_qmoe_router
+      26.6 us      3x  tree_kernel
+      19.7 us      8x  tf_add_rms_rows_bf16h
+      16.8 us      4x  select_kernel
+      16.5 us      1x  tf_qmm_seg_s4_t1_g2
+      10.2 us      3x  tf_gdn_prep_128
+       9.6 us      1x  tf_tree_part_256_w1
+       7.3 us      3x  tf_gated_rms_rows_128
+       6.6 us      4x  tf_qmoe_combine_f32
+       6.4 us      1x  tf_qmm_seg_s4_t1_g4
+       4.1 us      1x  tf_qk_rows
+       2.3 us      1x  tf_tree_merge
+eager kernels per graph launch: 8, time 124 us
+      32.0 us    0.3x  tf_qmm_seg_s3_t1_g1
+      29.7 us    0.2x  prefill_kernel
+      15.6 us    0.1x  replay_kernel
+       9.8 us    0.5x  swap_kernel
+       4.9 us    0.8x  tf_qmm_seg_s4_t1_g4
+       3.7 us    0.3x  tf_qmm_seg_s4_t1_g2
+       3.4 us    1.5x  tf_add_rms_rows_bf16h
+       3.4 us    0.2x  tf_qmm_lane_m32
+       3.0 us    0.3x  tf_window_part
+       2.8 us    0.3x  tf_qmoe_router
+       2.5 us    0.3x  tf_qmm_seg_s4_t1_g1
+       1.9 us    0.4x  tf_argmax_part_bf16

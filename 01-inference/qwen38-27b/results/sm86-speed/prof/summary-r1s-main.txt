@@ -1,0 +1,63 @@
+### r1s-main: top kernels
+total GPU kernel ms 4647.7 kernels 255136
+ 26.6%   1235.6ms n=  12200 avg=  101.3us med=   91.6 void tf_experts3::expert_kernel<(int)2, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, int, con
+ 17.4%    807.0ms n=  63176 avg=   12.8us med=   12.6 tf_lane_gemv_split
+ 14.0%    651.8ms n=  12200 avg=   53.4us med=   48.5 void tf_experts3::expert_kernel<(int)1, (int)0, (int)2, (int)4>(const __nv_bfloat16 *, int, int, con
+ 13.4%    622.9ms n=  13194 avg=   47.2us med=   43.1 tf_moe_router
+  8.7%    404.6ms n=   1182 avg=  342.3us med=  334.6 void tf_qmm_group::group_kernel<(int)64, (int)16, (int)64, (int)1, (int)4, (int)8, (bool)0, (bool)0,
+  2.3%    108.3ms n=   9060 avg=   12.0us med=   11.1 tf_q35_gdn_slots_1
+  2.1%     95.5ms n=   3080 avg=   31.0us med=   26.0 tf_q35_attn_partial
+  1.7%     80.7ms n=  29632 avg=    2.7us med=    2.5 tf_q35_norm
+  1.4%     66.8ms n=    588 avg=  113.6us med=   89.9 void tf_qmm_prefill::prefill_kernel<(int)64, (int)128, (int)128, (int)2, (int)4, (int)3, (bool)0>(co
+  1.4%     65.6ms n=    874 avg=   75.1us med=   74.8 tf_q35_argmax
+  1.1%     52.3ms n=  13194 avg=    4.0us med=    3.8 tf_experts::plan_kernel(const int *, int, int, int, int *, int *, int *)
+  1.1%     51.6ms n=  13194 avg=    3.9us med=    3.6 tf_moe_topk
+  1.0%     46.4ms n=    874 avg=   53.1us med=   53.2 tf_q36m_attn
+  0.9%     44.0ms n=    284 avg=  154.9us med=  152.9 tf_q35k_apply
+  0.9%     39.6ms n=    120 avg=  330.4us med=  289.2 void tf_experts3_prefill::prefill_kernel<(int)2, (int)2, (int)2, (int)2, (int)4>(const __nv_bfloat16
+  0.8%     36.1ms n=    871 avg=   41.4us med=   39.1 void tf_experts::expert_kernel<(int)64, (int)2, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, 
+  0.7%     31.6ms n=   9240 avg=    3.4us med=    3.1 tf_q35_gdn_pre
+  0.7%     31.0ms n=  18608 avg=    1.7us med=    1.6 tf_q35_sums
+  0.6%     28.9ms n=  13194 avg=    2.2us med=    2.0 tf_moe_combine
+  0.6%     27.9ms n=   9240 avg=    3.0us med=    2.8 tf_q35_conv_commit
+  0.5%     23.4ms n=   3080 avg=    7.6us med=    6.1 tf_q35_rope
+  0.4%     18.3ms n=   9240 avg=    2.0us med=    1.9 tf_q35_gdn_post
+  0.3%     13.8ms n=    120 avg=  114.7us med=  102.2 void tf_experts3_prefill::prefill_kernel<(int)1, (int)3, (int)2, (int)2, (int)4>(const __nv_bfloat16
+  0.3%     12.4ms n=    871 avg=   14.2us med=   11.3 void tf_experts::expert_kernel<(int)64, (int)1, (int)0, (int)2, (int)4>(const __nv_bfloat16 *, int, 
+  0.2%     11.1ms n=   6160 avg=    1.8us med=    1.7 tf_q35_head_norm
+
+### r1s-main: busy/launches
+kernels 255136 (in graphs 221970, graph launches 302), memcpys 3238
+active span 5428.5 ms, busy 4649.1 ms, busy fraction 0.856, request gaps 0
+graph launch span median 12.87 ms, nodes median 735
+
+### r1s-main: per verify graph launch
+graph node counts: [(735, 302)]
+302 launches of 735 nodes: kernel time 12727 us, span 12796 us
+    6189.4 us     80x  expert_kernel
+    2488.7 us    190x  tf_lane_gemv_split
+    1894.4 us     40x  tf_moe_router
+     360.1 us      1x  group_kernel
+     358.5 us     30x  tf_q35_gdn_slots_1
+     313.7 us     10x  tf_q35_attn_partial
+     230.6 us     81x  tf_q35_norm
+     159.6 us     40x  plan_kernel
+     156.1 us     40x  tf_moe_topk
+     100.3 us     30x  tf_q35_gdn_pre
+      91.1 us     30x  tf_q35_conv_commit
+      88.2 us     40x  tf_moe_combine
+      76.3 us     10x  tf_q35_rope
+      70.7 us     41x  tf_q35_sums
+eager kernels per graph launch: 110, time 2663 us
+     979.4 us    2.9x  group_kernel
+     402.9 us    2.8x  prefill_kernel
+     220.6 us    6.6x  expert_kernel
+     217.3 us    2.9x  tf_q35_argmax
+     183.5 us   19.2x  tf_lane_gemv_split
+     168.3 us    3.7x  tf_moe_router
+     153.6 us    2.9x  tf_q36m_attn
+     145.7 us    0.9x  tf_q35k_apply
+      36.7 us   17.1x  tf_q35_norm
+      32.1 us   20.6x  tf_q35_sums
+      21.5 us    5.8x  tf_q36m_norm_rope
+      21.1 us    0.6x  tf_q35_gdn_chain

@@ -1,0 +1,52 @@
+Generating SQLite file nsys-r1s-fork.sqlite from nsys-r1s-fork.nsys-rep
+Processing [nsys-r1s-fork.sqlite] with [/usr/lib/nsight-systems/target-linux-x64/reports/cuda_gpu_kern_sum.py]... 
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+18.3,331056208,9440,35069.5,34720.0,24576,534436,25640.2,"void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)1, (int)3>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int, qmoe::Combine)"
+17.4,315543293,20977,15042.3,10112.0,8960,516323,17601.5,tf_qmm_seg_s4_t1_g1
+10.9,196983467,1036,190138.5,121505.0,113248,865062,123609.5,tf_qmm_seg_s3_t1_g1
+10.7,193835609,11560,16767.8,16256.0,8065,500099,16802.2,"void qmoe::swap_kernel<(int)64, (int)1, (int)0, (int)2, (int)1, (int)3>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int, qmoe::Combine)"
+4.9,87973289,12553,7008.1,7009.0,3392,334786,8969.5,tf_qmoe_router
+4.3,77243348,8670,8909.3,8832.0,6112,367650,11036.8,"void tf_gdn::tree_kernel<__nv_bfloat16, (int)0, (int)8, (int)4, (bool)1>(const T1 *, const T1 *, const __nv_bfloat16 *, const float *, const float *, const float *, const long long *, const int *, const int *, int, __nv_bfloat16 *, int, int, int, tf_gdn::Pending<T1>, float *, const long long *, bool)"
+3.9,69903618,27666,2526.7,2272.0,2016,461187,7923.9,tf_add_rms_rows_bf16h
+3.3,59341194,240,247255.0,242273.5,124064,763844,95455.7,"void qmoe::prefill_kernel<(int)64, (int)2, (int)2, (int)2, (int)2, (int)4, (int)3>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int)"
+3.2,58025910,3637,15954.3,14241.0,13280,478531,23090.2,tf_qmm_seg_s4_t1_g2
+3.0,54339021,2120,25631.6,24736.0,19008,477251,16085.3,"void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)2, (int)3>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int, qmoe::Combine)"
+2.9,52391460,12310,4256.0,4016.5,3680,424163,7860.4,"void qmoe::select_kernel<(int)8>(const float *, int, int, int, int, int, int *, float *, int *, int *, int *)"
+2.5,45065609,289,155936.4,154625.0,148257,203041,6878.0,"void tf_gdn::replay_kernel<__nv_bfloat16, (int)8, (int)4>(const long long *, int, const int *, int, const int *, int, float *, int, int, int)"
+1.8,32354107,5131,6305.6,5888.0,5504,437187,11087.0,tf_qmm_seg_s4_t1_g4
+1.7,31198012,8850,3525.2,3232.0,2912,423395,7912.0,tf_gdn_prep_128
+1.5,27534669,2890,9527.6,9152.0,6432,258274,10385.8,tf_tree_part_256_w1
+1.4,25080824,240,104503.4,87760.5,50145,554628,83029.2,"void qmoe::prefill_kernel<(int)64, (int)1, (int)3, (int)2, (int)2, (int)4, (int)3>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int)"
+1.3,22829577,8850,2579.6,2208.0,2144,420675,10243.7,tf_gated_rms_rows_128
+1.1,19713022,11796,1671.2,1568.0,1504,329538,4339.0,tf_qmoe_combine_f32
+0.8,13573888,3703,3665.6,2624.0,2400,497091,19025.5,tf_qk_rows
+0.5,9830500,588,16718.5,17153.0,7616,340258,15998.4,tf_qmm_lane_m32
+0.5,9507099,514,18496.3,18368.0,18048,26016,564.6,"void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)4, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int, qmoe::Combine)"
+0.5,8719833,750,11626.4,9312.5,7936,26400,3873.9,tf_window_part
+0.4,7784906,3703,2102.3,2016.0,1856,195041,3181.1,tf_gate_rows
+0.4,6870056,2890,2377.2,2112.0,1792,332066,8187.3,tf_tree_merge
+0.4,6441318,149,43230.3,41216.0,29537,142785,14815.1,"void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)1, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int, qmoe::Combine)"
+0.3,5565978,1036,5372.6,4448.0,4096,334242,10285.2,tf_argmax_part_bf16
+0.3,5445958,514,10595.2,10464.0,10144,32192,1336.2,"void qmoe::swap_kernel<(int)64, (int)1, (int)4, (int)2, (int)1, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int, qmoe::Combine)"
+0.3,4574615,236,19384.0,18944.0,11712,58944,6304.6,"void qmoe::swap_kernel<(int)64, (int)1, (int)0, (int)2, (int)1, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int, qmoe::Combine)"
+0.2,4036244,2890,1396.6,1376.0,1312,2720,48.5,tf_tree_shared_256_w1
+0.2,2854450,339,8420.2,8096.0,7392,10144,797.1,tf_qmm_seg_s4_t2_g4
+0.1,2441136,87,28059.0,28129.0,23744,30528,1456.4,"void qmoe::swap_kernel<(int)64, (int)2, (int)2, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int, qmoe::Combine)"
+0.1,2299466,180,12774.8,12800.0,9728,16064,2873.7,"void tf_gdn_prefill::chain_kernel<__nv_bfloat16, (int)64, (int)32>(const T1 *, const T1 *, const __nv_bfloat16 *, const float *, const float *, const float *, float *, __nv_bfloat16 *, int, int, int)"
+0.1,2175307,1036,2099.7,2080.0,1984,3680,82.4,tf_argmax_merge_i32
+0.1,2160120,432,5000.3,4928.0,2336,20192,1390.2,tf_copy_batch
+0.1,2014124,750,2685.5,2784.0,1568,9568,617.2,tf_window_merge
+0.1,1859782,1048,1774.6,1728.0,1568,6432,224.0,tf_embed_rows_affine4
+0.1,1846474,123,15012.0,14944.0,14624,17184,411.7,tf_qmm_seg_s4_t2_g2
+0.1,1583593,123,12874.7,12928.0,11840,14496,467.6,tf_qmm_seg_s4_t2_g1
+0.1,1324422,588,2252.4,2464.0,1472,20800,1057.2,tf_qmm_reduce
+0.1,1176901,741,1588.3,1568.0,1504,6976,204.5,tf_draft_pick
+0.1,1089670,243,4484.2,4928.0,3936,5025,524.0,"qmoe::plan_kernel(const int *, int, int, int, int *, int *, int *)"
+0.1,1052453,63,16705.6,16704.0,16640,16800,38.3,"void tf_prefill_attention::pattn_kernel<(int)256, (int)8, (int)2, (int)2>(const __nv_bfloat16 *, const __nv_bfloat16 *, const __nv_bfloat16 *, __nv_bfloat16 *, int, int, int, int, int, float)"
+0.0,898758,3,299586.0,299618.0,299426,299714,146.6,"void qmoe::prefill_kernel<(int)64, (int)2, (int)2, (int)2, (int)2, (int)4, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int)"
+0.0,717446,243,2952.5,3104.0,2432,3744,385.5,tf_qmoe_combine_bf16
+0.0,626146,243,2576.7,2560.0,2560,2656,18.5,tf_qmoe_topk_rows
+0.0,551779,289,1909.3,1952.0,1440,2336,246.8,tf_tree_paths
+0.0,384738,3,128246.0,128225.0,128160,128353,98.2,"void qmoe::prefill_kernel<(int)64, (int)1, (int)3, (int)2, (int)2, (int)4, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int)"
+0.0,7808,6,1301.3,1312.0,1280,1312,16.5,tf_group_sums_rows
+

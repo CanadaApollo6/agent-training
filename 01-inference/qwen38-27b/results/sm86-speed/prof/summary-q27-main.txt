@@ -1,0 +1,63 @@
+### q27-main: top kernels
+total GPU kernel ms 6126.3 kernels 227456
+ 37.6%   2302.8ms n=  27582 avg=   83.5us med=   71.6 void tf_qmm_group::group_kernel<(int)64, (int)16, (int)64, (int)1, (int)4, (int)8, (bool)0, (bool)0,
+ 35.3%   2163.0ms n=  70581 avg=   30.6us med=   30.1 tf_lane_gemv_split
+  9.4%    574.0ms n=   1521 avg=  377.4us med=  266.7 void tf_qmm_prefill::prefill_kernel<(int)64, (int)128, (int)128, (int)2, (int)4, (int)3, (bool)0>(co
+  3.7%    226.6ms n=   5328 avg=   42.5us med=   43.4 tf_q35_gdn_slots_2
+  2.1%    127.6ms n=   2880 avg=   44.3us med=   42.7 tf_q35_attn_partial
+  2.1%    127.2ms n=  25320 avg=    5.0us med=    5.0 tf_q35_norm
+  1.6%     95.7ms n=   2064 avg=   46.4us med=   44.7 tf_q35_gdn_slots_4
+  1.0%     61.4ms n=   3480 avg=   17.6us med=   21.1 tf_q35d_dyn_conv_batch
+  1.0%     59.7ms n=    160 avg=  372.9us med=  366.7 tf_q35k_apply
+  0.8%     51.0ms n=   8640 avg=    5.9us med=    6.4 tf_q35_conv_commit
+  0.8%     48.1ms n=    870 avg=   55.2us med=   52.9 tf_q35d_attn_partial
+  0.8%     46.7ms n=  26847 avg=    1.7us med=    1.7 tf_q35_sums
+  0.7%     44.9ms n=  12390 avg=    3.6us med=    3.7 tf_q35_mlp_act
+  0.6%     39.3ms n=   8640 avg=    4.6us med=    4.7 tf_q35_gdn_pre
+  0.5%     28.0ms n=   2880 avg=    9.7us med=    9.0 tf_q35_rope
+  0.3%     21.0ms n=   8640 avg=    2.4us med=    2.3 tf_q35_gdn_post
+  0.3%     17.0ms n=    174 avg=   97.5us med=   96.2 tf_topk_slices
+  0.3%     15.8ms n=    960 avg=   16.4us med=   12.0 tf_q35_gdn_slots_1
+  0.2%     13.7ms n=    288 avg=   47.4us med=   46.3 tf_q35_gdn_chain
+  0.2%     13.4ms n=   5760 avg=    2.3us med=    1.8 tf_q35_head_norm
+  0.1%      9.0ms n=    900 avg=   10.0us med=    8.7 tf_q35_tap
+  0.1%      8.4ms n=   2880 avg=    2.9us med=    2.9 tf_q35_attn_merge
+  0.1%      5.9ms n=   2880 avg=    2.0us med=    2.0 tf_q35_attn_gate
+  0.1%      4.9ms n=   1740 avg=    2.8us med=    2.8 tf_q35d_norm_rope_batch
+  0.1%      3.2ms n=     99 avg=   32.0us med=   32.0 tf_q35d_gather_rows
+
+### q27-main: busy/launches
+kernels 227456 (in graphs 193662, graph launches 174), memcpys 1056
+active span 6581.3 ms, busy 6120.1 ms, busy fraction 0.930, request gaps 0
+graph launch span median 26.95 ms, nodes median 1113
+
+### q27-main: per verify graph launch
+graph node counts: [(1113, 174)]
+174 launches of 1113 nodes: kernel time 27430 us, span 27440 us
+   11443.7 us    145x  group_kernel
+   11220.6 us    352x  tf_lane_gemv_split
+    1302.5 us     31x  tf_q35_gdn_slots_2
+     725.2 us     16x  tf_q35_attn_partial
+     658.8 us    129x  tf_q35_norm
+     550.1 us     12x  tf_q35_gdn_slots_4
+     289.6 us     48x  tf_q35_conv_commit
+     226.6 us     64x  tf_q35_mlp_act
+     225.0 us    129x  tf_q35_sums
+     216.3 us     48x  tf_q35_gdn_pre
+     155.7 us     16x  tf_q35_rope
+     116.0 us     48x  tf_q35_gdn_post
+      90.6 us      6x  tf_q35_gdn_slots_1
+      74.5 us     32x  tf_q35_head_norm
+eager kernels per graph launch: 194, time 7779 us
+    3299.0 us    8.7x  prefill_kernel
+    1791.0 us   13.5x  group_kernel
+    1210.4 us   53.6x  tf_lane_gemv_split
+     352.7 us   20.0x  tf_q35d_dyn_conv_batch
+     342.9 us    0.9x  tf_q35k_apply
+     276.2 us    5.0x  tf_q35d_attn_partial
+      97.5 us    1.0x  tf_topk_slices
+      78.5 us    1.7x  tf_q35_gdn_chain
+      72.2 us   16.5x  tf_q35_norm
+      43.5 us   25.3x  tf_q35_sums
+      31.6 us    7.2x  tf_q35_mlp_act
+      27.9 us   10.0x  tf_q35d_norm_rope_batch

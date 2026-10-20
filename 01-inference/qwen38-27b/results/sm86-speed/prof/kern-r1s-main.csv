@@ -1,0 +1,42 @@
+Generating SQLite file nsys-r1s-main.sqlite from nsys-r1s-main.nsys-rep
+Processing [nsys-r1s-main.sqlite] with [/usr/lib/nsight-systems/target-linux-x64/reports/cuda_gpu_kern_sum.py]... 
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+26.6,1235580977,12200,101277.1,91616.0,40160,1613897,59987.2,"void tf_experts3::expert_kernel<(int)2, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int)"
+17.4,806998581,63176,12773.8,12640.0,5152,1371497,21914.2,tf_lane_gemv_split
+14.0,651805053,12200,53426.6,48512.0,10336,1611977,48921.0,"void tf_experts3::expert_kernel<(int)1, (int)0, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int)"
+13.4,622928189,13194,47213.0,43104.0,42432,545507,35027.8,tf_moe_router
+8.7,404550885,1182,342259.6,334562.0,330882,809957,25548.7,"void tf_qmm_group::group_kernel<(int)64, (int)16, (int)64, (int)1, (int)4, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>(const __nv_bfloat16 *, const float *, tf_qmm_group::Parts, int, int, int, int, int)"
+2.3,108267624,9060,11950.1,11072.0,7616,623684,20795.3,tf_q35_gdn_slots_1
+2.1,95506789,3080,31008.7,26016.5,7233,518148,40484.7,tf_q35_attn_partial
+1.7,80724875,29632,2724.2,2464.0,1824,428131,7978.2,tf_q35_norm
+1.4,66799853,588,113605.2,89921.0,88032,525411,56657.7,"void tf_qmm_prefill::prefill_kernel<(int)64, (int)128, (int)128, (int)2, (int)4, (int)3, (bool)0>(const __nv_bfloat16 *, const unsigned int *, const __nv_bfloat16 *, const __nv_bfloat16 *, void *, int, int, int, int, int, int)"
+1.4,65612101,874,75071.1,74753.0,74368,91777,1753.9,tf_q35_argmax
+1.1,52294283,13194,3963.5,3776.0,3296,427651,7932.5,"tf_experts::plan_kernel(const int *, int, int, int, int *, int *, int *)"
+1.1,51562581,13194,3908.0,3584.0,3552,481251,9224.1,tf_moe_topk
+1.0,46388887,874,53076.5,53168.0,8128,93856,21515.4,tf_q36m_attn
+0.9,43990090,284,154894.7,152929.0,147969,194977,7007.8,tf_q35k_apply
+0.9,39646749,120,330389.6,289154.0,233025,822790,146056.4,"void tf_experts3_prefill::prefill_kernel<(int)2, (int)2, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int)"
+0.8,36061808,871,41402.8,39105.0,38656,115553,6361.4,"void tf_experts::expert_kernel<(int)64, (int)2, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float)"
+0.7,31566498,9240,3416.3,3104.0,2784,431586,8904.3,tf_q35_gdn_pre
+0.7,31041678,18608,1668.2,1632.0,1408,329410,3692.0,tf_q35_sums
+0.6,28859486,13194,2187.3,1984.0,1632,488963,8092.9,tf_moe_combine
+0.6,27899234,9240,3019.4,2816.0,1984,484515,9869.1,tf_q35_conv_commit
+0.5,23411040,3080,7601.0,6112.0,6048,427778,20744.9,tf_q35_rope
+0.4,18325644,9240,1983.3,1888.0,1664,290434,4011.2,tf_q35_gdn_post
+0.3,13764591,120,114704.9,102241.0,81537,516707,62159.9,"void tf_experts3_prefill::prefill_kernel<(int)1, (int)3, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float, const uint4 *, int)"
+0.3,12372554,871,14205.0,11264.0,10784,58401,6013.3,"void tf_experts::expert_kernel<(int)64, (int)1, (int)0, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float)"
+0.2,11065582,6160,1796.4,1664.0,1440,482211,7417.6,tf_q35_head_norm
+0.2,8402306,3080,2728.0,2368.0,2336,478179,9744.7,tf_q35_attn_merge
+0.1,6491040,1748,3713.4,3680.0,3232,5216,452.3,tf_q36m_norm_rope
+0.1,6380967,180,35449.8,32608.0,21184,354754,26694.1,tf_q35_gdn_chain
+0.1,6086366,3080,1976.1,1600.0,1472,330978,9417.4,tf_q35_attn_gate
+0.1,3413367,1182,2887.8,2688.0,2464,14144,514.8,tf_q35_embed
+0.0,2242867,302,7426.7,7392.0,6752,13600,636.9,tf_q35_argmax_slices
+0.0,1870600,284,6586.6,6560.0,6368,16192,577.7,tf_q35k_conv
+0.0,1566570,874,1792.4,1792.0,1760,1952,25.0,tf_q35d_ring_put
+0.0,1171435,314,3730.7,3744.0,3360,4096,120.8,tf_q35d_gather_taps
+0.0,1054630,3,351543.3,351522.0,351106,352002,448.4,"void tf_experts_prefill::prefill_kernel<(int)64, (int)2, (int)2, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float)"
+0.0,1031749,308,3349.8,3296.0,3232,10784,493.6,tf_q35_tap
+0.0,535237,302,1772.3,1760.0,1728,2016,60.1,tf_q35_argmax_merge
+0.0,398051,3,132683.7,132673.0,132577,132801,112.4,"void tf_experts_prefill::prefill_kernel<(int)64, (int)1, (int)3, (int)2, (int)2, (int)4>(const __nv_bfloat16 *, int, int, const uint4 *, int, int, const int *, const int *, const int *, void *, int, float)"
+
