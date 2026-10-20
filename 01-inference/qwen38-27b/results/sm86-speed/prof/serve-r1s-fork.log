@@ -1,0 +1,21 @@
+info: the model's MTP head drafts every stream (a step 0.26 ms)
+[tensorfold] CUDA sm_86 device 0 (NVIDIA GeForce RTX 3090): model 15.93 GiB; 1 stream at once, 0.23 GiB each at a 8192-token window, of 5.0 GiB left after a 1.0 GiB reserve; prompts in 4096-row chunks, no prompt cache; own glue kernels
+[tensorfold] serving bundle at http://127.0.0.1:8097/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 8192; loaded in 5.5s)
+[tensorfold] thinking on (the chat template's default): replies reason in reasoning_content before the answer in content, and max_tokens counts both. --no-thinking turns it off; a request can send chat_template_kwargs {"enable_thinking": false}
+[tensorfold] 127.0.0.1 "GET /v1/models HTTP/1.1" 200 -
+[tensorfold] 127.0.0.1 "GET /v1/models HTTP/1.1" 200 -
+[tensorfold] done cmpl-90db3544c8ad66d29c6bf1985668fb4b prompt=1 cached=0 thinking=False effort=none tokens=16 sha=14f19f7edb88 finish=length rounds=9 accepted=7/10
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] done cmpl-6ee09fd2c9a0194f9f770736f884fad0 prompt=14 cached=0 thinking=False effort=none tokens=128 sha=899553f93289 finish=length rounds=38 accepted=89/114
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] done cmpl-cdb1e7f3c593bd432fa5fbd793a32c97 prompt=14 cached=0 thinking=False effort=none tokens=128 sha=899553f93289 finish=length rounds=38 accepted=89/114
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] done cmpl-444a7615f70e79629c0dd37ef7e40503 prompt=14 cached=0 thinking=False effort=none tokens=128 sha=899553f93289 finish=length rounds=38 accepted=89/114
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-1e743195239e05624da7735faace33c6 prompt=31 cached=0 thinking=False effort=none tokens=128 sha=1460678064eb finish=length rounds=63 accepted=65/106
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-591ebdad68d080b3954ad8caa0f3980e prompt=31 cached=0 thinking=False effort=none tokens=128 sha=1460678064eb finish=length rounds=58 accepted=70/133
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] done chatcmpl-b546ab97828c25724b226583a8e767c1 prompt=31 cached=0 thinking=False effort=none tokens=128 sha=1460678064eb finish=length rounds=54 accepted=74/160
+Collecting data...

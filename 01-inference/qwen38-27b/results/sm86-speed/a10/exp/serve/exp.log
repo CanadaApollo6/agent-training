@@ -1,0 +1,63 @@
+# VOID for exp served numbers: tf-exp/zig-out/native/bin/tensorfold-native was base's binary (not rebuilt). Engine (tf-qwen35-cuda) lines are valid. Served receipts: exp_serve.log.
+exp r1s step == base
+exp r1s window == base
+exp r1s tree == base
+exp r1s beside == base
+exp r1s pre == base
+exp r1s resume == base
+exp r1s window == step
+exp r1s tree == step
+exp r1s beside == step
+exp r1s resume == fresh
+64 steps: the first 8.3 ms, then 7.9 ms a step (126.8 tok/s)
+RUNS_DONE
+base2 r1s step == base
+base2 r1s window == base
+base2 r1s tree == base
+base2 r1s beside == base
+base2 r1s pre == base
+base2 r1s resume == base
+base2 r1s window == step
+base2 r1s tree == step
+base2 r1s beside == step
+base2 r1s resume == fresh
+64 steps: the first 9.3 ms, then 8.9 ms a step (112.6 tok/s)
+RUNS_DONE
+{"label": "base2-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 153.52121833030608, "decode_tps_all": [160.47, 152.77, 153.52], "ttft_s_median": 0.019882766999216983}
+{"label": "base2-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 120.85437749033315, "decode_tps_all": [120.85, 120.74, 121.53], "ttft_s_median": 0.04601109999930486}
+{"label": "base2-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 143.0678496135493, "decode_tps_all": [120.43, 144.92, 143.07], "ttft_s_median": 0.01975940299962531}
+{"label": "base2-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 112.15061623585481, "decode_tps_all": [112.15, 117.04, 107.34], "ttft_s_median": 0.045023247999779414}
+done base2-r1s
+{"label": "exp-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 153.46219811896847, "decode_tps_all": [160.29, 153.03, 153.46], "ttft_s_median": 0.01971156700165011}
+{"label": "exp-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 120.95274196745025, "decode_tps_all": [120.95, 120.95, 120.97], "ttft_s_median": 0.04614019600012398}
+{"label": "exp-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 137.85087975418128, "decode_tps_all": [115.93, 137.85, 142.33], "ttft_s_median": 0.019926943999962532}
+{"label": "exp-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 111.96693819096639, "decode_tps_all": [111.97, 120.38, 108.75], "ttft_s_median": 0.04520797700024559}
+done exp-r1s
+server died
+tensorfold: none is neither a directory nor a Hugging Face repo id (owner/name)
+server died
+tensorfold: none is neither a directory nor a Hugging Face repo id (owner/name)
+{"label": "conc-exp-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 159.72027913369277, "decode_tps_all": [159.72], "ttft_s_median": 0.020188946000416763}
+{"label": "conc-exp-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 120.54158967965662, "decode_tps_all": [120.54], "ttft_s_median": 0.04642581699954462}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 153.8, "per_stream_tps": 153.8, "ttft_s_max": 0.02, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 275.0, "per_stream_tps": 139.2, "ttft_s_max": 0.04, "steady_tps": 282.5, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 119.9, "per_stream_tps": 119.9, "ttft_s_max": 0.05, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 194.4, "per_stream_tps": 99.0, "ttft_s_max": 0.09, "steady_tps": 201.4, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 113.9, "per_stream_tps": 113.8, "ttft_s_max": 0.02, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 198.8, "per_stream_tps": 106.3, "ttft_s_max": 0.04, "steady_tps": 216.1, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 115.3, "per_stream_tps": 115.2, "ttft_s_max": 0.05, "alone": {"equal": 0, "unequal": 2, "failed": 0}, "serial": {"equal": 1, "unequal": 1, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 161.8, "per_stream_tps": 86.0, "ttft_s_max": 0.09, "steady_tps": 175.9, "alone": {"equal": 0, "unequal": 4, "failed": 0}, "serial": {"equal": 1, "unequal": 1, "failed": 0}}
+      "complete": true,
+      "token_sha": "eaa68149fc60",
+      "token_sha256": "eaa68149fc6002f81b3868dd6968ce78950075c8d7412f7e7ebb8dc2996be983",
+      "output_sha256": "bc28c652a0310e27138d6e66ad79c742cb4b1672cb6e4233bf2cb1fb5be43ded",
+      "ttft_s": 2.366588450000563,
+      "decode_tps": 249.81989571680478,
+      "equal_first_tokens": true,
+      "equal_first_output": true
+    }
+  ],
+  "qualified": true
+}
+done conc-exp-r1s
+ALL_DONE

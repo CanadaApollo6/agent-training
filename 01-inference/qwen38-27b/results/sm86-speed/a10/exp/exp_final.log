@@ -1,0 +1,29 @@
+# VOID for exp served numbers: tf-exp/zig-out/native/bin/tensorfold-native was base's binary (not rebuilt). Engine (tf-qwen35-cuda) lines are valid. Served receipts: exp_serve.log.
+exp r1s step == base
+exp r1s window == base
+exp r1s tree == base
+exp r1s beside == base
+exp r1s pre == base
+exp r1s resume == base
+exp r1s window == step
+exp r1s tree == step
+exp r1s beside == step
+exp r1s resume == fresh
+64 steps: the first 8.3 ms, then 7.9 ms a step (126.8 tok/s)
+RUNS_DONE
+{"label": "base-plain-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 111.73947703370477, "decode_tps_all": [111.74, 111.77, 111.65], "ttft_s_median": 0.017178231000798405}
+{"label": "base-plain-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 109.66513533321086, "decode_tps_all": [109.68, 109.61, 109.67], "ttft_s_median": 0.04017541000030178}
+{"label": "base-plain-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 104.48151767528603, "decode_tps_all": [109.96, 104.48, 104.45], "ttft_s_median": 0.01733287499882863}
+{"label": "base-plain-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 105.4245263633627, "decode_tps_all": [106.58, 105.42, 101.85], "ttft_s_median": 0.04016182900159038}
+done base-plain-r1s
+{"label": "exp-plain-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 111.64758969649036, "decode_tps_all": [111.71, 111.61, 111.65], "ttft_s_median": 0.017392089999702876}
+{"label": "exp-plain-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 109.73616155416275, "decode_tps_all": [109.76, 109.74, 109.69], "ttft_s_median": 0.039995906001422554}
+{"label": "exp-plain-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 104.72512835971791, "decode_tps_all": [109.87, 104.73, 104.51], "ttft_s_median": 0.017260382999666035}
+{"label": "exp-plain-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 105.41745768515402, "decode_tps_all": [106.59, 105.42, 101.96], "ttft_s_median": 0.04052309399958176}
+done exp-plain-r1s
+{"label": "exp-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 153.16295097519068, "decode_tps_all": [159.53, 152.46, 153.16], "ttft_s_median": 0.019660873000248102}
+{"label": "exp-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 120.68013507281809, "decode_tps_all": [120.71, 120.68, 120.52], "ttft_s_median": 0.045930843998576165}
+{"label": "exp-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 141.85306790848944, "decode_tps_all": [115.66, 143.6, 141.85], "ttft_s_median": 0.01988176399936492}
+{"label": "exp-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 111.92930621171585, "decode_tps_all": [111.93, 118.5, 108.97], "ttft_s_median": 0.04543659599949024}
+done exp-r1s
+ALL_DONE

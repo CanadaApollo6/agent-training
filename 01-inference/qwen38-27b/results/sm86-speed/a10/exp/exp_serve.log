@@ -1,0 +1,44 @@
+{"label": "exp-plain-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 125.0501773682072, "decode_tps_all": [125.18, 125.05, 124.93], "ttft_s_median": 0.017464189000747865}
+{"label": "exp-plain-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 123.08561955665706, "decode_tps_all": [123.19, 123.09, 123.05], "ttft_s_median": 0.040002362000450375}
+{"label": "exp-plain-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 116.50553436004128, "decode_tps_all": [122.21, 115.88, 116.51], "ttft_s_median": 0.017305563000263646}
+{"label": "exp-plain-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 117.5766857735178, "decode_tps_all": [118.92, 117.58, 113.03], "ttft_s_median": 0.04035692400066182}
+done exp-plain-r1s
+{"label": "base-plain-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 111.74350721267692, "decode_tps_all": [111.79, 111.74, 111.64], "ttft_s_median": 0.017520074999993085}
+{"label": "base-plain-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 109.76407884501754, "decode_tps_all": [109.76, 109.73, 109.76], "ttft_s_median": 0.04016652399877785}
+{"label": "base-plain-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 104.70729873961666, "decode_tps_all": [109.98, 104.71, 104.65], "ttft_s_median": 0.01727525699971011}
+{"label": "base-plain-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 105.40713661710181, "decode_tps_all": [106.68, 105.41, 101.98], "ttft_s_median": 0.04019578200131946}
+done base-plain-r1s
+{"label": "exp-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 160.4127926900436, "decode_tps_all": [160.41, 160.95, 153.61], "ttft_s_median": 0.019691025001520757}
+{"label": "exp-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 121.00751439593913, "decode_tps_all": [121.01, 121.0, 121.02], "ttft_s_median": 0.04593435899914766}
+{"label": "exp-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 137.81317432121034, "decode_tps_all": [116.7, 137.81, 142.52], "ttft_s_median": 0.019685516999743413}
+{"label": "exp-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 111.89757780335476, "decode_tps_all": [111.9, 118.66, 111.64], "ttft_s_median": 0.044529228000101284}
+done exp-r1s
+{"label": "base3-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 152.72775082108592, "decode_tps_all": [159.96, 152.73, 152.47], "ttft_s_median": 0.019705548998899758}
+{"label": "base3-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 120.56327561079598, "decode_tps_all": [120.71, 120.56, 120.56], "ttft_s_median": 0.04600743499941018}
+{"label": "base3-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 137.27641614478566, "decode_tps_all": [115.72, 137.28, 142.19], "ttft_s_median": 0.01988607199928083}
+{"label": "base3-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 111.65786480020988, "decode_tps_all": [111.66, 118.27, 106.96], "ttft_s_median": 0.04569891000028292}
+done base3-r1s
+{"label": "conc-exp-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 158.69952779743667, "decode_tps_all": [158.7], "ttft_s_median": 0.019833333999486058}
+{"label": "conc-exp-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 120.37997611503411, "decode_tps_all": [120.38], "ttft_s_median": 0.0463562519998959}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 154.2, "per_stream_tps": 154.2, "ttft_s_max": 0.02, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 273.9, "per_stream_tps": 138.6, "ttft_s_max": 0.04, "steady_tps": 281.4, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 120.5, "per_stream_tps": 120.5, "ttft_s_max": 0.05, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 195.1, "per_stream_tps": 99.3, "ttft_s_max": 0.09, "steady_tps": 202.1, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 116.8, "per_stream_tps": 116.8, "ttft_s_max": 0.02, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 201.3, "per_stream_tps": 103.2, "ttft_s_max": 0.04, "steady_tps": 209.7, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 128.6, "per_stream_tps": 128.6, "ttft_s_max": 0.05, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 183.1, "per_stream_tps": 97.1, "ttft_s_max": 0.09, "steady_tps": 196.7, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+      "complete": true,
+      "token_sha": "eaa68149fc60",
+      "token_sha256": "eaa68149fc6002f81b3868dd6968ce78950075c8d7412f7e7ebb8dc2996be983",
+      "output_sha256": "bc28c652a0310e27138d6e66ad79c742cb4b1672cb6e4233bf2cb1fb5be43ded",
+      "ttft_s": 2.365879656999823,
+      "decode_tps": 248.32654515069794,
+      "equal_first_tokens": true,
+      "equal_first_output": true
+    }
+  ],
+  "qualified": true
+}
+done conc-exp-r1s
+ALL_DONE

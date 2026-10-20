@@ -78,3 +78,15 @@ reading the 4-bit weights once at 936 GB/s: the decode matmuls run at roughly 55
 GPU-memory note for resumed runs: R1s serves in ~15 GiB and the 27B with DFlash2 in ~20 GiB at 8K; with nsys or ncu
 attached the desktop apps (~1 GiB) were starved. Keep the 27B runs to `--context 4096`, avoid nsys on the 27B, and
 check `nvidia-smi` headroom before each run.
+
+## Results on an A10 (sm_86), 2026-10-20
+
+- Piece A, `qwen35-sm86-qmm` dd14fa24: segmented split-K launch for decode projections of one input. Exact (engine
+  modes byte-equal to base). Served greedy code/chat: R1s drafted 152.5/120.3 -> 164.8/126.3, 27B DFlash2
+  109.8/82.5 -> 111.9/84.0. Draft: `pr-qwen35-sm86-qmm.md`.
+- Piece B, `qwen35-sm86-experts` 1ac42291: split decode pair form for 1-3 row calls. Exact (affine-4 byte-equal in
+  both forms, engine modes byte-equal to base, served concurrency 36/36 equal). R1s plain 111.7/109.8 -> 125.1/123.1,
+  drafted 152.7/120.6 -> 160.4/121.0 (4-row windows stay on `expert_kernel`). Draft: `pr-qwen35-sm86-experts.md`.
+- Receipts: `a10/serve`, `a10/engine` (A), `a10/exp` (B; `exp_final.log`'s served lines are void, a stale native binary).
+- The expected gains above (−3 ms a verify for experts) did not carry to the A10's 4-row windows: at 4 rows the
+  existing experts kernel already runs at ~70-83% of A10 bandwidth; the 3090 profile was inflated by nsys node tracing.
