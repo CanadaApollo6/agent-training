@@ -1,0 +1,71 @@
+{
+ "fixture": "kv-gate tensorfold-md@d1018b31 seed 799 rows 256",
+ "format": "bf16",
+ "mean_bar": 0.01,
+ "worst_bar": 0.1,
+ "pass": true,
+ "seconds_bf16": 439.73915002,
+ "seconds_other": 454.446102016,
+ "depths": [
+  {
+   "depth": 1024,
+   "rows": 256,
+   "kl_mean": 0,
+   "kl_p99": 0,
+   "kl_max": 0,
+   "worst_at": 1024,
+   "top1": 1,
+   "ppl_bf16": 11.0094989121291,
+   "ppl_other": 11.0094989121291,
+   "recall_bf16": true,
+   "recall_other": true,
+   "pass": true,
+   "diffs": []
+  },
+  {
+   "depth": 8192,
+   "rows": 256,
+   "kl_mean": 0,
+   "kl_p99": 0,
+   "kl_max": 0,
+   "worst_at": 8192,
+   "top1": 1,
+   "ppl_bf16": 11.363617279220069,
+   "ppl_other": 11.363617279220069,
+   "recall_bf16": true,
+   "recall_other": true,
+   "pass": true,
+   "diffs": []
+  },
+  {
+   "depth": 32768,
+   "rows": 256,
+   "kl_mean": 0,
+   "kl_p99": 0,
+   "kl_max": 0,
+   "worst_at": 32768,
+   "top1": 1,
+   "ppl_bf16": 29.111613272475484,
+   "ppl_other": 29.111613272475484,
+   "recall_bf16": true,
+   "recall_other": true,
+   "pass": true,
+   "diffs": []
+  },
+  {
+   "depth": 65536,
+   "rows": 256,
+   "kl_mean": 0,
+   "kl_p99": 0,
+   "kl_max": 0,
+   "worst_at": 65536,
+   "top1": 1,
+   "ppl_bf16": 26.033302176836433,
+   "ppl_other": 26.033302176836433,
+   "recall_bf16": true,
+   "recall_other": true,
+   "pass": true,
+   "diffs": []
+  }
+ ]
+}

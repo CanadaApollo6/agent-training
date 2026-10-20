@@ -1,0 +1,105 @@
+test
++- test-cuda-host
+   +- run test w
+tf_h3_forward: BadH3Dimensions
+tf_h3_forward_host: BadH3Dimensions
+tf_h3_forward: BadH3Dimensions
+tf_h3_forward_host: BadH3Dimensions
+tf_h3_forward: BadH3Dimensions
+tf_h3_forward_host: BadH3Dimensions
+tf_h3_forward: BadH3Rotary
+tf_h3_forward_host: BadH3Rotary
+tf_h3_forward: BadH3Rotary
+tf_h3_forward_host: BadH3Rotary
+tf_h3_forward: BadH3Keep
+tf_h3_forward_host: BadH3Keep
+tf_h3_forward: BadH3Keep
+tf_h3_forward_host: BadH3Keep
+tf_h3_forward: BadH3Blocks
+tf_h3_forward_host: BadH3Blocks
+tf_h3_forward: BadH3Scalar
+tf_h3_forward_host: BadH3Scalar
+tf_h3_forward: BadH3Scalar
+tf_h3_forward_host: BadH3Scalar
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward_host: BadH3Scalar
+H3 model retained at close: NotReady
+H3 geometry retained: NotReady
+tensor blocks.0.norm1.weight: MissingTensor
+tensor blocks.1.attn.qkv_proj.weight: MissingTensor
+tensor blocks.1.norm1.weight: MissingTensor
+failed command: ./.zig-cache/o/e566f9b05a706f83bd0c06288e930d64/test --cache-dir=./.zig-cache --seed=0xedf84e29 --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): Drama readback drain failed: retaining its buffers and engine owner
+[default] (warn): Drama readback drain failed: retaining its buffers and engine owner
+codec requested 1, actual sizes { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+codec requested 1, actual sizes { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+codec requested 4, actual sizes { 4, 4, 4, 4, 1 }
+codec requested 16, actual sizes { 16, 1 }
+codec requested 1, actual sizes { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+Drama replay passed: eager/graphs, poison/reset, codec chunks and interleaved state
+[default] (warn): drama3: config hidden_size = 4096, the kernels need 2048
+[default] (warn): codec.pth pickle names os.system, outside the tensor state-dict allow-list
+failed command: ./.zig-cache/o/369729e35111f67b7700b8442964484e/test --cache-dir=./.zig-cache --seed=0xedf84e29 --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+FAIL kernel-contract: unknown image name: unknown_image
+FAIL kernel-contract: unknown image name: glm_glu
+FAIL kernel-contract: unknown image name: 
+FAIL kernel-contract: unknown image name: contract_control
+FAIL kernel-contract: unknown image name: GLM_GLUE
+failed command: ./.zig-cache/o/69f3eae48b147e13f0ce6661987264f9/test --cache-dir=./.zig-cache --seed=0xedf84e29 --listen=-
+
+discovery verbs: retained through TLS, atexit and destructor; child exit 0
+discovery grammar: retained through TLS, atexit and destructor; child exit 0
+test
++- test-cuda-host
+   +- run test 22 pass, 3 fail (25 total)
+error: 'tool_parse_test.test.a reply of many calls searches each opener once, not again after every call' failed:
+       /root/zig-x86_64-linux-0.17.0/lib/std/testing.zig:584:14: 0x1234559 in expect (std.zig)
+           if (!ok) return error.TestUnexpectedResult;
+                    ^
+       /root/tf-test/zig/src/server/tool_parse_test.zig:55:5: 0x130d22f in test.a reply of many calls searches each opener once, not again after every call (tool_parse_test.zig)
+           try std.testing.expect(ns[1] <= 20 * std.time.ns_per_ms or ns[1] <= 24 * ns[0]);
+           ^
+error: 'tool_parse_test.test.a GLM call's keys without values search their key and value ends once' failed:
+       /root/zig-x86_64-linux-0.17.0/lib/std/testing.zig:584:14: 0x1234559 in expect (std.zig)
+           if (!ok) return error.TestUnexpectedResult;
+                    ^
+       /root/tf-test/zig/src/server/tool_parse_test.zig:173:5: 0x1308935 in test.a GLM call's keys without values search their key and value ends once (tool_parse_test.zig)
+           try std.testing.expect(ns[1] <= 20 * std.time.ns_per_ms or ns[1] <= 24 * ns[0]);
+           ^
+error: 'tool_parse_test.test.namespaced openers without closers read in linear time' failed:
+       /root/zig-x86_64-linux-0.17.0/lib/std/testing.zig:584:14: 0x1234559 in expect (std.zig)
+           if (!ok) return error.TestUnexpectedResult;
+                    ^
+       /root/tf-test/zig/src/server/tool_parse_test.zig:239:9: 0x1305d7d in test.namespaced openers without closers read in linear time (tool_parse_test.zig)
+               try std.testing.expect(ns[1] <= 20 * std.time.ns_per_ms or ns[1] <= 24 * ns[0]);
+               ^
+failed command: ./.zig-cache/o/0f53ea2995453fa22b93093dce3e34f2/test --cache-dir=./.zig-cache --seed=0xedf84e29 --listen=-
+
+Build Summary: 208/211 steps succeeded (1 failed); 190/195 tests passed (2 skipped, 3 failed)
+test transitive failure
++- test-cuda-host transitive failure
+   +- run test 22 pass, 3 fail (25 total)
+
+
+real	0m32.883s
+user	2m56.132s
+sys	0m24.219s
+TEST EXIT 1

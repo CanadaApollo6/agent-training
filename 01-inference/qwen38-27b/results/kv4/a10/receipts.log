@@ -1,0 +1,97 @@
+== exactness, q4, parallel 2
+lock taken 21:23:48
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=15.305s reserve=0.007s warmups=1.336s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 2 streams at once, 0.85 GiB each at a 8192-token window (q4 caches), of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 8192; loaded in 17.1s)
+idle device MiB: 17801
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 96.1, "per_stream_tps": 96.2, "ttft_s_max": 0.05, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 130.3, "per_stream_tps": 65.9, "ttft_s_max": 0.09, "steady_tps": 134.2, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 73.5, "per_stream_tps": 73.5, "ttft_s_max": 0.17, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 93.0, "per_stream_tps": 48.2, "ttft_s_max": 0.33, "steady_tps": 98.5, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 76.0, "per_stream_tps": 76.0, "ttft_s_max": 0.05, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 116.7, "per_stream_tps": 73.8, "ttft_s_max": 0.09, "steady_tps": 147.6, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 65.8, "per_stream_tps": 65.8, "ttft_s_max": 0.17, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 83.5, "per_stream_tps": 43.9, "ttft_s_max": 0.33, "steady_tps": 91.5, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+step conc took 75 s
+      "equal_first_tokens": true,
+      "equal_first_output": true
+    }
+  ],
+  "qualified": true
+}
+step cache took 27 s
+peak device MiB: 17831
+done q4-p2 21:25:48
+== bf16 default: this branch
+lock taken 21:25:48
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=16.257s reserve=0.007s warmups=1.349s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 2 streams at once, 1.21 GiB each at a 8192-token window, of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 8192; loaded in 18.0s)
+idle device MiB: 18537
+{"label": "bf16-p2", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 98.88026215955882, "decode_tps_all": [98.88, 98.67, 98.9], "ttft_s_median": 0.045357418000094185}
+{"label": "bf16-p2", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 77.78307748658942, "decode_tps_all": [75.34, 77.8, 77.78], "ttft_s_median": 0.1679900009994526}
+{"label": "bf16-p2", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 97.43478956711799, "decode_tps_all": [84.4, 149.53, 97.43], "ttft_s_median": 0.04507572199963761}
+{"label": "bf16-p2", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 63.43575375933785, "decode_tps_all": [63.44, 53.97, 64.0], "ttft_s_median": 0.16683019599986437}
+step openai took 27 s
+peak device MiB: 18537
+done bf16-p2 21:26:34
+== bf16 default: base
+lock taken 21:26:34
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=16.291s reserve=0.007s warmups=1.350s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 2 streams at once, 1.21 GiB each at a 8192-token window, of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 8192; loaded in 18.0s)
+idle device MiB: 18537
+{"label": "base-bf16-p2", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 99.0008013600152, "decode_tps_all": [99.22, 99.0, 98.89], "ttft_s_median": 0.044893669999510166}
+{"label": "base-bf16-p2", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 77.50965525261773, "decode_tps_all": [75.45, 77.67, 77.51], "ttft_s_median": 0.16767517700009194}
+{"label": "base-bf16-p2", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 97.58712401123549, "decode_tps_all": [84.15, 148.93, 97.59], "ttft_s_median": 0.045172123000156716}
+{"label": "base-bf16-p2", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 60.14890635651313, "decode_tps_all": [60.15, 53.94, 63.85], "ttft_s_median": 0.16572933999941597}
+step openai took 27 s
+peak device MiB: 18537
+done base-bf16-p2 21:27:20
+== 32K bf16
+lock taken 21:27:20
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=16.077s reserve=0.005s warmups=1.264s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 3.21 GiB each at a 40960-token window, of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 40960; loaded in 17.7s)
+idle device MiB: 19341
+{"label": "bf16-32k", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 102.97563762067898, "decode_tps_all": [103.09, 102.87, 102.98], "ttft_s_median": 0.04516889599926799}
+{"label": "bf16-32k", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 77.43703208651623, "decode_tps_all": [75.38, 77.71, 77.44], "ttft_s_median": 0.1688693569994939}
+{"label": "bf16-32k", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 97.50718714729143, "decode_tps_all": [84.13, 148.92, 97.51], "ttft_s_median": 0.0448531339998226}
+{"label": "bf16-32k", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 63.44016805493958, "decode_tps_all": [63.44, 54.07, 63.93], "ttft_s_median": 0.16655261399955634}
+step openai took 27 s
+{"depth": 32768, "prompt_len": 32790, "code": "19680096", "recall": true, "drafted_equals_plain": true, "drafted": {"draft": true, "prompt_tokens": 32790, "cached_tokens": 0, "completion_tokens": 128, "ttft_s": 132.964, "decode_tps": 36.7}, "plain": {"draft": false, "prompt_tokens": 32790, "cached_tokens": 0, "completion_tokens": 128, "ttft_s": 133.798, "decode_tps": 23.6}, "reply_head": " 19680096\n\nThe passphrase for vault 4 is"}
+step long:32768 took 275 s
+peak device MiB: 19341
+done bf16-32k 21:32:42
+== 32K q4
+lock taken 21:32:42
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=15.933s reserve=0.005s warmups=1.262s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 3.21 GiB each at a 40960-token window, of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 40960; loaded in 17.6s)
+idle device MiB: 19341
+{"label": "q4-32k", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 102.8680907528015, "decode_tps_all": [98.93, 102.87, 102.95], "ttft_s_median": 0.04528163199938717}
+{"label": "q4-32k", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 77.43099682608256, "decode_tps_all": [75.32, 77.53, 77.43], "ttft_s_median": 0.16943041999911657}
+{"label": "q4-32k", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 97.12459411820733, "decode_tps_all": [84.13, 149.35, 97.12], "ttft_s_median": 0.044996284999797354}
+{"label": "q4-32k", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 63.78889252662996, "decode_tps_all": [64.45, 53.88, 63.79], "ttft_s_median": 0.16783871100051329}
+step openai took 27 s
+{"depth": 32768, "prompt_len": 32790, "code": "19680096", "recall": true, "drafted_equals_plain": true, "drafted": {"draft": true, "prompt_tokens": 32790, "cached_tokens": 0, "completion_tokens": 128, "ttft_s": 133.46, "decode_tps": 36.7}, "plain": {"draft": false, "prompt_tokens": 32790, "cached_tokens": 0, "completion_tokens": 128, "ttft_s": 133.839, "decode_tps": 23.6}, "reply_head": " 19680096\n\nThe passphrase for vault 4 is"}
+step long:32768 took 276 s
+peak device MiB: 19341
+done q4-32k 21:38:04
+== 262K q4
+lock taken 21:38:04
+CUDA family startup phases: load=17.874s reserve=0.005s warmups=1.293s calibration=6.608s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 5.21 GiB each at a 262144-token window (q4 caches), of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 262144; loaded in 26.2s)
+idle device MiB: 21389
+{"label": "q4-262k", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 99.0385649605466, "decode_tps_all": [99.05, 98.87, 99.04], "ttft_s_median": 0.0447842359999413}
+{"label": "q4-262k", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 75.04586116101244, "decode_tps_all": [72.88, 75.05, 75.28], "ttft_s_median": 0.17073023400007514}
+{"label": "q4-262k", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 84.41282312617268, "decode_tps_all": [78.49, 159.06, 84.41], "ttft_s_median": 0.045148864000111644}
+{"label": "q4-262k", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 62.77939580824124, "decode_tps_all": [65.74, 56.38, 62.78], "ttft_s_median": 0.16995582399977138}
+step openai took 28 s
+{"depth": 32768, "prompt_len": 32790, "code": "19680096", "recall": true, "drafted_equals_plain": true, "drafted": {"draft": true, "prompt_tokens": 32790, "cached_tokens": 0, "completion_tokens": 128, "ttft_s": 159.65, "decode_tps": 30.2}, "plain": {"draft": false, "prompt_tokens": 32790, "cached_tokens": 0, "completion_tokens": 128, "ttft_s": 160.197, "decode_tps": 22.3}, "reply_head": " 19680096\n\nThe passphrase for vault 4 is"}

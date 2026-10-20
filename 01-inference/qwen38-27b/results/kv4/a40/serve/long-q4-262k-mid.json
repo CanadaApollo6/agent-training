@@ -1,0 +1,53 @@
+{
+ "fixture": "kv-gate tensorfold-md@d1018b31 seed 799 rows 256",
+ "rows": [
+  {
+   "depth": 65536,
+   "prompt_len": 65558,
+   "code": "01255560",
+   "recall": true,
+   "drafted_equals_plain": true,
+   "drafted": {
+    "draft": true,
+    "prompt_tokens": 65558,
+    "cached_tokens": 0,
+    "completion_tokens": 128,
+    "ttft_s": 347.958,
+    "decode_tps": 32.5
+   },
+   "plain": {
+    "draft": false,
+    "prompt_tokens": 65558,
+    "cached_tokens": 0,
+    "completion_tokens": 128,
+    "ttft_s": 346.739,
+    "decode_tps": 24.7
+   },
+   "reply_head": " 01255560\n\nThe passphrase for vault 5 is"
+  },
+  {
+   "depth": 131072,
+   "prompt_len": 131094,
+   "code": "35406038",
+   "recall": true,
+   "drafted_equals_plain": true,
+   "drafted": {
+    "draft": true,
+    "prompt_tokens": 131094,
+    "cached_tokens": 0,
+    "completion_tokens": 128,
+    "ttft_s": 1239.318,
+    "decode_tps": 21.0
+   },
+   "plain": {
+    "draft": false,
+    "prompt_tokens": 131094,
+    "cached_tokens": 0,
+    "completion_tokens": 128,
+    "ttft_s": 1237.332,
+    "decode_tps": 19.9
+   },
+   "reply_head": " 35406038\n\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n\nThe\n"
+  }
+ ]
+}

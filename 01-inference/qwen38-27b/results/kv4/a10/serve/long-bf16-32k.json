@@ -1,0 +1,29 @@
+{
+ "fixture": "kv-gate tensorfold-md@d1018b31 seed 799 rows 256",
+ "rows": [
+  {
+   "depth": 32768,
+   "prompt_len": 32790,
+   "code": "19680096",
+   "recall": true,
+   "drafted_equals_plain": true,
+   "drafted": {
+    "draft": true,
+    "prompt_tokens": 32790,
+    "cached_tokens": 0,
+    "completion_tokens": 128,
+    "ttft_s": 132.964,
+    "decode_tps": 36.7
+   },
+   "plain": {
+    "draft": false,
+    "prompt_tokens": 32790,
+    "cached_tokens": 0,
+    "completion_tokens": 128,
+    "ttft_s": 133.798,
+    "decode_tps": 23.6
+   },
+   "reply_head": " 19680096\n\nThe passphrase for vault 4 is"
+  }
+ ]
+}

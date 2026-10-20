@@ -1,0 +1,27 @@
+lock taken 23:07:59
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=15.525s reserve=0.005s warmups=1.263s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 3.21 GiB each at a 40960-token window, of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 40960; loaded in 17.1s)
+idle device MiB: 19341
+{"pos": 32833, "next_id": 681, "text": "\n\n"}
+{"pos": 32943, "next_id": 12, "text": "\n\n"}
+{"pos": 32944, "next_id": 23129, "text": " Tensor"}
+{"pos": 32945, "next_id": 11, "text": " on"}
+step probe:32833+32943+32944+32945 took 538 s
+peak device MiB: 19341
+done probe-bf16 23:17:16
+lock taken 23:17:16
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=15.412s reserve=0.005s warmups=1.263s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 1.41 GiB each at a 40960-token window (q4 caches), of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 40960; loaded in 17.1s)
+idle device MiB: 17501
+{"pos": 32833, "next_id": 681, "text": ""}
+{"pos": 32943, "next_id": 12, "text": "\n\n"}
+{"pos": 32944, "next_id": 23129, "text": "\n\n"}
+{"pos": 32945, "next_id": 11, "text": " on"}
+step probe:32833+32943+32944+32945 took 644 s
+peak device MiB: 17501
+done probe-q4 23:28:17
+DIAG3 DONE 23:28:17

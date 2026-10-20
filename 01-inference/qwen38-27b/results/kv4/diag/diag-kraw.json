@@ -1,0 +1,230 @@
+{
+ "fixture": "kv-gate tensorfold-md@d1018b31 seed 799 rows 256",
+ "format": "q4",
+ "mean_bar": 0.01,
+ "worst_bar": 0.1,
+ "pass": false,
+ "seconds_bf16": 26.083729181,
+ "seconds_other": 40.468597226,
+ "depths": [
+  {
+   "depth": 1024,
+   "rows": 256,
+   "kl_mean": 0.003264238259373927,
+   "kl_p99": 0.03242681972429492,
+   "kl_max": 0.042401701010810054,
+   "top1": 0.94921875,
+   "ppl_bf16": 11.0094989121291,
+   "ppl_other": 11.111632703170088,
+   "recall_bf16": true,
+   "recall_other": true,
+   "pass": true,
+   "diffs": [
+    {
+     "position": 1024,
+     "bf16_top": 8442,
+     "other_top": 760,
+     "bf16_margin": 0.3125,
+     "other_margin": 0
+    },
+    {
+     "position": 1060,
+     "bf16_top": 23314,
+     "other_top": 14934,
+     "bf16_margin": 0.0625,
+     "other_margin": 0
+    },
+    {
+     "position": 1064,
+     "bf16_top": 321,
+     "other_top": 380,
+     "bf16_margin": 0,
+     "other_margin": 0.1875
+    },
+    {
+     "position": 1097,
+     "bf16_top": 2400,
+     "other_top": 52965,
+     "bf16_margin": 0.125,
+     "other_margin": 0.125
+    },
+    {
+     "position": 1101,
+     "bf16_top": 466,
+     "other_top": 1752,
+     "bf16_margin": 0,
+     "other_margin": 0.25
+    },
+    {
+     "position": 1107,
+     "bf16_top": 23,
+     "other_top": 16,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 1237,
+     "bf16_top": 579,
+     "other_top": 220,
+     "bf16_margin": 0.0625,
+     "other_margin": 0
+    },
+    {
+     "position": 1239,
+     "bf16_top": 51,
+     "other_top": 13,
+     "bf16_margin": 0.3125,
+     "other_margin": 0.0625
+    },
+    {
+     "position": 1243,
+     "bf16_top": 16545,
+     "other_top": 20269,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 1247,
+     "bf16_top": 13,
+     "other_top": 321,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 1253,
+     "bf16_top": 264,
+     "other_top": 1141,
+     "bf16_margin": 0.0625,
+     "other_margin": 0.0625
+    },
+    {
+     "position": 1258,
+     "bf16_top": 11,
+     "other_top": 321,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 1278,
+     "bf16_top": 16,
+     "other_top": 15,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    }
+   ]
+  },
+  {
+   "depth": 8192,
+   "rows": 256,
+   "kl_mean": 0.00874325447448619,
+   "kl_p99": 0.1148818250069364,
+   "kl_max": 0.31183032504143904,
+   "top1": 0.9453125,
+   "ppl_bf16": 11.363617279220069,
+   "ppl_other": 11.762784818273863,
+   "recall_bf16": true,
+   "recall_other": true,
+   "pass": false,
+   "diffs": [
+    {
+     "position": 8203,
+     "bf16_top": 198,
+     "other_top": 271,
+     "bf16_margin": 0.625,
+     "other_margin": 0.125
+    },
+    {
+     "position": 8255,
+     "bf16_top": 553,
+     "other_top": 681,
+     "bf16_margin": 0.125,
+     "other_margin": 0.125
+    },
+    {
+     "position": 8274,
+     "bf16_top": 23,
+     "other_top": 16,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 8289,
+     "bf16_top": 20,
+     "other_top": 19,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 8294,
+     "bf16_top": 16,
+     "other_top": 15,
+     "bf16_margin": 0.0625,
+     "other_margin": 0
+    },
+    {
+     "position": 8303,
+     "bf16_top": 264,
+     "other_top": 279,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 8308,
+     "bf16_top": 61369,
+     "other_top": 9705,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 8316,
+     "bf16_top": 9640,
+     "other_top": 4625,
+     "bf16_margin": 0.25,
+     "other_margin": 0
+    },
+    {
+     "position": 8323,
+     "bf16_top": 777,
+     "other_top": 16253,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 8372,
+     "bf16_top": 13,
+     "other_top": 26,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 8396,
+     "bf16_top": 321,
+     "other_top": 748,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 8422,
+     "bf16_top": 46120,
+     "other_top": 2450,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 8441,
+     "bf16_top": 69031,
+     "other_top": 18652,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 8442,
+     "bf16_top": 1142,
+     "other_top": 888,
+     "bf16_margin": 0.25,
+     "other_margin": 0.25
+    }
+   ]
+  }
+ ]
+}

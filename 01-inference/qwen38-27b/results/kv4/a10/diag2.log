@@ -1,0 +1,77 @@
+== probes 22:35:24
+lock taken 22:35:24
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=15.580s reserve=0.005s warmups=1.251s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 3.21 GiB each at a 40960-token window, of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 40960; loaded in 17.2s)
+idle device MiB: 19341
+Traceback (most recent call last):
+  File "/home/ubuntu/probe.py", line 12, in <module>
+    with urllib.request.urlopen(req, timeout=3600) as r:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+step probe:32833+32943+32944+32945 took 0 s
+peak device MiB: 19341
+done probe-bf16 22:35:43
+lock taken 22:35:43
+CUDA family startup phases: load=15.486s reserve=0.005s warmups=1.265s calibration=6.555s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 1.41 GiB each at a 40960-token window (q4 caches), of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 40960; loaded in 23.7s)
+idle device MiB: 17501
+Traceback (most recent call last):
+  File "/home/ubuntu/probe.py", line 12, in <module>
+    with urllib.request.urlopen(req, timeout=3600) as r:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/home/ubuntu/.local/share/uv/python/cpython-3.12.15-linux-x86_64-gnu/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 400: Bad Request
+step probe:32833+32943+32944+32945 took 0 s
+peak device MiB: 17501
+done probe-q4 22:36:08
+== bf16 vs bf16 gate 22:36:08
+bf16 depth 65536: prompt in at 439 s
+depth 1024: KL mean 0.00000 p99 0.00000 max 0.00000 at 1024, top-1 1.0000, ppl 11.0095 / 11.0095, recall true / true, pass
+depth 8192: KL mean 0.00000 p99 0.00000 max 0.00000 at 8192, top-1 1.0000, ppl 11.3636 / 11.3636, recall true / true, pass
+depth 32768: KL mean 0.00000 p99 0.00000 max 0.00000 at 32768, top-1 1.0000, ppl 29.1116 / 29.1116, recall true / true, pass
+depth 65536: KL mean 0.00000 p99 0.00000 max 0.00000 at 65536, top-1 1.0000, ppl 26.0333 / 26.0333, recall true / true, pass
+kv-gate kv-gate tensorfold-md@d1018b31 seed 799 rows 256 bf16: pass (bf16 440 s, bf16 454 s)
+== q4 gate 64k 22:51:03
+q4 depth 65536: prompt in at 556 s
+depth 1024: KL mean 0.00654 p99 0.04623 max 0.08507 at 1176, top-1 0.9609, ppl 11.0095 / 10.9961, recall true / true, pass
+depth 8192: KL mean 0.00934 p99 0.08850 max 0.17128 at 8380, top-1 0.9375, ppl 11.3636 / 11.6998, recall true / true, FAIL
+depth 32768: KL mean 0.10401 p99 0.89463 max 17.90719 at 32944, top-1 0.9336, ppl 29.1116 / 29.4325, recall true / true, FAIL
+depth 65536: KL mean 0.08030 p99 0.70342 max 11.80565 at 65755, top-1 0.9375, ppl 26.0333 / 31.6331, recall true / true, FAIL
+kv-gate kv-gate tensorfold-md@d1018b31 seed 799 rows 256 q4: FAIL (bf16 443 s, q4 572 s)
+DIAG2 DONE 23:07:58

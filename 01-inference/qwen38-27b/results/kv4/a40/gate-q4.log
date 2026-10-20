@@ -1,0 +1,18 @@
+depth 1024: KL mean 0.00654 max 0.08507
+depth 8192: KL mean 0.00934 max 0.17128
+depth 32768: KL mean 0.10401 max 17.90719
+depth 65536: KL mean 0.08030 max 11.80565
+depth 131072: KL mean 0.04594 max 2.29104
+depth 258048: KL mean 0.00830 max 0.19218
+depth 1024: KL mean 0.00654 p99 0.04623 max 0.08507, top-1 0.9609, ppl 11.0095 / 10.9961, recall true / true, pass
+depth 8192: KL mean 0.00934 p99 0.08850 max 0.17128, top-1 0.9375, ppl 11.3636 / 11.6998, recall true / true, FAIL
+depth 32768: KL mean 0.10401 p99 0.89463 max 17.90719, top-1 0.9336, ppl 29.1116 / 29.4325, recall true / true, FAIL
+depth 65536: KL mean 0.08030 p99 0.70342 max 11.80565, top-1 0.9375, ppl 26.0333 / 31.6331, recall true / true, FAIL
+depth 131072: KL mean 0.04594 p99 0.85407 max 2.29104, top-1 0.9531, ppl 94.6821 / 98.3792, recall true / true, FAIL
+depth 258048: KL mean 0.00830 p99 0.06460 max 0.19218, top-1 0.9570, ppl 4.5129 / 4.5605, recall true / true, FAIL
+kv-gate kv-gate tensorfold-md@d1018b31 seed 799 rows 256 q4: FAIL (bf16 4025 s, q4 4563 s)
+
+real	143m8.442s
+user	142m53.436s
+sys	0m18.802s
+gate q4 EXIT 1

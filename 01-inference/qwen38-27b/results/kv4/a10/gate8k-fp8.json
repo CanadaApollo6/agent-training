@@ -1,0 +1,125 @@
+{
+ "fixture": "kv-gate tensorfold-md@d1018b31 seed 799 rows 256",
+ "format": "fp8",
+ "mean_bar": 0.01,
+ "worst_bar": 0.1,
+ "pass": true,
+ "seconds_bf16": 26.433384010999998,
+ "seconds_other": 44.634170680000004,
+ "depths": [
+  {
+   "depth": 1024,
+   "rows": 256,
+   "kl_mean": 0.002009656560540461,
+   "kl_p99": 0.017762139106633552,
+   "kl_max": 0.07111283837574972,
+   "top1": 0.97265625,
+   "ppl_bf16": 11.0094989121291,
+   "ppl_other": 11.066520003045708,
+   "recall_bf16": true,
+   "recall_other": true,
+   "pass": true,
+   "diffs": [
+    {
+     "position": 1064,
+     "bf16_top": 321,
+     "other_top": 380,
+     "bf16_margin": 0,
+     "other_margin": 0.0625
+    },
+    {
+     "position": 1101,
+     "bf16_top": 466,
+     "other_top": 1752,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 1107,
+     "bf16_top": 23,
+     "other_top": 16,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 1136,
+     "bf16_top": 23,
+     "other_top": 24,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 1237,
+     "bf16_top": 579,
+     "other_top": 220,
+     "bf16_margin": 0.0625,
+     "other_margin": 0
+    },
+    {
+     "position": 1243,
+     "bf16_top": 16545,
+     "other_top": 20269,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 1247,
+     "bf16_top": 13,
+     "other_top": 321,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    }
+   ]
+  },
+  {
+   "depth": 8192,
+   "rows": 256,
+   "kl_mean": 0.0022304575227575785,
+   "kl_p99": 0.026981428084128907,
+   "kl_max": 0.08957803810796136,
+   "top1": 0.98046875,
+   "ppl_bf16": 11.363617279220069,
+   "ppl_other": 11.559654602387536,
+   "recall_bf16": true,
+   "recall_other": true,
+   "pass": true,
+   "diffs": [
+    {
+     "position": 8270,
+     "bf16_top": 19024,
+     "other_top": 61369,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 8289,
+     "bf16_top": 20,
+     "other_top": 19,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 8372,
+     "bf16_top": 13,
+     "other_top": 26,
+     "bf16_margin": 0,
+     "other_margin": 0.125
+    },
+    {
+     "position": 8422,
+     "bf16_top": 46120,
+     "other_top": 2450,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    },
+    {
+     "position": 8441,
+     "bf16_top": 69031,
+     "other_top": 18652,
+     "bf16_margin": 0.125,
+     "other_margin": 0
+    }
+   ]
+  }
+ ]
+}
