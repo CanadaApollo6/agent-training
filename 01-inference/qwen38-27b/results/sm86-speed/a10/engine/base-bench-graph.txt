@@ -1,0 +1,18 @@
+TIME [10240, 5120] sk 2: 1r 56.1us 525GB/s 2r 56.3us 524GB/s 3r 56.8us 519GB/s 4r 57.0us 518GB/s 8r 58.7us 502GB/s 16r 62.1us 475GB/s
+TIME [6144, 5120] sk 2: 1r 35.7us 496GB/s 2r 35.7us 496GB/s 3r 35.8us 494GB/s 4r 36.1us 490GB/s 8r 37.4us 473GB/s 16r 40.1us 441GB/s
+TIME [48, 5120] sk 8: 1r 7.7us 48GB/s 2r 7.7us 48GB/s 3r 7.8us 47GB/s 4r 7.8us 47GB/s 8r 8.2us 45GB/s 16r 10.0us 37GB/s
+TIME [5120, 6144] sk 4: 1r 36.6us 484GB/s 2r 37.0us 478GB/s 3r 37.4us 473GB/s 4r 38.0us 465GB/s 8r 39.2us 451GB/s 16r 42.7us 415GB/s
+TIME [17408, 5120] sk 1: 1r 91.2us 550GB/s 2r 91.4us 549GB/s 3r 92.1us 544GB/s 4r 92.7us 541GB/s 8r 94.0us 533GB/s 16r 97.2us 516GB/s
+TIME [5120, 17408] sk 4: 1r 92.3us 543GB/s 2r 92.7us 541GB/s 3r 92.9us 540GB/s 4r 93.8us 535GB/s 8r 96.3us 521GB/s 16r 101.0us 496GB/s
+TIME [12288, 5120] sk 1: 1r 80.6us 439GB/s 2r 80.1us 442GB/s 3r 80.2us 441GB/s 4r 81.0us 437GB/s 8r 81.5us 434GB/s 16r 87.0us 407GB/s
+TIME [1024, 5120] sk 8: 1r 10.9us 271GB/s 2r 11.0us 269GB/s 3r 11.1us 267GB/s 4r 11.1us 265GB/s 8r 11.8us 250GB/s 16r 13.5us 218GB/s
+TIME [8192, 2048] sk 2: 1r 21.3us 443GB/s 2r 21.2us 446GB/s 3r 21.3us 442GB/s 4r 21.6us 436GB/s 8r 22.4us 422GB/s 16r 24.7us 383GB/s
+TIME [4096, 2048] sk 4: 1r 12.8us 369GB/s 2r 12.8us 367GB/s 3r 12.9us 366GB/s 4r 12.9us 366GB/s 8r 13.3us 354GB/s 16r 15.2us 311GB/s
+TIME [32, 2048] sk 4: 1r 5.8us 26GB/s 2r 5.8us 26GB/s 3r 5.8us 26GB/s 4r 5.8us 25GB/s 8r 6.0us 25GB/s 16r 7.1us 21GB/s
+TIME [2048, 4096] sk 8: 1r 13.1us 359GB/s 2r 13.2us 358GB/s 3r 13.2us 357GB/s 4r 13.3us 354GB/s 8r 14.2us 333GB/s 16r 17.1us 276GB/s
+TIME [512, 2048] sk 4: 1r 6.3us 94GB/s 2r 6.5us 91GB/s 3r 6.3us 94GB/s 4r 6.3us 93GB/s 8r 6.5us 91GB/s 16r 7.6us 77GB/s
+TIME [2048, 512] sk 1: 1r 4.7us 125GB/s 2r 4.8us 124GB/s 3r 4.7us 124GB/s 4r 4.7us 124GB/s 8r 4.8us 124GB/s 16r 4.8us 124GB/s
+TIME [248320, 5120] sk 1: 1r 1307.0us 547GB/s 2r 1309.3us 546GB/s 3r 1326.7us 539GB/s 4r 1351.8us 529GB/s 8r 1430.8us 500GB/s 16r 1579.4us 453GB/s
+TIME [248320, 2048] sk 1: 1r 503.8us 568GB/s 2r 559.4us 511GB/s 3r 550.9us 519GB/s 4r 550.8us 519GB/s 8r 586.9us 487GB/s 16r 633.3us 452GB/s
+TIME all shapes once: 1r 2286.0us 2r 2344.7us 3r 2355.9us 4r 2384.8us 8r 2511.8us 16r 2742.6us
+PASS affine4-decode: 16 shapes, every row count byte-equal to the 16-row call's

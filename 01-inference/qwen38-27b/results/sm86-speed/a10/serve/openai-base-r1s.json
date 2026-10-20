@@ -1,0 +1,174 @@
+[
+ {
+  "label": "base-r1s",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 128,
+  "decode_tps_median": 152.547640243549,
+  "decode_tps_all": [
+   160.08,
+   152.55,
+   152.51
+  ],
+  "ttft_s_median": 0.019855484999425244,
+  "evidence": [
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "a4a9d7f17f0c",
+    "output_sha256": "f747164e4f595c47ddb9b4ae6cca6fbf0029600aef9ea3e136b577fc94da260b"
+   },
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "a4a9d7f17f0c",
+    "output_sha256": "f747164e4f595c47ddb9b4ae6cca6fbf0029600aef9ea3e136b577fc94da260b"
+   },
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "a4a9d7f17f0c",
+    "output_sha256": "f747164e4f595c47ddb9b4ae6cca6fbf0029600aef9ea3e136b577fc94da260b"
+   }
+  ],
+  "sample": "\n\nHere is a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    fib = [0, 1]\n    for i in range(2, n):\n        fib.appe"
+ },
+ {
+  "label": "base-r1s",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 128,
+  "decode_tps_median": 120.31700814558315,
+  "decode_tps_all": [
+   120.44,
+   120.3,
+   120.32
+  ],
+  "ttft_s_median": 0.04580610199991497,
+  "evidence": [
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "50994a6ef101",
+    "output_sha256": "c31fee52f0d6f0b1e294528a2c4a94ca7799cf9c06080164140377655cc016c5"
+   },
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "50994a6ef101",
+    "output_sha256": "c31fee52f0d6f0b1e294528a2c4a94ca7799cf9c06080164140377655cc016c5"
+   },
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "50994a6ef101",
+    "output_sha256": "c31fee52f0d6f0b1e294528a2c4a94ca7799cf9c06080164140377655cc016c5"
+   }
+  ],
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nA GPU (Graphics Processing Unit) is built to do **many simple calculations at the same time**, unlike a CPU "
+ },
+ {
+  "label": "base-r1s",
+  "prompt": "fibonacci-raw",
+  "temperature": 1.0,
+  "tokens": 128,
+  "decode_tps_median": 138.37386782975543,
+  "decode_tps_all": [
+   116.83,
+   138.37,
+   142.25
+  ],
+  "ttft_s_median": 0.019919676999961666,
+  "evidence": [
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "328367c6fb3b",
+    "output_sha256": "f3b79c4e9b14d24a040eb9ee58a69b2b1b38120ba2f2b3b55bd4714d5a0e68c3"
+   },
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "ad6358c0df12",
+    "output_sha256": "3cfb40a4e197f0eb3198829cab690bcaacb4e1a0a7eb2998464869f63e15072b"
+   },
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "5e6f917abe01",
+    "output_sha256": "c7e841e0f057915c08d7f0cd69192a6d0fc49c29c735b3540af5e8562609dd3e"
+   }
+  ],
+  "sample": "\n\n<think>\nThe user wants me to write a short Python function that computes the Fibonacci sequence and explain it. Let me create a clean, well-documented functio"
+ },
+ {
+  "label": "base-r1s",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 1.0,
+  "tokens": 128,
+  "decode_tps_median": 113.94191586905919,
+  "decode_tps_all": [
+   112.36,
+   121.06,
+   113.94
+  ],
+  "ttft_s_median": 0.045293318000403815,
+  "evidence": [
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "41741d4e04d9",
+    "output_sha256": "7e5052e533b8cda10838c749b7395ddfc1242f04ce89d7fa39012b02884e0edb"
+   },
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "dda42bd5cadf",
+    "output_sha256": "429ba5be715058f387aa4b42ea3d80150e6e90011e9c96859a706874736892b4"
+   },
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "1ec78d70cfe8",
+    "output_sha256": "e40445aa3c106610c1b77c9f60fcc9b48068a7542fe81c894ab722aeff5c5e7d"
+   }
+  ],
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nA GPU (Graphics Processing Unit) is essentially a **huge collection of tiny workers** (called \"cores\") that "
+ }
+]

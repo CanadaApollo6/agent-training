@@ -1,0 +1,67 @@
+{"label": "base-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 152.547640243549, "decode_tps_all": [160.08, 152.55, 152.51], "ttft_s_median": 0.019855484999425244}
+{"label": "base-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 120.31700814558315, "decode_tps_all": [120.44, 120.3, 120.32], "ttft_s_median": 0.04580610199991497}
+{"label": "base-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 138.37386782975543, "decode_tps_all": [116.83, 138.37, 142.25], "ttft_s_median": 0.019919676999961666}
+{"label": "base-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 113.94191586905919, "decode_tps_all": [112.36, 121.06, 113.94], "ttft_s_median": 0.045293318000403815}
+done base-r1s
+{"label": "new-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 164.83412116148423, "decode_tps_all": [161.76, 165.15, 164.83], "ttft_s_median": 0.01913392799997382}
+{"label": "new-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 126.33984185702867, "decode_tps_all": [124.61, 126.64, 126.34], "ttft_s_median": 0.046224456999880204}
+{"label": "new-r1s", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 141.26912345108647, "decode_tps_all": [127.33, 141.27, 145.92], "ttft_s_median": 0.018960082000376133}
+{"label": "new-r1s", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 117.98073533821893, "decode_tps_all": [114.99, 123.92, 117.98], "ttft_s_median": 0.04657600900009129}
+done new-r1s
+{"label": "base-q27", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 109.84405104491105, "decode_tps_all": [110.0, 109.84, 109.82], "ttft_s_median": 0.042270895000001474}
+{"label": "base-q27", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 82.4746817371097, "decode_tps_all": [82.51, 82.47, 82.24], "ttft_s_median": 0.16455091799980437}
+{"label": "base-q27", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 99.84594509684021, "decode_tps_all": [89.71, 158.95, 99.85], "ttft_s_median": 0.04266435199951957}
+{"label": "base-q27", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 68.00263672242689, "decode_tps_all": [68.6, 57.17, 68.0], "ttft_s_median": 0.16465167099977407}
+done base-q27
+{"label": "new-q27", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 111.90423023798398, "decode_tps_all": [107.86, 112.34, 111.9], "ttft_s_median": 0.041394521000256645}
+{"label": "new-q27", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 84.02660403759998, "decode_tps_all": [86.5, 84.03, 83.88], "ttft_s_median": 0.16633677700065164}
+{"label": "new-q27", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 106.62271209446449, "decode_tps_all": [91.47, 161.7, 106.62], "ttft_s_median": 0.041101771000285225}
+{"label": "new-q27", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 68.39010602642428, "decode_tps_all": [74.2, 67.02, 68.39], "ttft_s_median": 0.16568776100029936}
+done new-q27
+{"label": "conc-new-r1s", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 167.93495663854267, "decode_tps_all": [167.93], "ttft_s_median": 0.019359161000465974}
+{"label": "conc-new-r1s", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 127.95184439048315, "decode_tps_all": [127.95], "ttft_s_median": 0.047155748000477615}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 167.5, "per_stream_tps": 167.5, "ttft_s_max": 0.02, "alone": {"equal": 0, "unequal": 2, "failed": 0}, "serial": {"equal": 0, "unequal": 1, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 289.9, "per_stream_tps": 146.6, "ttft_s_max": 0.04, "steady_tps": 297.4, "alone": {"equal": 2, "unequal": 2, "failed": 0}, "serial": {"equal": 0, "unequal": 1, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 123.0, "per_stream_tps": 122.9, "ttft_s_max": 0.05, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 207.4, "per_stream_tps": 105.8, "ttft_s_max": 0.09, "steady_tps": 216.0, "alone": {"equal": 2, "unequal": 2, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 154.9, "per_stream_tps": 154.9, "ttft_s_max": 0.02, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 233.7, "per_stream_tps": 119.8, "ttft_s_max": 0.04, "steady_tps": 243.9, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 113.9, "per_stream_tps": 113.8, "ttft_s_max": 0.05, "alone": {"equal": 0, "unequal": 2, "failed": 0}, "serial": {"equal": 0, "unequal": 2, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 172.4, "per_stream_tps": 88.0, "ttft_s_max": 0.09, "steady_tps": 179.5, "alone": {"equal": 0, "unequal": 4, "failed": 0}, "serial": {"equal": 0, "unequal": 2, "failed": 0}}
+      "complete": true,
+      "token_sha": "eaa68149fc60",
+      "token_sha256": "eaa68149fc6002f81b3868dd6968ce78950075c8d7412f7e7ebb8dc2996be983",
+      "output_sha256": "bc28c652a0310e27138d6e66ad79c742cb4b1672cb6e4233bf2cb1fb5be43ded",
+      "ttft_s": 1.1857860979998804,
+      "decode_tps": 43.781185155758216,
+      "equal_first_tokens": true,
+      "equal_first_output": true
+    }
+  ],
+  "qualified": true
+}
+done conc-new-r1s
+{"label": "conc-new-q27", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 106.83102480194991, "decode_tps_all": [106.83], "ttft_s_median": 0.04155446899949311}
+{"label": "conc-new-q27", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 84.18831595175072, "decode_tps_all": [84.19], "ttft_s_median": 0.16739535400029126}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 111.6, "per_stream_tps": 111.6, "ttft_s_max": 0.04, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 137.9, "per_stream_tps": 69.8, "ttft_s_max": 0.09, "steady_tps": 143.2, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 76.7, "per_stream_tps": 76.7, "ttft_s_max": 0.17, "alone": {"equal": 0, "unequal": 2, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 0.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 101.1, "per_stream_tps": 52.3, "ttft_s_max": 0.33, "steady_tps": 107.4, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 1, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 91.0, "per_stream_tps": 91.0, "ttft_s_max": 0.04, "alone": {"equal": 2, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "code", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 125.5, "per_stream_tps": 79.0, "ttft_s_max": 0.09, "steady_tps": 150.6, "alone": {"equal": 4, "unequal": 0, "failed": 0}, "serial": {"equal": 2, "unequal": 0, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 1, "failed": 0, "unmeasured": 0, "aggregate_tps": 68.3, "per_stream_tps": 68.3, "ttft_s_max": 0.17, "alone": {"equal": 0, "unequal": 2, "failed": 0}, "serial": {"equal": 0, "unequal": 2, "failed": 0}}
+{"label": "", "prompt": "chat", "temperature": 1.0, "streams": 2, "failed": 0, "unmeasured": 0, "aggregate_tps": 87.3, "per_stream_tps": 46.6, "ttft_s_max": 0.33, "steady_tps": 95.3, "alone": {"equal": 0, "unequal": 4, "failed": 0}, "serial": {"equal": 0, "unequal": 2, "failed": 0}}
+      "complete": true,
+      "token_sha": "faa2ff400113",
+      "token_sha256": "faa2ff4001133fb40168aa0622691e76bd5d290ec1b3fb8b297c192dc1334422",
+      "output_sha256": "0c6a26a35d36ec0a0e9e7562a13fc22bde303c52d5de11c5ca6fc9978b9e06f3",
+      "ttft_s": 4.356911472999855,
+      "decode_tps": 10.723758294496237,
+      "equal_first_tokens": false,
+      "equal_first_output": false
+    }
+  ],
+  "qualified": false
+}
+done conc-new-q27
+ALL_DONE

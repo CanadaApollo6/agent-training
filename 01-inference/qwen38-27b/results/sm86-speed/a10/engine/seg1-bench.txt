@@ -1,0 +1,13 @@
+TIME 27B delta in (47.9 MB) decode/segmented: 1r 104.7/90.3us 2r 105.0/92.9us 3r 108.7/97.1us 4r 111.7/98.7us 8r 115.9/100.2us 16r 127.8/101.3us
+TIME 27B delta out (17.7 MB) decode/segmented: 1r 38.2/38.4us 2r 38.0/38.6us 3r 37.5/37.9us 4r 38.0/38.8us 8r 39.1/40.4us 16r 44.6/44.7us
+TIME 27B attention in (41.3 MB) decode/segmented: 1r 98.6/76.4us 2r 101.7/77.3us 3r 105.2/78.8us 4r 109.9/80.4us 8r 114.2/82.2us 16r 125.2/88.4us
+TIME 27B mlp in (100.3 MB) decode/segmented: 1r 182.6/185.5us 2r 187.2/205.7us 3r 190.9/209.2us 4r 192.3/210.4us 8r 194.7/213.4us 16r 210.5/210.4us
+TIME 27B mlp out (50.1 MB) decode/segmented: 1r 92.1/92.7us 2r 92.8/93.4us 3r 94.4/95.3us 4r 95.8/97.0us 8r 98.9/100.7us 16r 106.3/107.8us
+TIME 27B head (715.2 MB) decode/segmented: 1r 1308.8/1254.5us 2r 1309.3/1262.4us 3r 1330.3/1352.1us 4r 1467.4/1270.4us 8r 1424.5/1404.1us 16r 1540.4/1564.8us
+TIME 35B delta in (14.5 MB) decode/segmented: 1r 47.6/32.1us 2r 46.8/31.8us 3r 46.8/32.2us 4r 47.0/32.5us 8r 48.6/34.1us 16r 54.7/38.8us
+TIME 35B delta out (4.7 MB) decode/segmented: 1r 13.5/15.1us 2r 13.6/15.3us 3r 13.4/15.0us 4r 13.5/15.0us 8r 14.3/15.6us 16r 17.3/19.7us
+TIME 35B attention in (10.6 MB) decode/segmented: 1r 33.5/23.1us 2r 33.5/23.3us 3r 33.7/23.6us 4r 34.1/23.8us 8r 35.3/24.9us 16r 39.7/27.6us
+TIME 35B head (286.1 MB) decode/segmented: 1r 503.5/505.9us 2r 557.0/508.7us 3r 564.3/511.2us 4r 582.9/513.4us 8r 606.9/530.0us 16r 653.8/613.9us
+TIME short K (0.7 MB) decode/segmented: 1r 16.8/6.5us 2r 17.0/6.5us 3r 17.0/6.5us 4r 16.4/5.7us 8r 14.8/5.6us 16r 15.3/5.8us
+TIME every set once, decode/segmented: 1r 2439.8/2320.4us 2r 2501.9/2355.9us 3r 2542.3/2458.8us 4r 2709.0/2386.1us 8r 2707.2/2551.2us 16r 2935.5/2823.0us
+PASS affine4-decode: 11 sets by 6 row counts: every row count, one segment and every set's segmented launch byte-equal to decode() at 16 rows

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "fixture_sha256": "1ba9483fada0d676d0a31f5f0563374f3ab90d5120ff59531b7946d9be7e7d34",
+  "requested_reply_tokens": 64,
+  "temperature": 0,
+  "seed": 1234,
+  "rows": [
+    {
+      "phase": "first",
+      "prompt_tokens": 2571,
+      "cached_tokens": 0,
+      "tokens": 64,
+      "cache_state": "cold",
+      "complete": true,
+      "token_sha": "f9992dbf9ef3",
+      "token_sha256": "f9992dbf9ef341ac5358fd852dba8e8a494177049261b13e17045d16bd61e8dd",
+      "output_sha256": "a7a174af7cdf66f047bf9ad3068484fc789878c0f66ee2f59c42886d0c4ed6b6",
+      "ttft_s": 4.332045182999536,
+      "decode_tps": 77.50979436212234
+    },
+    {
+      "phase": "repeated",
+      "prompt_tokens": 2571,
+      "cached_tokens": 0,
+      "tokens": 64,
+      "cache_state": "cold",
+      "complete": true,
+      "token_sha": "e51904e2d71b",
+      "token_sha256": "e51904e2d71b13d16d4d83b60fb50bcf224e141c54b23394526c9c5b34579420",
+      "output_sha256": "5ef3f419d5c6d9e22fc3554251e10d9714ec6a96d6cdba412dd9c343f2ae15f5",
+      "ttft_s": 4.350226067999756,
+      "decode_tps": 69.20975509567702,
+      "equal_first_tokens": false,
+      "equal_first_output": false
+    },
+    {
+      "phase": "repeated",
+      "prompt_tokens": 2571,
+      "cached_tokens": 0,
+      "tokens": 64,
+      "cache_state": "cold",
+      "complete": true,
+      "token_sha": "0510c10dcb6f",
+      "token_sha256": "0510c10dcb6fe29756c29627fd9dcb7bd656e1060aef6922d33894b50372f6c7",
+      "output_sha256": "68517b96ac62697274e2cb7c04ac7bb17cc67a9164548e9d637f9efd8a7dcaf8",
+      "ttft_s": 4.3533634260002145,
+      "decode_tps": 60.28030179590282,
+      "equal_first_tokens": false,
+      "equal_first_output": false
+    },
+    {
+      "phase": "concurrent",
+      "prompt_tokens": 2571,
+      "cached_tokens": 0,
+      "tokens": 64,
+      "cache_state": "cold",
+      "complete": true,
+      "token_sha": "82e86cf616ba",
+      "token_sha256": "82e86cf616bae2c849ae0d9076ca6ec60e4748f7b61e0545c7c65baf92c2c2e8",
+      "output_sha256": "086c45bb5c762ec3654f4dc1cdba6904ce678bc181ee6d9718e99123f26040f5",
+      "ttft_s": 8.760816533000252,
+      "decode_tps": 55.41412171153109,
+      "equal_first_tokens": false,
+      "equal_first_output": false
+    },
+    {
+      "phase": "concurrent",
+      "prompt_tokens": 2571,
+      "cached_tokens": 0,
+      "tokens": 64,
+      "cache_state": "cold",
+      "complete": true,
+      "token_sha": "3686e82c8e86",
+      "token_sha256": "3686e82c8e861da384bd5adf6b354b4d8e65a6119adfc7d4b062ce40d63e23c7",
+      "output_sha256": "385f4741020c76a14f4a0596ebee5e5de682b8eb341e9fd80dc7029eab785e95",
+      "ttft_s": 4.356263943999693,
+      "decode_tps": 11.651366911549026,
+      "equal_first_tokens": false,
+      "equal_first_output": false
+    }
+  ],
+  "qualified": false
+}
