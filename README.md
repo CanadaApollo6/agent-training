@@ -813,3 +813,43 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     on our agent traces, moves next-token predictions by 0.80 KL (78% top-1 agreement) on held-out traces, about 6x
     our whole 4-bit LFM2.5 build. Cutting only a quarter is still 0.47. Not an M3TiS candidate without a repair
     training pass, which at this size is its own large project.
+- [Ornith-1.5-122B](https://huggingface.co/ornith-ai/Ornith-1.5-122B) (Ornith, 2026-10-20; MIT; official GGUF,
+  FP8, NVFP4 and MLX builds): the big member of the Ornith 1.5 family, with the same thinking and Qwen3 XML tool
+  calls as the 9B and 35B.
+  - **Base: Qwen3.5-122B-A10B, not Qwen3.8-Flash-Next.** The card never names a base, but its config matches
+    Qwen3.5-122B-A10B field for field: `qwen3_5_moe`, 48 layers (36 linear attention, 12 full), hidden 3072, 256
+    experts with top-8 routing plus a shared expert, 1 MTP layer, vision tower. Flash-Next is a different model
+    (`qwen4_exp`, 512 experts, n-gram table). The card only uses Flash-Next as a comparison column. So it is a
+    scaled-up Ornith 35B: same family, same tokenizer (248,320 vocab), ~10B active.
+  - Card numbers (self-reported, no recipe yet): SWE-bench Verified 84.5 vs Flash-Next 82.8, SWE-bench Pro 76.9 vs
+    43.9, TB2.1 81.2 vs 83.4, Toolathlon 70.8 vs 71.4, HLE with tools 48.0 vs 38.0. The SWE-bench Pro gap is too
+    large to take on trust. TB2 ran under Claude Code.
+  - The 3090: no. Smallest official GGUF is Q4_K_M at 76 GB. Routed experts are ~116B, so even 2-bit experts are
+    ~29 GB, more than 24 GB VRAM, and this PC has 32 GB RAM. The Flash-Next study showed expert pruning costs too
+    much without repair training. Not an M3TiS candidate.
+  - **For us:** a same-family teacher for Ornith 35B / R1s. GLM and V4 Pro use other tokenizers, so they only
+    allow SFT on text. A teacher sharing Ornith's tokenizer allows logit distillation (KL on every token), which
+    is what a quantized build needs to recover quality. Its FP8 build (126 GB) fits one H200 under vLLM, which
+    supports `qwen3_5_moe`. First cheap check: run it on our TB2 pilot tasks under pi and see whether it actually
+    clears tasks the 35B fails.
+- [MemT-1.0](https://huggingface.co/collections/MemTensor/memt-1) (MemTensor, 2026-10-19;
+  [paper](https://arxiv.org/abs/2610.26825), [code](https://github.com/MemTensor/MemT-1.0)): two "memory
+  foundation models". **Nano** = Qwen3.6-35B-A3B + 451M trainable memory parameters (Apache-2.0). **Flash** =
+  DeepSeek-V4-Flash + 3.61B (288B total, MIT).
+  - What "parametric memory" means here: not LoRA, not a KV cache, not an external store. Each layer gets a
+    fixed-size memory matrix (10M numbers in total for Nano) that starts at zero for each session. A side
+    "memory attention" reads it on every token. At the end of each turn a Gated-DeltaNet-2 rule (erase, write and
+    forget gates) folds the turn into it, and the plaintext turn can be dropped. The weights stay frozen. The
+    state saves to a file and reloads later. Think "a GDN state that persists across turns", the same kind of
+    state our engines already carry inside the linear-attention layers.
+  - Claims: ~66x less storage than a 128K KV cache, 1.86x end-to-end speedup at 128K history. Best among
+    parametric-memory methods on 11 memory benchmarks, but the card admits strong text-memory systems (retrieval
+    and notes) still win overall, especially when the history holds details that must be recalled exactly. They
+    also show "experience-guided" coding agents that load past experience into memory instead of the prompt.
+  - The 3090: Nano is 72 GB in bf16, transformers-only custom code, no quants. Doesn't fit. A pod (one H100 80 GB
+    or H200) runs it.
+  - **For us:** Nano's backbone has the same shape as Ornith 35B (40 layers, hidden 2048, 256 experts), which our
+    Zig engine already runs, and the memory update is a GDN variant, which we already have kernels for. So a
+    TensorFold port is a plausible later project. The research question for us is the experience angle: does
+    putting lessons from past tasks into memory beat writing them into the prompt, as our harness lessons do
+    now? Compare to the Nemotron Lightning memory entry above, which writes facts into weights instead.
