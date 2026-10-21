@@ -1,0 +1,29 @@
+{
+ "fixture": "kv-gate tensorfold-md@d1018b31 seed 799 rows 256",
+ "rows": [
+  {
+   "depth": 258048,
+   "prompt_len": 258070,
+   "code": "79796257",
+   "recall": true,
+   "drafted_equals_plain": null,
+   "drafted": {
+    "draft": false,
+    "prompt_tokens": 258070,
+    "cached_tokens": 0,
+    "completion_tokens": 128,
+    "ttft_s": 7451.163,
+    "decode_tps": 10.5
+   },
+   "plain": {
+    "draft": false,
+    "prompt_tokens": 258070,
+    "cached_tokens": 0,
+    "completion_tokens": 128,
+    "ttft_s": 7451.163,
+    "decode_tps": 10.5
+   },
+   "reply_head": " 79796257\n\nM5 tensor units, 4-bit groups"
+  }
+ ]
+}

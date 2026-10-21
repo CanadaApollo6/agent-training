@@ -1,0 +1,13 @@
+== KRAW 64k 23:54:15
+depth 1024: KL mean 0.00326 p99 0.03243 max 0.04240, top-1 0.9492, ppl 11.0095 / 11.1116, recall true / true, pass
+depth 8192: KL mean 0.00874 p99 0.11488 max 0.31183, top-1 0.9453, ppl 11.3636 / 11.7628, recall true / true, FAIL
+depth 32768: KL mean 0.07299 p99 0.29651 max 13.33816, top-1 0.9531, ppl 29.1116 / 32.5273, recall true / true, FAIL
+depth 65536: KL mean 0.01959 p99 0.21071 max 0.44860, top-1 0.9648, ppl 26.0333 / 29.1728, recall true / true, FAIL
+kv-gate kv-gate tensorfold-md@d1018b31 seed 799 rows 256 q4: FAIL (bf16 332 s, q4 609 s)
+== VRAW 64k 00:20:00
+depth 1024: KL mean 0.00415 p99 0.01919 max 0.10239, top-1 0.9609, ppl 11.0095 / 11.0095, recall true / true, FAIL
+depth 8192: KL mean 0.00525 p99 0.05943 max 0.14138, top-1 0.9336, ppl 11.3636 / 11.4430, recall true / true, FAIL
+depth 32768: KL mean 0.10840 p99 0.69946 max 20.28813, top-1 0.9453, ppl 29.1116 / 30.3308, recall true / true, FAIL
+depth 65536: KL mean 0.04552 p99 0.76282 max 5.46229, top-1 0.9609, ppl 26.0333 / 27.8670, recall true / true, FAIL
+kv-gate kv-gate tensorfold-md@d1018b31 seed 799 rows 256 q4: FAIL (bf16 331 s, q4 602 s)
+A40DIAG DONE 00:35:33

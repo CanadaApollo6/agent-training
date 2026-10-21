@@ -1,0 +1,18 @@
+== fp8 gate 64k 23:28:18
+fp8 depth 65536: prompt in at 1168 s
+depth 1024: KL mean 0.00201 p99 0.01776 max 0.07111 at 1176, top-1 0.9727, ppl 11.0095 / 11.0665, recall true / true, pass
+depth 8192: KL mean 0.00223 p99 0.02698 max 0.08958 at 8380, top-1 0.9805, ppl 11.3636 / 11.5597, recall true / true, pass
+depth 32768: KL mean 0.04797 p99 0.04972 max 11.31622 at 32944, top-1 0.9688, ppl 29.1116 / 29.2692, recall true / true, FAIL
+depth 65536: KL mean 0.03792 p99 0.32639 max 7.59449 at 65683, top-1 0.9766, ppl 26.0333 / 27.3412, recall true / true, FAIL
+kv-gate kv-gate tensorfold-md@d1018b31 seed 799 rows 256 fp8: FAIL (bf16 443 s, fp8 1189 s)
+lock taken 23:55:30
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=15.780s reserve=0.005s warmups=1.269s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 5.21 GiB each at a 262144-token window (q4 caches), of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 262144; loaded in 17.4s)
+idle device MiB: 21389
+{"depth": 258048, "prompt_len": 258070, "code": "79796257", "recall": true, "drafted_equals_plain": null, "drafted": {"draft": false, "prompt_tokens": 258070, "cached_tokens": 0, "completion_tokens": 128, "ttft_s": 7451.163, "decode_tps": 10.5}, "plain": {"draft": false, "prompt_tokens": 258070, "cached_tokens": 0, "completion_tokens": 128, "ttft_s": 7451.163, "decode_tps": 10.5}, "reply_head": " 79796257\n\nM5 tensor units, 4-bit groups"}
+step long:258048 took 7463 s
+peak device MiB: 21389
+done q4-262k-deep 02:00:12
+A10LONG DONE 02:00:12

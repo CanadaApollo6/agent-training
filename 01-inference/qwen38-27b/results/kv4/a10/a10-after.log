@@ -1,0 +1,14 @@
+lock taken 02:00:22
+info: CUDA window costs: cached 64 widths
+CUDA family startup phases: load=15.407s reserve=0.005s warmups=1.257s calibration=0.000s
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 15.40 GiB; 1 stream at once, 1.41 GiB each at a 40960-token window (q4 caches), of 5.4 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, a 8.0 GiB prompt cache in host memory with 0 MiB of device staging; own glue kernels
+[tensorfold] serving 22d8d538154e0e5b6f8dcb1fcc74a60a0798104c at http://127.0.0.1:8096/v1 (sampling: temperature 1.0, top_k 20, top_p 0.95; drafts: on; context: 40960; loaded in 17.1s)
+idle device MiB: 17501
+{"label": "q4-40k", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 99.43260529718258, "decode_tps_all": [99.45, 99.29, 99.43], "ttft_s_median": 0.04421265999917523}
+{"label": "q4-40k", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 73.25940775337311, "decode_tps_all": [73.26, 73.06, 75.36], "ttft_s_median": 0.1696912120023626}
+{"label": "q4-40k", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 87.20626238236079, "decode_tps_all": [76.28, 160.3, 87.21], "ttft_s_median": 0.044723705999786034}
+{"label": "q4-40k", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 65.92277675130183, "decode_tps_all": [65.92, 56.48, 66.82], "ttft_s_median": 0.16833916700124973}
+step openai took 28 s
+peak device MiB: 17501
+done q4-40k 02:01:07
+A10AFTER DONE 02:01:07

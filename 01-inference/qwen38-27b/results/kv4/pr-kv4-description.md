@@ -55,9 +55,16 @@ Command: `tf-qwen35-cuda <checkpoint> kv-gate fixture.json gate-q4.json q4`.
   - A diagnostic build stored raw bf16 rows beside the 4-bit ones and read only the raw rows through the q4 kernel (the turn in fp32, nothing rounded). It still gives KL 24.5 there; the other depths fall to 0.0008 to 0.0016 mean.
   - Served bf16 (`/v1/completions`, greedy, the same 32,945 ids) predicts ` Tensor` at that row, while the gate's bf16 rows put `Each` 20 logits above it.
   - fp8 flips the same row (11.3).
-  So a change in prompt chunking or arithmetic order alone moves that row by 20 logits. No format can hold a worst-token bar of 0.1 at 32K on this fixture.
+  So a change in prompt chunking or in arithmetic order alone moves that row by about 20 logits. On this fixture, I don't expect any cache format to hold a worst-token bar of 0.1 at 32K.
 - Without that row, q4's 32K mean is 0.034 and fp8's 0.0038. At 64K, without the worst row, q4's mean is 0.034 and fp8's 0.0083. That is the real cost of 4 bits here: about 4 to 9 times fp8's drift. At 64K it raises perplexity by 21%.
-- Raw keys alone or raw values alone (the diagnostic build, 8K fixture) each still miss the 0.1 worst bar: K raw 0.0087 / 0.31, V raw 0.0053 / 0.14. Both halves contribute. [64K split: pending]
+- Which half costs more (the diagnostic build, 64K fixture, mean / worst):
+
+  | depth | keys raw, values q4 | keys q4, values raw | both q4 |
+  |---|---|---|---|
+  | 8,192 | 0.0087 / 0.31 | 0.0053 / 0.14 | 0.0093 / 0.17 |
+  | 65,536 | 0.0196 / 0.45 | 0.0455 / 5.46 | 0.0803 / 11.8 |
+
+  At depth the 4-bit keys cost more. But even exact keys with 4-bit values miss the mean bar at 64K, so 8-bit keys with 4-bit values would not pass either.
 - Earlier, a Python engine on a different document read 0.0034 / 0.030 (1K), 0.0055 / 0.045 (16K) and 0.0018 / 0.029 (49K). It used the same scheme. This fixture is harder: perplexity is 4.5 to 95 here, against 2 to 9 there.
 
 ## Receipt
@@ -72,7 +79,7 @@ Command: `tf-qwen35-cuda <checkpoint> kv-gate fixture.json gate-q4.json q4`.
   |---|---|---|
   | 8,192, `--parallel 2` | 1.21 GiB a stream, 18,537 MiB on the device | 0.85 GiB a stream, 17,801 MiB (peak 17,831) |
   | 40,960 | 3.21 GiB, 19,341 MiB | 1.41 GiB, 17,501 MiB |
-  | 262,144 | does not fit (by the startup's arithmetic, bf16's largest window here is about 76K) | 5.21 GiB of 5.4 GiB free, 21,389 MiB idle, peak [258K prompt: pending] MiB |
+  | 262,144 | does not fit (by the startup's arithmetic, bf16's largest window here is about 76K) | 5.21 GiB of 5.4 GiB free; 21,389 MiB idle and 21,389 MiB peak through a 258,070-token prompt |
 
 - Long context with q4 at a 262,144 window (`longctx.py`: the fixture up to the planted answer, greedy, 128 tokens, drafted then `"draft": false`):
 
@@ -81,14 +88,14 @@ Command: `tf-qwen35-cuda <checkpoint> kv-gate fixture.json gate-q4.json q4`.
   | 32,790 | A10 | yes | yes | 160.2 s (bf16 at 40,960: 133.8 s, recall yes) | 22.3 / 30.2 (bf16: 23.6 / 36.7) |
   | 65,558 | A40 | yes | yes | 346.7 s | 24.7 / 32.5 |
   | 131,094 | A40 | yes | yes | 1,237.3 s | 19.9 / 21.0 |
-  | 258,070 | A10 | [pending] | not run (plain only) | [pending] | [pending] |
+  | 258,070 | A10 | yes | not run (plain only) | 7,451 s | 10.5 / not run |
 
   - Prompts and codes are in `long-*.json`. At 131K the reply after the code repeats `The`. That happens on both drafted and plain runs, and there is no bf16 window there to compare against.
   - Prompt reading is slower with q4: 205 tok/s against 245 at 32K on the A10, and 556 s against about 430 s for the gate's 64K prompt. Like bf16's, the kernel reads every key again for each row of a 128-row pass, and q4 also decodes it each time. fp8's gate prompt took 1,168 s for the same 64K.
 - Short-prompt decode (`bench_openai.py --tokens 128 --reps 3`, median tok/s, greedy, code / chat):
   - bf16 at 40,960: 103.0 / 77.4.
   - q4 at 262,144: 99.0 / 75.0.
-  - q4 at 40,960: [pending].
+  - q4 at 40,960: 99.4 / 73.3, about 4% below bf16 at the same window.
   - bf16 on this branch equals bf16 on `d1018b31`: every reply hash is equal, greedy and seeded, in `bench_openai` at `--parallel 2 --context 8192` (98.9 / 77.8 against 99.0 / 77.5).
 - Exactness with `--kv-cache q4` (A10):
   - `tf-qwen35-cuda` over 160 ids after a 1,500-token prefill:
@@ -126,4 +133,4 @@ Command: `tf-qwen35-cuda <checkpoint> kv-gate fixture.json gate-q4.json q4`.
 Your bar, mean ≤ 0.01 and worst ≤ 0.1 at every depth, is not met by q4 on a public fixture past 8K. It is not met by the fp8 cache already on main past 8K either, and at 32K one row moves 20 logits under a lossless change in arithmetic order. Which would you rather have?
 1. A bar relative to fp8 on the same fixture (for example, mean within 3x of fp8's), with the worst row reported, not gated.
 2. A fixture whose scored rows are unbroken text, with recall checked separately. All the confident flips here sit after the planted question.
-3. A wider format (5-bit codes, or 8-bit keys with 4-bit values) that I gate the same way before you look again.
+3. A wider format that I gate the same way before you look again. 8-bit keys with 4-bit values is ruled out by the split above. 5-bit codes are untested.
