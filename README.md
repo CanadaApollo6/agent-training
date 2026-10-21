@@ -832,6 +832,31 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     is what a quantized build needs to recover quality. Its FP8 build (126 GB) fits one H200 under vLLM, which
     supports `qwen3_5_moe`. First cheap check: run it on our TB2 pilot tasks under pi and see whether it actually
     clears tasks the 35B fails.
+- [Flint](https://huggingface.co/RecursiveSI/flint) (Recursive, 2026-10-21; Apache-2.0; also
+  [MLX int4](https://huggingface.co/RecursiveSI/flint-int4), Q4_1 and NVFP4 GGUFs, and the Apple-only
+  [rec](https://github.com/recursive-oss/rec) engine): a **39.8B-A2.5B** MoE coding-agent model trained from
+  scratch, not a fine-tune. Tuned for the pi harness, which our TB2 pilots already use.
+  - Shape: 49 layers (2 dense, then 47 MoE), hidden 2048, **256 experts, top-6, sigmoid router**, plus a shared
+    expert with no gate. Attention: 35 sliding-window layers (513 tokens) with RoPE and 14 full layers with **no
+    positional encoding**. 32 query / 4 KV heads, QK norm, and learned per-head attention sinks (`softmax_offset`,
+    as in gpt-oss). 150K vocab, 262K context. Routed experts are 37.8B of the 39.8B. No MTP head.
+  - Card numbers (self-reported, released today): TB2.1 54.9 (Terminus 2), SWE-bench Verified 74.2, SWE-bench
+    Pro v2 89.7. Pro scoring 15 points above Verified is backwards, since Pro is the harder set. Don't trust it.
+  - Reference code: no transformers modeling code yet. There's an SGLang kit (B300/H200) and llama.cpp PR #30928,
+    opened today.
+  - The 3090: their MLX int4 (g64 affine, 8-bit embeddings, `scale_rule: mse`, so plain rounding with searched
+    scales) is 22.6 GB = 21.0 GiB. That fits a headless 3090 with ~64K of 8-bit KV, but leaves no room next to a
+    desktop. KV is cheap because only the 14 full layers keep a long cache: 14.3 KB a token at 8 bits, so 262K is
+    3.8 GB. 3-bit routed experts (the R1s recipe) bring it to ~17.9 GB, so 262K fits.
+  - Speed estimate: ~1.40 GB read per token at 4 bits. Attention weights (0.52 GB) cost more than the six routed
+    experts (0.50 GB). That puts the ceiling around 590 tok/s, about LFM2.5's (330 measured). 3-bit experts save
+    only ~8% of the reads, so they buy memory, not speed. At 100K context, KV reads (1.4 GB) about halve decode.
+  - Engine work: the R1s 256-expert affine path and LFM2's sigmoid router carry over. New: the sliding-window ring
+    cache, attention sinks, NoPE layers, top-6. With no GDN or conv state, prefix caching is simpler than on R1s
+    or LFM2. Drafting would be prompt-lookup only.
+  - **For us (M3TiS #4 candidate):** first check the claims. Run Flint BF16 on one H200 pod with the SGLang kit,
+    on our 19-task TB2 pilot under pi, against R1s's 10.0/19. If it beats R1s, measure KL vs BF16 for their int4
+    and for a 3-bit-expert build before any Zig work.
 - [MemT-1.0](https://huggingface.co/collections/MemTensor/memt-1) (MemTensor, 2026-10-19;
   [paper](https://arxiv.org/abs/2610.26825), [code](https://github.com/MemTensor/MemT-1.0)): two "memory
   foundation models". **Nano** = Qwen3.6-35B-A3B + 451M trainable memory parameters (Apache-2.0). **Flash** =
