@@ -61,11 +61,16 @@ def main():
     ap.add_argument("--ref", default="q8")
     ap.add_argument("--drop", nargs="*", default=["qemu-startup"])
     ap.add_argument("--perms", type=int, default=20000)
+    ap.add_argument("--fail", nargs="*", default=[], metavar="BUILD:ATTEMPT:TASK",
+                    help="score these runs as failed, e.g. runs that looked the benchmark up (lookup_audit.py)")
     args = ap.parse_args()
     global BUILDS
     BUILDS = FAMILIES[args.family]
     data = {b: attempts(b, args.family) for b in BUILDS}
     data = {b: a for b, a in data.items() if a}
+    for spec in args.fail:
+        build, attempt, task = spec.rsplit(":", 2)
+        data[build][int(attempt)][task]["solved"] = False
     tasks = sorted({t for a in data.values() for run in a.values() for t in run} - set(args.drop))
     rate = {b: {t: st.mean(run.get(t, {"solved": False})["solved"] for run in a.values()) for t in tasks}
             for b, a in data.items()}

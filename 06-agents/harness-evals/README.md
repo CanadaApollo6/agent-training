@@ -613,6 +613,61 @@ Full tables: `results/lfm25-tb2-compare.md`.
   that looked stuck on build-pov-ray and re-ran it from the start. That task failed all 6 times across both builds,
   so the restart can't move the score. Next time, check the server's request log before calling a lane hung.
 
+## Flint BF16 on the pilot (2026-10-21)
+
+Recursive's [Flint](https://huggingface.co/RecursiveSI/flint) (39.8B-A2.5B, trained for pi) claims TB2.1 54.9. Is it
+better than R1s at agent work, enough to be worth a 3090 build (M3TiS #4)? Same pilot: pi, 19 tasks, 3 attempts, 60
+turns, 60 minutes.
+
+- **Setup:** BF16 at rev 2a247be0 on one Prime H200 (Nebius, $5.40/h). Served with Recursive's own SGLang kit
+  (SGLang 0.5.16 + their `flint_sglang` wheel, `serve_h200.sh` unchanged: FA3, fp32 LM head, their tool-call,
+  reasoning and grammar parsers). Their sampling, from generation_config: T 1.0, top_p 0.95, top_k 20. All three
+  attempts ran at once, 7 conversations each. The server held ~1,000 tok/s across 19 streams and never queued.
+- Scripts: `prime_create.py` (works around `prime pods create --id` missing filtered offers), `setup_flint_pod.sh`,
+  `serve_flint_pod.sh`, `run_flint_attempt.sh`, `flint_status.py`, `lookup_audit.py`. Pod times are in
+  `results/flint-pods.log`. Spend: $8.73 (1.6 h).
+
+| Build | Solved per attempt (of 19) | Mean | vs R1s, task by task | Median output tokens a task |
+|---|---|---|---|---|
+| Ornith 35B Q8_0 | 9, 10, 12 | 10.3 (54%) | +1.8 points (better on 3, worse on 4), p = 1.0 | 9.2K |
+| Ornith 35B R1s | 11, 10, 9 | 10.0 (53%) | — | 12.6K |
+| Flint BF16, as scored | 9, 11, 9 | 9.7 (51%) | −1.8 points (better on 5, worse on 5), p = 1.0 | 23.8K |
+| Flint BF16, lookup run failed | 8, 11, 9 | 9.3 (49%) | −3.5 points (better on 5, worse on 5), p = 0.88 | 23.8K |
+
+| Build | Solved-run tokens vs R1s | 95% CI | Longer on | Output tokens per call (median run) |
+|---|---|---|---|---|
+| Flint BF16 | 1.81× | 1.36–2.45 | 9 of 10 tasks | 694 (R1s: 406) |
+
+| Build | Gave a wrong answer | Hit 60 turns | Hit 60 min |
+|---|---|---|---|
+| R1s | 10 | 14 | 3 |
+| Flint BF16 | 15 | 11 | 3 |
+
+Full tables: `results/flint-tb2-compare.md` (lookup run failed) and `results/flint-tb2-compare-raw.md`. The lookup
+audit is `results/flint-lookup-audit.md`.
+
+- **A tie, not a win.** 9.3–9.7 vs R1s's 10.0, well inside noise. The card's 54.9 on TB2.1 doesn't show up as an edge
+  over a 3-bit Ornith 35B on these tasks.
+- **Different tasks, though.** Flint solved tasks Ornith never has: mteb-retrieve 3/3 (R1s and Q8 0/3),
+  git-multibranch 3/3 (R1s 1/3), custom-memory-heap-crash and build-pov-ray. It lost easy ones Ornith solves every time:
+  - **kv-store-grpc, 0/3 (R1s 3/3).** The spec says the request has "a key (string) and a value (int)". Flint named
+    the field `val` all three times, so the client calls fail. R1s named it `value`.
+  - **nginx-request-logging, 0/3 (R1s 3/3).** The spec gives the log line's fields. Flint added fields, brackets and
+    quotes; R1s wrote exactly the format asked for. a2 also sent missing pages to /404.html with a 200. (No verifier
+    output, so medium confidence on which check failed.)
+  - **rstan-to-pystan, 0/3 (R1s 2/3).** All three hit the hour.
+  - **schemelike-metacircular-eval, 0/3** (Ornith 0/3 too). Flint quit after 4–8 turns each time.
+  - The pattern: strong at long build-and-debug work, careless with exact specs, and it embellishes them.
+- **It looked the benchmark up.** In 2 of 57 runs, both build-pov-ray, Flint fetched the task from GitHub: a1 the TB2
+  task's README and tests (scored solved), a2 the Terminal-Bench 1 version's `task.yaml` and `solution.sh` (failed).
+  Recursive's card scores web-retrieved solutions as failures, so the second Flint row does too. R1s and Q8 did this
+  in 0 of 60 runs each. Sandboxes have internet; any build can do it, so `lookup_audit.py` should run on every pilot.
+- **Twice the tokens.** Solved runs used 1.81× R1s's tokens, longer on 9 of 10 shared tasks. Calls are wordier (694
+  vs 406 tokens each), not more numerous. This ran at Recursive's recommended sampling, so it's the cost as shipped.
+  Lower temperature might cut it; that's untested.
+- **Verdict for M3TiS #4:** the gate was "beats R1s". It doesn't, so no KL or Zig work for now. Its different solve
+  set makes it a possible second opinion or ensemble member, not a replacement.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
@@ -624,6 +679,8 @@ Full tables: `results/lfm25-tb2-compare.md`.
   R1's 1.67×; the engine was ruled out, and fidelity closed most of the gap.
 - **LFM2.5-24B-A2B (M3TiS #3):** the 3090 build is within noise of Liquid's Q8_0 (5.0 vs 5.7 of 19) with the
   repetition penalty on, at 1.40× the tokens per solve. The model itself is a weak terminal agent next to Ornith 35B.
+- **Flint BF16:** ties R1s (9.3 of 19 with the benchmark-lookup run failed, 9.7 as scored, vs 10.0) at 1.81× the
+  tokens per solve. It solves different tasks, but it doesn't beat R1s, so it isn't an M3TiS #4 build yet.
 - **Proxy fixes:** keep the image fix; it is the clear win (30% → 47% on picture tasks). check is cheap and maybe
   helps; cutoff mostly turns cut-off failures into ordinary failures. Together about +5 points per task, not proven at
   2 tries. Prime sandbox terminations (half the reruns lost again) must be dealt with before RL on Prime sandboxes.

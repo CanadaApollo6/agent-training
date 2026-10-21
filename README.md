@@ -857,6 +857,10 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   - **For us (M3TiS #4 candidate):** first check the claims. Run Flint BF16 on one H200 pod with the SGLang kit,
     on our 19-task TB2 pilot under pi, against R1s's 10.0/19. If it beats R1s, measure KL vs BF16 for their int4
     and for a 3-bit-expert build before any Zig work.
+  - **Result (2026-10-21, $8.73):** a tie, not a win. 9.7 of 19 as scored and 9.3 with the run that fetched the task
+    from GitHub counted as failed, vs R1s's 10.0. It used 1.81× R1s's tokens per solve. It solves different tasks
+    (mteb-retrieve 3/3, git-multibranch 3/3) and misreads easy specs (kv-store-grpc and nginx-request-logging, both
+    0/3). The gate isn't met, so no KL or Zig work for now. Details: `06-agents/harness-evals/README.md`.
 - [Evolving Agent Interfaces / Agent S4](https://arxiv.org/abs/2610.28601) (Simular, 2026-10-20;
   [code](https://github.com/simular-ai/agent-s), Apache-2.0): a meta-agent reads a task agent's trajectories, with no
   success labels, and writes and revises a Python package of task tools plus notes on when to use them
