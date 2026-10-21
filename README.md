@@ -857,6 +857,25 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   - **For us (M3TiS #4 candidate):** first check the claims. Run Flint BF16 on one H200 pod with the SGLang kit,
     on our 19-task TB2 pilot under pi, against R1s's 10.0/19. If it beats R1s, measure KL vs BF16 for their int4
     and for a 3-bit-expert build before any Zig work.
+- [Evolving Agent Interfaces / Agent S4](https://arxiv.org/abs/2610.28601) (Simular, 2026-10-20;
+  [code](https://github.com/simular-ai/agent-s), Apache-2.0): a meta-agent reads a task agent's trajectories, with no
+  success labels, and writes and revises a Python package of task tools plus notes on when to use them
+  (`shadow_interface`, called from the harness's IPython kernel). Population search keeps the versions that score
+  best on held-out validation tasks. **Both the meta-agent and the task agent are Qwen3.8-27B in a modified Prime
+  Agent harness**, the model behind our M3TiS #1, in the harness from our thesis.
+  - OSWorld V2 binary score (108 tasks), same 27B throughout: Qwen's fixed GUI interface 5.56 → Prime Agent with
+    IPython and no tools 15.74 → hand-written seed tools 19.44 → evolved 21.30 (Opus 4.8 20.6, GPT-5.5 13.0). Cost
+    $1.10 a task vs $72.40 and $25.50.
+  - Read the steps, not the headline. Moving from clicks to a Python harness is +10 points. Hand-written tools add
+    +3.7. Evolution adds +1.9, which is 2 tasks out of 108 with one run, and the other two evolution variants
+    stayed at 19.44 (their partial scores did rise, 44.9 → 47-51). ScienceBoard shows a bigger jump, 41.4 → 58.6.
+  - Fine print: frontier models (gpt-6-astra, gpt-5.6-sol) wrote the synthetic training tasks. They don't give the
+    total cost of the evolution runs. 30 training and 15 validation tasks per run, rollouts up to 300 steps and 2 h.
+  - **For us:** strong support for the harness thesis on GUI work. The harness switch alone tripled the 27B. It
+    doesn't match our terminal result (R1s: pi 40/89, prime_agent 35/89), likely because a shell already is a
+    code interface. Evolved tools pay off when the same apps and data come back task after task. That fits a Smart
+    Data deployment, with fixed client systems, better than TB2, where every task is new. It's also a
+    training-free route to compare against RL: the M3TiS 27B could play both roles locally or on a pod.
 - [MemT-1.0](https://huggingface.co/collections/MemTensor/memt-1) (MemTensor, 2026-10-19;
   [paper](https://arxiv.org/abs/2610.26825), [code](https://github.com/MemTensor/MemT-1.0)): two "memory
   foundation models". **Nano** = Qwen3.6-35B-A3B + 451M trainable memory parameters (Apache-2.0). **Flash** =
