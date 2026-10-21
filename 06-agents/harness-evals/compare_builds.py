@@ -27,11 +27,17 @@ FAMILIES = {
                   "r1s-c4s": "R1s: R1 + imatrix-searched 4-bit always-on path (3090, TensorFold)"},
     "lfm25": {"q8": "Liquid's Q8_0 (pod, llama.cpp)",
               "m3tis": "M3TiS #3: Liquid's MLX 4-bit + 4-bit table (sm_86 pod, TensorFold Zig)"},
+    # across families: a key "<family>:<build>" reads that family's runs
+    "flint": {"ornith35b:q8": "Ornith 35B Q8_0 (pod, llama.cpp)",
+              "ornith35b:r1s-c4s": "Ornith 35B R1s (3090, TensorFold)",
+              "flint:bf16": "Flint BF16 (H200, Recursive's SGLang kit)"},
 }
 BUILDS = FAMILIES["ornith35b"]
 
 
 def attempts(build, family="ornith35b"):
+    if ":" in build:
+        family, build = build.split(":")
     runs = {}
     for d in sorted(glob.glob(str(OUT / f"terminal-bench-2--{family}-{build}-a*--pi--*"))):
         m = re.search(rf"{family}-{re.escape(build)}-a(\d+)(?:l\d+)?--", d)
