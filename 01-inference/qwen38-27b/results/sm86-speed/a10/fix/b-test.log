@@ -1,0 +1,23 @@
+PASS experts3 decode (128 by 256, the pair a column block a warp): 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 prompt (128 by 256): 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 decode (512 by 2048, the pair a column block a warp): 36 pairs over 16 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 prompt (512 by 2048): 36 pairs over 16 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 decode (128 by 320, the pair a column block a warp): 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 prompt (128 by 320): 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 decode (128 by 256, the pair a column block a CTA): 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 prompt (128 by 256): 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 decode (512 by 2048, the pair a column block a CTA): 36 pairs over 16 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 prompt (512 by 2048): 36 pairs over 16 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 decode (128 by 320, the pair a column block a CTA): 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 prompt (128 by 320): 120 pairs over 6 3-bit experts and a 4-bit shared one, SwiGLU rows and down sums byte-equal to affine-4 on the same codes
+PASS experts3 gate decode (128 by 256): worst column error 1.0211952030658722e-6 against fp64 (affine-4 on the same codes 1.0211952030658722e-6), rms 1.1695334099202522e-7
+PASS experts3 gate prompt (128 by 256): worst column error 4.125665966421366e-2 against fp64 (affine-4 on the same codes 4.125665966421366e-2), rms 4.968534929847509e-3
+PASS experts3 up decode (128 by 256): worst column error 1.2516975402832031e-6 against fp64 (affine-4 on the same codes 1.2516975402832031e-6), rms 1.0510598251008578e-7
+PASS experts3 up prompt (128 by 256): worst column error 4.104255139827728e-2 against fp64 (affine-4 on the same codes 4.104255139827728e-2), rms 4.976530748945231e-3
+PASS experts3 down decode (256 by 128): worst column error 9.238719940185547e-7 against fp64 (affine-4 on the same codes 9.238719940185547e-7), rms 7.28525131824178e-8
+PASS experts3 down prompt (256 by 128): worst column error 3.464275598526001e-2 against fp64 (affine-4 on the same codes 3.464275598526001e-2), rms 3.7224355865093425e-3
+TIME experts3 decode (512 by 2048, 9 picks a row) at 1 rows: up a block a warp 46.2 us, a block a CTA 22.5 us (taken: a block a CTA); down 11.6 us
+TIME experts3 decode (512 by 2048, 9 picks a row) at 2 rows: up a block a warp 50.5 us, a block a CTA 42.2 us (taken: a block a CTA); down 23.6 us
+TIME experts3 decode (512 by 2048, 9 picks a row) at 3 rows: up a block a warp 67.5 us, a block a CTA 60.1 us (taken: a block a CTA); down 32.6 us
+TIME experts3 decode (512 by 2048, 9 picks a row) at 4 rows: up a block a warp 70.6 us, a block a CTA 75.5 us (taken: a block a warp); down 40.3 us
+b-test exit 0

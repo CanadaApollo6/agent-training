@@ -1,0 +1,23 @@
+base r1s step == base
+base r1s window == base
+base r1s tree == base
+base r1s beside == base
+base r1s pre == base
+base r1s resume == base
+base r1s window == step
+base r1s tree == step
+base r1s beside == step
+base r1s resume == fresh
+64 steps: the first 9.8 ms, then 9.2 ms a step (109.0 tok/s)
+base q27 step == base
+base q27 window == base
+base q27 tree == base
+base q27 beside == base
+base q27 pre == base
+base q27 resume == base
+base q27 window == step
+base q27 tree == step
+base q27 beside == step
+base q27 resume == fresh
+64 steps: the first 36.4 ms, then 35.9 ms a step (27.9 tok/s)
+RUNS_DONE

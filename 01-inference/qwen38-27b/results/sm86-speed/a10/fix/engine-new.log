@@ -1,0 +1,23 @@
+new r1s step == base
+new r1s window == base
+new r1s tree == base
+new r1s beside == base
+new r1s pre == base
+new r1s resume == base
+new r1s window == step
+new r1s tree == step
+new r1s beside == step
+new r1s resume == fresh
+64 steps: the first 9.3 ms, then 8.7 ms a step (115.0 tok/s)
+new q27 step == base
+new q27 window == base
+new q27 tree == base
+new q27 beside == base
+new q27 pre == base
+new q27 resume == base
+new q27 window == step
+new q27 tree == step
+new q27 beside == step
+new q27 resume == fresh
+64 steps: the first 35.4 ms, then 35.2 ms a step (28.4 tok/s)
+RUNS_DONE

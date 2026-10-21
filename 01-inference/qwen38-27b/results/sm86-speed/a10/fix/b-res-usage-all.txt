@@ -1,0 +1,105 @@
+
+Fatbin elf code:
+================
+arch = sm_80
+code version = [1,8]
+host = linux
+compile_size = 64bit
+
+Resource usage:
+ Common:
+  GLOBAL:0
+ Function _ZN11tf_experts312split_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:254 STACK:0 SHARED:25600 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi1ELi0ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:196 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:48 SHARED:0 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_planes:
+  REG:26 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:384 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_widen:
+  REG:32 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:376 TEXTURE:0 SURFACE:0 SAMPLER:0
+
+Fatbin elf code:
+================
+arch = sm_86
+code version = [1,8]
+host = linux
+compile_size = 64bit
+
+Resource usage:
+ Common:
+  GLOBAL:0
+ Function _ZN11tf_experts312split_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:0 SHARED:25600 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi1ELi0ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:197 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:40 SHARED:0 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_planes:
+  REG:28 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:384 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_widen:
+  REG:36 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:376 TEXTURE:0 SURFACE:0 SAMPLER:0
+
+Fatbin elf code:
+================
+arch = sm_89
+code version = [1,8]
+host = linux
+compile_size = 64bit
+
+Resource usage:
+ Common:
+  GLOBAL:0
+ Function _ZN11tf_experts312split_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:0 SHARED:25600 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi1ELi0ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:197 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:40 SHARED:0 LOCAL:0 CONSTANT[0]:436 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_planes:
+  REG:28 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:384 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_widen:
+  REG:36 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:376 TEXTURE:0 SURFACE:0 SAMPLER:0
+
+Fatbin elf code:
+================
+arch = sm_120
+code version = [1,8]
+host = linux
+compile_size = 64bit
+
+Resource usage:
+ Common:
+  GLOBAL:0
+ Function _ZN11tf_experts312split_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:0 SHARED:26624 LOCAL:0 CONSTANT[0]:980 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi1ELi0ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:190 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:980 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:40 SHARED:0 LOCAL:0 CONSTANT[0]:980 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_planes:
+  REG:36 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:928 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_widen:
+  REG:32 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:920 TEXTURE:0 SURFACE:0 SAMPLER:0
+
+Fatbin elf code:
+================
+arch = sm_121
+code version = [1,8]
+host = linux
+compile_size = 64bit
+
+Resource usage:
+ Common:
+  GLOBAL:0
+ Function _ZN11tf_experts312split_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:0 SHARED:26624 LOCAL:0 CONSTANT[0]:980 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi1ELi0ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:190 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:980 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function _ZN11tf_experts313expert_kernelILi2ELi2ELi2ELi4EEEvPK13__nv_bfloat16iiPK5uint4iiPKiS8_S8_PvifS6_i:
+  REG:255 STACK:40 SHARED:0 LOCAL:0 CONSTANT[0]:980 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_planes:
+  REG:36 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:928 TEXTURE:0 SURFACE:0 SAMPLER:0
+ Function tf_experts3_widen:
+  REG:32 STACK:0 SHARED:0 LOCAL:0 CONSTANT[0]:920 TEXTURE:0 SURFACE:0 SAMPLER:0

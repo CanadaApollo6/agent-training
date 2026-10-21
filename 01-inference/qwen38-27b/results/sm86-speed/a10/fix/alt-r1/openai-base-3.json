@@ -1,0 +1,48 @@
+[
+ {
+  "label": "base-3",
+  "prompt": "fibonacci-raw",
+  "temperature": 0.0,
+  "tokens": 128,
+  "decode_tps_median": 151.52595610036613,
+  "decode_tps_all": [
+   151.53
+  ],
+  "ttft_s_median": 0.02149561500004893,
+  "evidence": [
+   {
+    "prompt_tokens": 14,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "a4a9d7f17f0c",
+    "output_sha256": "f747164e4f595c47ddb9b4ae6cca6fbf0029600aef9ea3e136b577fc94da260b"
+   }
+  ],
+  "sample": "\n\nHere is a short Python function that computes the Fibonacci sequence:\n\n```python\ndef fibonacci(n):\n    fib = [0, 1]\n    for i in range(2, n):\n        fib.appe"
+ },
+ {
+  "label": "base-3",
+  "prompt": "gpu-chat-no-think",
+  "temperature": 0.0,
+  "tokens": 128,
+  "decode_tps_median": 114.2801685737826,
+  "decode_tps_all": [
+   114.28
+  ],
+  "ttft_s_median": 0.04719592499986902,
+  "evidence": [
+   {
+    "prompt_tokens": 31,
+    "cached_tokens": 0,
+    "tokens": 128,
+    "cache_state": "cold",
+    "complete": true,
+    "token_sha": "50994a6ef101",
+    "output_sha256": "c31fee52f0d6f0b1e294528a2c4a94ca7799cf9c06080164140377655cc016c5"
+   }
+  ],
+  "sample": "# Matrix Multiplication on a GPU\n\n## The Core Idea\n\nA GPU (Graphics Processing Unit) is built to do **many simple calculations at the same time**, unlike a CPU "
+ }
+]

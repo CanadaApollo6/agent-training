@@ -1,0 +1,5 @@
+{"label": "p1-base-1", "prompt": "fibonacci-raw", "temperature": 0.0, "decode_tps_median": 102.85902799354383, "decode_tps_all": [98.83, 102.86, 102.89], "ttft_s_median": 0.04505748499991569}
+{"label": "p1-base-1", "prompt": "gpu-chat-no-think", "temperature": 0.0, "decode_tps_median": 77.20696755068846, "decode_tps_all": [75.22, 77.41, 77.21], "ttft_s_median": 0.1650339420000364}
+{"label": "p1-base-1", "prompt": "fibonacci-raw", "temperature": 1.0, "decode_tps_median": 97.04532754494463, "decode_tps_all": [83.73, 148.48, 97.05], "ttft_s_median": 0.045163045999970564}
+{"label": "p1-base-1", "prompt": "gpu-chat-no-think", "temperature": 1.0, "decode_tps_median": 62.91709937364977, "decode_tps_all": [62.92, 53.63, 65.18], "ttft_s_median": 0.16494587000011052}
+done p1-base-1

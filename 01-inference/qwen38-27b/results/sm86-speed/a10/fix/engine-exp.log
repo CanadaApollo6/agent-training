@@ -1,0 +1,12 @@
+exp r1s step == base
+exp r1s window == base
+exp r1s tree == base
+exp r1s beside == base
+exp r1s pre == base
+exp r1s resume == base
+exp r1s window == step
+exp r1s tree == step
+exp r1s beside == step
+exp r1s resume == fresh
+64 steps: the first 8.9 ms, then 8.3 ms a step (121.1 tok/s)
+RUNS_DONE

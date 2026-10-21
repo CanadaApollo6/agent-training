@@ -11,6 +11,7 @@
   - Draft-frame attention in: q, k, v.
 
   The MLP's gate and up are left alone: at 2 x 17408 columns they are already bandwidth-bound and one launch over both measured slower (below).
+- One path change beyond sm_86: on every GPU that takes the split form, a projection whose `splitK` is 1 used to run `decode()`'s `cluster()` (qmm_group's cluster tile). Inside a segmented launch it now runs the lane kernel's one-slice store instead. The bits are the same (checked above and by the contract). I timed this only on the A10; on sm_80, sm_89, sm_90 and sm_120 its speed is untimed.
 
 ## Receipt
 
@@ -19,27 +20,22 @@
   - `TensorFold/Qwen3.8-27B-MLX-4bit` rev 22d8d538 with `z-lab/Qwen3.8-27B-DFlash2`.
   - `CanadaApollo6/Ornith-1.5-35B-A3B-M3TiS-3090` rev 66da2f4e (Qwen3.5-MoE 35B-A3B), drafted by its own MTP layer.
 - Exactness:
-  - `tf-cuda-test affine4-decode` (new). It runs eleven sets of projections at the 27B's and the 35B-A3B's shapes plus a short-K set, at 1, 2, 3, 4, 8 and 16 rows. It checks that:
+  - `tf-cuda-test affine4-decode` (new; bits only, no timing). It runs eleven sets of projections at the 27B's and the 35B-A3B's shapes plus a short-K set, at 1, 2, 3, 4, 8 and 16 rows. It checks that:
     - `decode()` at each row count equals its 16-row call;
     - one segment equals `decode()`;
     - every set's segmented launch equals `decode()` per projection, byte for byte.
 
     PASS.
+  - The kernel contract launches `tf_lane_gemv_seg` with two segments of the shape and checks the second, so its partials and tickets sit past the first's.
   - `tf-qwen35-cuda` over 64 ids, both models: `step`, `window`, `tree`, a second stream beside (`TF_Q35_BESIDE=64`), and a resumed state (`TF_Q35_PREFILL=32 TF_Q35_RESUME=1`).
     - Logits are byte-equal to base's in every mode.
     - On this branch, `window` and `tree` equal `step`, beside equals `step`, and resumed equals fresh.
-  - Served greedy output: `bench_openai` token hashes at T=0 are equal to base's on both models, code and chat.
-  - `bench_concurrent --tokens 128 --reps 2 --alone --serial --levels 1,2` at `--parallel 2`, T=0 and seeded T=1: this branch and base both report unequal alone/serial hashes on this machine, in different cells from run to run. That makes it run-to-run variation on `main` as served here, not this change; the engine-level checks above are the exact comparison.
-
-    | | alone equal / unequal | serial equal / unequal |
-    | --- | --- | --- |
-    | 35B-A3B, base | 16 / 8 | 10 / 2 |
-    | 35B-A3B, this branch | 12 / 12 | 6 / 6 |
-    | 27B, base | 17 / 7 | 8 / 4 |
-    | 27B, this branch | 16 / 8 | 8 / 4 |
-
-    - `bench_cache` qualifies on the 35B-A3B on both binaries.
-    - On the 27B it fails on both binaries: repeated and concurrent first outputs differ from the first request's.
+  - Served output, base and this branch alternately on one A10, each a fresh server:
+    - The 35B-A3B (MTP drafts, `--context 8192`) at `--parallel 2`: three rounds each. A round is `bench_openai` T=0 code and chat, then `bench_concurrent --tokens 128 --reps 2 --alone --serial --levels 1,2` at T=0 and seeded T=1, then `bench_cache`.
+    - The 27B (DFlash2, `--context 4096`): two rounds each, of `bench_openai --reps 3` at T=0 and seeded T=1 on `--parallel 1`, then the same sequence at `--parallel 2`.
+    - Every request's token hash, in order, is the same on this branch as on base in every round (28 requests a round on the 35B-A3B; 9 + 28 on the 27B).
+    - Every `bench_concurrent` run reports alone 24 equal / 0 unequal and serial 12 / 0, on both binaries and both models. `bench_cache` qualifies on every run.
+  - An earlier A10 machine gave unequal alone/serial cells on base as well as on this branch: base 16 / 8 alone on the 35B-A3B and 17 / 7 on the 27B. It also failed `bench_cache` on the 27B for both binaries, and its base T=1 hashes differed from this machine's base. None of that reproduces on this machine, for either binary. A device-side check of the split tickets after every launch (a debug build, not in this branch) found every ticket back at 0. The engine records on one stream, so two graphs never run at once.
 - Decode speed: `bench_openai --tokens 128 --reps 3`, median tok/s, one stream, `--parallel 1`, code / chat.
 
   | model, serve | base T=0 | this T=0 | base T=1 | this T=1 |
@@ -47,10 +43,18 @@
   | 35B-A3B, MTP drafts, `--context 8192` | 152.5 / 120.3 | 164.8 / 126.3 | 138.4 / 113.9 | 141.3 / 118.0 |
   | 27B, DFlash2, `--context 4096` | 109.8 / 82.5 | 111.9 / 84.0 | 99.8 / 68.0 | 106.6 / 68.4 |
 
+  The alternating runs above on the second machine, mean of the rounds' medians, code / chat:
+
+  | model, serve | base T=0 | this T=0 | base T=1 | this T=1 |
+  | --- | --- | --- | --- | --- |
+  | 35B-A3B, `--parallel 2` | 152.0 / 114.7 | 156.4 / 116.9 | | |
+  | 27B, `--parallel 1` | 102.8 / 77.2 | 105.7 / 79.5 | 96.8 / 62.8 | 99.3 / 64.3 |
+  | 27B, `--parallel 2` | 98.9 / 75.2 | 102.2 / 77.5 | | |
+
   - `tf-qwen35-cuda step` (plain, 64 ids):
     - 35B-A3B: 8.9 -> 8.4 ms a step (112.5 -> 119.5 tok/s).
     - 27B: 32.9 -> 32.2 ms (30.4 -> 31.1 tok/s).
-  - Per set, one captured graph of calls, 1 row, `decode()` per projection vs segmented, in µs:
+  - Per set, one captured graph of calls, 1 row, `decode()` per projection vs segmented, in µs (a local timing loop, not part of this branch):
 
     | set | `decode()` | segmented |
     | --- | --- | --- |
@@ -75,7 +79,7 @@
     - The `tf_lane_gemv_seg` record is `62 / 56 / 56 / 54 / 54` registers (sm_80/86/89/120/121), 128 static bytes, bound 128.
     - `tf_lane_gemv_split`'s record is unchanged and current: 62 / 56 / 56 / 44 / 44.
 - Tests:
-  - `zig build test native -Dsm=86`: passes.
+  - `zig build test native -Dsm=86`: 2960 of 2974 tests pass, 14 skipped. On the same machine base d1018b31 and `qwen35-sm86-experts` each fail one test, `cuda_cost_identity`'s "a changed payload at the same path invalidates it". It passed in this branch's run, so it is flaky on this machine rather than fixed here.
   - `tf-cuda-test affine4-decode`: passes.
   - `tools/zig/lean_check.py`: 444 problems on this branch and on base, none added. `zig fmt --check`: clean.
 - Not run:
@@ -86,10 +90,10 @@
 ## Checklist
 
 - [x] Every token still goes through the lane rounds. No serial path, and nothing that needs drafts off.
-- [x] Drafted output equals plain (`window`/`tree` == `step`), a resumed state equals a fresh one, and concurrent equals solo at the engine level. The served `bench_concurrent` cells vary on base too (above).
+- [x] Drafted output equals plain (`window`/`tree` == `step`), a resumed state equals a fresh one, and concurrent equals solo, at the engine level and served (`bench_concurrent` alone and serial all equal, three rounds against base).
 - [x] No precision traded for speed: per-projection partition, slice partials and slice-order sums unchanged, checked byte for byte.
 - [x] Prompt processing is no slower: same calls past 16 rows; TTFT within noise.
 - [x] The description says which platforms I ran (CUDA sm_86 on an A10) and which I could not.
-- [x] New tests fail before the change, pass after it, and skip cleanly without their dependency.
+- [ ] New tests fail before the change: not applicable. `affine4-decode` calls `decodeMany`, which this change adds, so it does not build on base. It passes after the change.
 - [x] Comments and docstrings are one line. No measurements or history in the source.
 - [x] No personal data, machine names, internal hosts or local paths. No AI attribution lines.

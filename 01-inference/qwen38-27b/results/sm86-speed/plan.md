@@ -90,3 +90,20 @@ check `nvidia-smi` headroom before each run.
 - Receipts: `a10/serve`, `a10/engine` (A), `a10/exp` (B; `exp_final.log`'s served lines are void, a stale native binary).
 - The expected gains above (−3 ms a verify for experts) did not carry to the A10's 4-row windows: at 4 rows the
   existing experts kernel already runs at ~70-83% of A10 bandwidth; the 3090 profile was inflated by nsys node tracing.
+
+### Review follow-up, 2026-10-21 (second A10 pod)
+
+- qmm nondeterminism: not reproduced and not branch-specific. On a fresh A10, base and branch alternated (R1s 3 rounds
+  at `--parallel 2`; 27B 2 rounds at p1 and p2) give identical per-request hash sequences, `bench_concurrent` alone
+  24/0 and serial 12/0 on every run, `bench_cache` qualified on every run. The first pod's unequal cells hit base too
+  (base 16/8 R1s, 17/7 27B; base T=1 hashes differ from the fresh pod's base). Ticket readback after every launch
+  (debug build, `TF_SEGDBG=8`) found no leak. Receipts: `a10/fix/alt-r1*.log`, `a10/fix/alt-q1*`.
+- Engine `== base` lines for step/window/tree/beside/pre/resume: `a10/fix/engine-{base,new,exp}.log` (the per-mode
+  `*-window.log`/`*-tree.log` are empty because the binary prints nothing in those modes; removed).
+- qmm amended (36442723): two-segment contract launch (`Split.initFor(gpu.d, 2)`), timing harness dropped from
+  `affine4-decode`. Contract SUMMARY unchanged (76 pass, 932 limit problems as base). PR text: sk==1 one-slice path
+  replaces `cluster()` on every split-form GPU (untimed off sm_86); checklist line fixed.
+- experts amended (3ca1e303): 128x320 shape (5 K groups, a partial last round), PASS both forms. Kernel times and
+  `cuobjdump` (no stack/local on sm_80/86/89/120/121) in `a10/fix/b-test.log`, `a10/fix/b-res-usage-*.txt`. PR text:
+  ungated bound covers ~6 rows on 4090/H100, ~8 on 5090 (untimed); void run's unequal cells were base's; concurrency
+  is a single run.
