@@ -15,7 +15,7 @@ Decode rows of the 3-bit routed experts (`experts3`) get a second form of the Sw
 
 ## Receipt
 
-- Environment: NVIDIA A10 (24 GB, sm_86, 72 SMs), Linux, driver 570.148.08, CUDA 13.0 `nvcc`, Zig 0.17.0, built `-Dsm=86 -Doptimize=ReleaseFast`. Every number here is A10 (sm_86). Base is `main` d1018b31, built the same way on the same machine.
+- Environment: NVIDIA A10 (24 GB, sm_86, 72 SMs), Linux, driver 570.148.08, CUDA 13.0 `nvcc`, Zig 0.17.0, built `-Dsm=86 -Doptimize=ReleaseFast`. Numbers are A10 (sm_86) unless marked RTX 3090. Base is `main` d1018b31, built the same way on the same machine.
 - Checkpoint: `CanadaApollo6/Ornith-1.5-35B-A3B-M3TiS-3090` rev 66da2f4e (Qwen3.5-MoE 35B-A3B with 3-bit routed experts and a 4-bit shared expert), drafted by its own MTP layer.
 - Exactness:
   - `tf-cuda-test experts3` runs `sameBits` with the split form forced off and forced on. The shapes are the existing one (128 by 256) and two new ones. One is wide (512 by 2048, 16 experts, 4 rows, 9 picks a row, the shared expert in the last slot). The other is short (128 by 320): its 5 K groups leave the split form's last round with one group for four warps. The pairs' SwiGLU rows and the down sums are byte-equal to affine-4 on the same codes in both forms. PASS.
@@ -36,6 +36,18 @@ Decode rows of the 3-bit routed experts (`experts3`) get a second form of the Sw
 
   These are the `TIME` lines of one run on the final commit. An earlier run on another A10 gave 45.9 / 21.2, 49.2 / 40.1, 64.6 / 57.5 and 68.2 / 75.6.
 
+- RTX 3090 (sm_86, 24 GB, 82 SMs, driver 615.78.08, CUDA 13.4 `nvcc`, the same build flags), base and this branch alternately, each a fresh server with `TENSORFOLD_MEMORY_RESERVE_GIB=4 --prompt-cache-gib 2`, `--context 8192 --parallel 2`:
+  - A round is `bench_openai --reps 3` at T=0 and seeded T=1, then `bench_concurrent --tokens 128 --reps 2 --alone --serial --levels 1,2` at T=0 and seeded T=1, then `bench_cache`. Plain: two rounds each. MTP drafts: one round of this branch against three of base.
+  - Every request's token hash (34 a round) is the same on this branch as on base, plain and drafted, and plain equals drafted.
+  - Every `bench_concurrent` run reports alone 24 / 0 and serial 12 / 0, and `bench_cache` qualifies on every run.
+  - Decode, median tok/s, one stream, code / chat (mean of the rounds):
+
+    | serve | base T=0 | this T=0 | base T=1 | this T=1 |
+    | --- | --- | --- | --- | --- |
+    | plain | 121.8 / 118.9 | 137.0 / 134.5 | 113.6 / 114.1 | 127.3 / 128.3 |
+    | MTP drafts | 191.8 / 146.0 | 188.1 / 146.9 | 168.7 / 137.3 | 172.2 / 137.3 |
+
+    With drafts the change is within base's own spread (185.9 to 194.8 code at T=0 over its three rounds): the verify windows are 4 rows, which keep `expert_kernel` as on the A10.
 - Decode speed: `bench_openai --tokens 128 --reps 3`, median tok/s, one stream, `--parallel 1 --context 8192`, code / chat. Base and this branch were run back to back on the same machine.
 
   | serve | base T=0 | this T=0 | base T=1 | this T=1 |
@@ -74,7 +86,7 @@ Decode rows of the 3-bit routed experts (`experts3`) get a second form of the Sw
 - Not run:
   - The 4-bit routed experts (`experts.cu`). The same split applies there, but this PR keeps to one kernel.
   - nvcc 13.2's record set: I have no 13.2 here.
-  - GB10, sm_89, sm_120 and an RTX 3090. The 7/8 bound is set from the resident-warp count, so a 3090 (82 SMs) takes `expert_kernel` at 4 rows as the A10 does. I have not timed it there.
+  - GB10, sm_89 and sm_120.
 
 ## Checklist
 
@@ -82,7 +94,7 @@ Decode rows of the 3-bit routed experts (`experts3`) get a second form of the Sw
 - [x] Drafted output equals plain (`window`/`tree` == `step`), a resumed state equals a fresh one, and concurrent equals solo, at the engine level and in one served `bench_concurrent` run.
 - [x] No precision traded for speed: same terms and the same fma chain in group order, checked byte for byte against affine-4 in both forms.
 - [x] Prompt processing is no slower: the prompt kernels are untouched.
-- [x] The description says which platforms I ran (CUDA sm_86 on an A10) and which I could not.
+- [x] The description says which platforms I ran (CUDA sm_86 on an A10 and an RTX 3090) and which I could not.
 - [ ] New tests fail before the change: not applicable. The test forces each form through `split_below`, which this change adds, so it does not build on base. It passes after the change.
 - [x] Comments and docstrings are one line. No measurements or history in the source.
 - [x] No personal data, machine names, internal hosts or local paths. No AI attribution lines.

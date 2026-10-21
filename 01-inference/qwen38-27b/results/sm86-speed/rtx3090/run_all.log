@@ -1,0 +1,45 @@
+start 22:26:47 avail 23G gpu 1187MiB
+base-1 up: 17889 MiB, 55
+base-1 hashes: 1:14f19f7ex1 14:0e189b55x1 14:328367c6x8 14:560da8b0x1 14:5e6f917ax1 14:a4a9d7f1x12 14:ad6358c0x5 2571:eaa68149x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=194.6 gpu-@T0.0=146.2 fibo@T1.0=168.2 gpu-@T1.0=138.1
+qmm-1 up: 17869 MiB, 59
+qmm-1 hashes: 1:14f19f7ex1 14:0e189b55x1 14:328367c6x8 14:560da8b0x1 14:5e6f917ax1 14:a4a9d7f1x12 14:ad6358c0x5 2571:eaa68149x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=202.8 gpu-@T0.0=152.9 fibo@T1.0=178.5 gpu-@T1.0=140.7
+base-2 up: 17884 MiB, 57
+base-2 hashes: 1:14f19f7ex1 14:0e189b55x1 14:328367c6x8 14:560da8b0x1 14:5e6f917ax1 14:a4a9d7f1x12 14:ad6358c0x5 2571:eaa68149x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=185.9 gpu-@T0.0=145.8 fibo@T1.0=169.3 gpu-@T1.0=137.1
+qmm-2 up: 18102 MiB, 58
+qmm-2 hashes: 1:14f19f7ex1 14:0e189b55x1 14:328367c6x8 14:560da8b0x1 14:5e6f917ax1 14:a4a9d7f1x12 14:ad6358c0x5 2571:eaa68149x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=202.8 gpu-@T0.0=152.6 fibo@T1.0=177.6 gpu-@T1.0=141.7
+base-3 up: 17896 MiB, 58
+base-3 hashes: 1:14f19f7ex1 14:0e189b55x1 14:328367c6x8 14:560da8b0x1 14:5e6f917ax1 14:a4a9d7f1x12 14:ad6358c0x5 2571:eaa68149x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=194.8 gpu-@T0.0=146.0 fibo@T1.0=168.7 gpu-@T1.0=136.7
+qmm-3 up: 17892 MiB, 58
+qmm-3 hashes: 1:14f19f7ex1 14:0e189b55x1 14:328367c6x8 14:560da8b0x1 14:5e6f917ax1 14:a4a9d7f1x12 14:ad6358c0x5 2571:eaa68149x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=202.7 gpu-@T0.0=152.0 fibo@T1.0=178.0 gpu-@T1.0=140.0
+ALT_DONE
+exp-1 up: 17896 MiB, 60
+exp-1 hashes: 1:14f19f7ex1 14:0e189b55x1 14:328367c6x8 14:560da8b0x1 14:5e6f917ax1 14:a4a9d7f1x12 14:ad6358c0x5 2571:eaa68149x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=188.1 gpu-@T0.0=146.9 fibo@T1.0=172.2 gpu-@T1.0=137.3
+both-1 up: 17892 MiB, 59
+both-1 hashes: 1:14f19f7ex1 14:0e189b55x1 14:328367c6x8 14:560da8b0x1 14:5e6f917ax1 14:a4a9d7f1x12 14:ad6358c0x5 2571:eaa68149x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=194.3 gpu-@T0.0=155.3 fibo@T1.0=177.5 gpu-@T1.0=143.7
+ALT_DONE
+base-1 up: 19230 MiB, 62
+base-1 hashes: 1:04a77359x1 14:0c99c6aax5 14:41b4449ex2 14:86de1c69x1 14:b4b8b4c2x8 14:f5c9409cx12 2571:4c821e72x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=141.6 gpu-@T0.0=110.9 fibo@T1.0=143.1 gpu-@T1.0=87.9
+qmm-1 up: 19226 MiB, 62
+qmm-1 hashes: 1:04a77359x1 14:0c99c6aax5 14:41b4449ex2 14:86de1c69x1 14:b4b8b4c2x8 14:f5c9409cx12 2571:4c821e72x5 
+   alone eq/uneq [24, 0] serial eq/uneq [12, 0]
+   tok/s fibo@T0.0=151.8 gpu-@T0.0=114.3 fibo@T1.0=146.1 gpu-@T1.0=93.4
+ALT_DONE
+ALL_DONE 22:38:41

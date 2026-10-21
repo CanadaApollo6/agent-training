@@ -15,7 +15,7 @@
 
 ## Receipt
 
-- Environment: NVIDIA A10 (24 GB, sm_86, 72 SMs), Linux, driver 570.148.08, CUDA 13.0 `nvcc`, Zig 0.17.0, built `-Dsm=86 -Doptimize=ReleaseFast`. Every number here is A10 (sm_86); base is `main` d1018b31 built the same way on the same machine.
+- Environment: NVIDIA A10 (24 GB, sm_86, 72 SMs), Linux, driver 570.148.08, CUDA 13.0 `nvcc`, Zig 0.17.0, built `-Dsm=86 -Doptimize=ReleaseFast`. Numbers are A10 (sm_86) unless marked RTX 3090; base is `main` d1018b31 built the same way on the same machine.
 - Checkpoints:
   - `TensorFold/Qwen3.8-27B-MLX-4bit` rev 22d8d538 with `z-lab/Qwen3.8-27B-DFlash2`.
   - `CanadaApollo6/Ornith-1.5-35B-A3B-M3TiS-3090` rev 66da2f4e (Qwen3.5-MoE 35B-A3B), drafted by its own MTP layer.
@@ -36,6 +36,16 @@
     - Every request's token hash, in order, is the same on this branch as on base in every round (28 requests a round on the 35B-A3B; 9 + 28 on the 27B).
     - Every `bench_concurrent` run reports alone 24 equal / 0 unequal and serial 12 / 0, on both binaries and both models. `bench_cache` qualifies on every run.
   - An earlier A10 machine gave unequal alone/serial cells on base as well as on this branch: base 16 / 8 alone on the 35B-A3B and 17 / 7 on the 27B. It also failed `bench_cache` on the 27B for both binaries, and its base T=1 hashes differed from this machine's base. None of that reproduces on this machine, for either binary. A device-side check of the split tickets after every launch (a debug build, not in this branch) found every ticket back at 0. The engine records on one stream, so two graphs never run at once.
+- RTX 3090 (sm_86, 24 GB, driver 615.78.08, CUDA 13.4 `nvcc`, the same build flags), base and this branch alternately, each a fresh server with `TENSORFOLD_MEMORY_RESERVE_GIB=4 --prompt-cache-gib 2`:
+  - The 35B-A3B (MTP drafts, `--context 8192 --parallel 2`): three rounds each. The 27B (DFlash2, `--context 4096 --parallel 2`): one round each. A round is `bench_openai --reps 3` at T=0 and seeded T=1, then `bench_concurrent --tokens 128 --reps 2 --alone --serial --levels 1,2` at T=0 and seeded T=1, then `bench_cache`.
+  - Every request's token hash (34 a round) is the same on this branch as on base in every round, on both models.
+  - Every `bench_concurrent` run reports alone 24 / 0 and serial 12 / 0, and `bench_cache` qualifies on every run.
+  - Decode, median tok/s, one stream, code / chat (35B-A3B: mean of the three rounds):
+
+    | model | base T=0 | this T=0 | base T=1 | this T=1 |
+    | --- | --- | --- | --- | --- |
+    | 35B-A3B, MTP drafts | 191.8 / 146.0 | 202.8 / 152.5 | 168.7 / 137.3 | 178.0 / 140.8 |
+    | 27B, DFlash2 | 141.6 / 110.9 | 151.8 / 114.3 | 143.1 / 87.9 | 146.1 / 93.4 |
 - Decode speed: `bench_openai --tokens 128 --reps 3`, median tok/s, one stream, `--parallel 1`, code / chat.
 
   | model, serve | base T=0 | this T=0 | base T=1 | this T=1 |
@@ -85,7 +95,7 @@
 - Not run:
   - nvcc 13.2's record set: I have no 13.2 here.
   - Metal: this touches only the CUDA engine.
-  - GB10, sm_89, sm_120 and an RTX 3090. GB10's path is unchanged by construction (`split == null`).
+  - GB10, sm_89 and sm_120. GB10's path is unchanged by construction (`split == null`).
 
 ## Checklist
 
@@ -93,7 +103,7 @@
 - [x] Drafted output equals plain (`window`/`tree` == `step`), a resumed state equals a fresh one, and concurrent equals solo, at the engine level and served (`bench_concurrent` alone and serial all equal, three rounds against base).
 - [x] No precision traded for speed: per-projection partition, slice partials and slice-order sums unchanged, checked byte for byte.
 - [x] Prompt processing is no slower: same calls past 16 rows; TTFT within noise.
-- [x] The description says which platforms I ran (CUDA sm_86 on an A10) and which I could not.
+- [x] The description says which platforms I ran (CUDA sm_86 on an A10 and an RTX 3090) and which I could not.
 - [ ] New tests fail before the change: not applicable. `affine4-decode` calls `decodeMany`, which this change adds, so it does not build on base. It passes after the change.
 - [x] Comments and docstrings are one line. No measurements or history in the source.
 - [x] No personal data, machine names, internal hosts or local paths. No AI attribution lines.
