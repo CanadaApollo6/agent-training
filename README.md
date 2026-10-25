@@ -901,3 +901,31 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     TensorFold port is a plausible later project. The research question for us is the experience angle: does
     putting lessons from past tasks into memory beat writing them into the prompt, as our harness lessons do
     now? Compare to the Nemotron Lightning memory entry above, which writes facts into weights instead.
+- [Nanbeige4.3-33B](https://huggingface.co/Nanbeige/Nanbeige4.3-33B) (Nanbeige / BOSS Zhipin, 2026-10-24;
+  Apache-2.0; also [Base](https://huggingface.co/Nanbeige/Nanbeige4.3-33B-Base); community GGUFs from bartowski and
+  others, FP8, NVFP4): a **dense 33.1B** thinking model aimed at agentic coding and office ("cowork") tasks.
+  - Shape: plain `LlamaForCausalLM`. 52 layers, hidden 7168, 56 query / 8 KV heads (head 128), MLP 22016, 167K
+    vocab, RoPE theta 1.2e8, 512K context. Every layer is full attention: no sliding window, no linear attention,
+    no MoE, no MTP head. No tech report yet. Their earlier 3B models had arXiv papers.
+  - Card numbers (self-reported, one day old, one run, no error bars), vs Qwen3.8-27B: TB2.1 80.9 vs 73.0
+    (Terminus 2), DeepSWE 65.5 vs 42.5, SWE-Bench Pro 60.3 vs 61.7, Tau3 48.8 vs 48.5, GPQA 89.5 vs 89.2. Unlike
+    Flint's card, nothing reads backwards: it loses where you'd expect a close race, and the big wins are on long
+    agent runs. Still unverified.
+  - Template: thinking on by default. For agent work they evaluate with `preserve_thinking=true`, which keeps
+    earlier turns' reasoning in the prompt (the template's default). The harness has to send `reasoning_content`
+    back, or the thinking is lost. Tool calls default to the Qwen3-Coder XML format, so vLLM/SGLang use the
+    `qwen3` reasoning parser and the `qwen3_coder` tool parser. Sampling for agents: T 1.0, top-p 0.95.
+  - The 3090 (memory): at ~4.25 bits the body is ~16.3 GB, plus ~0.9 GB for a 6-bit output head, ≈ 17.2 GB. The
+    catch is the KV cache. All 52 layers keep one, 213 KB a token at 16 bits and 53 KB at 4 bits. That's 4× our
+    Qwen3.8-27B build, where only one layer in four keeps a long cache. About 85K of 4-bit KV fits next to the
+    weights on a headless card, vs 262K on the 27B. Bartowski's Q4_K_M (~20 GB) leaves only ~15K.
+  - The 3090 (speed): ~17.2 GB read per token gives a plain-decode ceiling around 52 tok/s, close to the 27B's
+    plain read (16.6 ms a round). It has no draft head, so the drafting that gets our 27B build to 135-221 tok/s
+    doesn't carry over. Prompt-lookup only, unless someone trains a drafter. Their 3B DSpark drafter has a
+    different vocab (166144), so it won't plug in. At 64K context the KV reads add ~3.4 GB a token, about −20%.
+  - Engine work: the least of any candidate. It's plain Llama, so llama.cpp, ExLlamaV3 and vLLM run it today.
+    In our Zig engine it's the 27B's full-attention layers repeated 52 times, with no GDN state.
+  - **For us:** the strongest claimed ~30B agent model so far, and the first dense one with an easy port. Same
+    gate as Flint: run BF16 on one H200 (66 GB, so no need for the card's TP4) under vLLM, on our 19-task TB2 pilot
+    under pi with 3 attempts, against R1s's 10.0/19. Run `lookup_audit.py` too. If it clearly wins, the local
+    question becomes whether ~85K context and ~50 tok/s is worth trading for the 27B's 262K and 135-221 tok/s.
