@@ -668,6 +668,66 @@ audit is `results/flint-lookup-audit.md`.
 - **Verdict for M3TiS #4:** the gate was "beats R1s". It doesn't, so no KL or Zig work for now. Its different solve
   set makes it a possible second opinion or ensemble member, not a replacement.
 
+## Nanbeige4.3-33B BF16 on the pilot (2026-10-25)
+
+[Nanbeige4.3-33B](https://huggingface.co/Nanbeige/Nanbeige4.3-33B) (dense 33B, plain Llama, Apache-2.0, out
+2026-10-24) claims TB2.1 80.9 vs Qwen3.8-27B's 73.0. Does it beat R1s on our pilot, enough to be worth a 3090 build and
+a draft head of our own? Same pilot: pi, 19 tasks, 3 attempts, 60 turns, 60 minutes.
+
+- **Setup:** BF16 at rev c1093c50 on vLLM 0.32, **one Prime H200 per attempt** (Nebius, $5.40/h each). One pod
+  couldn't hold all three: every layer keeps a KV cache, so 61 GiB holds only 309K tokens at BF16. Even with 7
+  conversations a pod, KV hit 90–94% and vLLM preempted 2 requests in total; the 3 runs that hit the hour were on
+  tasks R1s fails too (custom-memory-heap-crash, make-mips-interpreter, protein-assembly). Parsers from the card
+  (`qwen3` reasoning, `qwen3_coder` tools). Its generation_config sets no sampling, so the card's agent sampling (T 1.0,
+  top_p 0.95) was set server-side. BF16 KV.
+- **Earlier thinking goes back to the model**, as in the card's agent evals (`preserve_thinking`). Checked by
+  rebuilding a run's prompts: with the reasoning they match the recorded prompt sizes (+20 tokens, constant), without
+  it they fall 17–338 tokens short.
+- **Pod fixes:** Nebius ships driver 550 (CUDA 12.4) and vLLM 0.32's wheels are CUDA 13, so `cuda-compat-13-0`
+  supplies a forward-compatible libcuda. FlashInfer's top-p sampler JIT-builds with the system nvcc and fails, so
+  `VLLM_USE_FLASHINFER_SAMPLER=0` (same distribution, PyTorch sampler).
+- Scripts: `setup_nanbeige_pod.sh`, `serve_nanbeige_pod.sh`, `run_pilot_attempt.sh` and `pilot_status.py` (both
+  generic now), `lookup_audit.py`. Pod times: `results/nanbeige-pods.log`. Spend: $26.95, including ~25 minutes of
+  draft-head data generation on the pods that finished first (see below).
+
+| Build | Solved per attempt (of 19) | Mean | vs R1s, task by task | Median output tokens a task |
+|---|---|---|---|---|
+| Nanbeige BF16, as scored | 11, 10, 13 | 11.3 (60%) | +7.0 points (better on 7, worse on 4), p = 0.61 | 20.6K |
+| Nanbeige BF16, lookup run failed | 11, 9, 13 | 11.0 (58%) | +5.3 points (better on 6, worse on 4), p = 0.73 | 20.6K |
+| R1s | 11, 10, 9 | 10.0 (53%) | - | 12.6K |
+| Flint BF16, as scored | 9, 11, 9 | 9.7 (51%) | −1.8 points, p = 1.0 | 23.8K |
+
+| Build | Solved-run tokens vs R1s | 95% CI | Longer on | Output tokens per call (median run) |
+|---|---|---|---|---|
+| Nanbeige BF16 | 2.71× | 1.92–3.77 | 10 of 11 tasks | 1074 (R1s: 406) |
+
+| Build | Gave a wrong answer | Hit 60 turns | Hit 60 min |
+|---|---|---|---|
+| R1s | 10 | 14 | 3 |
+| Nanbeige BF16 | 18 | 2 | 3 |
+
+Full tables: `results/nanbeige-tb2-compare.md` (lookup run failed) and `results/nanbeige-tb2-compare-raw.md`. Lookup
+audit: `results/nanbeige-lookup-audit.md`.
+
+- **Best mean so far, but not a clear win.** 11.0–11.3 vs R1s's 10.0 is +1 task an attempt, and the paired test
+  can't tell it from noise (p 0.61–0.73). The card's 8-point TB2.1 lead over Qwen3.8-27B doesn't turn into a clear
+  lead over a 3-bit Ornith 35B here.
+- **Strong on long build-and-debug work:** compile-compcert 3/3 (R1s 1/3), rstan-to-pystan 3/3 (R1s 2/3, Flint 0/3),
+  git-multibranch 3/3 (R1s 1/3), custom-memory-heap-crash 2/3 (R1s 0/3), protein-assembly 1/3 (first solve by any
+  build). Unlike Flint it also gets kv-store-grpc 3/3.
+- **Weak where it stops early, sure of itself:** financial-document-processor 0/3 (R1s 2/3, each run over in 5–8
+  turns), sqlite-db-truncate 0/3 (R1s 2/3), nginx-request-logging 1/3 (R1s 3/3). It ran out of turns only twice; most
+  failures are a finished, wrong answer, where R1s more often runs out of turns still trying.
+- **It looked the benchmark up once:** a2 mteb-retrieve queried Hugging Face's datasets server for
+  `laude-institute/terminal-bench`, and that run scored as solved. The second row counts it as failed.
+- **2.7× the tokens.** Solved runs used 2.71× R1s's tokens, longer on 10 of 11 shared tasks, from calls 2.6× as long
+  (it thinks at length each turn), not from more calls. On a 3090 that compounds with speed: a dense 33B reads ~17 GB
+  a token at 4 bits, against ~3B active weights for R1s, so a task would take many times R1s's wall time even with a
+  draft head.
+- **Verdict:** the gate was "clearly beats R1s". +1 task at p ≈ 0.7 and 2.7× the tokens doesn't meet it, so no 3090
+  build or draft head for now. Draft-head generation started speculatively on the idle pods was stopped; the scripts
+  and the 639 responses so far are kept for a later go (`01-inference/nanbeige-33b/drafter/`).
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
@@ -681,6 +741,8 @@ audit is `results/flint-lookup-audit.md`.
   repetition penalty on, at 1.40× the tokens per solve. The model itself is a weak terminal agent next to Ornith 35B.
 - **Flint BF16:** ties R1s (9.3 of 19 with the benchmark-lookup run failed, 9.7 as scored, vs 10.0) at 1.81× the
   tokens per solve. It solves different tasks, but it doesn't beat R1s, so it isn't an M3TiS #4 build yet.
+- **Nanbeige4.3-33B BF16:** best mean yet (11.0 of 19 with the lookup run failed, 11.3 as scored, vs 10.0), but
+  within noise (p ≈ 0.7) at 2.71× the tokens per solve. Gate not met; no 3090 build or draft head for now.
 - **Proxy fixes:** keep the image fix; it is the clear win (30% → 47% on picture tasks). check is cheap and maybe
   helps; cutoff mostly turns cut-off failures into ordinary failures. Together about +5 points per task, not proven at
   2 tries. Prime sandbox terminations (half the reruns lost again) must be dealt with before RL on Prime sandboxes.

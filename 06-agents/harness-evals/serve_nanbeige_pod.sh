@@ -3,6 +3,7 @@
 # 127.0.0.1:8000, served as the given names. Parsers from the card (qwen3 reasoning, qwen3_coder tool calls). Its
 # generation_config sets no sampling, so the card's agent sampling (T 1.0, top_p 0.95) is set server-side. The
 # template keeps earlier turns' thinking by default (preserve_thinking unset), as in their agent evals.
+# KV_DTYPE=fp8 doubles the KV pool, for bulk generation (drafter data) where exact BF16 attention doesn't matter.
 # Waits until it generates. Log: /tmp/vllm.log
 #
 #   bash serve_nanbeige_pod.sh nanbeige-bf16-a1 [more names]
@@ -14,7 +15,7 @@ export PATH=$HOME/vllm/bin:$PATH   # ninja: vLLM JIT-builds kernels at startup
 # draws from the same distribution.
 export VLLM_USE_FLASHINFER_SAMPLER=0
 nohup ~/vllm/bin/vllm serve ~/nanbeige --served-model-name "$@" --host 127.0.0.1 --port 8000 \
-  --max-model-len 262144 --gpu-memory-utilization 0.92 --enable-prefix-caching \
+  --max-model-len 262144 --gpu-memory-utilization 0.92 --enable-prefix-caching --kv-cache-dtype ${KV_DTYPE:-auto} \
   --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder \
   --override-generation-config '{"temperature": 1.0, "top_p": 0.95}' > /tmp/vllm.log 2>&1 &
 until curl -sf -m 10 127.0.0.1:8000/health > /dev/null; do

@@ -929,3 +929,8 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     gate as Flint: run BF16 on one H200 (66 GB, so no need for the card's TP4) under vLLM, on our 19-task TB2 pilot
     under pi with 3 attempts, against R1s's 10.0/19. Run `lookup_audit.py` too. If it clearly wins, the local
     question becomes whether ~85K context and ~50 tok/s is worth trading for the 27B's 262K and 135-221 tok/s.
+  - **Result (2026-10-25, $26.95):** the best mean on the pilot so far, but not a clear win. 11.0 of 19 with one
+    benchmark-lookup run failed (11.3 as scored) vs R1s's 10.0, p ≈ 0.7, at 2.71× R1s's tokens per solve. Strong on
+    long build-and-debug tasks (compile-compcert 3/3, rstan-to-pystan 3/3), weak where it stops early with a wrong
+    answer (financial-document-processor 0/3). Gate not met, so no 3090 build or draft head for now. Draft-data
+    scripts and 639 responses are kept in `01-inference/nanbeige-33b/`. Details: `06-agents/harness-evals/README.md`.

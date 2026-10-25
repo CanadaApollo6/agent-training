@@ -6,3 +6,8 @@
 2026-10-25 13:48:17 ip nanbeige-a3 204.12.168.38 (pod 0b7274f9fb474311b8ef1ee1348c1727)
 2026-10-25 13:56:15 server up a1 (vLLM 0.32.0, rev c1093c50); attempt a1 started, -c 7
 2026-10-25 13:58:19 servers up a2, a3; attempts a2, a3 started, -c 7
+2026-10-25 15:15:53 a3 done (13/19); drafter data gen started on nanbeige-a3 (shard 0 of 3)
+2026-10-25 15:23:08 a1 done (11/19); nanbeige-a1 restarted with FP8 KV, drafter gen shard 1 of 3; a3 gen concurrency 256 -> 128 (KV preemption churn)
+2026-10-25 15:25:38 terminate nanbeige-a1 6d4a70cf927f4686bc7bd914afb8ca85
+2026-10-25 15:25:40 terminate nanbeige-a2 43b62429584f40e092cd4bb109b05439
+2026-10-25 15:25:41 terminate nanbeige-a3 0b7274f9fb474311b8ef1ee1348c1727
