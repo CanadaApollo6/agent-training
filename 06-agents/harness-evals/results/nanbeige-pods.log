@@ -1,0 +1,8 @@
+2026-10-25 13:45:25 create nanbeige-a1 H200_141GB nebius 1215b4 $5.40/h
+2026-10-25 13:45:54 create nanbeige-a2 H200_141GB nebius 13c583 $5.40/h (via prime_create.py)
+2026-10-25 13:46:16 create nanbeige-a3 H200_141GB nebius 1215b4 $5.40/h (via prime_create.py)
+2026-10-25 13:47:44 ip nanbeige-a1 204.12.188.225 (pod 6d4a70cf927f4686bc7bd914afb8ca85)
+2026-10-25 13:48:16 ip nanbeige-a2 89.169.125.201 (pod 43b62429584f40e092cd4bb109b05439)
+2026-10-25 13:48:17 ip nanbeige-a3 204.12.168.38 (pod 0b7274f9fb474311b8ef1ee1348c1727)
+2026-10-25 13:56:15 server up a1 (vLLM 0.32.0, rev c1093c50); attempt a1 started, -c 7
+2026-10-25 13:58:19 servers up a2, a3; attempts a2, a3 started, -c 7

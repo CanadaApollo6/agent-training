@@ -31,6 +31,10 @@ FAMILIES = {
     "flint": {"ornith35b:q8": "Ornith 35B Q8_0 (pod, llama.cpp)",
               "ornith35b:r1s-c4s": "Ornith 35B R1s (3090, TensorFold)",
               "flint:bf16": "Flint BF16 (H200, Recursive's SGLang kit)"},
+    "nanbeige": {"ornith35b:q8": "Ornith 35B Q8_0 (pod, llama.cpp)",
+                 "ornith35b:r1s-c4s": "Ornith 35B R1s (3090, TensorFold)",
+                 "flint:bf16": "Flint BF16 (H200, Recursive's SGLang kit)",
+                 "nanbeige:bf16": "Nanbeige4.3-33B BF16 (H200 per attempt, vLLM)"},
 }
 BUILDS = FAMILIES["ornith35b"]
 
