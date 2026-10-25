@@ -934,3 +934,19 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     long build-and-debug tasks (compile-compcert 3/3, rstan-to-pystan 3/3), weak where it stops early with a wrong
     answer (financial-document-processor 0/3). Gate not met, so no 3090 build or draft head for now. Draft-data
     scripts and 639 responses are kept in `01-inference/nanbeige-33b/`. Details: `06-agents/harness-evals/README.md`.
+- [Zagitta/gpu-unlock](https://github.com/Zagitta/gpu-unlock) (2026-10-24, GPL-2.0, one author, days old): a Linux
+  kernel module that lifts the GeForce Ampere half-rate limit on 16-bit tensor math with 32-bit accumulation. The
+  RTX 3090 does FP16/BF16 multiply-adds into FP32 at half the speed of the same chip sold as an A-series card. The
+  module loads from the initramfs before `nvidia`, writes the card's speed settings (the CMP-unlocker technique), and
+  resets the card.
+  - Reported: BF16 matrix multiplies +25-67% on a 3090, LLM prompt processing +14-36%, outputs bit-identical.
+    Decode doesn't change, because one token at a time is limited by memory reads, not math.
+  - **For us:** it helps exactly where our engine is math-bound. (1) Prompt processing: our 27B reads a 2.5K-token
+    prompt in ~1.2 s vs a 4090's 0.7 s. (2) Drafted decoding's verify step: checking 16 guessed tokens on a 33B
+    dense model is close to math-bound on a locked 3090 (~15 ms of math vs ~18 ms of reads), so unlocked math makes
+    wider guesses cheaper. This matters most for a Nanbeige drafter. It does nothing for plain decode speed.
+  - Risks: a boot-time kernel module from a new repo on the card that also drives Riel's desktop (the screen blanks
+    until the NVIDIA driver takes over), more heat in an already warm room (more math at the same 420 W cap means
+    hitting the cap sooner), and it ties results to a modded card, so speeds measured with it need labels. Install
+    only with Riel's OK. Measure prompt speed and verify time before and after, on the 27B build first, then on
+    Nanbeige once its drafter exists.
