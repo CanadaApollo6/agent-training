@@ -3,6 +3,7 @@
 # serves Nanbeige (FP8, as in training) with SGLang's DFLASH decoder, and runs `specforge benchmark` on its five
 # held-out sets (none were in the training prompts). Acceptance length = completion tokens / verify steps, the number
 # z-lab reports (Qwen3.8-27B-DFlash2: 4.1-5.5). Then single-user speed on two sets, with and without the draft.
+# Everything runs twice: greedy, then sampled at the agent's settings (temperature 1.0, top_p 0.95; tags end in -t1).
 #
 #   bash eval_accept.sh <checkpoint dir, e.g. ~/out/full/nanbeige-dflash2-full-step2278> [prompts per set, default 64]
 #
@@ -34,9 +35,10 @@ serve() {  # serve <tag> [extra args...]: start SGLang on :30000 and wait until 
   echo "SERVE_FAIL $tag"; tail -20 "$out/serve-$tag.log"; return 1
 }
 stop() { kill $srv 2>/dev/null; wait $srv 2>/dev/null; sleep 5; }
-bench() {  # bench <file tag> <dataset> <prompts> <concurrency>
+T1=(--temperature 1.0 --top-p 0.95 --top-k -1)  # top-k defaults to 1, i.e. greedy
+bench() {  # bench <file tag> <dataset> <prompts> <concurrency> [sampling args...]
   specforge benchmark --model ~/nanbeige --dataset "$2" --num-prompts "$3" --concurrency "$4" --enable-thinking \
-    --max-new-tokens 2048 --output-json "$out/$1-$2.json" > "$out/$1-$2.log" 2>&1
+    --max-new-tokens 2048 --output-json "$out/$1-$2.json" "${@:5}" > "$out/$1-$2.log" 2>&1
   echo "$1 $2: $(tail -3 "$out/$1-$2.log" | tr '\n' ' ' | cut -c1-300)"
 }
 
@@ -44,8 +46,10 @@ serve dflash --speculative-algorithm DFLASH --speculative-draft-model-path "$dra
   || exit 1
 for ds in gsm8k math500 humaneval mbpp mt-bench; do bench accept $ds "$n" 16; done
 for ds in humaneval mt-bench; do bench speed $ds 10 1; done
+for ds in gsm8k math500 humaneval mbpp mt-bench; do bench accept-t1 $ds "$n" 16 "${T1[@]}"; done
+for ds in humaneval mt-bench; do bench speed-t1 $ds 10 1 "${T1[@]}"; done
 stop
 serve plain || exit 1
-for ds in humaneval mt-bench; do bench base $ds 10 1; done
+for ds in humaneval mt-bench; do bench base $ds 10 1; bench base-t1 $ds 10 1 "${T1[@]}"; done
 stop
 echo EVAL_DONE

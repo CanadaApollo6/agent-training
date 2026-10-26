@@ -15,3 +15,4 @@
 2026-10-26 11:03:19 create nb-eval1 H100_80GB PCIe lambdalabs 4258a6 $3.29/h (3fe47bebad98457a94223c24eb26155b) — test SGLang DFLASH serving + eval_accept.sh on the step-250 checkpoint while training runs
 2026-10-26 12:29:46 terminate nb-eval1 3fe47beb (~1h15m, ~$4): SGLang main serves our DFlash2 export; step-250 held-out accept 1.67-2.31, single-user 1.59x humaneval / 1.25x mt-bench on H100 FP8
 2026-10-26 17:47:02 terminate nb-train1 22b314c7 (~8h15m, ~$44): full run TRAIN_EXIT 0 at step 2278 (17:07 local); final held-out accept 2.80-3.85, single-user 2.44x humaneval / 1.95x mt-bench on H200; checkpoints + exported draft home
+2026-10-26 18:07:09 create nb-cool1 H200 nebius 13c583 $5.40/h (816dda2f5eb94271909aaee572fe3f43) — lr cooldown: warm-start from step 2278, 570 steps cosine 5e-4 -> 0, then greedy + T=1.0 eval

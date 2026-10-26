@@ -1,0 +1,91 @@
+# Cooldown (2026-10-26): the full run kept lr at a constant 5e-4 and never decayed it. This warm-starts from its final
+# weights (step 2278; optimizer state was lost with the pod, so Adam starts fresh behind a short warmup) and trains
+# 570 more steps (~half an epoch) on the same data in a new order, with lr cosine-decayed from 5e-4 to 0.
+# ~2.9 samples/s, so ~1.8 h.
+#
+#   bash train_run.sh cool-1gpu.yaml
+model:
+  target_model_path: /home/ubuntu/nanbeige
+  draft_checkpoint_path: /home/ubuntu/warm
+  draft_model_config: configs/nanbeige4.3-33b-dflash2.json
+  target_backend: sglang
+  trust_remote_code: false
+  embedding_key: model.embed_tokens.weight
+  lm_head_key: lm_head.weight
+  torch_dtype: bfloat16
+  mask_token_id: 1
+  use_liger_kernel: true
+  sglang_disable_radix_cache: true
+  sglang_quantization: fp8
+  # FA3 is prebuilt for Hopper; FlashInfer JIT-builds its prefill kernels (and needs the full CUDA 13 headers).
+  sglang_attention_backend: fa3
+  sglang_context_length: 8199
+
+data:
+  train_data_path: /home/ubuntu/data/full.jsonl
+  max_length: 8192
+  chat_template: nanbeige-thinking
+  build_dataset_num_proc: 16
+  dataloader_num_workers: 4
+  cache_dir: /home/ubuntu/cache/full
+
+training:
+  strategy: dflash
+  num_epochs: 1
+  max_steps: 570
+  tp_size: 1
+  batch_size: 1
+  accumulation_steps: 32
+  learning_rate: 0.0005
+  lr_scheduler: cosine
+  warmup_ratio: 0.03
+  max_grad_norm: 1.0
+  attention_backend: flex_attention
+  num_anchors: 512
+  loss_decay_gamma: 7.0
+  objective_chunk_blocks: 128
+  loss_type: dflash
+  dflash2_selector_loss_alpha: 1.0
+  dflash2_selector_stop_gradient: false
+  dflash_teacher_metrics: false
+  save_interval: 190
+  log_interval: 10
+  dist_timeout: 30
+  seed: 42
+  prompt_seed: 7
+
+tracking:
+  report_to: tensorboard
+
+runtime:
+  producer_lease: 4
+  producer_concurrency: 2
+  # The low watermark must cover one optimizer step (32 samples). In flight is ~0.4 GB per sample (up to ~0.7 GB
+  # for an 8K agent window), hence the 64 GB Mooncake segment.
+  in_flight_high_watermark: 48
+  in_flight_low_watermark: 32
+
+run_id: nanbeige-dflash2-cool
+output_dir: /home/ubuntu/out/cool
+
+deployment:
+  mode: disaggregated
+  trainer:
+    nnodes: 1
+    nproc_per_node: 1
+  disaggregated:
+    control_dir: /home/ubuntu/out/cool/control
+    consumer_state_dir: /home/ubuntu/out/cool/consumer-state
+    backend: mooncake
+    managed_local:
+      trainer_cuda_visible_devices: ["0"]
+      mooncake:
+        protocol: tcp
+        global_segment_size_bytes: 68719476736
+        local_buffer_size_bytes: 1073741824
+        default_kv_lease_ttl_ms: 10000
+      capture_servers:
+        - port: 30000
+          cuda_visible_devices: ["0"]
+          tp_size: 1
+          mem_fraction_static: 0.4
