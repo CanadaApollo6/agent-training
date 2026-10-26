@@ -10,5 +10,9 @@ fi
 [ -d /usr/local/cuda-13.0/bin ] && export CUDA_HOME=/usr/local/cuda-13.0 PATH=/usr/local/cuda-13.0/bin:$PATH
 export PATH=$HOME/sf/bin:$PATH
 cfg=$(realpath "$1"); name=$(basename "$1" .yaml)
+# A run that just died leaves the capture port (30000) unbindable for a minute or so, and SpecForge refuses to start.
+for _ in $(seq 60); do
+  python3 -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 30000))' 2>/dev/null && break; sleep 5
+done
 cd ~/SpecForge && specforge train --config "$cfg" > /tmp/train-$name.log 2>&1
 echo "TRAIN_EXIT $?" >> /tmp/train-$name.log

@@ -58,8 +58,10 @@ tracking:
 runtime:
   producer_lease: 4
   producer_concurrency: 2
-  in_flight_high_watermark: 32
-  in_flight_low_watermark: 16
+  # The low watermark must cover one optimizer step (32 samples). In flight is ~0.4 GB per sample (up to ~0.7 GB
+  # for an 8K agent window), hence the 64 GB Mooncake segment.
+  in_flight_high_watermark: 48
+  in_flight_low_watermark: 32
 
 run_id: nanbeige-dflash2-full
 output_dir: /home/ubuntu/out/full
@@ -77,7 +79,7 @@ deployment:
       trainer_cuda_visible_devices: ["0"]
       mooncake:
         protocol: tcp
-        global_segment_size_bytes: 34359738368
+        global_segment_size_bytes: 68719476736
         local_buffer_size_bytes: 1073741824
         default_kv_lease_ttl_ms: 10000
       capture_servers:
