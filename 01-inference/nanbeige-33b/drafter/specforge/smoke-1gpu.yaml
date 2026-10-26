@@ -1,9 +1,10 @@
-# Smoke test on one H200 while the other three generate data: one BF16 capture server and one trainer share GPU 3.
-# Short run on the first responses; checks the template, loss mask, capture and a falling loss, not speed.
+# Smoke test on one H200 (Prime had only single GPUs, 2026-10-26): an FP8 capture server and the trainer share GPU 0,
+# which needs allow_shared_gpu.py. 60 optimizer steps on 2,000 responses plus the agent windows: checks capture of a
+# Llama target, the loss mask and a falling loss, and measures samples/s to price the full run.
 #
 #   cd ~/SpecForge && specforge train --config ~/smoke-1gpu.yaml
 model:
-  target_model_path: /root/nanbeige
+  target_model_path: /home/ubuntu/nanbeige
   draft_model_config: configs/nanbeige4.3-33b-dflash2.json
   target_backend: sglang
   trust_remote_code: false
@@ -13,15 +14,16 @@ model:
   mask_token_id: 1
   use_liger_kernel: true
   sglang_disable_radix_cache: true
+  sglang_quantization: fp8
   sglang_context_length: 8199
 
 data:
-  train_data_path: /root/data/smoke.jsonl
+  train_data_path: /home/ubuntu/data/smoke.jsonl
   max_length: 8192
   chat_template: nanbeige-thinking
   build_dataset_num_proc: 16
   dataloader_num_workers: 4
-  cache_dir: /root/cache/smoke
+  cache_dir: /home/ubuntu/cache/smoke
 
 training:
   strategy: dflash
@@ -58,7 +60,7 @@ runtime:
   in_flight_low_watermark: 16
 
 run_id: nanbeige-dflash2-smoke
-output_dir: /root/out/smoke
+output_dir: /home/ubuntu/out/smoke
 
 deployment:
   mode: disaggregated
@@ -66,11 +68,11 @@ deployment:
     nnodes: 1
     nproc_per_node: 1
   disaggregated:
-    control_dir: /root/out/smoke/control
-    consumer_state_dir: /root/out/smoke/consumer-state
+    control_dir: /home/ubuntu/out/smoke/control
+    consumer_state_dir: /home/ubuntu/out/smoke/consumer-state
     backend: mooncake
     managed_local:
-      trainer_cuda_visible_devices: ["3"]
+      trainer_cuda_visible_devices: ["0"]
       mooncake:
         protocol: tcp
         global_segment_size_bytes: 34359738368
@@ -78,6 +80,6 @@ deployment:
         default_kv_lease_ttl_ms: 10000
       capture_servers:
         - port: 30000
-          cuda_visible_devices: ["3"]
+          cuda_visible_devices: ["0"]
           tp_size: 1
-          mem_fraction_static: 0.55
+          mem_fraction_static: 0.4

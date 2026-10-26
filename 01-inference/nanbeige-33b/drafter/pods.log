@@ -8,3 +8,5 @@
 2026-10-25 22:12:16 384 parallel filled the KV pool (96%); generator restarted at 224 (server unchanged)
 2026-10-26 02:37:15 GEN_DONE: 35,999 responses (1 request failed), 94.5M tokens, mean 2,625, 47% cut at 4K cap; synced home
 2026-10-26 02:37:15 terminate nb-gen3 96e9d9c1517e40c5ae5ebd24146b4492
+2026-10-26 09:31:09 create nb-train1 H200_141GB nebius 13c583 $5.40/h (22b314c7e3914e60aac37f0169689bce) — colocated SpecForge smoke test
+2026-10-26 09:31:54 ip nb-train1 89.169.96.90 (pod 22b314c7e3914e60aac37f0169689bce)
