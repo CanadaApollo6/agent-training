@@ -9,7 +9,7 @@ export PATH=$HOME/.local/bin:$PATH
 # torch 2.13 is CUDA 13; Nebius H200s ship driver 550. The forward-compat libcuda bridges it, and FlashInfer's JIT
 # kernels need a CUDA 13 nvcc, not the system 12.4.
 if [ "$(nvidia-smi --query-gpu=driver_version --format=csv,noheader | head -1 | cut -d. -f1)" -lt 580 ]; then
-  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq cuda-compat-13-0 cuda-nvcc-13-0 cuda-cudart-dev-13-0 \
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq cuda-compat-13-0 cuda-nvcc-13-0 cuda-cudart-dev-13-0 libcurand-dev-13-0 \
     > /tmp/compat.log 2>&1
 fi
 [ -d ~/SpecForge ] || git clone -q https://github.com/sgl-project/SpecForge.git ~/SpecForge

@@ -10,3 +10,4 @@
 2026-10-26 02:37:15 terminate nb-gen3 96e9d9c1517e40c5ae5ebd24146b4492
 2026-10-26 09:31:09 create nb-train1 H200_141GB nebius 13c583 $5.40/h (22b314c7e3914e60aac37f0169689bce) — colocated SpecForge smoke test
 2026-10-26 09:31:54 ip nb-train1 89.169.96.90 (pod 22b314c7e3914e60aac37f0169689bce)
+2026-10-26 09:49:19 nb-train1 22b314c7 (H200 nebius 13c583, $5.40/h): smoke OK 13:46 UTC (60 steps, ~2.3 samples/s); full run launched 13:49 UTC (2 epochs, 36,450 samples)

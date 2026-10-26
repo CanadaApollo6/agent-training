@@ -1,0 +1,87 @@
+# Full run on one H200 (2026-10-26): same shared-GPU layout as smoke-1gpu.yaml (FP8 capture server + trainer on
+# GPU 0). Data: 35,999 generated responses + 451 agent-run windows (~36.5K samples). Recipe follows SpecForge's
+# qwen3.8-27b DFlash2 H200 example (constant lr 5e-4, ~32-36 samples per optimizer step, teacher metrics off).
+# Smoke measured ~2.3 samples/s, so one epoch is ~4.4 h (~$24 at $5.40/h).
+#
+#   bash train_run.sh full-1gpu.yaml
+model:
+  target_model_path: /home/ubuntu/nanbeige
+  draft_model_config: configs/nanbeige4.3-33b-dflash2.json
+  target_backend: sglang
+  trust_remote_code: false
+  embedding_key: model.embed_tokens.weight
+  lm_head_key: lm_head.weight
+  torch_dtype: bfloat16
+  mask_token_id: 1
+  use_liger_kernel: true
+  sglang_disable_radix_cache: true
+  sglang_quantization: fp8
+  # FA3 is prebuilt for Hopper; FlashInfer JIT-builds its prefill kernels (and needs the full CUDA 13 headers).
+  sglang_attention_backend: fa3
+  sglang_context_length: 8199
+
+data:
+  train_data_path: /home/ubuntu/data/full.jsonl
+  max_length: 8192
+  chat_template: nanbeige-thinking
+  build_dataset_num_proc: 16
+  dataloader_num_workers: 4
+  cache_dir: /home/ubuntu/cache/full
+
+training:
+  strategy: dflash
+  num_epochs: 2
+  tp_size: 1
+  batch_size: 1
+  accumulation_steps: 32
+  learning_rate: 0.0005
+  lr_scheduler: constant
+  warmup_ratio: 0.05
+  max_grad_norm: 1.0
+  attention_backend: flex_attention
+  num_anchors: 512
+  loss_decay_gamma: 7.0
+  objective_chunk_blocks: 128
+  loss_type: dflash
+  dflash2_selector_loss_alpha: 1.0
+  dflash2_selector_stop_gradient: false
+  dflash_teacher_metrics: false
+  save_interval: 250
+  log_interval: 10
+  dist_timeout: 30
+  seed: 42
+  prompt_seed: 42
+
+tracking:
+  report_to: tensorboard
+
+runtime:
+  producer_lease: 4
+  producer_concurrency: 2
+  in_flight_high_watermark: 32
+  in_flight_low_watermark: 16
+
+run_id: nanbeige-dflash2-full
+output_dir: /home/ubuntu/out/full
+
+deployment:
+  mode: disaggregated
+  trainer:
+    nnodes: 1
+    nproc_per_node: 1
+  disaggregated:
+    control_dir: /home/ubuntu/out/full/control
+    consumer_state_dir: /home/ubuntu/out/full/consumer-state
+    backend: mooncake
+    managed_local:
+      trainer_cuda_visible_devices: ["0"]
+      mooncake:
+        protocol: tcp
+        global_segment_size_bytes: 34359738368
+        local_buffer_size_bytes: 1073741824
+        default_kv_lease_ttl_ms: 10000
+      capture_servers:
+        - port: 30000
+          cuda_visible_devices: ["0"]
+          tp_size: 1
+          mem_fraction_static: 0.4

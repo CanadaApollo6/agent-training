@@ -3,7 +3,8 @@
 A run is a chain of messages, often far past the 8K training length, so each run is cut into windows: the system
 prompt and task, then as many whole turns (an assistant message and the tool results after it) as fit in ~7K
 tokens. Tool results over 6K characters keep their head and tail. Tool calls are stored flat; the template wants
-OpenAI shape with arguments as a mapping.
+OpenAI shape with arguments as a mapping. Nanbeige's template allows a system message only first, so the harness's
+mid-run system notices (5 windows of 451) become user messages.
 
     python3 traj_to_specforge.py out.jsonl outputs/primeintellect/*nanbeige*/traces.jsonl
 """
@@ -52,6 +53,7 @@ with open(dst, "w") as out:
             r = json.loads(line)
             for t in r["traces"]:
                 msgs = [clean(n["message"]) for n in t["nodes"]]
+                msgs = [m if i == 0 or m["role"] != "system" else {**m, "role": "user"} for i, m in enumerate(msgs)]
                 tools = [tool_spec(x) for x in (t["nodes"][0].get("tools") or t.get("tools") or [])]
                 head = [m for m in msgs[:2] if m["role"] in ("system", "user")]
                 turns, cur = [], []

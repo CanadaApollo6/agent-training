@@ -15,6 +15,8 @@ model:
   use_liger_kernel: true
   sglang_disable_radix_cache: true
   sglang_quantization: fp8
+  # FA3 is prebuilt for Hopper; FlashInfer JIT-builds its prefill kernels (and needs the full CUDA 13 headers).
+  sglang_attention_backend: fa3
   sglang_context_length: 8199
 
 data:
