@@ -1,0 +1,6 @@
+2026-10-25 16:33:28 create nb-drafter 4xH200_141GB spot datacrunch cdf22f $11.89/h (pod 90297d2e3d9249a7bce790980f8f4573)
+2026-10-25 16:34:37 ip nb-drafter 95.133.252.52 (pod 90297d2e3d9249a7bce790980f8f4573)
+2026-10-25 16:41:47 gen started on GPUs 0-2 (FP8 weights+KV, KV pool 920K/GPU, conc 192, 4K cap), 36K prompts, 639 seeded
+2026-10-25 17:31:17 terminate nb-drafter 90297d2e3d9249a7bce790980f8f4573 (spot preempted after 58m; generated data lost, not synced off the pod)
+2026-10-25 19:45:49 create nb-gen3 H200_141GB nebius 1215b4 $5.40/h (96e9d9c1517e40c5ae5ebd24146b4492)
+2026-10-25 21:34:04 ip nb-gen3 204.12.189.38 (pod 96e9d9c1517e40c5ae5ebd24146b4492); idle until now

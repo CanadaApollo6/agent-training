@@ -1,0 +1,83 @@
+# Smoke test on one H200 while the other three generate data: one BF16 capture server and one trainer share GPU 3.
+# Short run on the first responses; checks the template, loss mask, capture and a falling loss, not speed.
+#
+#   cd ~/SpecForge && specforge train --config ~/smoke-1gpu.yaml
+model:
+  target_model_path: /root/nanbeige
+  draft_model_config: configs/nanbeige4.3-33b-dflash2.json
+  target_backend: sglang
+  trust_remote_code: false
+  embedding_key: model.embed_tokens.weight
+  lm_head_key: lm_head.weight
+  torch_dtype: bfloat16
+  mask_token_id: 1
+  use_liger_kernel: true
+  sglang_disable_radix_cache: true
+  sglang_context_length: 8199
+
+data:
+  train_data_path: /root/data/smoke.jsonl
+  max_length: 8192
+  chat_template: nanbeige-thinking
+  build_dataset_num_proc: 16
+  dataloader_num_workers: 4
+  cache_dir: /root/cache/smoke
+
+training:
+  strategy: dflash
+  num_epochs: 1
+  max_steps: 60
+  tp_size: 1
+  batch_size: 1
+  accumulation_steps: 4
+  learning_rate: 0.0005
+  lr_scheduler: constant
+  warmup_ratio: 0.05
+  max_grad_norm: 1.0
+  attention_backend: flex_attention
+  num_anchors: 512
+  loss_decay_gamma: 7.0
+  objective_chunk_blocks: 128
+  loss_type: dflash
+  dflash2_selector_loss_alpha: 1.0
+  dflash2_selector_stop_gradient: false
+  dflash_teacher_metrics: true
+  save_interval: 1000
+  log_interval: 5
+  dist_timeout: 30
+  seed: 42
+  prompt_seed: 42
+
+tracking:
+  report_to: tensorboard
+
+runtime:
+  producer_lease: 4
+  producer_concurrency: 2
+  in_flight_high_watermark: 32
+  in_flight_low_watermark: 16
+
+run_id: nanbeige-dflash2-smoke
+output_dir: /root/out/smoke
+
+deployment:
+  mode: disaggregated
+  trainer:
+    nnodes: 1
+    nproc_per_node: 1
+  disaggregated:
+    control_dir: /root/out/smoke/control
+    consumer_state_dir: /root/out/smoke/consumer-state
+    backend: mooncake
+    managed_local:
+      trainer_cuda_visible_devices: ["3"]
+      mooncake:
+        protocol: tcp
+        global_segment_size_bytes: 34359738368
+        local_buffer_size_bytes: 1073741824
+        default_kv_lease_ttl_ms: 10000
+      capture_servers:
+        - port: 30000
+          cuda_visible_devices: ["3"]
+          tp_size: 1
+          mem_fraction_static: 0.55

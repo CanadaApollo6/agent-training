@@ -1,12 +1,13 @@
 """On a pod with Nanbeige4.3-33B on vLLM (06-agents/harness-evals/serve_nanbeige_pod.sh): write the model's own
 responses, thinking included, for every prompt. Same sampling as the agent runs (the server's T 1.0, top_p 0.95) so the
 draft head trains on the text it will see. Resumable: prompts already in the output are skipped. Each pod takes the
-prompts with index % N == K.
+prompts with index % N == K. PORT (default 8000) picks the server, for one server a GPU.
 
     python3 gen_responses.py prompts.jsonl out.jsonl <model name> [K N] [concurrency] [max tokens]
 """
 import asyncio
 import json
+import os
 import sys
 
 import httpx
@@ -26,7 +27,7 @@ async def main():
     todo = [p for i, l in enumerate(open(src)) if i % N == K and (p := json.loads(l))["id"] not in done]
     print(f"{len(todo)} to go, {len(done)} done", flush=True)
     sem, out, n = asyncio.Semaphore(CONC), open(dst, "a"), 0
-    async with httpx.AsyncClient(base_url="http://127.0.0.1:8000/v1", timeout=3600,
+    async with httpx.AsyncClient(base_url=f"http://127.0.0.1:{os.environ.get('PORT', 8000)}/v1", timeout=3600,
                                  limits=httpx.Limits(max_connections=CONC)) as client:
         async def one(p):
             nonlocal n
