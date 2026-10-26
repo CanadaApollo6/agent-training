@@ -4,3 +4,7 @@
 2026-10-25 17:31:17 terminate nb-drafter 90297d2e3d9249a7bce790980f8f4573 (spot preempted after 58m; generated data lost, not synced off the pod)
 2026-10-25 19:45:49 create nb-gen3 H200_141GB nebius 1215b4 $5.40/h (96e9d9c1517e40c5ae5ebd24146b4492)
 2026-10-25 21:34:04 ip nb-gen3 204.12.189.38 (pod 96e9d9c1517e40c5ae5ebd24146b4492); idle until now
+2026-10-25 22:06:53 nb-gen3 generating since 21:39 at ~4.9K tok/s, KV 45% full at 192 parallel; restarted at 384 parallel (max-num-seqs 448)
+2026-10-25 22:12:16 384 parallel filled the KV pool (96%); generator restarted at 224 (server unchanged)
+2026-10-26 02:37:15 GEN_DONE: 35,999 responses (1 request failed), 94.5M tokens, mean 2,625, 47% cut at 4K cap; synced home
+2026-10-26 02:37:15 terminate nb-gen3 96e9d9c1517e40c5ae5ebd24146b4492
