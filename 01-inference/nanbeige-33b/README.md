@@ -3,7 +3,7 @@
 Dense 33.1B Llama-architecture thinking model (Nanbeige / BOSS Zhipin, 2026-10-24, Apache-2.0). Reading-spine entry:
 the top-level README. Terminal-Bench 2 pilot: `06-agents/harness-evals/README.md`.
 
-**Status (2026-10-25): building a draft head.** On our 19-task TB2 pilot it averaged 11.0 of 19 (lookup run failed) vs
+**Status (2026-10-26): training the draft head** (full run on one H200, ETA ~17:40 local). On our 19-task TB2 pilot it averaged 11.0 of 19 (lookup run failed) vs
 R1s's 10.0, within noise (p ≈ 0.7), at 2.71× R1s's tokens per solve. That didn't meet the gate, but Riel chose to build
 the draft head anyway: if the model is as good as it looks, the speed-up is worth it.
 
@@ -26,6 +26,28 @@ sample and hand its layer outputs to the trainer, so nothing big is stored on di
 
 Mask token `<s>` (id 1): the chat format never uses it (its BOS is `<|im_start|>`). Chat format registered in
 SpecForge as `nanbeige-thinking` (`register_template.py`).
+
+## Draft head training (2026-10-26)
+
+Data: 35,999 responses (94.5M tokens, one on-demand H200, ~$49 with a lost spot pod) + 451 agent windows = 36,450
+samples. Prime only had single-GPU pods, so the SGLang capture server (FP8) and the trainer share one H200
+(`drafter/specforge/allow_shared_gpu.py` drops SpecForge's separate-GPU check). Smoke: 60 steps, loss 19.7 → 7.5,
+~2.3 samples/s. Full run (`full-1gpu.yaml`): 2 epochs, 32 samples per step, constant lr 5e-4, ~2.8 samples/s, ~7.5 h,
+~$41. `drafter/train_watch.sh` copies each checkpoint's weights home; `drafter/train_status.py` draws progress.
+
+Gotchas: SpecForge's JSON loader needs one schema for every row (`uniform_schema.py`; verified token-identical); the
+in-flight low watermark must cover one optimizer step; a crashed run blocks port 30000 for a minute (`train_run.sh`
+waits). Serving needs SGLang main: SpecForge's pinned 0.5.18 has no `DFlash2DraftModel` (`eval_accept.sh`).
+
+Held-out check of the step-250 weights (11% of training) on an H100, FP8 target, block 8, thinking on, greedy, 16
+prompts per set (`drafter/results/eval-step250/`). Acceptance = tokens per verify step; z-lab's Qwen3.8-27B-DFlash2,
+trained on far more data, gets 4.1–5.5 on the same sets.
+
+| Set | GSM8K | MATH-500 | HumanEval | MBPP | MT-Bench |
+| :-- | --: | --: | --: | --: | --: |
+| Acceptance, step 250 | 2.09 | 2.00 | 2.00 | 2.31 | 1.67 |
+
+Single user (10 prompts): HumanEval 78.6 vs 49.4 tok/s without the draft (1.59×), MT-Bench 61.9 vs 49.5 (1.25×).
 
 ## Draft head (started, stopped)
 

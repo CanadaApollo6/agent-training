@@ -13,3 +13,4 @@
 2026-10-26 09:49:19 nb-train1 22b314c7 (H200 nebius 13c583, $5.40/h): smoke OK 13:46 UTC (60 steps, ~2.3 samples/s); full run launched 13:49 UTC (2 epochs, 36,450 samples)
 2026-10-26 10:04:59 nb-train1: full run relaunched 14:09 UTC after schema/watermark/port fixes; 2.7 samples/s, ~2,280 steps, ETA ~17:40 local
 2026-10-26 11:03:19 create nb-eval1 H100_80GB PCIe lambdalabs 4258a6 $3.29/h (3fe47bebad98457a94223c24eb26155b) — test SGLang DFLASH serving + eval_accept.sh on the step-250 checkpoint while training runs
+2026-10-26 12:29:46 terminate nb-eval1 3fe47beb (~1h15m, ~$4): SGLang main serves our DFlash2 export; step-250 held-out accept 1.67-2.31, single-user 1.59x humaneval / 1.25x mt-bench on H100 FP8
