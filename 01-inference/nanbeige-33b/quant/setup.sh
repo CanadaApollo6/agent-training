@@ -1,7 +1,8 @@
 #!/bin/bash
 # On a quant pod: exllamav3 1.6.5 (prebuilt wheel, torch 2.10 cu128) in ~/exl3, its convert and eval scripts in ~/qkit
 # (outside the source tree, so Python imports the installed wheel), and Nanbeige4.3-33B bf16 at the pinned revision.
-# Run from the directory holding model_diff_rows.patch.py. Log lines: SETUP_DONE at the end.
+# Run from the directory holding model_diff_rows.patch.py. Log lines: SETUP_DONE at the end. transformers, fastapi and
+# uvicorn are for serve_exl3.py.
 set -euo pipefail
 REV=c1093c501cc6460427c0ac634db7223d0450c0ee
 EXL3=v1.6.5
@@ -23,7 +24,7 @@ else
 fi
 uv venv -q ~/exl3 --python 3.12
 VIRTUAL_ENV=~/exl3 uv pip install -q torch==2.10.0 --index-url https://download.pytorch.org/whl/cu128
-VIRTUAL_ENV=~/exl3 uv pip install -q "$WHEEL" datasets tabulate pyyaml "huggingface_hub[hf_xet]" 2>&1 | tail -3
+VIRTUAL_ENV=~/exl3 uv pip install -q "$WHEEL" datasets tabulate pyyaml "huggingface_hub[hf_xet]" transformers fastapi uvicorn 2>&1 | tail -3
 [ -d ~/exl3src ] || git clone -q https://github.com/turboderp-org/exllamav3.git ~/exl3src
 git -C ~/exl3src checkout -q $EXL3
 mkdir -p ~/qkit

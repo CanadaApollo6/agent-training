@@ -6,6 +6,10 @@ Writes three safetensors files, each holding `input_ids` [rows, 2048]:
   cal-nb.safetensors    250 rows for `convert.py -cd`: 200 answers + 50 windows from the other 37 trajectories
 The KL rows and the calibration rows come from different conversations, so a Nanbeige-calibrated quant is not
 scored on text it was calibrated on. Conversations are rendered with the model's own chat template.
+Every row starts with <|im_start|>, the model's BOS: a window cut from mid-trajectory gets it put in front (its last
+token drops). Without it the model has no first-token anchor and KL vs bf16 is 8-9x higher (README, quantization test).
+The first run (2026-10-27) built its agent and calibration windows without that token; `bos_rows.py` patched the KL
+rows after the fact, which gives exactly what this version writes for kl-agent.
 
     python build_rows.py MODEL_DIR GEN_JSONL TRAJ_JSONL OUT_DIR
 """
@@ -18,6 +22,7 @@ from safetensors.torch import save_file
 from transformers import AutoTokenizer
 
 LEN = 2048
+BOS = 166100  # <|im_start|>
 
 
 def render(tok, msgs):
@@ -36,7 +41,7 @@ def windows(ids, n, rng):
     picks = sorted(rng.sample(range(spans), min(n, spans)))
     slack = len(ids) - spans * LEN
     off = rng.randint(0, slack)
-    return [ids[off + p * LEN: off + (p + 1) * LEN] for p in picks]
+    return [[BOS] + ids[off + p * LEN: off + (p + 1) * LEN - 1] for p in picks]
 
 
 def packed(tok, convs, rows):
