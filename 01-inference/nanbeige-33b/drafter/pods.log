@@ -18,3 +18,4 @@
 2026-10-26 18:07:09 create nb-cool1 H200 nebius 13c583 $5.40/h (816dda2f5eb94271909aaee572fe3f43) — lr cooldown: warm-start from step 2278, 570 steps cosine 5e-4 -> 0, then greedy + T=1.0 eval
 2026-10-26 20:50:16 terminate nb-cool1 816dda2f (~2h45m, ~$15): cooldown TRAIN_EXIT 0 at step 570; greedy accept 2.88-4.01, sampled (T1.0/top_p .95) 2.71-3.78; single-user 2.55x/2.05x greedy, 2.39x/1.78x sampled (humaneval/mt-bench); draft + ckpts home
 2026-10-26 22:25:54 create nb-quant1 H200 nebius 13c583 $5.40/h (ce9d3a8b88b54ee3b9e7979813002e6e) — EXL3 quant test: convert 3.0/3.5/4.0 + 3.5 Nanbeige-calibrated, KL vs bf16 on wiki2/chat/agent rows
+2026-10-27 02:34:57 terminate nb-quant1 ce9d3a8b (~4h50m, ~$26): EXL3 3.0/3.5/4.0/3.5-nb converted, KL vs bf16 with BOS: 3.5-nb 0.036 chat / 0.066 agent, 4.0 0.023/0.044; 8-bit KV free; quants 3.0/3.5-nb/4.0 home (sha ok)
