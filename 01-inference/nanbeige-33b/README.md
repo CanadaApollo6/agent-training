@@ -3,8 +3,9 @@
 Dense 33.1B Llama-architecture thinking model (Nanbeige / BOSS Zhipin, 2026-10-24, Apache-2.0). Reading-spine entry:
 the top-level README. Terminal-Bench 2 pilot: `06-agents/harness-evals/README.md`.
 
-**Status (2026-10-26): draft head trained.** Held-out acceptance 2.8–3.9 tokens per verify, 2.44× single-user speed
-on HumanEval and 1.95× on MT-Bench (H200, SGLang). Next: a serving path for Riel's machines. On our 19-task TB2 pilot it averaged 11.0 of 19 (lookup run failed) vs
+**Status (2026-10-26): draft head trained and cooled down.** Held-out acceptance 2.9–4.0 tokens per verify (greedy),
+2.7–3.8 sampled at the agent's settings. Single-user speed on an H200 with SGLang: 2.55× on HumanEval, 2.05× on
+MT-Bench (greedy); 2.39× and 1.78× sampled. Next: a serving path for Riel's machines. On our 19-task TB2 pilot it averaged 11.0 of 19 (lookup run failed) vs
 R1s's 10.0, within noise (p ≈ 0.7), at 2.71× R1s's tokens per solve. That didn't meet the gate, but Riel chose to build
 the draft head anyway: if the model is as good as it looks, the speed-up is worth it.
 
@@ -58,6 +59,31 @@ with and without the draft (10,469 tokens), as lossless drafting should. Accepta
 epoch, so more data or a third epoch would likely help; the gap to z-lab's 4.1–5.5 is mostly chat and code.
 The exported draft (`specforge export --to hf`, 3.8 GB) is in `drafter/data/draft-step2278/`; all ten checkpoints'
 weights are in `drafter/data/live/train-full/ckpt/`.
+
+**Learning-rate cooldown (2026-10-26 evening).** The main run held lr at 5e-4 throughout. `cool-1gpu.yaml` warm-starts
+from step 2278 (fresh Adam; the optimizer state went with the pod) and trains 570 more steps, about half an epoch,
+with lr cosine-decayed from 5e-4 to 0. It took 1.8 h; the pod cost ~$15. Every set improved
+(`drafter/results/eval-cool-step570/`, same 64 prompts per set). "Sampled" is temperature 1.0, top_p 0.95, no top-k
+limit: the agent's settings. `specforge benchmark` defaults to top-k 1, which is greedy, so `eval_accept.sh` passes
+`--top-k -1` explicitly.
+
+| Set | GSM8K | MATH-500 | HumanEval | MBPP | MT-Bench |
+| :-- | --: | --: | --: | --: | --: |
+| Greedy, step 2278 | 3.85 | 3.69 | 3.26 | 3.72 | 2.80 |
+| Greedy, after cooldown | **4.01** | **3.88** | **3.42** | **3.90** | **2.88** |
+| Sampled, after cooldown | 3.78 | 3.57 | 3.30 | 3.63 | 2.71 |
+
+| Single user, H200 | Draft | No draft | Speed-up |
+| :-- | --: | --: | --: |
+| HumanEval, greedy | 244.0 tok/s | 95.9 | **2.55×** (was 2.44×) |
+| MT-Bench, greedy | 196.6 | 96.0 | **2.05×** (was 1.95×) |
+| HumanEval, sampled | 227.2 | 95.2 | **2.39×** |
+| MT-Bench, sampled | 169.9 | 95.4 | **1.78×** |
+
+Greedy output was token-for-token the same length with and without the draft on both sets. The current best
+draft is `drafter/data/draft-cool-step570/` (3.8 GB, sha256 0b36cfc0…); its three checkpoints are in
+`drafter/data/live/train-cool/ckpt/`. Further gains need more data, especially multi-turn chat; see the
+plan in the step-2278 notes above.
 
 ## Draft head (started, stopped)
 

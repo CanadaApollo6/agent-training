@@ -16,3 +16,4 @@
 2026-10-26 12:29:46 terminate nb-eval1 3fe47beb (~1h15m, ~$4): SGLang main serves our DFlash2 export; step-250 held-out accept 1.67-2.31, single-user 1.59x humaneval / 1.25x mt-bench on H100 FP8
 2026-10-26 17:47:02 terminate nb-train1 22b314c7 (~8h15m, ~$44): full run TRAIN_EXIT 0 at step 2278 (17:07 local); final held-out accept 2.80-3.85, single-user 2.44x humaneval / 1.95x mt-bench on H200; checkpoints + exported draft home
 2026-10-26 18:07:09 create nb-cool1 H200 nebius 13c583 $5.40/h (816dda2f5eb94271909aaee572fe3f43) — lr cooldown: warm-start from step 2278, 570 steps cosine 5e-4 -> 0, then greedy + T=1.0 eval
+2026-10-26 20:50:16 terminate nb-cool1 816dda2f (~2h45m, ~$15): cooldown TRAIN_EXIT 0 at step 570; greedy accept 2.88-4.01, sampled (T1.0/top_p .95) 2.71-3.78; single-user 2.55x/2.05x greedy, 2.39x/1.78x sampled (humaneval/mt-bench); draft + ckpts home
