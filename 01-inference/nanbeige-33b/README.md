@@ -9,6 +9,46 @@ MT-Bench (greedy); 2.39× and 1.78× sampled. Next: a serving path for Riel's ma
 R1s's 10.0, within noise (p ≈ 0.7), at 2.71× R1s's tokens per solve. That didn't meet the gate, but Riel chose to build
 the draft head anyway: if the model is as good as it looks, the speed-up is worth it.
 
+## RTX 3090 fit and TensorFold port (paper estimate, 2026-10-26)
+
+`fit_3090.py` (no GPU): Nanbeige is dense, and all 52 layers use full attention, so weights and KV cache both crowd a
+24 GB card. KV costs 208 KiB a token at bf16 (fp8 halves it). Speeds assume a TensorFold port reading weights at
+~730 GB/s, a 9-row verify at 1.15× a plain step, a 3 ms draft pass, and our sampled acceptance (code 3.30, chat
+2.71). Treat them as ±25%.
+
+| Weights | VRAM | Context left (bf16 / fp8 KV) | Plain | Drafted @2K code / chat | @32K, fp8 KV |
+| :-- | --: | --: | --: | --: | --: |
+| MLX 4-bit g64 (stock format) | 16.7 GiB | 12K / 25K | 40 | 104 / 86 | doesn't fit |
+| EXL3 4.0 bpw | 15.1 GiB | 20K / 41K | 44 | 114 / 94 | 97 / 79 |
+| EXL3 3.5 bpw | 13.4 GiB | 29K / 59K | 50 | 127 / 104 | 106 / 87 |
+| EXL3 3.0 bpw | 11.6 GiB | 38K / 77K | 58 | 144 / 118 | 118 / 97 |
+
+For comparison, measured on this 3090: R1s (Ornith 35B-A3B) drafted 180 code / 167 chat on TensorFold. So a working
+port at 3.0–3.5 bpw would run at roughly 0.6–0.8× R1s's speed. With Nanbeige's 2.71× tokens per TB2 solve, it would
+take about 3.5–4.5× R1s's wall-clock per task, for a TB2 score within noise of R1s's.
+
+The stock 4-bit format doesn't leave room for agent-length context, so the port needs a custom quantization.
+EXL3 (trellis, fractional bit rates) is the natural fit: TensorFold already ships EXL3 dense kernels (`exl3_linear.cu`,
+used by its deepseek_v41 family). Whether 3.0–3.5 bpw keeps Nanbeige's quality is unmeasured, and on a 1-point TB2
+lead, that decides everything.
+
+What the port involves (TensorFold 1.1.x tree, `tools/TensorFold-speed`):
+- **New `llama` family.** Plain GQA attention (56 query / 8 KV heads, head dim 128, full RoPE θ 1.2e8), RMSNorm,
+  SwiGLU, 52 identical blocks. It's the simplest shape in the tree, with no GDN or MoE. It can reuse the qwen27
+  family's full-attention, sampler, prefix cache and server pieces, and the EXL3 linears.
+- **Drafter.** `families/qwen27/dflash/config.zig` already describes DFlash2 by config, and our draft passes its
+  shape checks (7168 wide, 52 target layers, taps 4/15/26/38/49, mask 1). Today `requireStock()` refuses anything but
+  z-lab's 27B drafter. Lift that gate, test the kernels at our sizes, and capture the five tap layers from the new
+  engine. The draft can be stored at 4 bits; that can only change acceptance, never the output.
+- **Quantization.** Convert with exllamav3 on a pod at 3.0 / 3.5 / 4.0 bpw. Gate on KL vs bf16 (the LFM2.5 pattern),
+  then a TB2 pilot.
+- **Server.** Add Nanbeige's chat template and tool-call format to `tensorfold-native serve`. Check that drafted
+  greedy output equals serial greedy.
+
+Suggested order: measure the quantization quality first (pod, ~$15–25: EXL3 conversions, KL, a TB2 subset at the
+best bit rate). That gates the engine work. If 3.0–3.5 bpw holds the score, the port is worth building; if not,
+stop there.
+
 ## Draft head plan (2026-10-25)
 
 Shape: a DFlash2 block drafter, the same kind our Qwen3.8-27B build runs (z-lab's Qwen3.8-27B-DFlash2), not an MTP
