@@ -1,0 +1,85 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+ -- model.embed_tokens                         rfn_err: 0.000000   max_diff/norm: 0.000000   sqnr: 86.226803   cos_err: 0.000000
+ -- model.layers.0                             rfn_err: 0.045812   max_diff/norm: 0.001537   sqnr: 29.283037   cos_err: 0.000886
+ -- model.layers.1                             rfn_err: 0.048067   max_diff/norm: 0.001020   sqnr: 28.093315   cos_err: 0.001027
+ -- model.layers.2                             rfn_err: 0.043934   max_diff/norm: 0.066232   sqnr: 28.570460   cos_err: 0.000833
+ -- model.layers.3                             rfn_err: 0.045810   max_diff/norm: 0.058530   sqnr: 28.029549   cos_err: 0.000911
+ -- model.layers.4                             rfn_err: 0.049300   max_diff/norm: 0.051087   sqnr: 27.402663   cos_err: 0.001066
+ -- model.layers.5                             rfn_err: 0.050033   max_diff/norm: 0.046139   sqnr: 27.363514   cos_err: 0.001086
+ -- model.layers.6                             rfn_err: 0.050306   max_diff/norm: 0.043375   sqnr: 27.391603   cos_err: 0.001089
+ -- model.layers.7                             rfn_err: 0.048851   max_diff/norm: 0.040057   sqnr: 27.670241   cos_err: 0.001019
+ -- model.layers.8                             rfn_err: 0.048436   max_diff/norm: 0.037758   sqnr: 27.691102   cos_err: 0.001004
+ -- model.layers.9                             rfn_err: 0.049560   max_diff/norm: 0.036259   sqnr: 27.413897   cos_err: 0.001058
+ -- model.layers.10                            rfn_err: 0.051239   max_diff/norm: 0.035233   sqnr: 27.055021   cos_err: 0.001148
+ -- model.layers.11                            rfn_err: 0.052990   max_diff/norm: 0.033978   sqnr: 26.698959   cos_err: 0.001239
+ -- model.layers.12                            rfn_err: 0.054330   max_diff/norm: 0.032661   sqnr: 26.412421   cos_err: 0.001303
+ -- model.layers.13                            rfn_err: 0.055691   max_diff/norm: 0.031384   sqnr: 26.153359   cos_err: 0.001370
+ -- model.layers.14                            rfn_err: 0.057870   max_diff/norm: 0.030317   sqnr: 25.771749   cos_err: 0.001480
+ -- model.layers.15                            rfn_err: 0.059852   max_diff/norm: 0.029405   sqnr: 25.433655   cos_err: 0.001580
+ -- model.layers.16                            rfn_err: 0.061271   max_diff/norm: 0.028519   sqnr: 25.192353   cos_err: 0.001652
+ -- model.layers.17                            rfn_err: 0.062067   max_diff/norm: 0.027791   sqnr: 25.109394   cos_err: 0.001693
+ -- model.layers.18                            rfn_err: 0.064206   max_diff/norm: 0.027124   sqnr: 24.786604   cos_err: 0.001838
+ -- model.layers.19                            rfn_err: 0.066382   max_diff/norm: 0.026221   sqnr: 24.440320   cos_err: 0.002000
+ -- model.layers.20                            rfn_err: 0.068216   max_diff/norm: 0.025379   sqnr: 24.166698   cos_err: 0.002155
+ -- model.layers.21                            rfn_err: 0.070473   max_diff/norm: 0.024278   sqnr: 23.891946   cos_err: 0.002375
+ -- model.layers.22                            rfn_err: 0.073605   max_diff/norm: 0.023337   sqnr: 23.534533   cos_err: 0.002678
+ -- model.layers.23                            rfn_err: 0.076840   max_diff/norm: 0.022682   sqnr: 23.211518   cos_err: 0.003099
+ -- model.layers.24                            rfn_err: 0.081041   max_diff/norm: 0.021718   sqnr: 22.797864   cos_err: 0.003761
+ -- model.layers.25                            rfn_err: 0.088507   max_diff/norm: 0.021132   sqnr: 22.153909   cos_err: 0.004926
+ -- model.layers.26                            rfn_err: 0.091885   max_diff/norm: 0.020282   sqnr: 21.870298   cos_err: 0.005582
+ -- model.layers.27                            rfn_err: 0.094252   max_diff/norm: 0.019544   sqnr: 21.665464   cos_err: 0.005996
+ -- model.layers.28                            rfn_err: 0.097251   max_diff/norm: 0.018774   sqnr: 21.431781   cos_err: 0.006527
+ -- model.layers.29                            rfn_err: 0.097553   max_diff/norm: 0.017904   sqnr: 21.455888   cos_err: 0.006631
+ -- model.layers.30                            rfn_err: 0.102460   max_diff/norm: 0.017914   sqnr: 21.041606   cos_err: 0.007286
+ -- model.layers.31                            rfn_err: 0.105608   max_diff/norm: 0.017745   sqnr: 20.823417   cos_err: 0.007737
+ -- model.layers.32                            rfn_err: 0.108989   max_diff/norm: 0.017100   sqnr: 20.571046   cos_err: 0.008248
+ -- model.layers.33                            rfn_err: 0.109292   max_diff/norm: 0.016189   sqnr: 20.474541   cos_err: 0.007900
+ -- model.layers.34                            rfn_err: 0.107629   max_diff/norm: 0.014804   sqnr: 20.741866   cos_err: 0.008017
+ -- model.layers.35                            rfn_err: 0.111626   max_diff/norm: 0.039113   sqnr: 20.472124   cos_err: 0.008539
+ -- model.layers.36                            rfn_err: 0.121036   max_diff/norm: 0.053422   sqnr: 19.896827   cos_err: 0.010107
+ -- model.layers.37                            rfn_err: 0.132972   max_diff/norm: 0.063668   sqnr: 19.260115   cos_err: 0.012022
+ -- model.layers.38                            rfn_err: 0.137184   max_diff/norm: 0.057539   sqnr: 19.036410   cos_err: 0.012665
+ -- model.layers.39                            rfn_err: 0.139687   max_diff/norm: 0.057773   sqnr: 18.976076   cos_err: 0.013327
+ -- model.layers.40                            rfn_err: 0.144230   max_diff/norm: 0.055560   sqnr: 18.723106   cos_err: 0.014446
+ -- model.layers.41                            rfn_err: 0.149584   max_diff/norm: 0.054050   sqnr: 18.500861   cos_err: 0.015454
+ -- model.layers.42                            rfn_err: 0.157243   max_diff/norm: 0.049770   sqnr: 18.061947   cos_err: 0.016900
+ -- model.layers.43                            rfn_err: 0.159988   max_diff/norm: 0.047794   sqnr: 17.940648   cos_err: 0.017596
+ -- model.layers.44                            rfn_err: 0.165076   max_diff/norm: 0.048859   sqnr: 17.713647   cos_err: 0.018885
+ -- model.layers.45                            rfn_err: 0.174704   max_diff/norm: 0.051633   sqnr: 17.282864   cos_err: 0.021149
+ -- model.layers.46                            rfn_err: 0.178093   max_diff/norm: 0.047264   sqnr: 17.087006   cos_err: 0.021796
+ -- model.layers.47                            rfn_err: 0.186296   max_diff/norm: 0.047043   sqnr: 16.687583   cos_err: 0.024124
+ -- model.layers.48                            rfn_err: 0.189330   max_diff/norm: 0.041851   sqnr: 16.533135   cos_err: 0.025123
+ -- model.layers.49                            rfn_err: 0.190178   max_diff/norm: 0.036441   sqnr: 16.446061   cos_err: 0.025392
+ -- model.layers.50                            rfn_err: 0.169238   max_diff/norm: 0.028695   sqnr: 17.471034   cos_err: 0.020888
+ -- model.layers.51                            rfn_err: 0.143623   max_diff/norm: 0.048479   sqnr: 19.587258   cos_err: 0.021086
+ -- model.norm                                 rfn_err: 0.142378   max_diff/norm: 0.011902   sqnr: 19.215495   cos_err: 0.022459
+ -- A perplexity: 43.82110147
+ -- B perplexity: 40.15683676
+ -- A label in top-K:
+      K = 1: 0.4303
+      K = 2: 0.5388
+      K = 3: 0.5964
+      K = 4: 0.6339
+      K = 5: 0.6615
+ -- B label in top-K:
+      K = 1: 0.4359
+      K = 2: 0.5450
+      K = 3: 0.6027
+      K = 4: 0.6402
+      K = 5: 0.6674
+ -- Top-K agreement, A vs B:
+      K = 1: 0.8495
+      K = 2: 0.6480
+      K = 3: 0.4509
+      K = 4: 0.2915
+      K = 5: 0.1768
+ -- KL divergence (A, B):  0.31278972
+ -- KL divergence (B, A):  0.30558893
+ -- KL divergence (A, B), per-token: median 0.03255424   p90 0.27131370
+ -- KL divergence (A, B), by reference confidence:
+      B top-prob [0.00, 0.25):  10.1% of tokens   mean 0.264402   median 0.082912
+      B top-prob [0.25, 0.50):  28.6% of tokens   mean 0.327017   median 0.058663
+      B top-prob [0.50, 0.75):  23.7% of tokens   mean 0.368629   median 0.037546
+      B top-prob [0.75, 0.95):  19.1% of tokens   mean 0.347039   median 0.016833
+      B top-prob [0.95, 1.00):  18.5% of tokens   mean 0.210424   median 0.001262

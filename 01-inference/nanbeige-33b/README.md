@@ -5,7 +5,9 @@ the top-level README. Terminal-Bench 2 pilot: `06-agents/harness-evals/README.md
 
 **Status (2026-10-26): draft head trained and cooled down.** Held-out acceptance 2.9–4.0 tokens per verify (greedy),
 2.7–3.8 sampled at the agent's settings. Single-user speed on an H200 with SGLang: 2.55× on HumanEval, 2.05× on
-MT-Bench (greedy); 2.39× and 1.78× sampled. Next: a serving path for Riel's machines. On our 19-task TB2 pilot it averaged 11.0 of 19 (lookup run failed) vs
+MT-Bench (greedy); 2.39× and 1.78× sampled. Quantization test (2026-10-27): EXL3 3.5 bpw calibrated on
+Nanbeige's own text drifts KL 0.036 (chat) / 0.066 (agent) from bf16; 4.0 bpw 0.023 / 0.044. Next: a TB2 subset at
+3.5 bpw, then the TensorFold port. On our 19-task TB2 pilot it averaged 11.0 of 19 (lookup run failed) vs
 R1s's 10.0, within noise (p ≈ 0.7), at 2.71× R1s's tokens per solve. That didn't meet the gate, but Riel chose to build
 the draft head anyway: if the model is as good as it looks, the speed-up is worth it.
 
@@ -48,6 +50,41 @@ What the port involves (TensorFold 1.1.x tree, `tools/TensorFold-speed`):
 Suggested order: measure the quantization quality first (pod, ~$15–25: EXL3 conversions, KL, a TB2 subset at the
 best bit rate). That gates the engine work. If 3.0–3.5 bpw holds the score, the port is worth building; if not,
 stop there.
+
+## Quantization test: EXL3 KL vs bf16 (2026-10-27)
+
+`quant/` (pod nb-quant1, one H200, ~4h, ~$24). exllamav3 1.6.5 converted Nanbeige at 3.0, 3.5 and 4.0 bpw (head
+6 bits, mul1 codebook) and once more at 3.5 bpw calibrated on Nanbeige's own text (`3.5-nb`: 200 chat answers and
+50 agent windows from `drafter/data/live`, via `convert.py -cd`). `model_diff.py` scored each against bf16 on three
+sets: 100 rows of Nanbeige's own chat/math/code answers with thinking (`gen`), 40 windows from 20 pi-harness
+trajectories (`agent`), and 100 rows of wikitext-2. Scored and calibration rows come from different conversations.
+Every row is 2048 tokens. Full table: `quant/results/summary.tsv`.
+
+| mean KL vs bf16 (top-1 agreement) | 4.0 | 3.5-nb | 3.5 | 3.0 |
+| :-- | --: | --: | --: | --: |
+| own chat answers | 0.023 (95.6%) | **0.036 (94.5%)** | 0.043 (93.9%) | 0.078 (91.6%) |
+| own agent runs | 0.044 (94.7%) | **0.066 (93.4%)** | 0.073 (93.0%) | 0.122 (90.5%) |
+| wikitext-2 | 0.051 (91.6%) | 0.109 (87.5%) | 0.093 (88.6%) | 0.161 (84.6%) |
+| files on disk (incl. 2.4 GB bf16 embedding, kept in RAM) | 18 GB | 16 GB | 16 GB | 14 GB |
+
+What we learned:
+- **The start token matters a lot.** The first agent and wikitext runs started mid-text with no `<|im_start|>` (the
+  model's BOS) at position 0. Without it every quant fell apart on a minority of tokens: agent KL 0.39 at 4.0 bpw,
+  0.84 at 3.0, while the median stayed small. With the start token restored, the same rows score 8–9× lower (the table
+  above). Real requests always start with `<|im_start|>system`, so the table is the realistic one. The engine port must
+  keep that token at position 0, and its KV entry is a candidate for extra precision.
+- **exllamav3 runs Nanbeige correctly.** On the same 8 wikitext rows, bf16 perplexity is 18.05 under exllamav3 and
+  18.09 under HF transformers (`quant/hf_ppl.py`). Raw wikitext is just far from what this chat model was tuned on.
+- **Own-text calibration helps where it counts.** At 3.5 bpw it cuts KL 16% on chat and 10% on agent text, and costs
+  some wikitext. Its agent calibration windows also lacked the start token; a rebuild with it may gain more.
+- **Use an 8-bit KV cache, not 4-bit** (simulated on 3.5-nb, agent rows with BOS): 8-bit adds nothing (0.066 →
+  0.066), 6-bit +5%, 5-bit +21%, 4-bit +70% (0.112), about the cost of dropping the weights from 3.5 to 3.0 bpw.
+  `fit_3090.py` already assumes fp8 KV.
+
+Reading: 3.5-nb is the candidate (59K fp8 context on a 3090 by `fit_3090.py`). 4.0 is clearly closer to bf16 but
+leaves 41K. 3.0 roughly doubles the drift again. KL alone can't say whether a 1-point TB2 lead survives. Next: rebuild
+the 3.5 custom quant with start-token calibration rows (maybe a per-tensor `sc_optimize` recipe), then a TB2 subset at
+3.5-nb vs bf16. The 3.0, 3.5-nb and 4.0 quants are kept locally in `quant/models/` (gitignored).
 
 ## Draft head plan (2026-10-25)
 

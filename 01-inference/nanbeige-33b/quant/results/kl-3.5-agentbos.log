@@ -1,0 +1,83 @@
+ -- model.embed_tokens                         rfn_err: 0.000000   max_diff/norm: 0.000000   sqnr: 86.300492   cos_err: 0.000000
+ -- model.layers.0                             rfn_err: 0.031565   max_diff/norm: 0.001724   sqnr: 31.723118   cos_err: 0.000496
+ -- model.layers.1                             rfn_err: 0.032678   max_diff/norm: 0.001150   sqnr: 31.033632   cos_err: 0.000509
+ -- model.layers.2                             rfn_err: 0.009181   max_diff/norm: 0.025368   sqnr: 31.821555   cos_err: 0.000371
+ -- model.layers.3                             rfn_err: 0.009877   max_diff/norm: 0.025231   sqnr: 31.714488   cos_err: 0.000367
+ -- model.layers.4                             rfn_err: 0.010603   max_diff/norm: 0.025068   sqnr: 31.869455   cos_err: 0.000356
+ -- model.layers.5                             rfn_err: 0.011283   max_diff/norm: 0.024875   sqnr: 32.060474   cos_err: 0.000341
+ -- model.layers.6                             rfn_err: 0.012098   max_diff/norm: 0.024646   sqnr: 32.102212   cos_err: 0.000337
+ -- model.layers.7                             rfn_err: 0.012870   max_diff/norm: 0.024408   sqnr: 32.247639   cos_err: 0.000330
+ -- model.layers.8                             rfn_err: 0.013727   max_diff/norm: 0.024192   sqnr: 32.115890   cos_err: 0.000339
+ -- model.layers.9                             rfn_err: 0.014594   max_diff/norm: 0.024030   sqnr: 31.755978   cos_err: 0.000366
+ -- model.layers.10                            rfn_err: 0.015500   max_diff/norm: 0.023917   sqnr: 31.272272   cos_err: 0.000405
+ -- model.layers.11                            rfn_err: 0.016337   max_diff/norm: 0.023784   sqnr: 31.015104   cos_err: 0.000440
+ -- model.layers.12                            rfn_err: 0.017224   max_diff/norm: 0.023671   sqnr: 30.680678   cos_err: 0.000475
+ -- model.layers.13                            rfn_err: 0.018179   max_diff/norm: 0.023466   sqnr: 30.367520   cos_err: 0.000505
+ -- model.layers.14                            rfn_err: 0.019160   max_diff/norm: 0.023328   sqnr: 29.983918   cos_err: 0.000539
+ -- model.layers.15                            rfn_err: 0.020049   max_diff/norm: 0.023193   sqnr: 29.640420   cos_err: 0.000577
+ -- model.layers.16                            rfn_err: 0.020861   max_diff/norm: 0.023064   sqnr: 29.342537   cos_err: 0.000606
+ -- model.layers.17                            rfn_err: 0.021447   max_diff/norm: 0.022925   sqnr: 29.243884   cos_err: 0.000642
+ -- model.layers.18                            rfn_err: 0.022761   max_diff/norm: 0.022799   sqnr: 28.737758   cos_err: 0.000707
+ -- model.layers.19                            rfn_err: 0.024160   max_diff/norm: 0.022652   sqnr: 28.270553   cos_err: 0.000792
+ -- model.layers.20                            rfn_err: 0.025616   max_diff/norm: 0.022505   sqnr: 27.834514   cos_err: 0.000871
+ -- model.layers.21                            rfn_err: 0.027209   max_diff/norm: 0.022234   sqnr: 27.387922   cos_err: 0.000959
+ -- model.layers.22                            rfn_err: 0.029325   max_diff/norm: 0.021994   sqnr: 26.866685   cos_err: 0.001077
+ -- model.layers.23                            rfn_err: 0.031451   max_diff/norm: 0.022023   sqnr: 26.286105   cos_err: 0.001231
+ -- model.layers.24                            rfn_err: 0.034045   max_diff/norm: 0.021882   sqnr: 25.742999   cos_err: 0.001378
+ -- model.layers.25                            rfn_err: 0.036764   max_diff/norm: 0.021617   sqnr: 25.221150   cos_err: 0.001630
+ -- model.layers.26                            rfn_err: 0.040006   max_diff/norm: 0.021331   sqnr: 24.690436   cos_err: 0.001891
+ -- model.layers.27                            rfn_err: 0.042973   max_diff/norm: 0.021074   sqnr: 24.332458   cos_err: 0.002125
+ -- model.layers.28                            rfn_err: 0.046585   max_diff/norm: 0.020697   sqnr: 23.914810   cos_err: 0.002408
+ -- model.layers.29                            rfn_err: 0.049458   max_diff/norm: 0.020327   sqnr: 23.687388   cos_err: 0.002601
+ -- model.layers.30                            rfn_err: 0.054100   max_diff/norm: 0.020071   sqnr: 23.128347   cos_err: 0.003050
+ -- model.layers.31                            rfn_err: 0.058051   max_diff/norm: 0.019746   sqnr: 22.800998   cos_err: 0.003390
+ -- model.layers.32                            rfn_err: 0.063151   max_diff/norm: 0.019380   sqnr: 22.338067   cos_err: 0.003854
+ -- model.layers.33                            rfn_err: 0.067006   max_diff/norm: 0.019024   sqnr: 22.093976   cos_err: 0.004230
+ -- model.layers.34                            rfn_err: 0.070717   max_diff/norm: 0.018577   sqnr: 21.940300   cos_err: 0.004408
+ -- model.layers.35                            rfn_err: 0.077025   max_diff/norm: 0.018294   sqnr: 21.484796   cos_err: 0.005183
+ -- model.layers.36                            rfn_err: 0.084586   max_diff/norm: 0.017595   sqnr: 20.940918   cos_err: 0.006221
+ -- model.layers.37                            rfn_err: 0.093579   max_diff/norm: 0.017064   sqnr: 20.365456   cos_err: 0.007147
+ -- model.layers.38                            rfn_err: 0.100327   max_diff/norm: 0.016455   sqnr: 20.017256   cos_err: 0.008078
+ -- model.layers.39                            rfn_err: 0.105817   max_diff/norm: 0.015648   sqnr: 19.823888   cos_err: 0.008530
+ -- model.layers.40                            rfn_err: 0.112879   max_diff/norm: 0.015285   sqnr: 19.371650   cos_err: 0.009704
+ -- model.layers.41                            rfn_err: 0.118603   max_diff/norm: 0.014685   sqnr: 19.133669   cos_err: 0.010132
+ -- model.layers.42                            rfn_err: 0.124354   max_diff/norm: 0.014236   sqnr: 18.836799   cos_err: 0.011063
+ -- model.layers.43                            rfn_err: 0.130246   max_diff/norm: 0.013702   sqnr: 18.545111   cos_err: 0.012010
+ -- model.layers.44                            rfn_err: 0.136315   max_diff/norm: 0.013414   sqnr: 18.254787   cos_err: 0.012845
+ -- model.layers.45                            rfn_err: 0.141188   max_diff/norm: 0.012826   sqnr: 18.041049   cos_err: 0.013319
+ -- model.layers.46                            rfn_err: 0.144715   max_diff/norm: 0.012188   sqnr: 17.902939   cos_err: 0.013746
+ -- model.layers.47                            rfn_err: 0.148093   max_diff/norm: 0.012160   sqnr: 17.768348   cos_err: 0.014342
+ -- model.layers.48                            rfn_err: 0.149777   max_diff/norm: 0.012331   sqnr: 17.752067   cos_err: 0.014586
+ -- model.layers.49                            rfn_err: 0.148377   max_diff/norm: 0.010179   sqnr: 17.890946   cos_err: 0.014300
+ -- model.layers.50                            rfn_err: 0.130999   max_diff/norm: 0.009662   sqnr: 19.067481   cos_err: 0.010935
+ -- model.layers.51                            rfn_err: 0.104126   max_diff/norm: 0.013914   sqnr: 21.265883   cos_err: 0.006003
+ -- model.norm                                 rfn_err: 0.085083   max_diff/norm: 0.009162   sqnr: 23.603776   cos_err: 0.004710
+ -- A perplexity:  3.99612231
+ -- B perplexity:  3.94437223
+ -- A label in top-K:
+      K = 1: 0.7107
+      K = 2: 0.7996
+      K = 3: 0.8387
+      K = 4: 0.8610
+      K = 5: 0.8767
+ -- B label in top-K:
+      K = 1: 0.7137
+      K = 2: 0.8017
+      K = 3: 0.8401
+      K = 4: 0.8630
+      K = 5: 0.8780
+ -- Top-K agreement, A vs B:
+      K = 1: 0.9296
+      K = 2: 0.7608
+      K = 3: 0.5707
+      K = 4: 0.3946
+      K = 5: 0.2568
+ -- KL divergence (A, B):  0.07280512
+ -- KL divergence (B, A):  0.07546523
+ -- KL divergence (A, B), per-token: median 0.00438019   p90 0.08134764
+ -- KL divergence (A, B), by reference confidence:
+      B top-prob [0.00, 0.25):   6.2% of tokens   mean 0.179461   median 0.036936
+      B top-prob [0.25, 0.50):  15.6% of tokens   mean 0.174568   median 0.036600
+      B top-prob [0.50, 0.75):  15.9% of tokens   mean 0.121946   median 0.022859
+      B top-prob [0.75, 0.95):  15.1% of tokens   mean 0.073080   median 0.010592
+      B top-prob [0.95, 1.00):  47.2% of tokens   mean 0.008625   median 0.000034
