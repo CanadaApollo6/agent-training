@@ -53,7 +53,7 @@ stop there.
 
 ## Quantization test: EXL3 KL vs bf16 (2026-10-27)
 
-`quant/` (pod nb-quant1, one H200, ~4h, ~$24). exllamav3 1.6.5 converted Nanbeige at 3.0, 3.5 and 4.0 bpw (head
+`quant/` (pod nb-quant1, one H200, ~4h, ~$23). exllamav3 1.6.5 converted Nanbeige at 3.0, 3.5 and 4.0 bpw (head
 6 bits, mul1 codebook) and once more at 3.5 bpw calibrated on Nanbeige's own text (`3.5-nb`: 200 chat answers and
 50 agent windows from `drafter/data/live`, via `convert.py -cd`). `model_diff.py` scored each against bf16 on three
 sets: 100 rows of Nanbeige's own chat/math/code answers with thinking (`gen`), 40 windows from 20 pi-harness
