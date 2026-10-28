@@ -1,0 +1,19 @@
+{
+  "command": [
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/pre/bin/tf-llama-test",
+    "llama-greedy-slice",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+    "12",
+    "128",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/greedy12-before.json"
+  ],
+  "pid": 3160794,
+  "exit_code": 1,
+  "seconds": 12.261118443013402,
+  "timeout": false,
+  "initial_free_mib": 7531,
+  "minimum_free_mib": 3183,
+  "peak_process_vram_mib": 4350,
+  "sampling_ms": 200
+}

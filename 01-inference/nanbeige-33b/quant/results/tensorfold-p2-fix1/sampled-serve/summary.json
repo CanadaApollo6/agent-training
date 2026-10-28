@@ -1,0 +1,22 @@
+{
+  "state": "PASS",
+  "endpoints": 2,
+  "serial_equal_tokens": 64,
+  "defaults": {
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 0,
+    "min_p": 0
+  },
+  "same_seed_equal": true,
+  "different_seed_differs": true,
+  "penalties_equal_serial": true,
+  "concurrent_equal": true,
+  "pi_sse_status": 200,
+  "pi_max_tokens": 16384,
+  "pi_cancelled_after_events": 3,
+  "cancel_reuse_equal": true,
+  "pre_stream_rejections": 3,
+  "peak_mib": 1912,
+  "minimum_free_mib": 5815
+}

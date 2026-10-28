@@ -1,0 +1,47 @@
+[
+  {
+    "sha": "9633b5a3d0b28ee5306553b23958db1fda867a1a",
+    "title": "test(server): reproduce Nanbeige prompt and output parity failures",
+    "standalone_unicode": false
+  },
+  {
+    "sha": "c523f51d2d60c5ba1e22141d2c84f20435b0f606",
+    "title": "fix(server): retain byte-fallback tokens when checking Unicode stops",
+    "standalone_unicode": true
+  },
+  {
+    "sha": "b9bb75910057a0ab294936c4a3dad71eca0ca617",
+    "title": "fix(llama): match pod XML names and case-sensitive tool schemas",
+    "standalone_unicode": false
+  },
+  {
+    "sha": "b56332ea05bd9095c494137eb73057163fcde3b6",
+    "title": "fix(llama): encode literal special tokens like Hugging Face",
+    "standalone_unicode": false
+  },
+  {
+    "sha": "fca75a7a0231c265adaf89a5bc05fe929600356f",
+    "title": "fix(llama): preserve conversation roles through prompt normalization",
+    "standalone_unicode": false
+  },
+  {
+    "sha": "66442f8e38eeb51bd71b7f1630e8a62c27ed186a",
+    "title": "fix(server): keep resolved template controls above raw kwargs",
+    "standalone_unicode": false
+  },
+  {
+    "sha": "8794a8af4c06025a34bad00e37664b21eba9a44e",
+    "title": "fix(llama): refuse context overflow before opening SSE",
+    "standalone_unicode": false
+  },
+  {
+    "sha": "9feb86001fdd113109d8e35eaaf9bc02a4783004",
+    "title": "fix(server): preserve unset and global resolved template controls",
+    "standalone_unicode": false
+  },
+  {
+    "sha": "94c2c22be9cd429e8162e2284b963ee525ea76a0",
+    "title": "test(llama): check native pre-stream context refusal",
+    "standalone_unicode": false
+  }
+]

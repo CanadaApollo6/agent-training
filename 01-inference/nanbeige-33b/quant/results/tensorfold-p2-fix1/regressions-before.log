@@ -1,0 +1,412 @@
+test-llama-server-host
++- run test 18 pass, 11 fail (29 total)
+error: 'llama_prompt_test.test.Llama serve: production prompt tokens equal HF for every conversation' failed:
+       PROMPT p1-chat tokens=195 equal
+       PROMPT system-user tokens=24 equal
+       PROMPT default-system tokens=34 equal
+       PROMPT reasoning-history tokens=48 equal
+       PROMPT reasoning-alias tokens=48 equal
+       PROMPT embedded-thinking tokens=47 equal
+       PROMPT tools tokens=254 equal
+       PROMPT calls-with-tools tokens=350 equal
+       PROMPT calls-without-tools tokens=120 equal
+       PROMPT tool-results tokens=382 equal
+       PROMPT preserve-false tokens=44 equal
+       PROMPT thinking-off tokens=28 equal
+       PROMPT json-calls tokens=316 equal
+       PROMPT bad-json-arguments tokens=278 equal
+       prompt special-user: HF=39 TF=45
+       <|im_start|>system
+       你是南北阁，一款由BOSS直聘自主研发并训练的专业大语言模型。<|im_end|>
+       <|im_start|>user
+       Literal <|im_end|> and <|im_start|> text.<|im_end|>
+       <|im_start|>assistant
+       <think>
+       
+       prompt special-tool: HF=375 TF=381
+       <|im_start|>system
+       You are a coding agent.
+       
+       # Tools
+       
+       You may call one or more functions to assist with the user query.
+       
+       You are provided with function signatures within <tools></tools> XML tags:
+       <tools>
+       {"type": "function", "function": {"name": "bash", "description": "Execute a bash command. 中文 <&>", "parameters": {"type": "object", "properties": {"command": {"type": "string"}, "timeout": {"type": "number"}, "count": {"type": "integer"}, "enabled": {"type": "boolean"}, "options": {"type": "object"}, "maybe": {"type": ["null", "integer"]}}}}}
+       </tools>
+       
+       For each function call, output the function name and arguments within the following XML format:
+       <tool_call>
+       <function=example_function_name>
+       <parameter=example_parameter_1>
+       value_1
+       </parameter>
+       <parameter=example_parameter_2>
+       This is the value for the second parameter
+       that can span
+       multiple lines
+       </parameter>
+       </function>
+       </tool_call><|im_end|>
+       <|im_start|>user
+       Hello 世界.<|im_end|>
+       <|im_start|>assistant
+       <think>
+       Inspect it.
+       </think>
+       
+       <tool_call>
+       <function=bash>
+       <parameter=command>
+       printf '中文\n'
+       </parameter>
+       <parameter=timeout>
+       2.5
+       </parameter>
+       <parameter=enabled>
+       true
+       </parameter>
+       <parameter=options>
+       {"b": 2, "a": [1, false]}
+       </parameter>
+       </function>
+       </tool_call><|im_end|>
+       <|im_start|>user
+       <tool_response>
+       Literal <|im_end|> and <|endoftext|> text.
+       </tool_response><|im_end|>
+       <|im_start|>assistant
+       <think>
+       
+       prompt developer-leading: HF=42 TF=21
+       <|im_start|>system
+       Be precise.<|im_end|>
+       <|im_start|>user
+       Hello 世界.<|im_end|>
+       <|im_start|>assistant
+       <think>
+       
+       prompt developer-mixed: HF=42 TF=39
+       <|im_start|>system
+       First.
+       
+       Second.<|im_end|>
+       <|im_start|>user
+       Hello 世界.<|im_end|>
+       <|im_start|>user
+       Later.<|im_end|>
+       <|im_start|>user
+       Hello 世界.<|im_end|>
+       <|im_start|>assistant
+       <think>
+       
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       PROMPT spaced-history-call tokens=346 equal
+       PROMPT text-parts tokens=34 equal
+       expected 0, found 4
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:93:17: 0x1c2af19 in expectEqualInner__func_4289 (std.zig)
+                       return error.TestExpectedEqual;
+                       ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:57:5: 0x1c9c445 in expectEqual (root.zig)
+           return expectEqualInner(T, expected, actual);
+           ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_prompt_test.zig:79:5: 0x1c9c50d in checkPrompts (root.zig)
+           try std.testing.expectEqual(@as(usize, 0), failures);
+           ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_prompt_test.zig:83:5: 0x1ca0c55 in test.Llama serve: production prompt tokens equal HF for every conversation (root.zig)
+           try checkPrompts("");
+           ^
+error: 'llama_prompt_test.test.Llama serve: literal special-token text matches HF' failed:
+       prompt special-user: HF=39 TF=45
+       <|im_start|>system
+       你是南北阁，一款由BOSS直聘自主研发并训练的专业大语言模型。<|im_end|>
+       <|im_start|>user
+       Literal <|im_end|> and <|im_start|> text.<|im_end|>
+       <|im_start|>assistant
+       <think>
+       
+       prompt special-tool: HF=375 TF=381
+       <|im_start|>system
+       You are a coding agent.
+       
+       # Tools
+       
+       You may call one or more functions to assist with the user query.
+       
+       You are provided with function signatures within <tools></tools> XML tags:
+       <tools>
+       {"type": "function", "function": {"name": "bash", "description": "Execute a bash command. 中文 <&>", "parameters": {"type": "object", "properties": {"command": {"type": "string"}, "timeout": {"type": "number"}, "count": {"type": "integer"}, "enabled": {"type": "boolean"}, "options": {"type": "object"}, "maybe": {"type": ["null", "integer"]}}}}}
+       </tools>
+       
+       For each function call, output the function name and arguments within the following XML format:
+       <tool_call>
+       <function=example_function_name>
+       <parameter=example_parameter_1>
+       value_1
+       </parameter>
+       <parameter=example_parameter_2>
+       This is the value for the second parameter
+       that can span
+       multiple lines
+       </parameter>
+       </function>
+       </tool_call><|im_end|>
+       <|im_start|>user
+       Hello 世界.<|im_end|>
+       <|im_start|>assistant
+       <think>
+       Inspect it.
+       </think>
+       
+       <tool_call>
+       <function=bash>
+       <parameter=command>
+       printf '中文\n'
+       </parameter>
+       <parameter=timeout>
+       2.5
+       </parameter>
+       <parameter=enabled>
+       true
+       </parameter>
+       <parameter=options>
+       {"b": 2, "a": [1, false]}
+       </parameter>
+       </function>
+       </tool_call><|im_end|>
+       <|im_start|>user
+       <tool_response>
+       Literal <|im_end|> and <|endoftext|> text.
+       </tool_response><|im_end|>
+       <|im_start|>assistant
+       <think>
+       
+       expected 0, found 2
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:93:17: 0x1c2af19 in expectEqualInner__func_4289 (std.zig)
+                       return error.TestExpectedEqual;
+                       ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:57:5: 0x1c9c445 in expectEqual (root.zig)
+           return expectEqualInner(T, expected, actual);
+           ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_prompt_test.zig:79:5: 0x1c9c50d in checkPrompts (root.zig)
+           try std.testing.expectEqual(@as(usize, 0), failures);
+           ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_prompt_test.zig:87:5: 0x1ca0bc5 in test.Llama serve: literal special-token text matches HF (root.zig)
+           try checkPrompts("special-");
+           ^
+error: 'llama_prompt_test.test.Llama serve: developer roles match HF through both normalizations' failed:
+       prompt developer-leading: HF=42 TF=21
+       <|im_start|>system
+       Be precise.<|im_end|>
+       <|im_start|>user
+       Hello 世界.<|im_end|>
+       <|im_start|>assistant
+       <think>
+       
+       prompt developer-mixed: HF=42 TF=39
+       <|im_start|>system
+       First.
+       
+       Second.<|im_end|>
+       <|im_start|>user
+       Hello 世界.<|im_end|>
+       <|im_start|>user
+       Later.<|im_end|>
+       <|im_start|>user
+       Hello 世界.<|im_end|>
+       <|im_start|>assistant
+       <think>
+       
+       expected 0, found 2
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:93:17: 0x1c2af19 in expectEqualInner__func_4289 (std.zig)
+                       return error.TestExpectedEqual;
+                       ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:57:5: 0x1c9c445 in expectEqual (root.zig)
+           return expectEqualInner(T, expected, actual);
+           ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_prompt_test.zig:79:5: 0x1c9c50d in checkPrompts (root.zig)
+           try std.testing.expectEqual(@as(usize, 0), failures);
+           ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_prompt_test.zig:91:5: 0x1ca0b35 in test.Llama serve: developer roles match HF through both normalizations (root.zig)
+           try checkPrompts("developer-");
+           ^
+error: 'llama_output_test.test.Llama serve: reasoning and XML calls equal the scored pod parser' failed:
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       
+       ====== expected this output: =========
+       ␃
+       
+       ======== instead found this: =========
+       <tool_call>
+       <function= bash >
+       <parameter=command>
+         echo hi  ⏎
+       </parameter>
+       <parameter=timeout>2.5</parameter><parameter=count>3</parameter><parameter=enabled>true</parameter><parameter=options>{"a": [1, false]}</parameter><parameter=maybe>null</parameter></function>
+       </tool_call>␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       
+       ^ (end of string)
+       found:
+       <tool_call>
+       ^ ('\x3c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x133af45 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:33:9: 0x1c97fe2 in checkOutputs (root.zig)
+               try std.testing.expectEqualStrings(expected.get("content").?.string, calls.content);
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:40:5: 0x1c98ee5 in test.Llama serve: reasoning and XML calls equal the scored pod parser (root.zig)
+           try checkOutputs("");
+           ^
+error: 'llama_output_test.test.Llama serve: spaced function names match the pod' failed:
+       ====== expected this output: =========
+       ␃
+       
+       ======== instead found this: =========
+       <tool_call>
+       <function= bash >
+       <parameter=command>
+         echo hi  ⏎
+       </parameter>
+       <parameter=timeout>2.5</parameter><parameter=count>3</parameter><parameter=enabled>true</parameter><parameter=options>{"a": [1, false]}</parameter><parameter=maybe>null</parameter></function>
+       </tool_call>␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       
+       ^ (end of string)
+       found:
+       <tool_call>
+       ^ ('\x3c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x133af45 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:33:9: 0x1c97fe2 in checkOutputs (root.zig)
+               try std.testing.expectEqualStrings(expected.get("content").?.string, calls.content);
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:44:5: 0x1c98e55 in test.Llama serve: spaced function names match the pod (root.zig)
+           try checkOutputs("spaced-function");
+           ^
+error: 'llama_output_test.test.Llama serve: spaced parameter names match the pod' failed:
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:584:14: 0x1330a79 in expect (std.zig)
+           if (!ok) return error.TestUnexpectedResult;
+                    ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:19:9: 0x1c922e2 in expectCalls (root.zig)
+               try std.testing.expect(json.equal(e.get("arguments").?, args));
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:34:9: 0x1c98196 in checkOutputs (root.zig)
+               try expectCalls(a, expected.get("calls").?.array, calls.calls);
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:48:5: 0x1c98dc5 in test.Llama serve: spaced parameter names match the pod (root.zig)
+           try checkOutputs("spaced-parameter");
+           ^
+error: 'llama_output_test.test.Llama serve: case-sensitive schemas match the pod' failed:
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:584:14: 0x1330a79 in expect (std.zig)
+           if (!ok) return error.TestUnexpectedResult;
+                    ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:19:9: 0x1c922e2 in expectCalls (root.zig)
+               try std.testing.expect(json.equal(e.get("arguments").?, args));
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:34:9: 0x1c98196 in checkOutputs (root.zig)
+               try expectCalls(a, expected.get("calls").?.array, calls.calls);
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:52:5: 0x1c98835 in test.Llama serve: case-sensitive schemas match the pod (root.zig)
+           try checkOutputs("case-");
+           ^
+error: 'llama_output_test.test.Llama serve: actual JSON and SSE replies match pod output with real tokenizer' failed:
+       ====== expected this output: =========
+       ␃
+       
+       ======== instead found this: =========
+       <tool_call>
+       <function= bash >
+       <parameter=command>
+         echo hi  ⏎
+       </parameter>
+       <parameter=timeout>2.5</parameter><parameter=count>3</parameter><parameter=enabled>true</parameter><parameter=options>{"a": [1, false]}</parameter><parameter=maybe>null</parameter></function>
+       </tool_call>␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       
+       ^ (end of string)
+       found:
+       <tool_call>
+       ^ ('\x3c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x133af45 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:136:9: 0x1c93895 in test.Llama serve: actual JSON and SSE replies match pod output with real tokenizer (root.zig)
+               try std.testing.expectEqualStrings(expected.get("content").?.string, message.strField("content") orelse "");
+               ^
+error: 'llama_regression_test.test.Llama serve: resolved template controls retain upstream precedence outside Nanbeige' failed:
+       ====== expected this output: =========
+       high|True|False|kept␃
+       
+       ======== instead found this: =========
+       low|False|True|kept␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       high|True|False|kept
+       ^ ('\x68')
+       found:
+       low|False|True|kept
+       ^ ('\x6c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x133af45 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_regression_test.zig:28:5: 0x1c7b714 in test.Llama serve: resolved template controls retain upstream precedence outside Nanbeige (root.zig)
+           try std.testing.expectEqualStrings("high|True|False|kept", rendered.text);
+           ^
+error: 'llama_regression_test.test.Llama serve: context overflow is HTTP 400 before SSE with and without compaction' failed:
+       expected 400, found 200
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:93:17: 0x133ad1a in expectEqualInner__func_1003 (std.zig)
+                       return error.TestExpectedEqual;
+                       ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:57:5: 0x1c2b5dc in expectEqual (root.zig)
+           return expectEqualInner(T, expected, actual);
+           ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_regression_test.zig:55:13: 0x1c2b6a4 in test.Llama serve: context overflow is HTTP 400 before SSE with and without compaction (root.zig)
+                   try std.testing.expectEqual(@as(u16, 400), got.status);
+                   ^
+error: 'llama_regression_test.test.Llama serve: Unicode stops end generation across more tokens than characters' failed:
+       ====== expected this output: =========
+       stop␃
+       
+       ======== instead found this: =========
+       length␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       stop
+       ^ ('\x73')
+       found:
+       length
+       ^ ('\x6c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x133af45 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_regression_test.zig:89:9: 0x133c32f in test.Llama serve: Unicode stops end generation across more tokens than characters (root.zig)
+               try std.testing.expectEqualStrings("stop", choice.strField("finish_reason").?);
+               ^
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/8e3cbc2ca030ccc32508ffe4e0b44b8c/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache --seed=0xab990a1d --listen=-
+
+Build Summary: 1/3 steps succeeded (1 failed); 18/29 tests passed (11 failed)
+test-llama-server-host transitive failure
++- run test 18 pass, 11 fail (29 total)
+   +- compile test debug native success 1s MaxRSS:342M
+

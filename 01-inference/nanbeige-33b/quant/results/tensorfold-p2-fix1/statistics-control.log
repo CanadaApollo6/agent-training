@@ -1,0 +1,12 @@
+{"name": "pilot", "draws": 32768, "degrees_of_freedom": 7, "chi_square": 37996.3515625, "threshold": 40, "support": 6, "minimum_expected": 4096.0, "observed": [0, 0, 1095, 1893, 3018, 4931, 8332, 13499], "expected": [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]}
+Traceback (most recent call last):
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_sampling_check.py", line 228, in <module>
+    main()
+    ~~~~^^
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_sampling_check.py", line 224, in main
+    {"stats": stats, "trace": trace, "serve": serve}[args.mode](args)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_sampling_check.py", line 58, in stats
+    assert chi_square < 40, result
+           ^^^^^^^^^^^^^^^
+AssertionError: {'name': 'pilot', 'draws': 32768, 'degrees_of_freedom': 7, 'chi_square': 37996.3515625, 'threshold': 40, 'support': 6, 'minimum_expected': 4096.0, 'observed': [0, 0, 1095, 1893, 3018, 4931, 8332, 13499], 'expected': [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]}

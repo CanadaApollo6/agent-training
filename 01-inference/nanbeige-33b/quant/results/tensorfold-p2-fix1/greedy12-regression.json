@@ -1,0 +1,16 @@
+{
+  "before_commit": "3aeb8e97513bfb0c2a66f2e32e5defad664bdd3d",
+  "tokens": 128,
+  "before_after_equal": true,
+  "inherited_exllamav3_assertion": "FAIL on both fresh runs",
+  "before_binary": {
+    "bytes": 15171200,
+    "sha256": "54964a0e870ed99ce1f66c4e0ee0f5a0621f1104ec43bbdbc76010615e2d8b44"
+  },
+  "after_binary": {
+    "bytes": 17495536,
+    "sha256": "82a7880ef25c6670e770be606a530ceb91274ae6d46d19377d1e52bdea43b21b"
+  },
+  "before_receipt": "greedy12-before-vram.json",
+  "after_receipt": "greedy12-vram.json"
+}

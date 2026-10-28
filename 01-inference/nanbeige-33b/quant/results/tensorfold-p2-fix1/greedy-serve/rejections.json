@@ -1,0 +1,52 @@
+[
+  {
+    "fields": {
+      "temperature": -1
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "temperature must be nonnegative",
+        "type": "invalid_request_error"
+      }
+    }
+  },
+  {
+    "fields": {
+      "top_p": 2
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "top_p must be between 0 and 1",
+        "type": "invalid_request_error"
+      }
+    }
+  },
+  {
+    "fields": {
+      "repetition_penalty": 1.1
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "Nanbeige does not support repetition_penalty; send 1 or omit it",
+        "type": "invalid_request_error"
+      }
+    }
+  },
+  {
+    "fields": {
+      "max_tokens": 1024
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "This server's maximum context length is 1024 tokens, but the rendered prompt has 35 tokens and requests 1024 reply tokens, which exceeds the context window. Reduce the prompt to at most 0 prompt tokens or request at most 989 reply tokens, including chat template and thinking tokens.",
+        "type": "invalid_request_error",
+        "param": "messages",
+        "code": "context_length_exceeded"
+      }
+    }
+  }
+]

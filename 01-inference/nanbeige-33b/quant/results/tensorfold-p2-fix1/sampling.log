@@ -1,0 +1,9 @@
+SAMPLED pilot draws=32768
+SAMPLED temperature draws=32768
+SAMPLED top_k draws=32768
+SAMPLED min_p draws=32768
+SAMPLED combined draws=32768
+SAMPLED penalties draws=32768
+SAMPLED wide_nucleus draws=8192
+SUMMARY llama sampling greedy_fp32=128/128 same_seed=256/256 different_seed=228/256 cases=7
+{"command": ["/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test", "llama-sampling", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/distributions.jsonl"], "pid": 3091557, "exit_code": 0, "seconds": 50.20124610199127, "timeout": false, "initial_free_mib": 7784, "minimum_free_mib": 7464, "peak_process_vram_mib": 262, "sampling_ms": 200}

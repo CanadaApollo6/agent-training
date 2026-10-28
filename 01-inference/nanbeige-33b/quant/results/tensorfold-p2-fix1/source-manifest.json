@@ -1,0 +1,1476 @@
+{
+  "head": "94c2c22be9cd429e8162e2284b963ee525ea76a0",
+  "base": "31ce9eb3e5d3e211dcd36e657085eb8bd40b42c2",
+  "input": "3aeb8e97513bfb0c2a66f2e32e5defad664bdd3d",
+  "source": {
+    "tools/zig/llama_serve_check.py": {
+      "bytes": 14147,
+      "sha256": "b9536b370893d6e85760f655bc413c06605a80f759035e3cd1bd00e92e074d66",
+      "lines": 282
+    },
+    "tools/zig/llama_serve_reference.py": {
+      "bytes": 11106,
+      "sha256": "c20b951e3aa35fda3591d756b954e69bcf74b1e3b5f7f8a016806d6c089f3a0e",
+      "lines": 175
+    },
+    "zig/src/server/fixtures/llama/outputs.json": {
+      "bytes": 20787,
+      "sha256": "ef4d3f91e566a0c4f6e25580e3e851afbd8de9bafb93757f96d07b29f12f4755",
+      "lines": 28
+    },
+    "zig/src/server/fixtures/llama/prompts.json": {
+      "bytes": 43871,
+      "sha256": "e37257ea1ec10cdb8babf3e847fc2ee98761e977ff348d65aa99b234b293ec3c",
+      "lines": 25
+    },
+    "zig/src/server/hf_text.zig": {
+      "bytes": 30034,
+      "sha256": "b2229f5a704c0902a9cda214932a8f1400b1fb0f197d79688e84c8d7535d07c1",
+      "lines": 554
+    },
+    "zig/src/server/llama_output_test.zig": {
+      "bytes": 14768,
+      "sha256": "443f19c7ac7aa33c270fce936b8e251fc34064b5e072a9575da6a4860dcf5354",
+      "lines": 288
+    },
+    "zig/src/server/llama_prompt_test.zig": {
+      "bytes": 3831,
+      "sha256": "13b27d8e2ad368e59a1f1f06d5f41db31e8e220273b176d8d68c958e6be649f6",
+      "lines": 96
+    },
+    "zig/src/server/llama_regression_test.zig": {
+      "bytes": 5855,
+      "sha256": "a60f54e3e23ed95907f913c26d64986efd96ee7df4d89c1f8864301e5a91db02",
+      "lines": 115
+    },
+    "zig/src/server/messages.zig": {
+      "bytes": 20403,
+      "sha256": "e67d54e749f381d633f3500529fdad0d82daceecf24a3eb32f77c56f5263e84d",
+      "lines": 338
+    },
+    "zig/src/server/openai.zig": {
+      "bytes": 31645,
+      "sha256": "32d7e8780e71eb94c7abba2908770a953287efb6bf2cf940716e6a302793f7bf",
+      "lines": 585
+    },
+    "zig/src/server/prompt.zig": {
+      "bytes": 10862,
+      "sha256": "c21d256f01f5e889c3f44f1163cfdf1b68f3551cb842c8206ff54878c8a773e0",
+      "lines": 186
+    },
+    "zig/src/server/reply_text.zig": {
+      "bytes": 24738,
+      "sha256": "4119b30187011080c910f7e7a7da026331fe34b87652a53e7702b74fc4abc2fc",
+      "lines": 523
+    },
+    "zig/src/server/root.zig": {
+      "bytes": 7910,
+      "sha256": "f9a869c433a646b8b5086220842f682379aac33bb23317138e8bc297a88a2403",
+      "lines": 199
+    },
+    "zig/src/server/stream_preflight_test.zig": {
+      "bytes": 27286,
+      "sha256": "ea671611ca3280741bb8a329378b73e337e9d07713e32cecb48e1a17c817de60",
+      "lines": 554
+    },
+    "zig/src/server/tool_params.zig": {
+      "bytes": 19023,
+      "sha256": "7613600f8e1b7f695291d2d3d066ece181e330e8615490fa9f53753fb7a08c96",
+      "lines": 443
+    },
+    "zig/src/server/tool_parse.zig": {
+      "bytes": 27157,
+      "sha256": "e757552ff38d2f781d46d268def0f88aaa5fc088ca4cbc5846063edc9e2315ce",
+      "lines": 554
+    },
+    "zig/src/server/tool_qwen.zig": {
+      "bytes": 2074,
+      "sha256": "83fcd50e8df6635154c22b14a44cc75e9ced83a8e874c06d2a64bea3bd1d60d1",
+      "lines": 40
+    }
+  },
+  "binaries": {
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test": {
+      "bytes": 17495536,
+      "sha256": "82a7880ef25c6670e770be606a530ceb91274ae6d46d19377d1e52bdea43b21b"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/native/bin/tensorfold-native": {
+      "bytes": 81848520,
+      "sha256": "5f5e851a81831783d60570f072782db9fc6ab42e5a3473372cf77741af220d9a"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/pre/bin/tf-llama-test": {
+      "bytes": 15171200,
+      "sha256": "54964a0e870ed99ce1f66c4e0ee0f5a0621f1104ec43bbdbc76010615e2d8b44"
+    }
+  },
+  "refs": {
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/serve_exl3.py": {
+      "bytes": 12868,
+      "sha256": "b46fae9c5ae7655c05eae16918237d3a8ccacbad6e775f0f843834f3cc19f7f1"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb/tokenizer.json": {
+      "bytes": 18450979,
+      "sha256": "1d858a0fc007f22af6ae18bfa1ae52d30e398aa9cd1ea06e7777176869346a3f"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb/tokenizer_config.json": {
+      "bytes": 11033,
+      "sha256": "91f4aec9f1fafb9924659bc3d843130bd3b092418327f31a998156aa07aa44b7"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice/slice.json": {
+      "bytes": 267,
+      "sha256": "811adf2c5644cc9de8f40f395f718ea5f6af5ae8ceeefe27fd90200fd4c111e9"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2b/pi-request.json": {
+      "bytes": 8529,
+      "sha256": "a81ff86f8da1f42dc49d13cc681a71df2b2c3b5b1c6ed6baf37f45453cd15c27"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/sequences.json": {
+      "bytes": 1342,
+      "sha256": "d0f3857b36e5a685982d2ac94eb63dbc766f86c40623659adb3821a2ef46f8fd"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/ref-12-greedy.json": {
+      "bytes": 917,
+      "sha256": "084c517926b419488227228949b0b7ad96fcb9affe8a12673bf4a947b282d085"
+    }
+  },
+  "verified_binaries": {
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/verified/tensorfold-native": {
+      "bytes": 81848520,
+      "sha256": "5f5e851a81831783d60570f072782db9fc6ab42e5a3473372cf77741af220d9a",
+      "executed_as": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/native/bin/tensorfold-native"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/verified/tf-llama-test": {
+      "bytes": 17495536,
+      "sha256": "82a7880ef25c6670e770be606a530ceb91274ae6d46d19377d1e52bdea43b21b",
+      "executed_as": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test"
+    }
+  },
+  "prebuilt_fatbins_for_host_and_before_runner": {
+    "modelopt_pack.fatbin": {
+      "bytes": 26872,
+      "sha256": "16faa614d1fbabd17872a25bfb9f967d23aa923d471751fe1fe8ee7f046e2b1d"
+    },
+    "glm_kda.fatbin": {
+      "bytes": 61808,
+      "sha256": "e0add944342b59ee7f1e1012316b59ab599def21ad0745a975ff6975f16d63c1"
+    },
+    "flashnext_hcf.fatbin": {
+      "bytes": 211184,
+      "sha256": "cbfd627e1dc29fa1a4b45575a0e9150fcd904c2f7bbcdc6decf6b64915d83319"
+    },
+    "prefill_attention.fatbin": {
+      "bytes": 588784,
+      "sha256": "9c5efd3e2cd4a2abb1219465fdec14d06dbbefc0e37a7f467e48385952abe86c"
+    },
+    "exlr8.fatbin": {
+      "bytes": 611568,
+      "sha256": "6af398908a462a4663bfeed23108a32481374fe4ee4a7bf1baaec457f892408b"
+    },
+    "nemotron_route.fatbin": {
+      "bytes": 150640,
+      "sha256": "3ce67936be0dea53ef4ac71a6c59fd282da0b73458acece0462da09e5d918012"
+    },
+    "gdn.fatbin": {
+      "bytes": 220912,
+      "sha256": "10231c52fa8e1ad3bcdf9fded6968b73c2fcba710b947267c0bf47a6b164776e"
+    },
+    "glm_index.fatbin": {
+      "bytes": 71792,
+      "sha256": "388607d4c88c725662cfe8f9404c61ba1577330649f432a0ce4ea19700e99304"
+    },
+    "torch_pointwise.fatbin": {
+      "bytes": 7672,
+      "sha256": "e2171125f210999aa39c9bde46adceeedbaa6927d54f3ceb3532d5e8209bc827"
+    },
+    "act_rows.fatbin": {
+      "bytes": 125616,
+      "sha256": "c56207d9fc4e63634bd7e933a4b649b24c85bf676005c27d169285deb5f70795"
+    },
+    "nemotron_latent.fatbin": {
+      "bytes": 235248,
+      "sha256": "e2c3a32410539ebc7cb4ae6028ce4c8e7b181107774ac7bac42c97c2b7a300f2"
+    },
+    "train.fatbin": {
+      "bytes": 296112,
+      "sha256": "242a2f3df57f91db2e1fb30d476a74359cf47f16ec691ac96e1e152203dfbd1c"
+    },
+    "gdn_prep.fatbin": {
+      "bytes": 62584,
+      "sha256": "b59b4b6dd518108ed849e6640fd03e60ea8baa584d6f6df1112f5e348f3707c7"
+    },
+    "gdn_train.fatbin": {
+      "bytes": 90992,
+      "sha256": "75811937be479bbcb2316bf1e2cba268ca977ed85fc5e758d39ac2356b416666"
+    },
+    "exl3_linear.fatbin": {
+      "bytes": 2175216,
+      "sha256": "baede92fb6537278e0f3ff01f1d603e9d0168cfa575c71dad5a5d6110d7801f3"
+    },
+    "dense_rows.fatbin": {
+      "bytes": 287544,
+      "sha256": "c3030e533d05fe088f9a7738d8960bf187a30b54f9b31881fbd8919edd4b8702"
+    },
+    "embed_rows.fatbin": {
+      "bytes": 19640,
+      "sha256": "cabec930bdbd9ce5244ba038e98b6afc71d5b2c38a3a786a354a2c180b6a47e5"
+    },
+    "qwen_vision.fatbin": {
+      "bytes": 66864,
+      "sha256": "db7949daf68e9d864302be0df1fe127900b38f26e1a53bb43a29a19899887cfd"
+    },
+    "qwen35_bf16_rows.fatbin": {
+      "bytes": 9776,
+      "sha256": "2e03a8ef01214866fa1377752645031cc5f96f4e9e629dfbb5b8221545c2b6fc"
+    },
+    "qwen35_kv8.fatbin": {
+      "bytes": 507440,
+      "sha256": "dba5f98513f07644fa5739fc259c02b256eb196082e02b0903f0aca05684322e"
+    },
+    "flashnext_hc.fatbin": {
+      "bytes": 233328,
+      "sha256": "14ba48c494166e5061add0ce51b20e65fe6f25c2654caaae1a867cd00f14b374"
+    },
+    "drama3.fatbin": {
+      "bytes": 357808,
+      "sha256": "83bebd1b07f21fd9481dd4f0160f062a156cd30beb524246cddf83024371c5cf"
+    },
+    "moe_glue.fatbin": {
+      "bytes": 58736,
+      "sha256": "0cdc5f50637abe1fdfc3a9d4dfd75658d9b7afc69a6850e479124930c3acd7cc"
+    },
+    "experts3.fatbin": {
+      "bytes": 186352,
+      "sha256": "4da295af96dd7c254014f4eea24070ef535c438513f0f49441400f6db0544286"
+    },
+    "glm_glue.fatbin": {
+      "bytes": 560880,
+      "sha256": "caf66dafa3fdda6c6be5931c8db284f55429310bedf50d84cb99f66892776128"
+    },
+    "torch_movement.fatbin": {
+      "bytes": 10232,
+      "sha256": "4d59ad17780769cb3ddbe97238485977ed0d419b3defecfab477ccf12395fbe6"
+    },
+    "glm_quant.fatbin": {
+      "bytes": 59824,
+      "sha256": "74a7dd79d2e72f468f7e94bafc63f2d2170251d399a73df0d66cd1ce0a10ed0f"
+    },
+    "torch_nemotron_constants.fatbin": {
+      "bytes": 4088,
+      "sha256": "06eada9c58e0d11a6b81124039bb901d82fb940ebb1690dd74851449fec7417e"
+    },
+    "window_attention.fatbin": {
+      "bytes": 654448,
+      "sha256": "f4b08ccc29d2913f403aff3690d8439619d0e6d20eb4bb150501c4b3262c2443"
+    },
+    "flashnext_fexp.fatbin": {
+      "bytes": 79728,
+      "sha256": "dcea57a82442f32df8900f794c95386bca3f778957ab4bc6fb2b4afeabfb19bc"
+    },
+    "attn_train.fatbin": {
+      "bytes": 65840,
+      "sha256": "d880ae463ab49213edd11764e117efccd001db801e7aafb910eec86c765dda4d"
+    },
+    "qmm_prefill.fatbin": {
+      "bytes": 138736,
+      "sha256": "eee6ecbcb8b6318d9b1feb7bb0f1cac6ea27ae84a99f97f3500b6ad47fe0f281"
+    },
+    "torch_indexing.fatbin": {
+      "bytes": 12600,
+      "sha256": "43da0955c73006240a0f2ceb89f5589e384d5d462c76127ffd4700a631f4ba8e"
+    },
+    "glm_ops.fatbin": {
+      "bytes": 15800,
+      "sha256": "4ef5c04abd2e8aa941372c15b579589ad85f61093dd44cd6e68cd2350f558ec9"
+    },
+    "qwen4_hc.fatbin": {
+      "bytes": 103352,
+      "sha256": "8d0541db3bae1ad599d0a974ec0fdf2ef0cbb8f0a30873afa8e6fc730d5e7827"
+    },
+    "nemotron_norms.fatbin": {
+      "bytes": 46512,
+      "sha256": "030d066c48553249ca2d42f2f2e779951316ff9a2655ef7bad14847ed11f998f"
+    },
+    "experts3_prefill.fatbin": {
+      "bytes": 172656,
+      "sha256": "0404d90e8548a919afec1725e6b05d29bede6106fef84f538d8535f40df8cdc8"
+    },
+    "flashnext_gdn.fatbin": {
+      "bytes": 20720,
+      "sha256": "ee78fd14900e22c3d43ebe558026e066be35b95231f69170d0c7c3377682d40a"
+    },
+    "qwen36_mtp.fatbin": {
+      "bytes": 70328,
+      "sha256": "2018c708230912e44b2d3a6f777334a4c59fd2dea780b0ead288d0f98de7476f"
+    },
+    "ck_experts.fatbin": {
+      "bytes": 177328,
+      "sha256": "9a3d55058137c70a626ee3eb18ad023389d4d60de2ed8da680b75bed57666db5"
+    },
+    "drama3_codec.fatbin": {
+      "bytes": 70000,
+      "sha256": "23f86daa48890a90affcde77bb5b4a7bf021b87b6749d805918ff7b25cd6179a"
+    },
+    "lane_gemv.fatbin": {
+      "bytes": 68336,
+      "sha256": "fd405f0fb49fe45e15e917ec86bcde2eecc31b80e992552a016d3b87ba8baf1a"
+    },
+    "drama3_staged_gemv.fatbin": {
+      "bytes": 11568,
+      "sha256": "8e917d6a7f9b59d2db5f92ee5e16cdfadbb53fb7e0542f3fc11fc92d6557415d"
+    },
+    "qmmf.fatbin": {
+      "bytes": 2932016,
+      "sha256": "18854d3f3a9d458db9178c30ee6107ff8c0cd6eda39dc0279aff5461625a33c6"
+    },
+    "exl3_experts.fatbin": {
+      "bytes": 744112,
+      "sha256": "6f38f3122c37d721d4de3a3d5098c3f72d83d6704fe384266e22eae38ec30516"
+    },
+    "window_rows.fatbin": {
+      "bytes": 625392,
+      "sha256": "e3072cb284ebdb7835b3ebf4a7f8e576713eb4e04a0539672cc87882e48c13e5"
+    },
+    "qwen35_draft.fatbin": {
+      "bytes": 117936,
+      "sha256": "4980bd25bb0a3af9629dc8c91d6484bbf19585edfb7a54674e7cdfcb9a1a757b"
+    },
+    "block_attention.fatbin": {
+      "bytes": 113584,
+      "sha256": "e05105296a0099fb1f4c84f99cc1582c938e0b250725ba0d984feb61f25dd316"
+    },
+    "window_pages.fatbin": {
+      "bytes": 237936,
+      "sha256": "c615739233f3a6a1599ed309fdd75d7fd7c80a1cb7b4375a699e7d314f97b15e"
+    },
+    "qwen27_train.fatbin": {
+      "bytes": 182256,
+      "sha256": "d59a51bd472f88ec68bb4daaa0c5d484f622fb79a80e04456cefead3209f4392"
+    },
+    "affine8.fatbin": {
+      "bytes": 249712,
+      "sha256": "68b3ad49384b45f28a381bd2e927750659ebdcab821250ddcac3da39cabb9fd9"
+    },
+    "flashnext_mtp.fatbin": {
+      "bytes": 8688,
+      "sha256": "2e8b0561a17402da393f456a2575724f4f96884081a6e8e336f1131c247a24bd"
+    },
+    "glm_dflash.fatbin": {
+      "bytes": 91952,
+      "sha256": "dab871378da8a5c40f9f9b75ca33229ffb419467e09b6d3939aead9b412a9f75"
+    },
+    "exlr8_dense.fatbin": {
+      "bytes": 177072,
+      "sha256": "05b3cbf5333e980917905381fb86fa28ae9994e35ffb201085db2c75bd63f9f7"
+    },
+    "affine_prefill.fatbin": {
+      "bytes": 310640,
+      "sha256": "e480863858ab4d926dec60f2663c22fe20d896674e501edaa5664ac7d0c7ccf6"
+    },
+    "probe.fatbin": {
+      "bytes": 13552,
+      "sha256": "97be87ae22ed1bd90ae111f71d209af18a2dd4aa3c45f7b5999de07ad6267f40"
+    },
+    "experts.fatbin": {
+      "bytes": 197808,
+      "sha256": "3977354011592382425d5a21c5a172b404bffa4033c36576dc91d02e77544ad0"
+    },
+    "glm_vision.fatbin": {
+      "bytes": 58096,
+      "sha256": "452e00cdc1b307592cb835f9819049bf36d1f9ea14da2b2c0ee0bf238dfb6620"
+    },
+    "qwen4_gdn.fatbin": {
+      "bytes": 114160,
+      "sha256": "fe061398214a2c0407f18ced25e989e47a94c43fcc7343d0ae8f305bc60c9342"
+    },
+    "route_rows.fatbin": {
+      "bytes": 44272,
+      "sha256": "e094bf83eacb09929a82a9b8a6a2518434641dd58afc0f083d1ff28730846ed6"
+    },
+    "gdn_prefill.fatbin": {
+      "bytes": 18672,
+      "sha256": "dffd66fe071576a00e25f4d2fea9467c4551edec55a99b0fcf5e0cc597b5d807"
+    },
+    "prompt16.fatbin": {
+      "bytes": 328944,
+      "sha256": "15454a8737c48a55bdc7a6a9246a24682165d3104240b2ce1c7ce66f1dee1efe"
+    },
+    "ggml.fatbin": {
+      "bytes": 1467760,
+      "sha256": "defc59d2aff062dc36bc0e7a2399ee437d9424261439cdae2c3e8e82eb64cf67"
+    },
+    "glm_mm.fatbin": {
+      "bytes": 617712,
+      "sha256": "b1bb1aba3419ded420b9ddf85f2e2426a102ac7922fe06fcfa541b6de524bff9"
+    },
+    "sample.fatbin": {
+      "bytes": 737520,
+      "sha256": "08535766465e3e79ae4ce50aa36f0dbbcaa1b07171a204b24c4a9acc7b68fe5f"
+    },
+    "dense_pointwise.fatbin": {
+      "bytes": 14584,
+      "sha256": "2f36ba1c763492122ba42ca282ca8e3df7a1e7f869b5a9326bb70f4dc4687c62"
+    },
+    "moe.fatbin": {
+      "bytes": 32624,
+      "sha256": "edee0f2ec338379e47876fbc5a3f5253d8e3c57f6a0c7e1a9b6e8477c066baba"
+    },
+    "nemotron_attention.fatbin": {
+      "bytes": 90288,
+      "sha256": "40109aa3c9a8b4954dc91a9bdee1fd23bd03b3f0a7431620840c6a1cf12a53f6"
+    },
+    "qwen35.fatbin": {
+      "bytes": 482352,
+      "sha256": "ae4d8ca524fb7001939ce269b77899274c4ea6aa4d8adf253e132377f4583a5b"
+    },
+    "scan_rows.fatbin": {
+      "bytes": 49904,
+      "sha256": "269a1a0399c57f53b95e7150d7a3919b4acbb99dee00168c03cb0ac95c914691"
+    },
+    "nvfp4_experts_tile.fatbin": {
+      "bytes": 384624,
+      "sha256": "191825d95bb52d6c62938aa5c7a3e18a77f52f5a6fc2a9f46a15eac0dee7892b"
+    },
+    "exl3_candidate.fatbin": {
+      "bytes": 1351024,
+      "sha256": "52d50bdabcce3930561426ec84a9869e95f1ad8e03b5321736f8bbe8bc116e8d"
+    },
+    "train_q4.fatbin": {
+      "bytes": 130928,
+      "sha256": "3f29034fe5b58a633b6f8fd809850d27196d1a09e59d076506fa753a94b80464"
+    },
+    "drama3_fp8.fatbin": {
+      "bytes": 126064,
+      "sha256": "6eb218c68860c91e454e923cee4ef007faed515513ec850afde3569c0e1bf853"
+    },
+    "qmm_group.fatbin": {
+      "bytes": 104112,
+      "sha256": "dc5dc5ea274acae31e0587d1fcd35bf4c1dea4f9c53522382d922883d0b37d5b"
+    },
+    "rank_sum.fatbin": {
+      "bytes": 14072,
+      "sha256": "3a150a36b6baa4bd34dfd234925b79915ba5ffd6b4beff313b42d8052c727e14"
+    },
+    "lfm2.fatbin": {
+      "bytes": 60864,
+      "sha256": "f72b93aec67b34d2e5ad25c7e2e6ea63f60585bd8928434e46fc507c22ff35bd"
+    },
+    "nvfp4_experts.fatbin": {
+      "bytes": 1568496,
+      "sha256": "67c36f9b59d7e91d245216c4c2e39e69d0b78bf129cd1d24a1ce328197573bd3"
+    },
+    "qwen4_ple.fatbin": {
+      "bytes": 139952,
+      "sha256": "01982b61dcc6266d8cb32d2dce5f5dd78dabaf5e9279fd2dc1bcd28b93ab1cb2"
+    },
+    "tree_attention.fatbin": {
+      "bytes": 1041008,
+      "sha256": "39a30ba3a004f850c61042a4b579cb3e1cb8338991f3eb2a4747dd8d44be792d"
+    },
+    "flashnext_attn.fatbin": {
+      "bytes": 509808,
+      "sha256": "85a4763b6801437d33680c39c7593304ec24eb2bf641a99325e5ec886025be80"
+    },
+    "experts_pack.fatbin": {
+      "bytes": 10680,
+      "sha256": "f9830faa2b0e3e0fa427be926e8fb6127162cc27e03a986fe3353d46500c1d57"
+    },
+    "qk_rows.fatbin": {
+      "bytes": 94192,
+      "sha256": "25a97000bc678a03dffb8e2b9e2f1a3af484ab696f4b5e7be3998e37221ec30c"
+    },
+    "qmm.fatbin": {
+      "bytes": 52144,
+      "sha256": "11ce135d7231cfadad0bb739a79954107391f30b07b87f3eee052c8bb8c95b25"
+    },
+    "fp8_experts.fatbin": {
+      "bytes": 179504,
+      "sha256": "ac0a2a662476d9105010e3ac1d6fe625e58c0385d8539edd679f707622340785"
+    },
+    "w4a8_prefill.fatbin": {
+      "bytes": 79088,
+      "sha256": "82ac3e4af73536c559eeb98ff3a42c9862fdc730698e8371ad313746cb7af0b3"
+    },
+    "flashnext_train.fatbin": {
+      "bytes": 161776,
+      "sha256": "e0f75a9d918066ae9e882b1c690685297c90e7a53e82661775c16589241d4bf8"
+    },
+    "torch_topk.fatbin": {
+      "bytes": 25648,
+      "sha256": "3e6b2a8a03cab8cace958e3eca05cff604360435cd822abdec57b29a7ddf335d"
+    },
+    "flashnext_fact.fatbin": {
+      "bytes": 199408,
+      "sha256": "5855c0574bfa54092ce14f79888cd00f9f0ebc482bb849e369ddc17d6165f13d"
+    },
+    "nemotron_keyed.fatbin": {
+      "bytes": 9784,
+      "sha256": "52efce2cf1631e9e97bd9e8914502e51ec552e1730f3b1c1d9af1724ea6630a8"
+    },
+    "torch_argmax.fatbin": {
+      "bytes": 64752,
+      "sha256": "0c3b5bd7a423cfc4afeb2b2dcf8d00a65870bf18af9f8a82b5c6657807dd1390"
+    },
+    "roce_gather.fatbin": {
+      "bytes": 7288,
+      "sha256": "bff684d7aa12828c703735e6bd88916b5a69944ebf0a717420d060297a3f68bd"
+    },
+    "nemotron_mamba.fatbin": {
+      "bytes": 74352,
+      "sha256": "f6d4f263e0fd7d50d1f2fbc81e55c865016a92b64d9945203f47d948564ec7ea"
+    },
+    "experts_prefill.fatbin": {
+      "bytes": 116080,
+      "sha256": "daae18e501110406dd1f3bf4c57c21c57d55cf7957fe96a803c47af7ee68f78d"
+    },
+    "qwen4_projection.fatbin": {
+      "bytes": 37880,
+      "sha256": "ac1735211ff836711c52beb27cf9a590788b3331c9648406ad0363176af15609"
+    },
+    "flashnext_batch.fatbin": {
+      "bytes": 221680,
+      "sha256": "577354df67b29e9bc8317cccdd35eaaff255f1cc832cf2391e43ed9a8e779d1b"
+    },
+    "vit.fatbin": {
+      "bytes": 69424,
+      "sha256": "a0310809ae33da3360a63a9cb3b7db401403ba5c5700ae0abbd8d0bf7dde3c82"
+    },
+    "train_attn.fatbin": {
+      "bytes": 57520,
+      "sha256": "44607b849e56a419bdaebb6a23bf8981f01cc0770eed339008875e44da76ac60"
+    },
+    "qwen35_keep.fatbin": {
+      "bytes": 17592,
+      "sha256": "c99e735bf39b5fca10cfd02bd542dabf61c5c3298a9021c9ad6b2c7b83c837a1"
+    },
+    "experts_rows.fatbin": {
+      "bytes": 67640,
+      "sha256": "c93dd5b3f50b7e39a449579fc30a557fa34139b49cbd8d842bbc5a012b98ff23"
+    },
+    "affine4_pack.fatbin": {
+      "bytes": 10936,
+      "sha256": "22f9f8c6932b6f0bc1c1c155be4b50dfdf3acaf484a307fa4cbcac6e92ef0fe6"
+    },
+    "nemotron_ops.fatbin": {
+      "bytes": 129136,
+      "sha256": "bf4e968e513e6933a9db614c4d9dcec0aa8b218d6c5f97872c39770aec970893"
+    },
+    "tree_round.fatbin": {
+      "bytes": 27440,
+      "sha256": "f6862d66cb184da5623f41da6b3b3daa6cc28344427e6b6b0f757c46531b49f3"
+    },
+    "ck_lane.fatbin": {
+      "bytes": 320816,
+      "sha256": "a8b56a62d3ffb1e94a620381d594faed0ba602865aca5ed79fd5f741ac591888"
+    },
+    "norms.fatbin": {
+      "bytes": 495920,
+      "sha256": "9b54f9ddddd17b8024af310786402d046805891abe6cf0d88eb5f0c6f583a607"
+    },
+    "contract_controls.fatbin": {
+      "bytes": 964208,
+      "sha256": "c336fd1255b59345f53d38a9bcc86bd079697e302356d51a09df19f71558b674"
+    },
+    "unsupported-dsv41_lin2.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unsupported-dsv41_topk.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unsupported-dsv41_topk_b.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unsupported-dsv41_attn.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "dsv41_exl3_experts.fatbin": {
+      "bytes": 18,
+      "sha256": "cbcb6fae38cff35eab6b884597967cbbb40303c849cf1552a15cdaebd16e5d5c"
+    },
+    "dsv41_x3ld.fatbin": {
+      "bytes": 10,
+      "sha256": "78e3389f9f13a8313025b62bc21ad0b63cdad75e7f148541ec81b21054a17008"
+    },
+    "dsv41_x3pf.fatbin": {
+      "bytes": 10,
+      "sha256": "50a13245df48f1bca7019847b3b56394b2d14c66a7cc31f9f001f702002aec21"
+    },
+    "dsv41_x3gm.fatbin": {
+      "bytes": 10,
+      "sha256": "71a2b1c8067e43b06c4db824c2b27b53b0803d25dd9ca1a1ccadcf2be12ae9e6"
+    },
+    "dsv41_linear.fatbin": {
+      "bytes": 12,
+      "sha256": "5687d69bf6d571fdea755e14bbe7ad6cfc43ea7ea5fac09d3c0480d5aa654741"
+    },
+    "dsv41_x3seg.fatbin": {
+      "bytes": 11,
+      "sha256": "dcd40989892cf2936c5fd755cb12ecdd2d72b4e17507f4f432c09e5da483b641"
+    },
+    "dsv41_dense3.fatbin": {
+      "bytes": 12,
+      "sha256": "f856b74f7a48acfe12722e993cef685262123bed85e69096ff220c3d41a0747f"
+    },
+    "dsv41_attn.fatbin": {
+      "bytes": 10,
+      "sha256": "5e32a5cbddd297457b90f1d70522919ae43bdf0735a3ae643d02002f29f43efe"
+    },
+    "dsv41_topk.fatbin": {
+      "bytes": 10,
+      "sha256": "e68c3260fd83be5085a8bb4168fa2a0bbcb1c2cfbd8ec8bb9d9d11033a429e65"
+    },
+    "dsv41_mhc.fatbin": {
+      "bytes": 9,
+      "sha256": "58d2a952f0070e1a7d3ef154b7c093685aab8de5328c9d2116c0eecb3be5e566"
+    },
+    "dsv41_mhc_pf.fatbin": {
+      "bytes": 12,
+      "sha256": "65d8834ccc153b524926b35f0d74a2a309ba1a357ad3827f5d473d9c428b6245"
+    },
+    "dsv41_router_gemv.fatbin": {
+      "bytes": 17,
+      "sha256": "8b6ba1ed37da1e3166107b86c477946180d8f4969d739c863efeaccd13b9d98a"
+    },
+    "dsv41_pfdense_k8.fatbin": {
+      "bytes": 16,
+      "sha256": "89ae47c5c31d4f36ac8ff7b582b5f8315b18ad816dd1597c85c70936f7eb6f3d"
+    },
+    "dsv41_pfdense_k10.fatbin": {
+      "bytes": 17,
+      "sha256": "15fbd786d5837f078d644e64092ca56346f527a1e20d2a681d68d2341fd4c5f3"
+    },
+    "dsv41_pfdense_k12.fatbin": {
+      "bytes": 17,
+      "sha256": "d4c522079417cd16ab7f39d87c79fc96efab9e4d34b198288f0249edc7104b6b"
+    },
+    "dsv41_pfdense_k16.fatbin": {
+      "bytes": 17,
+      "sha256": "83c0919797cf2c3c83f70e9eb383261aefb68fb8a403d1da9dfc0c970a7ec0a9"
+    },
+    "dsv41_engram_gate.fatbin": {
+      "bytes": 17,
+      "sha256": "edad566c27f816456ab46950f7e8e8e4e69c57ba55a1aa54b5d98ed8541736de"
+    },
+    "dsv41_l2pace.fatbin": {
+      "bytes": 12,
+      "sha256": "49e811215ca8d6b5cc6e57be4c906e8993c90e5587674e760ec724b7c8de3166"
+    },
+    "dsv41_l2pf.fatbin": {
+      "bytes": 10,
+      "sha256": "1b61f8b0d3dc609c0d6b799a5e2feb9354cc732cf24c66b131e29f35d3e38139"
+    },
+    "dsv41_x3gm_plan.fatbin": {
+      "bytes": 15,
+      "sha256": "908e27a44e7c8ea0933d0680663912d8008b52e0e6decae61e6938f4ccd7cd2a"
+    },
+    "dsv41_topk_keys.fatbin": {
+      "bytes": 15,
+      "sha256": "7e1e5bb31a691051540ab6e2e2fd29e9280edddec19cf8cc51ae7ca652c7cd54"
+    },
+    "dsv41_pointwise.fatbin": {
+      "bytes": 15,
+      "sha256": "a017f98db1b28a3f264ffec10385496659f163032b584b41a3774e19371f57bf"
+    },
+    "dsv41_kvsplit.fatbin": {
+      "bytes": 13,
+      "sha256": "68b0404542dbb02bf415cef8ef29b9350056aa541a26691bc5cac309e22bd504"
+    },
+    "dsv41_glue.fatbin": {
+      "bytes": 10,
+      "sha256": "f3bceb1e626fdff3b78e2509853d7e050cb8c9eedc17415a84e224f2c21b2733"
+    },
+    "dsv41_x3gm3.fatbin": {
+      "bytes": 11,
+      "sha256": "265146ed0edba4bf9409841f688b30dc99f529c18c27c06495596b7b6a582fb0"
+    },
+    "dsv41_pfglue.fatbin": {
+      "bytes": 12,
+      "sha256": "65aa2b913c9a316e9eb8c1ffa739055b045fde3f8ef4718ec438aa5e5d20569c"
+    },
+    "dsv41_router_glue.fatbin": {
+      "bytes": 17,
+      "sha256": "41f522ab703066e5c1c530d95e4f6c98e57df6844f37486a04bd860d72cd19e0"
+    },
+    "dsv41_kv_glue.fatbin": {
+      "bytes": 13,
+      "sha256": "1afa8e28ce1faa10951b0ad99b951c2d10f38696e16ea992da0b87316fc26cc8"
+    },
+    "dsv41_x3ld_epi.fatbin": {
+      "bytes": 14,
+      "sha256": "142f937e5fea821346bbf4ef6a57c1cd318a564b609e4fa1d2076de89c310cf6"
+    },
+    "dsv41_topk_b.fatbin": {
+      "bytes": 12,
+      "sha256": "7079f29079b3a0bc4429832d5ef4d3cba3ad526897f319eaa3013aa285626950"
+    },
+    "dsv41_sampling.fatbin": {
+      "bytes": 14,
+      "sha256": "fb2a249311cdfd30947a6573e89fa18973e13cd2e20d704e860d59addf8ee340"
+    },
+    "dsv41_lin2.fatbin": {
+      "bytes": 10,
+      "sha256": "fdb595001f9785593b8e006986cbffc49266adfd509922a26223d4880252b29f"
+    },
+    "h3.fatbin": {
+      "bytes": 2,
+      "sha256": "97fb5f8538b89f6c1accfd19836b65a73b61fbc2e0cbf84bb858a0fffa3f1592"
+    },
+    "h3-compile-only.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "rebuilt_binaries_not_device_tested": {
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/rebuilt/tensorfold-native": {
+      "bytes": 81848520,
+      "sha256": "37b3ec846074ab79a9851d97c72d2922e186c74f054265d30621444490dee44b"
+    }
+  },
+  "native_rebuild_image_inputs": {
+    "fatbin_qwen4_projection": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/360600d1b4bb95cecc9779d5aa1e6233/qwen4_projection.fatbin",
+      "bytes": 37880,
+      "sha256": "ac1735211ff836711c52beb27cf9a590788b3331c9648406ad0363176af15609",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen4_gdn": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/3ae7b9944c607b036a7ae9932f3f1b83/qwen4_gdn.fatbin",
+      "bytes": 114160,
+      "sha256": "fe061398214a2c0407f18ced25e989e47a94c43fcc7343d0ae8f305bc60c9342",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen4_hc": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/6389a60ebd988bcb45feb92810349ac6/qwen4_hc.fatbin",
+      "bytes": 103352,
+      "sha256": "8d0541db3bae1ad599d0a974ec0fdf2ef0cbb8f0a30873afa8e6fc730d5e7827",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen4_ple": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/f517e82e3c86fb185f9e7b070bba54f9/qwen4_ple.fatbin",
+      "bytes": 139952,
+      "sha256": "01982b61dcc6266d8cb32d2dce5f5dd78dabaf5e9279fd2dc1bcd28b93ab1cb2",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_attn_train": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/0a776fbc8cc5a6f2b7027f286ae2656b/attn_train.fatbin",
+      "bytes": 65840,
+      "sha256": "d880ae463ab49213edd11764e117efccd001db801e7aafb910eec86c765dda4d",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen27_train": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/216c16a94e1d15503d25c49f5a75a2f6/qwen27_train.fatbin",
+      "bytes": 182256,
+      "sha256": "d59a51bd472f88ec68bb4daaa0c5d484f622fb79a80e04456cefead3209f4392",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_gdn_train": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/b297886d6a7e7dff156961fdf06ba68c/gdn_train.fatbin",
+      "bytes": 90992,
+      "sha256": "75811937be479bbcb2316bf1e2cba268ca977ed85fc5e758d39ac2356b416666",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_train_q4": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/5ab579da028a77b9d154730e94221f01/train_q4.fatbin",
+      "bytes": 130928,
+      "sha256": "3f29034fe5b58a633b6f8fd809850d27196d1a09e59d076506fa753a94b80464",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_train_attn": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/54d82aebdd0b5fbabab43fac013850d4/train_attn.fatbin",
+      "bytes": 57520,
+      "sha256": "44607b849e56a419bdaebb6a23bf8981f01cc0770eed339008875e44da76ac60",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_train": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/e5cbcb2df2e0f016a6a266ce5be8d1a9/flashnext_train.fatbin",
+      "bytes": 161776,
+      "sha256": "e0f75a9d918066ae9e882b1c690685297c90e7a53e82661775c16589241d4bf8",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_gdn": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/7f22e7aca0b914b3ad7aecaede92b635/flashnext_gdn.fatbin",
+      "bytes": 20720,
+      "sha256": "ee78fd14900e22c3d43ebe558026e066be35b95231f69170d0c7c3377682d40a",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_batch": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/6c8d6fd1e49c142b86aa8d0c5c510076/flashnext_batch.fatbin",
+      "bytes": 221680,
+      "sha256": "577354df67b29e9bc8317cccdd35eaaff255f1cc832cf2391e43ed9a8e779d1b",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_mtp": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/c1f2867ee27860b9dffe44084f17d960/flashnext_mtp.fatbin",
+      "bytes": 8688,
+      "sha256": "2e8b0561a17402da393f456a2575724f4f96884081a6e8e336f1131c247a24bd",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qmm": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/e0135acddaa905122d33147699530404/qmm.fatbin",
+      "bytes": 52144,
+      "sha256": "6ca2020393dd13d3ac84d6f52973ca5eff896a8a86e70506f59b309f2c0ec46b",
+      "embedded_in_tested_native": false,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_experts_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/dbb4c293314892756fac903dff58de4f/experts_rows.fatbin",
+      "bytes": 67640,
+      "sha256": "c93dd5b3f50b7e39a449579fc30a557fa34139b49cbd8d842bbc5a012b98ff23",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_route_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/ea8143701fb3f2c55ea6f4652d64eb63/route_rows.fatbin",
+      "bytes": 44272,
+      "sha256": "e094bf83eacb09929a82a9b8a6a2518434641dd58afc0f083d1ff28730846ed6",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_hc": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/e9529fe00db641c3606511cf6e449397/flashnext_hc.fatbin",
+      "bytes": 233328,
+      "sha256": "14ba48c494166e5061add0ce51b20e65fe6f25c2654caaae1a867cd00f14b374",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_attn": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/ecf5b7bf14ab5879422daf80f87ed5e1/flashnext_attn.fatbin",
+      "bytes": 509808,
+      "sha256": "85a4763b6801437d33680c39c7593304ec24eb2bf641a99325e5ec886025be80",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_experts3": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/dc752cd2ea1cc00161aaa9fdfdd395ca/experts3.fatbin",
+      "bytes": 186352,
+      "sha256": "4da295af96dd7c254014f4eea24070ef535c438513f0f49441400f6db0544286",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_experts3_prefill": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/c2da5d54a21bd27ffca54fee1958f90e/experts3_prefill.fatbin",
+      "bytes": 172656,
+      "sha256": "0404d90e8548a919afec1725e6b05d29bede6106fef84f538d8535f40df8cdc8",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_moe": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/fedd43ef2e8b11b978bda3d328a4995a/moe.fatbin",
+      "bytes": 32624,
+      "sha256": "edee0f2ec338379e47876fbc5a3f5253d8e3c57f6a0c7e1a9b6e8477c066baba",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen36_mtp": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/17da63369dbf59ccabf8086b784dea3a/qwen36_mtp.fatbin",
+      "bytes": 70328,
+      "sha256": "2018c708230912e44b2d3a6f777334a4c59fd2dea780b0ead288d0f98de7476f",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_ggml": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/9fdf1ac2817d440148556da755ae41a1/ggml.fatbin",
+      "bytes": 1467760,
+      "sha256": "defc59d2aff062dc36bc0e7a2399ee437d9424261439cdae2c3e8e82eb64cf67",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_gdn": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/a060a53a3e1385fa243751547a98e667/gdn.fatbin",
+      "bytes": 220912,
+      "sha256": "10231c52fa8e1ad3bcdf9fded6968b73c2fcba710b947267c0bf47a6b164776e",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_probe": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/9b9d6e989db5c1478f8dc5da2309c1b9/probe.fatbin",
+      "bytes": 13552,
+      "sha256": "97be87ae22ed1bd90ae111f71d209af18a2dd4aa3c45f7b5999de07ad6267f40",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qmm_group": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/5ac89b51beca5edad72d32539141674a/qmm_group.fatbin",
+      "bytes": 104112,
+      "sha256": "f5c6046db3da082f291568ef8b4438d85694148dff894f07d25f9c67c7fc6993",
+      "embedded_in_tested_native": false,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qmm_prefill": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/af919b4eb9fc15d784013020383f8134/qmm_prefill.fatbin",
+      "bytes": 138736,
+      "sha256": "eee6ecbcb8b6318d9b1feb7bb0f1cac6ea27ae84a99f97f3500b6ad47fe0f281",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_fact": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/9187b3c350f6862aaa23eb097a88e24e/flashnext_fact.fatbin",
+      "bytes": 199408,
+      "sha256": "5855c0574bfa54092ce14f79888cd00f9f0ebc482bb849e369ddc17d6165f13d",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_hcf": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/806e736846d3b37b4e77b75de0d4a7a9/flashnext_hcf.fatbin",
+      "bytes": 211184,
+      "sha256": "cbfd627e1dc29fa1a4b45575a0e9150fcd904c2f7bbcdc6decf6b64915d83319",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_flashnext_fexp": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/4808539c461908c42e40d1b4ebac9f43/flashnext_fexp.fatbin",
+      "bytes": 79728,
+      "sha256": "dcea57a82442f32df8900f794c95386bca3f778957ab4bc6fb2b4afeabfb19bc",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_w4a8_prefill": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/63c5bf620d2c4dd1c6703817ce407082/w4a8_prefill.fatbin",
+      "bytes": 79088,
+      "sha256": "82ac3e4af73536c559eeb98ff3a42c9862fdc730698e8371ad313746cb7af0b3",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_experts": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/2d4ff6319dd29ab218002124d926143c/experts.fatbin",
+      "bytes": 197808,
+      "sha256": "3977354011592382425d5a21c5a172b404bffa4033c36576dc91d02e77544ad0",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_experts_prefill": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/d15f016ab0d91f93f51bc74fead17522/experts_prefill.fatbin",
+      "bytes": 116080,
+      "sha256": "daae18e501110406dd1f3bf4c57c21c57d55cf7957fe96a803c47af7ee68f78d",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_experts_pack": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/9cc6e6071c1eb2ee78f08d531fc04bf9/experts_pack.fatbin",
+      "bytes": 10680,
+      "sha256": "f9830faa2b0e3e0fa427be926e8fb6127162cc27e03a986fe3353d46500c1d57",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_prefill_attention": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/fb963585787229e75b0a9e28b42c7051/prefill_attention.fatbin",
+      "bytes": 588784,
+      "sha256": "9c5efd3e2cd4a2abb1219465fdec14d06dbbefc0e37a7f467e48385952abe86c",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_scan_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/0fa5d0392e423b7a89ea7c54ba09b6fa/scan_rows.fatbin",
+      "bytes": 49904,
+      "sha256": "269a1a0399c57f53b95e7150d7a3919b4acbb99dee00168c03cb0ac95c914691",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nemotron_ops": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/83e2b32ffadda24bf7b802282c618ee0/nemotron_ops.fatbin",
+      "bytes": 129136,
+      "sha256": "bf4e968e513e6933a9db614c4d9dcec0aa8b218d6c5f97872c39770aec970893",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_affine4_pack": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/fb0130416f9a427ec14ba21de47a7ea3/affine4_pack.fatbin",
+      "bytes": 10936,
+      "sha256": "22f9f8c6932b6f0bc1c1c155be4b50dfdf3acaf484a307fa4cbcac6e92ef0fe6",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_affine8": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/2e6bc26df43acf2786ea562dd88a782f/affine8.fatbin",
+      "bytes": 249712,
+      "sha256": "68b3ad49384b45f28a381bd2e927750659ebdcab821250ddcac3da39cabb9fd9",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_affine_prefill": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/14a72d925dfc8732e854aa02cbc54116/affine_prefill.fatbin",
+      "bytes": 310640,
+      "sha256": "e480863858ab4d926dec60f2663c22fe20d896674e501edaa5664ac7d0c7ccf6",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_fp8_experts": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/b5a784e7c00094d64454958cdafd13fc/fp8_experts.fatbin",
+      "bytes": 179504,
+      "sha256": "ac0a2a662476d9105010e3ac1d6fe625e58c0385d8539edd679f707622340785",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_exlr8": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/a29cf5980d63a189bd98e2d199852fce/exlr8.fatbin",
+      "bytes": 611568,
+      "sha256": "6af398908a462a4663bfeed23108a32481374fe4ee4a7bf1baaec457f892408b",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_exlr8_dense": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/964bb519c2bc4ecf6c87c219fb3a9e34/exlr8_dense.fatbin",
+      "bytes": 177072,
+      "sha256": "05b3cbf5333e980917905381fb86fa28ae9994e35ffb201085db2c75bd63f9f7",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nvfp4_experts_tile": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/e2c55344bafd1db12f8894b1a69678a6/nvfp4_experts_tile.fatbin",
+      "bytes": 384624,
+      "sha256": "191825d95bb52d6c62938aa5c7a3e18a77f52f5a6fc2a9f46a15eac0dee7892b",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nvfp4_experts": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/a5fda734f108e8b0628c54d1ac84b41b/nvfp4_experts.fatbin",
+      "bytes": 1568496,
+      "sha256": "67c36f9b59d7e91d245216c4c2e39e69d0b78bf129cd1d24a1ce328197573bd3",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_rank_sum": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/1a98f74e89bacb0da0a37cced859c1d9/rank_sum.fatbin",
+      "bytes": 14072,
+      "sha256": "3a150a36b6baa4bd34dfd234925b79915ba5ffd6b4beff313b42d8052c727e14",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_lane_gemv": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/9eba2d360a86a35f44c20015e5b56b8e/lane_gemv.fatbin",
+      "bytes": 68336,
+      "sha256": "fd405f0fb49fe45e15e917ec86bcde2eecc31b80e992552a016d3b87ba8baf1a",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_sample": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/8fed9b9d39bbf809dd62d21331e51c80/sample.fatbin",
+      "bytes": 737520,
+      "sha256": "08535766465e3e79ae4ce50aa36f0dbbcaa1b07171a204b24c4a9acc7b68fe5f",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_train": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/c9f6f656c95ac4299468ef33f383d1b0/train.fatbin",
+      "bytes": 296112,
+      "sha256": "242a2f3df57f91db2e1fb30d476a74359cf47f16ec691ac96e1e152203dfbd1c",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen35": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/108099f7b4fbe9c1a2803b32ee31ad9c/qwen35.fatbin",
+      "bytes": 482352,
+      "sha256": "ae4d8ca524fb7001939ce269b77899274c4ea6aa4d8adf253e132377f4583a5b",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen35_draft": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/66d2afc7e7f4110dceae7de04ab22494/qwen35_draft.fatbin",
+      "bytes": 117936,
+      "sha256": "4980bd25bb0a3af9629dc8c91d6484bbf19585edfb7a54674e7cdfcb9a1a757b",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen35_keep": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/a5c77b7bab48a8f57717d008532084f6/qwen35_keep.fatbin",
+      "bytes": 17592,
+      "sha256": "c99e735bf39b5fca10cfd02bd542dabf61c5c3298a9021c9ad6b2c7b83c837a1",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen_vision": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/2eb370859b49275cf44caf17261e7a49/qwen_vision.fatbin",
+      "bytes": 66864,
+      "sha256": "db7949daf68e9d864302be0df1fe127900b38f26e1a53bb43a29a19899887cfd",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_gdn_prefill": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/d7fded4ff6d1d5127f79ad5c7a574a5b/gdn_prefill.fatbin",
+      "bytes": 18672,
+      "sha256": "dffd66fe071576a00e25f4d2fea9467c4551edec55a99b0fcf5e0cc597b5d807",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen35_kv8": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/202e1ea9cf910f17c9a065c98f7df078/qwen35_kv8.fatbin",
+      "bytes": 507440,
+      "sha256": "dba5f98513f07644fa5739fc259c02b256eb196082e02b0903f0aca05684322e",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qwen35_bf16_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/191b0aaaea9fc3030509124d95288206/qwen35_bf16_rows.fatbin",
+      "bytes": 9776,
+      "sha256": "2e03a8ef01214866fa1377752645031cc5f96f4e9e629dfbb5b8221545c2b6fc",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nemotron_norms": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/9303852315b0b6ec6f5e2d6ce73e9144/nemotron_norms.fatbin",
+      "bytes": 46512,
+      "sha256": "030d066c48553249ca2d42f2f2e779951316ff9a2655ef7bad14847ed11f998f",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nemotron_route": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/001bf0e3ab9474a1cf2fbfa73120c7c2/nemotron_route.fatbin",
+      "bytes": 150640,
+      "sha256": "3ce67936be0dea53ef4ac71a6c59fd282da0b73458acece0462da09e5d918012",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nemotron_mamba": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/75d1a2a4a24742f1c1977b4a03556db3/nemotron_mamba.fatbin",
+      "bytes": 74352,
+      "sha256": "f6d4f263e0fd7d50d1f2fbc81e55c865016a92b64d9945203f47d948564ec7ea",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nemotron_attention": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/c045f593f7fc91fcd2fc71e13e701b64/nemotron_attention.fatbin",
+      "bytes": 90288,
+      "sha256": "40109aa3c9a8b4954dc91a9bdee1fd23bd03b3f0a7431620840c6a1cf12a53f6",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nemotron_keyed": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/692df575145cb071d25c1b9e7ebfba15/nemotron_keyed.fatbin",
+      "bytes": 9784,
+      "sha256": "52efce2cf1631e9e97bd9e8914502e51ec552e1730f3b1c1d9af1724ea6630a8",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_nemotron_latent": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/4826baba702aa4e3d853654491982dd1/nemotron_latent.fatbin",
+      "bytes": 235248,
+      "sha256": "e2c3a32410539ebc7cb4ae6028ce4c8e7b181107774ac7bac42c97c2b7a300f2",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_ck_lane": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/701b69bc8f452c38fd787458167df0d8/ck_lane.fatbin",
+      "bytes": 320816,
+      "sha256": "a8b56a62d3ffb1e94a620381d594faed0ba602865aca5ed79fd5f741ac591888",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_ck_experts": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/0e83fa7a4d05167baf2e5e5b7ebb7cee/ck_experts.fatbin",
+      "bytes": 177328,
+      "sha256": "9a3d55058137c70a626ee3eb18ad023389d4d60de2ed8da680b75bed57666db5",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_norms": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/e642a19f4ab5b26d82642130ac2db47b/norms.fatbin",
+      "bytes": 495920,
+      "sha256": "9b54f9ddddd17b8024af310786402d046805891abe6cf0d88eb5f0c6f583a607",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_embed_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/1c3ceea7647575dc6b8c2e4639799609/embed_rows.fatbin",
+      "bytes": 19640,
+      "sha256": "cabec930bdbd9ce5244ba038e98b6afc71d5b2c38a3a786a354a2c180b6a47e5",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_lfm2": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/dc19e83e59b0683e5959349e63e5bd1d/lfm2.fatbin",
+      "bytes": 60864,
+      "sha256": "f72b93aec67b34d2e5ad25c7e2e6ea63f60585bd8928434e46fc507c22ff35bd",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_vit": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/c461b3472d94647fbc5808c4c41b78ae/vit.fatbin",
+      "bytes": 69424,
+      "sha256": "a0310809ae33da3360a63a9cb3b7db401403ba5c5700ae0abbd8d0bf7dde3c82",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_tree_round": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/3c5efe02fb8de1542e5a7aed3037fdfb/tree_round.fatbin",
+      "bytes": 27440,
+      "sha256": "f6862d66cb184da5623f41da6b3b3daa6cc28344427e6b6b0f757c46531b49f3",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_act_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/af821030b2bdbfec08edefa43b3b49db/act_rows.fatbin",
+      "bytes": 125616,
+      "sha256": "c56207d9fc4e63634bd7e933a4b649b24c85bf676005c27d169285deb5f70795",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_gdn_prep": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/f642f2d79161f28d79345788c22e6251/gdn_prep.fatbin",
+      "bytes": 62584,
+      "sha256": "b59b4b6dd518108ed849e6640fd03e60ea8baa584d6f6df1112f5e348f3707c7",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_qk_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/6e6b01bb857261b82c81a95701d9d714/qk_rows.fatbin",
+      "bytes": 94192,
+      "sha256": "25a97000bc678a03dffb8e2b9e2f1a3af484ab696f4b5e7be3998e37221ec30c",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_qmmf": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/79496c03da7085e297e6f9e1691eddbd/qmmf.fatbin",
+      "bytes": 2932016,
+      "sha256": "6b5cdd0adf146fbb74b56c2e50e5608cda4b77fa2502fc1bb8f2e02758b47c61",
+      "embedded_in_tested_native": false,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_prompt16": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/b6d172ce576c427ed0e2e7d44d1afff1/prompt16.fatbin",
+      "bytes": 328944,
+      "sha256": "15454a8737c48a55bdc7a6a9246a24682165d3104240b2ce1c7ce66f1dee1efe",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_tree_attention": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/3c811da52a0bf3eecec9e05c714a6594/tree_attention.fatbin",
+      "bytes": 1041008,
+      "sha256": "39a30ba3a004f850c61042a4b579cb3e1cb8338991f3eb2a4747dd8d44be792d",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_block_attention": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/ccec2d9da1066dfdef3ffd690c4a95da/block_attention.fatbin",
+      "bytes": 113584,
+      "sha256": "e05105296a0099fb1f4c84f99cc1582c938e0b250725ba0d984feb61f25dd316",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_window_attention": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/af35d502ff2b30e114303cbe8e41a23e/window_attention.fatbin",
+      "bytes": 654448,
+      "sha256": "f4b08ccc29d2913f403aff3690d8439619d0e6d20eb4bb150501c4b3262c2443",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_window_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/22f0cae7f8f772d95b16a06e079a7f4f/window_rows.fatbin",
+      "bytes": 625392,
+      "sha256": "e3072cb284ebdb7835b3ebf4a7f8e576713eb4e04a0539672cc87882e48c13e5",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_window_pages": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/818f0f01a5cf95621756d4f56880cd98/window_pages.fatbin",
+      "bytes": 237936,
+      "sha256": "c615739233f3a6a1599ed309fdd75d7fd7c80a1cb7b4375a699e7d314f97b15e",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_moe_glue": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/379c44dcd4d985a31f2203e48e3d506f/moe_glue.fatbin",
+      "bytes": 58736,
+      "sha256": "0cdc5f50637abe1fdfc3a9d4dfd75658d9b7afc69a6850e479124930c3acd7cc",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_dense_rows": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/40fe308e98b7cf712c6a4cc5047dd545/dense_rows.fatbin",
+      "bytes": 287544,
+      "sha256": "c3030e533d05fe088f9a7738d8960bf187a30b54f9b31881fbd8919edd4b8702",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_modelopt_pack": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/1b262ab7b0a0be3d6623482af9d36ec3/modelopt_pack.fatbin",
+      "bytes": 26872,
+      "sha256": "16faa614d1fbabd17872a25bfb9f967d23aa923d471751fe1fe8ee7f046e2b1d",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_glm_kda": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/09c72aa836d1289ad6eb1e47fb62de2e/glm_kda.fatbin",
+      "bytes": 61808,
+      "sha256": "e0add944342b59ee7f1e1012316b59ab599def21ad0745a975ff6975f16d63c1",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_glm_glue": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/7d806dcb737990ce1b0bdbea93c59cc9/glm_glue.fatbin",
+      "bytes": 560880,
+      "sha256": "caf66dafa3fdda6c6be5931c8db284f55429310bedf50d84cb99f66892776128",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_glm_ops": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/186f8d78acbaaae2691716286994e770/glm_ops.fatbin",
+      "bytes": 15800,
+      "sha256": "4ef5c04abd2e8aa941372c15b579589ad85f61093dd44cd6e68cd2350f558ec9",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_glm_index": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/752fb86e3a58bc88e0d9e91c687748ac/glm_index.fatbin",
+      "bytes": 71792,
+      "sha256": "388607d4c88c725662cfe8f9404c61ba1577330649f432a0ce4ea19700e99304",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_glm_quant": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/7b264421e8e57f4913c296c1f34dc5e4/glm_quant.fatbin",
+      "bytes": 59824,
+      "sha256": "74a7dd79d2e72f468f7e94bafc63f2d2170251d399a73df0d66cd1ce0a10ed0f",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_exl3_linear": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/0d8556094458245cab1978e5439d7449/exl3_linear.fatbin",
+      "bytes": 2175216,
+      "sha256": "baede92fb6537278e0f3ff01f1d603e9d0168cfa575c71dad5a5d6110d7801f3",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_exl3_experts": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/5e2cf0187d4a8a2abd4c07b746673778/exl3_experts.fatbin",
+      "bytes": 744112,
+      "sha256": "6f38f3122c37d721d4de3a3d5098c3f72d83d6704fe384266e22eae38ec30516",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_exl3_candidate": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/4ae750e8380d4486b2562d799a2ab070/exl3_candidate.fatbin",
+      "bytes": 1351024,
+      "sha256": "52d50bdabcce3930561426ec84a9869e95f1ad8e03b5321736f8bbe8bc116e8d",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_glm_vision": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/cf1a7dadb7e505b520b14628a989b751/glm_vision.fatbin",
+      "bytes": 58096,
+      "sha256": "452e00cdc1b307592cb835f9819049bf36d1f9ea14da2b2c0ee0bf238dfb6620",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_glm_mm": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/9fb40d15b0157923f92352cb560a2ea7/glm_mm.fatbin",
+      "bytes": 617712,
+      "sha256": "b1bb1aba3419ded420b9ddf85f2e2426a102ac7922fe06fcfa541b6de524bff9",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_glm_dflash": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/68016d49df952e69ffcc5d3e2fdffb63/glm_dflash.fatbin",
+      "bytes": 91952,
+      "sha256": "dab871378da8a5c40f9f9b75ca33229ffb419467e09b6d3939aead9b412a9f75",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_torch_argmax": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/282ff60c97a328f79bfcab756abec8c7/torch_argmax.fatbin",
+      "bytes": 64752,
+      "sha256": "0c3b5bd7a423cfc4afeb2b2dcf8d00a65870bf18af9f8a82b5c6657807dd1390",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_torch_topk": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/581cccf0e8ff4f2bff835c8394563e60/torch_topk.fatbin",
+      "bytes": 25648,
+      "sha256": "3e6b2a8a03cab8cace958e3eca05cff604360435cd822abdec57b29a7ddf335d",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_dense_pointwise": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/a01544fa05c57312742cb57367fdccf7/dense_pointwise.fatbin",
+      "bytes": 14584,
+      "sha256": "2f36ba1c763492122ba42ca282ca8e3df7a1e7f869b5a9326bb70f4dc4687c62",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_torch_pointwise": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/634aaa3dfc2fec7cb60050e868ce9e5e/torch_pointwise.fatbin",
+      "bytes": 7672,
+      "sha256": "e2171125f210999aa39c9bde46adceeedbaa6927d54f3ceb3532d5e8209bc827",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": true
+    },
+    "fatbin_torch_indexing": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/9033e3cecd6815c6edb1beed960b9380/torch_indexing.fatbin",
+      "bytes": 12600,
+      "sha256": "43da0955c73006240a0f2ceb89f5589e384d5d462c76127ffd4700a631f4ba8e",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_torch_movement": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/051ec5216e906b46f184182164c18a0d/torch_movement.fatbin",
+      "bytes": 10232,
+      "sha256": "4d59ad17780769cb3ddbe97238485977ed0d419b3defecfab477ccf12395fbe6",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_torch_nemotron_constants": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/41141105db73e4f5c76e94b5bf1bac79/torch_nemotron_constants.fatbin",
+      "bytes": 4088,
+      "sha256": "06eada9c58e0d11a6b81124039bb901d82fb940ebb1690dd74851449fec7417e",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_roce_gather": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/0c5c436352f5fcb40cc41fb88247cbcb/roce_gather.fatbin",
+      "bytes": 7288,
+      "sha256": "bff684d7aa12828c703735e6bd88916b5a69944ebf0a717420d060297a3f68bd",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_drama3_staged_gemv": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/943de26f2d1f93c265c6f128319bd922/drama3_staged_gemv.fatbin",
+      "bytes": 11568,
+      "sha256": "8e917d6a7f9b59d2db5f92ee5e16cdfadbb53fb7e0542f3fc11fc92d6557415d",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_drama3": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/025573c8715208237b2a2ba457e4b14d/drama3.fatbin",
+      "bytes": 357808,
+      "sha256": "83bebd1b07f21fd9481dd4f0160f062a156cd30beb524246cddf83024371c5cf",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_drama3_fp8": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/ab76464ab19ef5fc5216d3e859328f4d/drama3_fp8.fatbin",
+      "bytes": 126064,
+      "sha256": "6eb218c68860c91e454e923cee4ef007faed515513ec850afde3569c0e1bf853",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_drama3_codec": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/365c2f04b06ef2c40a3f150e5d166dd5/drama3_codec.fatbin",
+      "bytes": 70000,
+      "sha256": "23f86daa48890a90affcde77bb5b4a7bf021b87b6749d805918ff7b25cd6179a",
+      "embedded_in_tested_native": true,
+      "embedded_in_tested_runner": false
+    },
+    "fatbin_contract_controls": {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/b1abcc5efee30ad7410992344e17c1d2/contract_controls.fatbin",
+      "bytes": 964208,
+      "sha256": "c336fd1255b59345f53d38a9bcc86bd079697e302356d51a09df19f71558b674",
+      "embedded_in_tested_native": false,
+      "embedded_in_tested_runner": true
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test",
+    "llama-serve-greedy",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+    "128",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/greedy-serve/oracle-tokens.json"
+  ],
+  "pid": 3207655,
+  "exit_code": 0,
+  "seconds": 4.047076681992621,
+  "timeout": false,
+  "initial_free_mib": 7822,
+  "minimum_free_mib": 6062,
+  "peak_process_vram_mib": 1690,
+  "sampling_ms": 200
+}

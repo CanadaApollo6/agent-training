@@ -1,0 +1,37 @@
+1/13 root.test_0...OK
+2/13 root.test_1...OK
+3/13 root.test_2...OK
+4/13 root.test_3...OK
+5/13 root.test_4...OK
+6/13 root.test_5...OK
+7/13 llama_regression_test.test.Llama serve: resolved template controls retain upstream precedence outside Nanbeige...
+====== expected this output: =========
+high|True|False|kept|thinking␃
+
+======== instead found this: =========
+high|True|False|kept|raw␃
+
+======================================
+First difference occurs on line 1:
+expected:
+high|True|False|kept|thinking
+                     ^ ('\x74')
+found:
+high|True|False|kept|raw
+                     ^ ('\x72')
+FAIL (TestExpectedEqual)
+/home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x12ad935 in expectEqualStrings (std.zig)
+        return error.TestExpectedEqual;
+        ^
+/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_regression_test.zig:28:5: 0x12ae324 in test.Llama serve: resolved template controls retain upstream precedence outside Nanbeige (root.zig)
+    try std.testing.expectEqualStrings("high|True|False|kept|thinking", rendered.text);
+    ^
+8/13 idle_unload.test_0...OK
+9/13 tool_stream.test_0...OK
+10/13 auth.test_0...OK
+11/13 speech.test_0...OK
+12/13 cortheon.cortheon.test_0...OK
+13/13 hf_text.test_0...OK
+12 passed; 0 skipped; 1 failed.
+error: the following test command failed with exit code 1:
+/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/controls-boundary-before --seed=0xaeff4c2a

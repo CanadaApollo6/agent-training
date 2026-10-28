@@ -1,0 +1,161 @@
+[
+  {
+    "file": "sampling-vram.json",
+    "command": [
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test",
+      "llama-sampling",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/distributions.jsonl"
+    ],
+    "pid": 3091557,
+    "exit_code": 0,
+    "seconds": 50.20124610199127,
+    "timeout": false,
+    "initial_free_mib": 7784,
+    "minimum_free_mib": 7464,
+    "peak_process_vram_mib": 262,
+    "sampling_ms": 200
+  },
+  {
+    "file": "sampled-decode-vram.json",
+    "command": [
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test",
+      "llama-sampled",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/sampled-serial.jsonl"
+    ],
+    "pid": 3106056,
+    "exit_code": 0,
+    "seconds": 7.915676905991859,
+    "timeout": false,
+    "initial_free_mib": 7908,
+    "minimum_free_mib": 6209,
+    "peak_process_vram_mib": 1690,
+    "sampling_ms": 200
+  },
+  {
+    "file": "greedy12-vram.json",
+    "command": [
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test",
+      "llama-greedy-slice",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+      "12",
+      "128",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/greedy12.json"
+    ],
+    "pid": 3154711,
+    "exit_code": 1,
+    "seconds": 17.573279490999994,
+    "timeout": false,
+    "initial_free_mib": 7674,
+    "minimum_free_mib": 3153,
+    "peak_process_vram_mib": 4350,
+    "sampling_ms": 200
+  },
+  {
+    "file": "greedy12-before-vram.json",
+    "command": [
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/pre/bin/tf-llama-test",
+      "llama-greedy-slice",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+      "12",
+      "128",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/greedy12-before.json"
+    ],
+    "pid": 3160794,
+    "exit_code": 1,
+    "seconds": 12.261118443013402,
+    "timeout": false,
+    "initial_free_mib": 7531,
+    "minimum_free_mib": 3183,
+    "peak_process_vram_mib": 4350,
+    "sampling_ms": 200
+  },
+  {
+    "file": "greedy-serve/oracle-vram.json",
+    "command": [
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test",
+      "llama-serve-greedy",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+      "128",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/greedy-serve/oracle-tokens.json"
+    ],
+    "pid": 3207655,
+    "exit_code": 0,
+    "seconds": 4.047076681992621,
+    "timeout": false,
+    "initial_free_mib": 7822,
+    "minimum_free_mib": 6062,
+    "peak_process_vram_mib": 1690,
+    "sampling_ms": 200
+  },
+  {
+    "file": "greedy-serve/server-vram.json",
+    "command": [
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/native/bin/tensorfold-native",
+      "serve",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice",
+      "--port",
+      "44567",
+      "--name",
+      "nanbeige-exl3-a1",
+      "--context",
+      "1024",
+      "--parallel",
+      "1",
+      "--no-drafts",
+      "--temperature",
+      "0",
+      "--prompt-cache-gib",
+      "0",
+      "--keep-warm",
+      "0",
+      "--max-tokens",
+      "512",
+      "--no-update-check"
+    ],
+    "pid": 3208081,
+    "exit_code": 0,
+    "seconds": 6.605078445994877,
+    "timeout": false,
+    "initial_free_mib": 7778,
+    "minimum_free_mib": 6090,
+    "peak_process_vram_mib": 1666,
+    "sampling_ms": 200
+  },
+  {
+    "file": "sampled-serve/server-vram.json",
+    "command": [
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/native/bin/tensorfold-native",
+      "serve",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice",
+      "--port",
+      "36821",
+      "--name",
+      "nanbeige-exl3-a1",
+      "--context",
+      "32768",
+      "--parallel",
+      "1",
+      "--no-drafts",
+      "--prompt-cache-gib",
+      "0",
+      "--keep-warm",
+      "0",
+      "--max-tokens",
+      "512",
+      "--no-update-check"
+    ],
+    "pid": 3211396,
+    "exit_code": 0,
+    "seconds": 25.81893341500836,
+    "timeout": false,
+    "initial_free_mib": 7809,
+    "minimum_free_mib": 5815,
+    "peak_process_vram_mib": 1912,
+    "sampling_ms": 200
+  }
+]

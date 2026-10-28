@@ -1,0 +1,106 @@
+info(verbose): /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test -Odebug --dep engine_api --dep tokenizer --dep template --dep living --dep json --dep dsv41_chat --dep drama_prompt --dep lanes --dep qwen27_mask_fake --dep qwen27_masks --dep sys --dep checkpoint_config --dep save_guard -Mroot=zig/src/server/root.zig -Odebug --dep lanes --dep sys --dep checkpoint_config --dep save_guard -Mengine_api=zig/src/core/engine_api.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mtokenizer=zig/src/core/tokenizer/tokenizer.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mtemplate=zig/src/core/template/template.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mliving=zig/src/living/living.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mjson=zig/src/server/json.zig -Odebug --dep json --dep sys --dep checkpoint_config --dep save_guard -Mdsv41_chat=zig/src/families/deepseek_v41/serve/template.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mdrama_prompt=zig/src/families/drama3/prompt.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mlanes=zig/src/core/lanes/lanes.zig --dep lanes --dep qwen27_masks --dep qwen_draw --dep sys --dep checkpoint_config --dep save_guard -Mqwen27_mask_fake=zig/src/native/qwen27_mask_fake.zig --dep sys --dep checkpoint_config --dep save_guard -Mqwen27_masks=zig/src/native/qwen27_masks.zig --dep checkpoint_config --dep save_guard -Msys=zig/src/platform/sys.zig --dep save_guard -Mcheckpoint_config=zig/src/core/checkpoint_config.zig -Msave_guard=zig/src/core/save_guard.zig --dep lanes --dep sys --dep checkpoint_config --dep save_guard -Mqwen_draw=zig/src/families/qwen3_5/draw.zig -lc --test-filter "Llama serve:" --cache-dir /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache --global-cache-dir /home/riels/.cache/zig --build-root . --name test --zig-lib-dir /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/ --listen=-
+info(verbose): /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test -Odebug --dep cuda --dep core --dep lanes --dep sys --dep checkpoint_config --dep save_guard -Mroot=zig/src/families/llama/cuda.zig -Odebug --dep gpu_memory --dep kernel_options --dep stagger --dep sys --dep checkpoint_config --dep save_guard -Mcuda=zig/src/cuda/root.zig -Odebug --dep gpu_memory --dep tokenizer --dep living --dep sys --dep checkpoint_config --dep save_guard -Mcore=zig/src/core/root.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mlanes=zig/src/core/lanes/lanes.zig --dep checkpoint_config --dep save_guard -Msys=zig/src/platform/sys.zig --dep save_guard -Mcheckpoint_config=zig/src/core/checkpoint_config.zig -Msave_guard=zig/src/core/save_guard.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mgpu_memory=zig/src/gpu_memory.zig -Mkernel_options=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/163d285497c58d762b93d74b6b1f42b0/options.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mstagger=zig/src/core/stagger.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mtokenizer=zig/src/core/tokenizer/tokenizer.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mliving=zig/src/living/living.zig -lc --cache-dir /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache --global-cache-dir /home/riels/.cache/zig --build-root . --name test --zig-lib-dir /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/ --listen=-
+info(verbose): /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/162294b24de6102ee88a9400c2c5cf9b/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache --seed=0x9fa4b8b0 --listen=-
+info(verbose): /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/4e2d4b0c4c3d8bd59b8a8a73088c9b94/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache --seed=0x9fa4b8b0 --listen=-
+test-llama-server-host
++- run test w
+PROMPT p1-chat tokens=195 equal
+PROMPT system-user tokens=24 equal
+PROMPT default-system tokens=34 equal
+PROMPT reasoning-history tokens=48 equal
+PROMPT reasoning-alias tokens=48 equal
+PROMPT embedded-thinking tokens=47 equal
+PROMPT tools tokens=254 equal
+PROMPT calls-with-tools tokens=350 equal
+PROMPT calls-without-tools tokens=120 equal
+PROMPT tool-results tokens=382 equal
+PROMPT preserve-false tokens=44 equal
+PROMPT thinking-off tokens=28 equal
+PROMPT json-calls tokens=316 equal
+PROMPT bad-json-arguments tokens=278 equal
+PROMPT special-user tokens=39 equal
+PROMPT special-tool tokens=375 equal
+PROMPT developer-leading tokens=42 equal
+PROMPT developer-mixed tokens=42 equal
+PROMPT kwargs-effort tokens=24 equal
+PROMPT kwargs-top-effort tokens=24 equal
+PROMPT kwargs-top-only tokens=24 equal
+PROMPT spaced-history-call tokens=346 equal
+PROMPT text-parts tokens=34 equal
+PROMPT special-user tokens=39 equal
+PROMPT special-tool tokens=375 equal
+PROMPT developer-leading tokens=42 equal
+PROMPT developer-mixed tokens=42 equal
+PROMPT kwargs-effort tokens=24 equal
+PROMPT kwargs-top-effort tokens=24 equal
+PROMPT kwargs-top-only tokens=24 equal
+OUTPUT spaced-function equal
+OUTPUT spaced-parameter equal
+OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+OUTPUT spaced-empty equal
+OUTPUT name-newline equal
+OUTPUT name-inner-space equal
+OUTPUT name-unicode-space equal
+OUTPUT unicode equal
+OUTPUT plain equal
+OUTPUT no-close equal
+OUTPUT no-close-call equal
+OUTPUT typed equal
+OUTPUT multiple equal
+OUTPUT no-tools equal
+OUTPUT unclosed-call equal
+OUTPUT trailing-prose equal
+OUTPUT reasoning-spaces equal
+OUTPUT typed-edge equal
+OUTPUT truncated-params equal
+OUTPUT unknown-function equal
+OUTPUT malformed-first equal
+OUTPUT no-function equal
+OUTPUT spaced-function equal
+OUTPUT spaced-parameter equal
+OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+ROUTE spaced-function JSON+SSE equal
+ROUTE spaced-parameter JSON+SSE equal
+ROUTE case-function JSON+SSE equal
+ROUTE case-parameter JSON+SSE equal
+ROUTE case-collision JSON+SSE equal
+ROUTE case-collision-upper JSON+SSE equal
+ROUTE case-tags JSON+SSE equal
+ROUTE spaced-empty JSON+SSE equal
+ROUTE name-newline JSON+SSE equal
+ROUTE name-inner-space JSON+SSE equal
+ROUTE name-unicode-space JSON+SSE equal
+ROUTE unicode JSON+SSE equal
+ROUTE plain JSON+SSE equal
+ROUTE no-close JSON+SSE equal
+ROUTE no-close-call JSON+SSE equal
+ROUTE typed JSON+SSE equal
+ROUTE multiple JSON+SSE equal
+ROUTE no-tools JSON+SSE equal
+ROUTE unclosed-call JSON+SSE equal
+ROUTE trailing-prose JSON+SSE equal
+ROUTE reasoning-spaces JSON+SSE equal
+ROUTE typed-edge JSON+SSE equal
+ROUTE truncated-params JSON+SSE equal
+ROUTE unknown-function JSON+SSE equal
+ROUTE malformed-first JSON+SSE equal
+ROUTE no-function JSON+SSE equal
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/o/4e2d4b0c4c3d8bd59b8a8a73088c9b94/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache --seed=0x9fa4b8b0 --listen=-
+
+Build Summary: 7/7 steps succeeded; 36/36 tests passed
+test-llama-host success
++- run test 7 pass (7 total) 12ms MaxRSS:8M
+   +- compile test debug native success 369ms MaxRSS:216M
+      +- options success
+test-llama-server-host success
++- run test 29 pass (29 total) 9s MaxRSS:238M
+   +- compile test debug native success 1s MaxRSS:342M
+

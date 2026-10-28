@@ -1,0 +1,87 @@
+[
+  {
+    "file": "tools/zig/llama_serve_check.py",
+    "lines": 282,
+    "bytes": 14147
+  },
+  {
+    "file": "tools/zig/llama_serve_reference.py",
+    "lines": 175,
+    "bytes": 11106
+  },
+  {
+    "file": "zig/src/server/fixtures/llama/outputs.json",
+    "lines": 28,
+    "bytes": 20787
+  },
+  {
+    "file": "zig/src/server/fixtures/llama/prompts.json",
+    "lines": 25,
+    "bytes": 43871
+  },
+  {
+    "file": "zig/src/server/hf_text.zig",
+    "lines": 554,
+    "bytes": 30034
+  },
+  {
+    "file": "zig/src/server/llama_output_test.zig",
+    "lines": 288,
+    "bytes": 14768
+  },
+  {
+    "file": "zig/src/server/llama_prompt_test.zig",
+    "lines": 96,
+    "bytes": 3831
+  },
+  {
+    "file": "zig/src/server/llama_regression_test.zig",
+    "lines": 115,
+    "bytes": 5855
+  },
+  {
+    "file": "zig/src/server/messages.zig",
+    "lines": 338,
+    "bytes": 20403
+  },
+  {
+    "file": "zig/src/server/openai.zig",
+    "lines": 585,
+    "bytes": 31645
+  },
+  {
+    "file": "zig/src/server/prompt.zig",
+    "lines": 186,
+    "bytes": 10862
+  },
+  {
+    "file": "zig/src/server/reply_text.zig",
+    "lines": 523,
+    "bytes": 24738
+  },
+  {
+    "file": "zig/src/server/root.zig",
+    "lines": 199,
+    "bytes": 7910
+  },
+  {
+    "file": "zig/src/server/stream_preflight_test.zig",
+    "lines": 554,
+    "bytes": 27286
+  },
+  {
+    "file": "zig/src/server/tool_params.zig",
+    "lines": 443,
+    "bytes": 19023
+  },
+  {
+    "file": "zig/src/server/tool_parse.zig",
+    "lines": 554,
+    "bytes": 27157
+  },
+  {
+    "file": "zig/src/server/tool_qwen.zig",
+    "lines": 40,
+    "bytes": 2074
+  }
+]

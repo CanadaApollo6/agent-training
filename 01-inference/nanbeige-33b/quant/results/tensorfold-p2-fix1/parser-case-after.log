@@ -1,0 +1,19 @@
+1/13 root.test_0...OK
+2/13 root.test_1...OK
+3/13 root.test_2...OK
+4/13 root.test_3...OK
+5/13 root.test_4...OK
+6/13 root.test_5...OK
+7/13 llama_output_test.test.Llama serve: case-sensitive schemas match the pod...OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+OK
+8/13 idle_unload.test_0...OK
+9/13 tool_stream.test_0...OK
+10/13 auth.test_0...OK
+11/13 speech.test_0...OK
+12/13 cortheon.cortheon.test_0...OK
+13/13 hf_text.test_0...OK
+All 13 tests passed.

@@ -1,0 +1,42 @@
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[tensorfold] CUDA sm_86 device 0 (NVIDIA GeForce RTX 3090): model 1.36 GiB; 1 stream at once, 0.01 GiB each at a 1024-token window, of 4.9 GiB left after a 1.0 GiB reserve; prompts in passes of up to 32 rows, no prompt cache; own glue kernels
+[tensorfold] serving nanbeige-exl3-a1 at http://127.0.0.1:44567/v1 (sampling: greedy; drafts: off; context: 1024; loaded in 1.5s)
+[tensorfold] thinking on (the chat template's default): replies reason in reasoning_content before the answer in content, and max_tokens counts both. --no-thinking turns it off; a request can send chat_template_kwargs {"enable_thinking": false}
+[tensorfold] 127.0.0.1 "GET /health HTTP/1.1" 200 -
+[tensorfold] warning: a reply reached max_tokens while still thinking, so its content is empty and its text is all in reasoning_content; raise max_tokens, or send chat_template_kwargs {"enable_thinking": false} (server: --no-thinking)
+[tensorfold] done chatcmpl-f832bb1328e1cc05bbae166f9be03a9e prompt=35 cached=0 thinking=True effort=none tokens=16 sha=2e976f8340c4 finish=length rounds=15 accepted=0/0 ttft=0.227 decode=0.113 elapsed=0.341 queued=0.000 tok/s=132.5
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] warning: a reply reached max_tokens while still thinking, so its content is empty and its text is all in reasoning_content; raise max_tokens, or send chat_template_kwargs {"enable_thinking": false} (server: --no-thinking)
+[tensorfold] done chatcmpl-9efc5e25b67b820158971420f91748bd prompt=37 cached=0 thinking=True effort=none tokens=16 sha=52345deada30 finish=length rounds=15 accepted=0/0 ttft=0.087 decode=0.046 elapsed=0.133 queued=0.000 tok/s=324.3
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] warning: a reply reached max_tokens while still thinking, so its content is empty and its text is all in reasoning_content; raise max_tokens, or send chat_template_kwargs {"enable_thinking": false} (server: --no-thinking)
+[tensorfold] done chatcmpl-54535878f59dec2024f5b0224da65a47 prompt=37 cached=0 thinking=True effort=none tokens=16 sha=52345deada30 finish=length rounds=15 accepted=0/0 ttft=0.116 decode=0.106 elapsed=0.223 queued=0.000 tok/s=140.8
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] warning: a reply reached max_tokens while still thinking, so its content is empty and its text is all in reasoning_content; raise max_tokens, or send chat_template_kwargs {"enable_thinking": false} (server: --no-thinking)
+[tensorfold] done chatcmpl-68373affd6541c01e2c3faf1b9a0b990 prompt=35 cached=0 thinking=True effort=none tokens=16 sha=2e976f8340c4 finish=length rounds=15 accepted=0/0 ttft=0.338 decode=0.043 elapsed=0.381 queued=0.222 tok/s=347.5
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] warning: a reply reached max_tokens while still thinking, so its content is empty and its text is all in reasoning_content; raise max_tokens, or send chat_template_kwargs {"enable_thinking": false} (server: --no-thinking)
+[tensorfold] done chatcmpl-27628cc949c91cd557e33ee906562bbc prompt=35 cached=0 thinking=True effort=none tokens=16 sha=2e976f8340c4 finish=length rounds=15 accepted=0/0 ttft=0.226 decode=0.141 elapsed=0.366 queued=0.000 tok/s=106.6
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] ended chatcmpl-1a63eba02752869c918ca073b97c0bc6 reason=client-left prompt=37 tokens=0 after=0.07s
+[tensorfold] warning: a reply reached max_tokens while still thinking, so its content is empty and its text is all in reasoning_content; raise max_tokens, or send chat_template_kwargs {"enable_thinking": false} (server: --no-thinking)
+[tensorfold] done chatcmpl-dc84b8068f1ea045698983d5582d3f40 prompt=35 cached=0 thinking=True effort=none tokens=16 sha=2e976f8340c4 finish=length rounds=15 accepted=0/0 ttft=0.146 decode=0.083 elapsed=0.230 queued=0.070 tok/s=179.6
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] refused chatcmpl-ec19a14dd3eb997ff83feb4cf0fd47d8: temperature must be nonnegative
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 400 -
+[tensorfold] refused chatcmpl-310455adb1f9eb1dcdaf9d49ec7cbbe4: top_p must be between 0 and 1
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 400 -
+[tensorfold] refused chatcmpl-97b222fd4aa6284c601bc75ca1657f8f: Nanbeige does not support repetition_penalty; send 1 or omit it
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 400 -
+[tensorfold] refused chatcmpl-140302a597016f0ecaf6e9173142f0e2: This server's maximum context length is 1024 tokens, but the rendered prompt has 35 tokens and requests 1024 reply tokens, which exceeds the context window. Reduce the prompt to at most 0 prompt tokens or request at most 989 reply tokens, including chat template and thinking tokens.
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 400 -
+[tensorfold] done cmpl-54ead234788da14b7ea1d37a01bfd6ab prompt=195 cached=0 thinking=False effort=none tokens=128 sha=232a3945af94 finish=length rounds=127 accepted=0/0 ttft=0.731 decode=0.708 elapsed=1.440 queued=0.000 tok/s=179.4
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] warning: a reply reached max_tokens while still thinking, so its content is empty and its text is all in reasoning_content; raise max_tokens, or send chat_template_kwargs {"enable_thinking": false} (server: --no-thinking)
+[tensorfold] done chatcmpl-1b65105396982273f604e7a8746384d5 prompt=195 cached=0 thinking=True effort=none tokens=128 sha=232a3945af94 finish=length rounds=127 accepted=0/0 ttft=0.683 decode=0.750 elapsed=1.433 queued=0.000 tok/s=169.3
+[tensorfold] 127.0.0.1 "POST /v1/chat/completions HTTP/1.1" 200 -
+[tensorfold] shutting down (SIGTERM): draining: new requests get 503; 0 request(s) in progress may finish within 20.0 s
+[tensorfold] shutting down: drained
+[tensorfold] shutting down: stopped
+{"command": ["/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/native/bin/tensorfold-native", "serve", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice", "--port", "44567", "--name", "nanbeige-exl3-a1", "--context", "1024", "--parallel", "1", "--no-drafts", "--temperature", "0", "--prompt-cache-gib", "0", "--keep-warm", "0", "--max-tokens", "512", "--no-update-check"], "pid": 3208081, "exit_code": 0, "seconds": 6.605078445994877, "timeout": false, "initial_free_mib": 7778, "minimum_free_mib": 6090, "peak_process_vram_mib": 1666, "sampling_ms": 200}

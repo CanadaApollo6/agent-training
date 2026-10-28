@@ -1,0 +1,28 @@
+1/15 root.test_0...OK
+2/15 root.test_1...OK
+3/15 root.test_2...OK
+4/15 root.test_3...OK
+5/15 root.test_4...OK
+6/15 root.test_5...OK
+7/15 idle_unload.test_0...OK
+8/15 tool_stream.test_0...OK
+9/15 auth.test_0...OK
+10/15 speech.test_0...OK
+11/15 stream_preflight_test.test.Unicode stop strings end JSON and SSE replies with byte-sized tokens...expected .stop, found .length
+FAIL (TestExpectedEqual)
+/home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:93:17: 0x12c78b4 in expectEqualInner__func_981 (std.zig)
+                return error.TestExpectedEqual;
+                ^
+/home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:57:5: 0x12c7fa2 in expectEqual (root.zig)
+    return expectEqualInner(T, expected, actual);
+    ^
+/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/base-source/zig/src/server/stream_preflight_test.zig:554:9: 0x12c8030 in test.Unicode stop strings end JSON and SSE replies with byte-sized tokens (root.zig)
+        try std.testing.expectEqual(.stop, seen.finish.?);
+        ^
+12/15 cortheon.cortheon.test_0...OK
+13/15 hf_text.test_0...OK
+14/15 request_guard.test_0...OK
+15/15 drama_allow.test_0...OK
+14 passed; 0 skipped; 1 failed.
+error: the following test command failed with exit code 1:
+/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/host-cache/unicode-base-before --seed=0x91aeca9c

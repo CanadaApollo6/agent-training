@@ -1,0 +1,17 @@
+[
+  "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gpu_run.py",
+  "--need-mib",
+  "3000",
+  "--timeout",
+  "180",
+  "--receipt",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/greedy-serve/oracle-vram.json",
+  "--",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/install/bin/tf-llama-test",
+  "llama-serve-greedy",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+  "128",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/greedy-serve/oracle-tokens.json"
+]

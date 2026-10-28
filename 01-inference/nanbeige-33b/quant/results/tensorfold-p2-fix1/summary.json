@@ -1,0 +1,82 @@
+{
+  "head": "94c2c22be9cd429e8162e2284b963ee525ea76a0",
+  "six_defects_fixed": true,
+  "tests_before": {
+    "passed": 18,
+    "failed": 11,
+    "total": 29
+  },
+  "tests_after": {
+    "passed": 29,
+    "failed": 0,
+    "total": 29
+  },
+  "prompts": 23,
+  "prompt_ids": 3118,
+  "pod_outputs": 26,
+  "shared_parser_and_visibility": "56/56",
+  "broad_final": {
+    "passed": 704,
+    "skipped": 3,
+    "failed": 1,
+    "known_failure": "exl3_load NondeterministicMemoryUsage",
+    "steps": "457/460"
+  },
+  "broad_base": {
+    "passed": 5520,
+    "skipped": 26,
+    "failed": 0,
+    "steps": "458/458"
+  },
+  "lean": {
+    "base": 426,
+    "head": 426,
+    "new": 0
+  },
+  "greedy_serve": {
+    "state": "PASS",
+    "context": 1024,
+    "layers": 2,
+    "solo_tokens": [
+      16,
+      16
+    ],
+    "concurrent_equal": true,
+    "stream_equal": true,
+    "cancel_reuse_equal": true,
+    "pre_stream_rejections": 4,
+    "full_model_checks": "NOT RUN on a slice",
+    "greedy_equal": 128,
+    "greedy_paths": [
+      "chat",
+      "completions"
+    ],
+    "peak_mib": 1666,
+    "minimum_free_mib": 6090
+  },
+  "sampled_serve": {
+    "state": "PASS",
+    "endpoints": 2,
+    "serial_equal_tokens": 64,
+    "defaults": {
+      "temperature": 1,
+      "top_p": 0.95,
+      "top_k": 0,
+      "min_p": 0
+    },
+    "same_seed_equal": true,
+    "different_seed_differs": true,
+    "penalties_equal_serial": true,
+    "concurrent_equal": true,
+    "pi_sse_status": 200,
+    "pi_max_tokens": 16384,
+    "pi_cancelled_after_events": 3,
+    "cancel_reuse_equal": true,
+    "pre_stream_rejections": 3,
+    "peak_mib": 1912,
+    "minimum_free_mib": 5815
+  },
+  "full_model": "BLOCKED, NOT RUN",
+  "standalone_unicode": "c523f51d",
+  "inherited_greedy12": "128/128 before-after equal; both fail saved exllamav3 reference"
+}
