@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/home/riels/exl3-local/bin/python",
+    "tools/zig/llama_reference.py",
+    "../../nanbeige-33b/quant/models/3.5-nb",
+    "../../nanbeige-33b/quant/results/tensorfold-p1/dense",
+    "--layers",
+    "52",
+    "--greedy",
+    "128",
+    "--dense-head",
+    "--sequences",
+    "../../nanbeige-33b/quant/results/tensorfold-p1/sequences.json"
+  ],
+  "pid": 3166034,
+  "exit_code": 0,
+  "seconds": 54.9306380420021,
+  "timeout": false,
+  "initial_free_mib": 22300,
+  "minimum_free_mib": 6360,
+  "peak_process_vram_mib": 16572,
+  "sampling_ms": 200
+}

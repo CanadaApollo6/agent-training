@@ -1,0 +1,17 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-logits",
+    "../../nanbeige-33b/quant/models/3.5-nb",
+    "../../nanbeige-33b/quant/results/tensorfold-p1",
+    "../../nanbeige-33b/quant/results/tensorfold-p1/engine"
+  ],
+  "pid": 2946570,
+  "exit_code": 1,
+  "seconds": 17.914190930998302,
+  "timeout": false,
+  "initial_free_mib": 22300,
+  "minimum_free_mib": 8064,
+  "peak_process_vram_mib": 14224,
+  "sampling_ms": 200
+}

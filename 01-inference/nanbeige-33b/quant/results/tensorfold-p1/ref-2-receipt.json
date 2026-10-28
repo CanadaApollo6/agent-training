@@ -1,0 +1,21 @@
+{
+  "torch": "2.10.0+cu128",
+  "exllamav3": "1.6.5+cu128.torch2.10.0",
+  "layers": 2,
+  "sequence_lengths": [
+    1,
+    6,
+    15,
+    195
+  ],
+  "greedy_tokens": 0,
+  "sequences_sha256": "d0f3857b36e5a685982d2ac94eb63dbc766f86c40623659adb3821a2ef46f8fd",
+  "config_sha256": "63ed384a6cc98d59b3e57f63190ac3025a2f60a79e925c6b32f64225d1bcffb0",
+  "quant_config_sha256": "e524e65596469ece771bb2a2fa109de02f9c8768dcb8da0f0e4512bfac017267",
+  "peak_allocated_bytes": 1569490944,
+  "peak_reserved_bytes": 1579155456,
+  "int8_gemv": "0",
+  "no_reconstruct": true,
+  "attention_dtype": "float16",
+  "residual_dtype": "float32"
+}

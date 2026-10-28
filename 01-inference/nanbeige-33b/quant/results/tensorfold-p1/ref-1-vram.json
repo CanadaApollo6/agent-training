@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/home/riels/exl3-local/bin/python",
+    "../../nanbeige-33b/quant/tensorfold_reference.py",
+    "../../nanbeige-33b/quant/models/3.5-nb",
+    "../../nanbeige-33b/quant/results/tensorfold-p1",
+    "--layers",
+    "1"
+  ],
+  "pid": 2796544,
+  "exit_code": 0,
+  "seconds": 2.418103381001856,
+  "timeout": false,
+  "initial_free_mib": 7909,
+  "minimum_free_mib": 6331,
+  "peak_process_vram_mib": 1572,
+  "sampling_ms": 200
+}

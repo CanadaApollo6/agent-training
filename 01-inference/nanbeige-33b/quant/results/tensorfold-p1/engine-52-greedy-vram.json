@@ -1,0 +1,18 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-greedy",
+    "../../nanbeige-33b/quant/models/3.5-nb",
+    "../../nanbeige-33b/quant/results/tensorfold-p1/greedy52",
+    "128",
+    "../../nanbeige-33b/quant/results/tensorfold-p1/greedy52/engine-greedy.json"
+  ],
+  "pid": 2992502,
+  "exit_code": 1,
+  "seconds": 28.273830106991227,
+  "timeout": false,
+  "initial_free_mib": 22300,
+  "minimum_free_mib": 7284,
+  "peak_process_vram_mib": 15004,
+  "sampling_ms": 200
+}

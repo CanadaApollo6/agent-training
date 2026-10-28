@@ -1,0 +1,6 @@
+<|im_start|>system
+You are a careful assistant. Explain your reasoning and answer clearly.<|im_end|>
+<|im_start|>user
+A research group has one graphics card shared by a training job, a desktop, and an inference engine. The card has twenty four gigabytes of memory. The desktop must always have two gigabytes free. The training job holds fourteen gigabytes and cannot be interrupted. The inference engine needs fourteen gigabytes for its weights and one gigabyte for its context cache. Describe a safe plan for testing the engine while training continues, then for measuring full model correctness and speed after training finishes. Explain how you would compare the engine with a trusted reference on identical tokens and weights. Include a short checklist that distinguishes measurements actually completed from checks blocked by insufficient memory. Keep the answer practical. For the speed test, explain why prompt processing must be measured separately from token generation, and why warmup runs, repeated measurements, and token equality checks are necessary.<|im_end|>
+<|im_start|>assistant
+<think>
