@@ -1,0 +1,37 @@
+{
+  "labels": [
+    "seq2-pos7",
+    "seq3-pos110",
+    "greedy-token17-prefix"
+  ],
+  "inputs": [
+    {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/ref-52-s2-layer51.f32",
+      "sha256": "549b72714c02359374e195a2ddda9fd44b38fd314a8f55dbfaf645264cd0a238",
+      "position": 7,
+      "rows": 15
+    },
+    {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/ref-52-s3-layer51.f32",
+      "sha256": "b44d4bdcb4309694f4cde7ad43654cdf591e4ccaea55aae57faea696c083d83c",
+      "position": 110,
+      "rows": 195
+    },
+    {
+      "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/div17/ref-52-s0-layer51.f32",
+      "sha256": "5c7f547c23ec55044806f2f73a17ec4a845144e272fdf1b08aa9f4d072fe37b8",
+      "position": 211,
+      "rows": 212
+    }
+  ],
+  "weight_shape": [
+    7168,
+    166912
+  ],
+  "input_dtype": "fp16",
+  "torch": "2.10.0+cu128",
+  "peak_reserved_bytes": 1050673152,
+  "config_sha256": "63ed384a6cc98d59b3e57f63190ac3025a2f60a79e925c6b32f64225d1bcffb0",
+  "norm_input_sha256": "71365717874cf2287d400bce204e1d7e404099acf2425280ab776d32b6b7d0f7",
+  "exllamav3": "1.6.5"
+}

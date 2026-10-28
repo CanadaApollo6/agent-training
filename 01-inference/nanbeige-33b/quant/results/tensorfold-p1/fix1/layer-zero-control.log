@@ -1,0 +1,3 @@
+LAYER sequence=0 layer=0 rmse=9.339813860363319e-1 max_abs=7.185588836669922e1 relative_l2=7.907463925169755e16
+FAIL llama-layers: LlamaLayerDrift
+{"command": ["zig-out/bin/tf-llama-test", "llama-layers", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/zero-reference", "2", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/zero-output"], "pid": 2599701, "exit_code": 1, "seconds": 1.6721120680012973, "timeout": false, "initial_free_mib": 8780, "minimum_free_mib": 7157, "peak_process_vram_mib": 1614, "sampling_ms": 200}

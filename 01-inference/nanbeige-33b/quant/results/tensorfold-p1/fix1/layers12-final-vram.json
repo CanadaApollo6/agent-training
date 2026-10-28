@@ -1,0 +1,18 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-layers",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+    "12",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/layers12"
+  ],
+  "pid": 2598668,
+  "exit_code": 0,
+  "seconds": 9.479586765999557,
+  "timeout": false,
+  "initial_free_mib": 8780,
+  "minimum_free_mib": 4601,
+  "peak_process_vram_mib": 4170,
+  "sampling_ms": 200
+}

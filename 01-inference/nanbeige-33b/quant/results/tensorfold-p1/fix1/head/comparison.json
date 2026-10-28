@@ -1,0 +1,124 @@
+{
+  "reference": "CPU float64 dot of identical fp16 norm inputs and reconstructed fp16 head weights",
+  "chunk_columns": 1024,
+  "cases": [
+    {
+      "case": "seq2-pos7",
+      "fp64_top": 926,
+      "fp64_top2_margin": 1.4573437508920506,
+      "engine": {
+        "max_abs_error": 0.054508993540366646,
+        "worst_column": 166086,
+        "top": 926,
+        "top2_margin": 1.4715499877929688,
+        "fp64_winner_error": 0.0015549407789876568
+      },
+      "exl_one": {
+        "max_abs_error": 2.954659659722438,
+        "worst_column": 13,
+        "top": 13,
+        "top2_margin": 1.5833702087402344,
+        "fp64_winner_error": 0.08605429990984703
+      },
+      "exl_many": {
+        "max_abs_error": 1.6533329436208533,
+        "worst_column": 1,
+        "top": 926,
+        "top2_margin": 0.6914443969726562,
+        "fp64_winner_error": 0.002092813093440782
+      },
+      "closer_by_max_abs": "engine"
+    },
+    {
+      "case": "seq3-pos110",
+      "fp64_top": 152361,
+      "fp64_top2_margin": 1.653283926752394,
+      "engine": {
+        "max_abs_error": 0.05380445185755889,
+        "worst_column": 0,
+        "top": 152361,
+        "top2_margin": 1.6495513916015625,
+        "fp64_winner_error": 0.0027302471534156325
+      },
+      "exl_one": {
+        "max_abs_error": 3.6581684004595445,
+        "worst_column": 1,
+        "top": 152361,
+        "top2_margin": 1.623016357421875,
+        "fp64_winner_error": 0.03575789607919688
+      },
+      "exl_many": {
+        "max_abs_error": 1.0100159971134417,
+        "worst_column": 13,
+        "top": 152361,
+        "top2_margin": 1.6996192932128906,
+        "fp64_winner_error": 0.0020762714012718675
+      },
+      "closer_by_max_abs": "engine"
+    },
+    {
+      "case": "greedy-token17-prefix",
+      "fp64_top": 13,
+      "fp64_top2_margin": 0.8293503939167977,
+      "engine": {
+        "max_abs_error": 0.054380639352530125,
+        "worst_column": 0,
+        "top": 13,
+        "top2_margin": 0.8078346252441406,
+        "fp64_winner_error": 0.02284100453937299
+      },
+      "exl_one": {
+        "max_abs_error": 3.0125780381397362,
+        "worst_column": 166089,
+        "top": 2269,
+        "top2_margin": 0.2931671142578125,
+        "fp64_winner_error": 1.107222108054998
+      },
+      "exl_many": {
+        "max_abs_error": 0.8322165625723983,
+        "worst_column": 166021,
+        "top": 13,
+        "top2_margin": 1.3519172668457031,
+        "fp64_winner_error": 0.49101779062664264
+      },
+      "closer_by_max_abs": "engine"
+    }
+  ],
+  "inputs": {
+    "labels": [
+      "seq2-pos7",
+      "seq3-pos110",
+      "greedy-token17-prefix"
+    ],
+    "inputs": [
+      {
+        "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/ref-52-s2-layer51.f32",
+        "sha256": "549b72714c02359374e195a2ddda9fd44b38fd314a8f55dbfaf645264cd0a238",
+        "position": 7,
+        "rows": 15
+      },
+      {
+        "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/ref-52-s3-layer51.f32",
+        "sha256": "b44d4bdcb4309694f4cde7ad43654cdf591e4ccaea55aae57faea696c083d83c",
+        "position": 110,
+        "rows": 195
+      },
+      {
+        "path": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/div17/ref-52-s0-layer51.f32",
+        "sha256": "5c7f547c23ec55044806f2f73a17ec4a845144e272fdf1b08aa9f4d072fe37b8",
+        "position": 211,
+        "rows": 212
+      }
+    ],
+    "weight_shape": [
+      7168,
+      166912
+    ],
+    "input_dtype": "fp16",
+    "torch": "2.10.0+cu128",
+    "peak_reserved_bytes": 1050673152,
+    "config_sha256": "63ed384a6cc98d59b3e57f63190ac3025a2f60a79e925c6b32f64225d1bcffb0",
+    "norm_input_sha256": "71365717874cf2287d400bce204e1d7e404099acf2425280ab776d32b6b7d0f7",
+    "exllamav3": "1.6.5"
+  }
+}

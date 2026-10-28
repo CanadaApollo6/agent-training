@@ -1,0 +1,41 @@
+{
+  "base": "31ce9eb3",
+  "input_commit": "fe0bd8fb934b15e3365132bf677c07627c711490",
+  "source_sha256": {
+    "docs/kernel-contract.md": "014f6d8d8e34d3883096b3378e2324a5d52043759b199fdfa822715b1c8ca32f",
+    "tools/zig/llama_reference.py": "c3c7cd222019f1ca6cb780e2cd82ae7e5b7fb5ea149ac469ff695d442eb8a3ad",
+    "zig/build/cuda.zig": "cbb4637224e2cebf725462ec5da54c8756ffafcf6da517fddda96449d596a0d9",
+    "zig/build/cuda_fatbin.zig": "9af52d3c21a5a42d417233bc361f12564c8ad4ca0de97ea03b7ba1d1dd258a28",
+    "zig/build/cuda_kernels.zig": "c6ab32a3435bc539c7aad024699fa6477c3d265987a7232b32595f59846191e8",
+    "zig/build/llama.zig": "3daa2eee54c818485bdab7474afc5c1a3440c134804a3c6ecbfb035492bea6cd",
+    "zig/src/core/contract/limits.zig": "019e9595cec70664198512051a5cda4713044870ff1e6589f9c866afe5da0ce0",
+    "zig/src/core/contract/registry.zig": "5eab9bb98dcd61d47fa057d304de19eb42bfc95a08f150e8c3eff99fe429bdb0",
+    "zig/src/core/contract/registry_target.zig": "80340084d900f5ec859c9fb09e1e101fac1404f89eb188a7826db25f85917bff",
+    "zig/src/families/llama/cuda.zig": "d555db8eeed0466285db3bfc3290d778c0e585902899ce0bd3bef74cf72ca03d",
+    "zig/src/families/llama/forward.zig": "50da2c06d9eee29db0875cef39e1720bbe9f57274605e8239c687443a7f0d4d8",
+    "zig/src/families/llama/kernels.zig": "541c961cc8bd526c9257851713e4048752f289aecf85ecabc471a1b1822ecc3b",
+    "zig/src/families/llama/native.zig": "f93accd72db44d64bac7a52b67ebde31b0f3d6af827fb8cfab3935328622fd75",
+    "zig/src/families/llama/weights.zig": "3a8887a83e8ff223ca36bcecfb6919ec513dcd05c631995499c88066beaa14b7",
+    "zig/tests/cuda/contract_limits.zig": "24778d20a19435ca8241d8ba816d38e70b5c48c24cb53e17c82fb123f5b36441",
+    "zig/tests/cuda/contract_tests.zig": "bf48148db6967a4cd6fcea46abe22cac0893f233d24f25327593c2c47543fe3f",
+    "zig/tests/cuda/llama_tests.zig": "3283ba0b9852b92dc4354f36cd8d43c08a40ada593056f1bfa40085563fece6b",
+    "zig/tests/cuda/main.zig": "dc6625ffbb5be89a0668a3769e5d63c16d271577d153e8fbc0fed53a72cc0205",
+    "tools/zig/llama_boundary_reference.py": "d16a9abcecbe23d3fbf793c5c8fab8e0ab0885e6b3dc9d2105dfaa3d4f1a7aa7",
+    "tools/zig/llama_fix_bench.py": "352e8737989aa44c17525da315529d6c43127850386351027a018d1712fc58ba",
+    "tools/zig/llama_head_fp64.py": "3011d556c6b15d50369fe33d849fac18b04c069fa90f11e544b80d5f305564b3",
+    "zig/src/core/contract/dense_pointwise_records.zig": "2f6271482a1012c8c2e9fec4535f277447a1ba6a76d74ff7fdcb01c20592d51c",
+    "zig/src/families/llama/memory.zig": "2d8eaae8a9d960466bdb1d2cee45efb809db346f6d850deb6b3c1265ad9b1237",
+    "zig/src/families/llama/validation.zig": "7d9c80e40e4649b0e9bfdec9387e83f412d0d2901848400f07cb9737aa1d9c36",
+    "zig/tests/cuda/contract_dense_pointwise.zig": "0713e21e3015117860cf3a9250e5d254f563abcba82456ebd8950dd8f6708f3f",
+    "zig/tests/cuda/llama_boundary.zig": "0629934c79275fe5f2640af5aed028549e19b30e911c4058568838d7c5f9a584",
+    "zig/tests/cuda/llama_main.zig": "cb4e59af5b4f3f6a37b9aa2d3dd7910c65febb27697da1175b4c20fd20857995"
+  },
+  "binary_sha256": {
+    "tf-llama-before": "a7f3fa76bbe166c88a66d06a021d215dc0be2724a2455e2d67a84205eab64b2b",
+    "tf-llama-after": "512157f25f60be190ed40f9ffe7c76b37b462546b6ba7a2a29d1a3e3a1dc47e6"
+  },
+  "benchmark_before": "all final sources except forward.zig from fe0bd8fb",
+  "zig": "0.17.0",
+  "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Tue_Sep_01_08:45:21_PDT_2026\nCuda compilation tools, release 13.4, V13.4.92\nBuild cuda_13.4.r13.4/compiler.38855100_0",
+  "final_commit": "c4af57935cc5fb8f24252f1ae9ce298c3b9d335b"
+}

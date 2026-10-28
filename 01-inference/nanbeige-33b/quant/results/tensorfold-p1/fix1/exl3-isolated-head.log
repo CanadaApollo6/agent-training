@@ -1,0 +1,11 @@
+1/2 exl3_load.test.a scan that fails an allocation frees every group prefix it held...FAIL (NondeterministicMemoryUsage)
+/home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:1167:17: 0x1242de1 in checkAllAllocationFailures__func_965 (std.zig)
+                return error.NondeterministicMemoryUsage;
+                ^
+/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/core/exl3_load.zig:319:5: 0x1243f79 in test.a scan that fails an allocation frees every group prefix it held (exl3_load.zig)
+    try std.testing.checkAllAllocationFailures(a, scanFault, .{ io, dir });
+    ^
+2/2 safetensors.test_0...OK
+1 passed; 0 skipped; 1 failed.
+error: the following test command failed with exit code 1:
+.zig-cache/o/d66369cb4b8774e6980b90d72855af95/root --seed=0xe2444c17

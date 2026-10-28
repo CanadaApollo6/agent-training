@@ -1,0 +1,17 @@
+BOUNDARY position=511 layer=0 rmse=8.981247645730384e-4 max_abs=9.426116943359375e-3 relative_l2=1.6052605165282913e-3
+BOUNDARY position=511 layer=1 rmse=1.167075366420845e-3 max_abs=5.815625190734863e-3 relative_l2=1.573277296357741e-3
+BOUNDARY position=511 kl=6.183601941270583e-5 top1=true
+BOUNDARY position=512 layer=0 rmse=1.7261066199922572e-3 max_abs=4.970550537109375e-2 relative_l2=2.8599955538236477e-3
+BOUNDARY position=512 layer=1 rmse=1.7808041781351425e-3 max_abs=3.752899169921875e-2 relative_l2=2.161728470032401e-3
+BOUNDARY position=512 kl=7.440190765065663e-5 top1=true
+BOUNDARY position=2047 layer=0 rmse=9.012591545494655e-4 max_abs=7.639408111572266e-3 relative_l2=1.6638779604681005e-3
+BOUNDARY position=2047 layer=1 rmse=1.914008013510896e-3 max_abs=6.995010375976562e-2 relative_l2=2.466131596385208e-3
+BOUNDARY position=2047 kl=7.993875671844155e-5 top1=true
+BOUNDARY position=2048 layer=0 rmse=9.320245486325717e-4 max_abs=5.631923675537109e-3 relative_l2=1.9540477120458923e-3
+BOUNDARY position=2048 layer=1 rmse=1.2998497674359714e-3 max_abs=9.220004081726074e-3 relative_l2=1.8579942925706272e-3
+BOUNDARY position=2048 kl=7.50188187718559e-5 top1=true
+BOUNDARY position=16383 layer=0 rmse=1.1324464072604442e-3 max_abs=9.471595287322998e-3 relative_l2=2.1400570081702495e-3
+BOUNDARY position=16383 layer=1 rmse=1.5877911153194262e-3 max_abs=1.415252685546875e-2 relative_l2=2.0907069728249975e-3
+BOUNDARY position=16383 kl=8.286229714041146e-5 top1=true
+SUMMARY llama boundary heads=56/8 layers=2 context=16384 positions=511,512,2047,2048,16383 refused=16384 fresh_kl=1.1330218638119827e-4 fresh_repeat=bit_equal device_peak=1588639460
+{"command": ["zig-out/bin/tf-llama-test", "llama-boundary", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/boundary", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/boundary-engine"], "pid": 2600011, "exit_code": 0, "seconds": 55.56294680800056, "timeout": false, "initial_free_mib": 8780, "minimum_free_mib": 6982, "peak_process_vram_mib": 1784, "sampling_ms": 200}

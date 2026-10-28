@@ -1,0 +1,20 @@
+{
+  "layers": 2,
+  "context": 16384,
+  "positions": [
+    511,
+    512,
+    2047,
+    2048,
+    16383
+  ],
+  "heads": [
+    56,
+    8
+  ],
+  "reference_cache": "fp16",
+  "engine_cache": "bf16",
+  "prefill_chunk_max": 128,
+  "sequences_sha256": "cb850e71f818efc5cccc0024f3a08c776f6e6f69d538e1910a9f38125df25945",
+  "peak_reserved_bytes": 1619001344
+}

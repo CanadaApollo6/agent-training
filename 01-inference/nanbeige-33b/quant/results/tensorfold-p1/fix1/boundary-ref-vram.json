@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/riels/exl3-local/bin/python",
+    "tools/zig/llama_boundary_reference.py",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/boundary"
+  ],
+  "pid": 2161826,
+  "exit_code": 0,
+  "seconds": 11.907745263000834,
+  "timeout": false,
+  "initial_free_mib": 7578,
+  "minimum_free_mib": 5710,
+  "peak_process_vram_mib": 1862,
+  "sampling_ms": 200
+}

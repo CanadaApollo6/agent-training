@@ -1,0 +1,34 @@
+PASS nonfinite cuda dense_pointwise swiglu fp32: 4 non-finite and 35836 finite outputs match the float64 classes
+PASS repeat cuda dense_pointwise swiglu fp32: five runs byte-identical (28672 bytes), inputs and guards untouched, no overlap
+PASS shapes cuda dense_pointwise swiglu fp32: 6 shapes within the float64 bound (worst 0.358 of the bound), 0 edges refused by the kernel
+N/A  sums cuda dense_pointwise swiglu fp32: declares none sums
+PASS nonfinite cuda dense_pointwise add fp32: 4 non-finite and 35836 finite outputs match the float64 classes
+PASS repeat cuda dense_pointwise add fp32: five runs byte-identical (28672 bytes), inputs and guards untouched, no overlap
+PASS shapes cuda dense_pointwise add fp32: 6 shapes within the float64 bound (worst 0.500 of the bound), 0 edges refused by the kernel
+N/A  sums cuda dense_pointwise add fp32: declares none sums
+PASS nonfinite cuda dense_pointwise add bf16: 4 non-finite and 35836 finite outputs match the float64 classes
+PASS repeat cuda dense_pointwise add bf16: five runs byte-identical (14336 bytes), inputs and guards untouched, no overlap
+PASS shapes cuda dense_pointwise add bf16: 6 shapes within the float64 bound (worst 0.994 of the bound), 0 edges refused by the kernel
+N/A  sums cuda dense_pointwise add bf16: declares none sums
+FAIL shapes cuda dense_pointwise swiglu fp32: at 1x7168x1 output 0 is 3.499166e-1 where float64 gives -7.363509e-1: 2749978.74 of its bound
+CONTROL cuda dense_pointwise swiglu fp32: red at shapes, as planted
+FAIL shapes cuda dense_pointwise add fp32: at 1x7168x1 output 0 is -6.705667e0 where float64 gives 3.376241e-1: 174997622.98 of its bound
+CONTROL cuda dense_pointwise add fp32: red at shapes, as planted
+FAIL shapes cuda dense_pointwise add bf16: at 1x7168x1 output 0 is -5.125000e0 where float64 gives -6.116409e0: 41.49 of its bound
+CONTROL cuda dense_pointwise add bf16: red at shapes, as planted
+FAIL nonfinite control: fmax row max: 1 of 8 outputs differ in class; first at 0: finite where float64 gives nan
+CONTROL control: fmax row max: red at nonfinite, as planted
+FAIL repeat control: atomic-add row sum: 4 of 4 repeats differ from the first run's bytes, first at byte 0
+CONTROL control: atomic-add row sum: red at repeat, as planted
+FAIL repeat control: row sum writing its input: 4 of 4 repeats differ from the first run's bytes, first at byte 0
+CONTROL control: row sum writing its input: red at repeat, as planted
+FAIL shapes control: row sum losing a tail input: at 8x1x1 output 0 is 0.000000e0 where float64 gives -3.203125e-1: 2396744.29 of its bound
+CONTROL control: row sum losing a tail input: red at shapes, as planted
+FAIL sums control: dot summed in half: 29826161.8x over its exact-sum bound at k 4096: not fp32 sums (fp16 would miss 29826162x, bf16 16777216x)
+CONTROL control: dot summed in half: red at sums, as planted
+RECORD dense_pointwise _ZN15dsv41_pointwise13swiglu_kernelEPKfxS1_xPfxif sm=86 regs=20 static=0 bound=256 compiled=.{ .regs = 20, .static = 0, .bound = 256, .local = 0 }
+RECORD dense_pointwise _ZN15dsv41_pointwise10add_kernelEPfPKfx sm=86 regs=26 static=0 bound=256 compiled=.{ .regs = 26, .static = 0, .bound = 256, .local = 0 }
+RECORD dense_pointwise _ZN15dsv41_pointwise15add_bf16_kernelEPKfS1_P13__nv_bfloat16x sm=86 regs=12 static=0 bound=256 compiled=.{ .regs = 12, .static = 0, .bound = 256, .local = 0 }
+RED limits controls=2/2
+SUMMARY dense_pointwise kernels=3 pass=3 fail=0 numerical_controls=8 red=8 missed=0 limits=0 sm=86
+{"command": ["zig-out/bin/tf-llama-test", "llama-pointwise-contract"], "pid": 2592542, "exit_code": 0, "seconds": 0.5083074790018145, "timeout": false, "initial_free_mib": 8780, "minimum_free_mib": 8576, "peak_process_vram_mib": 204, "sampling_ms": 200}

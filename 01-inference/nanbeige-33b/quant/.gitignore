@@ -3,3 +3,6 @@ models/
 rows/
 results/night2/convert-*.log
 results/tensorfold-p1/**/*.f32
+results/tensorfold-p1/**/*.npy
+results/tensorfold-p1/**/*.f64
+results/tensorfold-p1/fix1/tf-*

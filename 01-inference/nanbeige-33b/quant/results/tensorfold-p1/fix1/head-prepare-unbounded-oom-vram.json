@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/home/riels/exl3-local/bin/python",
+    "tools/zig/llama_head_fp64.py",
+    "prepare",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/head"
+  ],
+  "pid": 1401403,
+  "exit_code": 1,
+  "seconds": 2.152211898996029,
+  "timeout": false,
+  "initial_free_mib": 8670,
+  "minimum_free_mib": 644,
+  "peak_process_vram_mib": 8028,
+  "sampling_ms": 200
+}

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-boundary",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/boundary",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/boundary-engine"
+  ],
+  "pid": 2600011,
+  "exit_code": 0,
+  "seconds": 55.56294680800056,
+  "timeout": false,
+  "initial_free_mib": 8780,
+  "minimum_free_mib": 6982,
+  "peak_process_vram_mib": 1784,
+  "sampling_ms": 200
+}

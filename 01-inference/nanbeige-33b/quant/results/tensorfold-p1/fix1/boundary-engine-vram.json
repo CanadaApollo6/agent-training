@@ -1,0 +1,17 @@
+{
+  "command": [
+    ".zig-cache/o/bdd12f337821ee076db5a91cb026bf29/tf-cuda-test",
+    "llama-boundary",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/boundary",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/boundary-engine"
+  ],
+  "pid": 2566913,
+  "exit_code": 0,
+  "seconds": 53.88090092499624,
+  "timeout": false,
+  "initial_free_mib": 8577,
+  "minimum_free_mib": 6784,
+  "peak_process_vram_mib": 1784,
+  "sampling_ms": 200
+}

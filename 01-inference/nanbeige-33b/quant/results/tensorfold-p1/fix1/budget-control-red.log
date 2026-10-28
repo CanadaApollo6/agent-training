@@ -1,0 +1,18 @@
+test-llama-host
++- run test 5 pass, 1 fail (6 total)
+error: 'memory.test.Llama host budget refuses KV beyond a 15 GiB cap and preserves a larger reserve' failed:
+       expected error.LlamaMemoryBudget, found void
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:634:9: 0x1244ebf in expectError__func_975 (std.zig)
+               return error.TestExpectedError;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/families/llama/memory.zig:43:5: 0x12469f6 in test.Llama host budget refuses KV beyond a 15 GiB cap and preserves a larger reserve (cuda.zig)
+           try std.testing.expectError(error.LlamaMemoryBudget, admit(c, 52, 16384, room));
+           ^
+failed command: ./.zig-cache/o/83f4734f90c66835ccdce2ecac833b58/test --cache-dir=./.zig-cache --seed=0xf0810f45 --listen=-
+
+Build Summary: 2/4 steps succeeded (1 failed); 5/6 tests passed (1 failed)
+test-llama-host transitive failure
++- run test 5 pass, 1 fail (6 total)
+   +- compile test debug native success 333ms MaxRSS:196M
+      +- options cached
+

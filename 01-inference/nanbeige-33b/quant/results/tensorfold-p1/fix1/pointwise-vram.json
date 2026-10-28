@@ -1,0 +1,14 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-pointwise-contract"
+  ],
+  "pid": 2592542,
+  "exit_code": 0,
+  "seconds": 0.5083074790018145,
+  "timeout": false,
+  "initial_free_mib": 8780,
+  "minimum_free_mib": 8576,
+  "peak_process_vram_mib": 204,
+  "sampling_ms": 200
+}

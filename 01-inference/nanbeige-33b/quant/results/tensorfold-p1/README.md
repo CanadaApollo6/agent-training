@@ -22,3 +22,10 @@ That is about 510 GB/s, 54% of the card's 936 GB/s. The 6-bit head runs at about
 Kernel time is about 29.2 ms of the 35.6 ms a token takes. The other 18% is launch gaps and the per-token host sync.
 
 VRAM receipts: `*-vram.json` (`tools/zig/llama_gpu_run.py`, nvidia-smi sampled every 200 ms).
+
+## Fix round 1
+
+[Fix round receipts](fix1/README.md) record budget admission, default-context seams, real sm_86 pointwise
+qualification, independent FP64 head errors, asserted layer bounds and prefix-sized attention launches.
+Native has the smallest FP64 head error at all three reviewed positions. Full 52-layer replay and the
+five-pair speed comparison remain blocked by Vesuvius GPU memory. No new full-model speed number is claimed.

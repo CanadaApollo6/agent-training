@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_head_fp64.py", line 100, in <module>
+    main()
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_head_fp64.py", line 96, in main
+    {"prepare": prepare, "analyze": analyze}[a.action](a)
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_head_fp64.py", line 44, in prepare
+    w = (head if hasattr(head, "get_weight_tensor") else head.inner).get_weight_tensor()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/exl3-local/lib/python3.12/site-packages/exllamav3/modules/quant/exl3.py", line 277, in get_weight_tensor
+    w = preapply_had_l(w, had_k)
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/exl3-local/lib/python3.12/site-packages/exllamav3/modules/quant/exl3_lib/quantize.py", line 435, in preapply_had_l
+    x = (had @ x.view(-1, had_dim, n)).view(k, n)
+         ~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 4.46 GiB. GPU 0 has a total capacity of 23.59 GiB of which 644.00 MiB is free. Process 2414 has 10.60 MiB memory in use. Process 8565 has 303.72 MiB memory in use. Process 20185 has 98.16 MiB memory in use. Process 2186320 has 180.35 MiB memory in use. Process 3473960 has 13.08 GiB memory in use. Process 1401142 has 204.72 MiB memory in use. Including non-PyTorch memory, this process has 7.84 GiB memory in use. Of the allocated memory 7.52 GiB is allocated by PyTorch, and 16.93 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+{"command": ["/home/riels/exl3-local/bin/python", "tools/zig/llama_head_fp64.py", "prepare", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix1/head"], "pid": 1401403, "exit_code": 1, "seconds": 2.152211898996029, "timeout": false, "initial_free_mib": 8670, "minimum_free_mib": 644, "peak_process_vram_mib": 8028, "sampling_ms": 200}
