@@ -1,0 +1,1419 @@
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+        keys    6 equal    0 differ   0 known
+      origin   34 equal    0 differ   0 known
+      scopes   13 equal    0 differ   0 known
+   admission    2 equal    0 differ   0 known
+55/55 equal to server goldens, 0 unexpected differences
+test
++- run test w
+[default] (warn): flash next: rotary cache table unavailable: OutOfMemory
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/20c77425642fc631a5dcf3dd43cde12b/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+KNOWN-DIFFER tools/two_tools-stream
+  reply 0 body differs at 313: golden [content": "\n"}, "finish_reason": null}]}
+
+data: {"id": "<id] zig [tool_calls": [{"index": 0, "id": "<id2>", "type": "function"]
+KNOWN-DIFFER tools/two_tools-single-stream
+  reply 0 body differs at 313: golden [content": "\n"}, "finish_reason": null}]}
+
+data: {"id": "<id] zig [tool_calls": [{"index": 0, "id": "<id2>", "type": "function"]
+KNOWN-DIFFER tools/choice-"required"
+  reply 0 status: golden HTTP/1.1 200 OK, zig HTTP/1.1 400 Bad Request
+  reply 0 body differs at 2: golden [id": "<id1>", "object": "chat.completion", "created": <ts>, ] zig [error": {"message": "backend 'lanes' cannot enforce tool_cho]
+  reply 0 headers differ
+KNOWN-DIFFER tools/choice-{"type": "function", "function": {"name": "lookup"}}
+  reply 0 status: golden HTTP/1.1 200 OK, zig HTTP/1.1 400 Bad Request
+  reply 0 body differs at 2: golden [id": "<id1>", "object": "chat.completion", "created": <ts>, ] zig [error": {"message": "backend 'lanes' cannot enforce tool_cho]
+  reply 0 headers differ
+KNOWN-DIFFER errors/format-json
+  reply 0 body differs at 41: golden [needs the checkpoint's config.json vocab_size", "type": "inv] zig [(response_format and the guided_* fields) is not supported b]
+  reply 0 headers differ
+KNOWN-DIFFER errors/stream-structured
+  connection after: golden closed, zig open
+  reply 0 status: golden HTTP/1.1 200 OK, zig HTTP/1.1 400 Bad Request
+  reply 0 body differs at 0: golden [data: {"id": "<id1>", "object": "chat.completion.chunk", "cr] zig [{"error": {"message": "structured output (response_format an]
+KNOWN-DIFFER anthropic/tool-use-stream
+  reply 0 body differs at 704: golden [\n"}}
+
+event: content_block_stop
+data: {"type": "content_blo] zig ["}}
+
+event: content_block_stop
+data: {"type": "content_block]
+KNOWN-DIFFER anthropic/tool-result
+  reply 0 status: golden HTTP/1.1 200 OK, zig HTTP/1.1 400 Bad Request
+  reply 0 body differs at 2: golden [id": "<id1>", "type": "message", "role": "assistant", "model] zig [type": "error", "error": {"type": "invalid_request_error", "]
+  reply 0 headers differ
+KNOWN-DIFFER anthropic/refuse-format
+  reply 0 body differs at 91: golden [needs the checkpoint's config.json vocab_size"}}] zig [(response_format and the guided_* fields) is not supported b]
+  reply 0 headers differ
+KNOWN-DIFFER cancel/metrics-after
+  reply 0 body differs at 307: golden [prompt_tokens_total Prompt tokens of finished requests.
+# TY] zig [generation_tokens_running Generated tokens held by live stre]
+  reply 0 headers differ
+KNOWN-DIFFER metrics-open/metrics
+  reply 0 body differs at 307: golden [prompt_tokens_total Prompt tokens of finished requests.
+# TY] zig [generation_tokens_running Generated tokens held by live stre]
+  reply 0 headers differ
+KNOWN-DIFFER metrics-open/v1-metrics
+  reply 0 body differs at 487: golden [prompt_tokens_total Prompt tokens of finished requests.
+# TY] zig [generation_tokens_running Generated tokens held by live stre]
+  reply 0 headers differ
+KNOWN-DIFFER keys/metrics-counted
+  reply 0 body differs at 887: golden [prompt_tokens_total Prompt tokens of finished requests.
+# TY] zig [generation_tokens_running Generated tokens held by live stre]
+  reply 0 headers differ
+        chat   16 equal    0 differ   0 known
+    thinking   16 equal    0 differ   0 known
+       stops   13 equal    0 differ   0 known
+       usage   10 equal    0 differ   0 known
+       tools   64 equal    0 differ   4 known
+      errors   37 equal    0 differ   2 known
+ completions   15 equal    0 differ   0 known
+   responses   29 equal    0 differ   0 known
+   anthropic   26 equal    0 differ   3 known
+      tokens   19 equal    0 differ   0 known
+      status   11 equal    0 differ   0 known
+     framing   42 equal    0 differ   0 known
+      cancel    1 equal    0 differ   1 known
+   lifecycle    2 equal    0 differ   0 known
+metrics-open    2 equal    0 differ   2 known
+        keys   19 equal    0 differ   1 known
+322/335 equal to server goldens, 0 unexpected differences
+test
++- run test w
+[default] (warn): XPU: a command list did not drain at close; its memory and context stay until the process ends
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/e2dd3dcecb58a374c725eb5a3b0e69c5/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): lm_head is 8-bit in groups of 64: CUDA reads Nemotron MLX checkpoints at 4-bit in groups of 64 only; mixed and 6- or 8-bit (oQ) checkpoints serve on Macs
+[default] (warn): backbone.embeddings is 8-bit in groups of 64: the Intel GPU engine reads Nemotron MLX checkpoints at 4-bit in groups of 64 only; mixed and 6- or 8-bit (oQ) checkpoints serve on Macs
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/ab0d295769f24a53840cdb1d8a09cdce/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): lm_head is 8-bit in groups of 64: CUDA reads Nemotron MLX checkpoints at 4-bit in groups of 64 only; mixed and 6- or 8-bit (oQ) checkpoints serve on Macs
+[default] (warn): backbone.embeddings is 8-bit in groups of 64: the Intel GPU engine reads Nemotron MLX checkpoints at 4-bit in groups of 64 only; mixed and 6- or 8-bit (oQ) checkpoints serve on Macs
+fake target: proposed=68 verified=68 accepted=68
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/1d6c7153f04651cead17a7e95f3fc9dc/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (err): rank 0: another rank's process ended (its line closed); this rank stops instead of waiting on it
+[default] (err): rank 0: rank 1 stopped (peer OOM); this rank stops too
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/00ab55d581180e34d8ec22cebf20a092/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/3d35663fd321b1afb9de6720fa9890e6/libpicture-codec-wrong.so is not libjpeg-turbo 3.1.4.1; JPEG images are refused until it is
+[default] (warn): /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/3d35663fd321b1afb9de6720fa9890e6/libpicture-codec-wrong.so is not libwebp 1.6.0; WebP images are refused until it is
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/1c76b783e400c3e1c9ba38730e641c54/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+VISION_LFM2 markers=104; every omitted entry refused
+VISION_LFM2_AUTO valid stays enabled; missing and non-added disable pictures with warning
+[default] (warn): libturbojpeg.so.0 is not libjpeg-turbo 3.1.4.1; JPEG images are refused until it is
+libjpeg-turbo 3.1.4.1 not found: LFM2's JPEG cases skipped
+libjpeg-turbo 3.1.4.1 not found: LFM2's JPEG cases skipped
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/f03c73324fac9c8d45dc9ef335a10747/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+page deinit: context_waits=1, unsafe_frees=0
+all-on-pages third opening: capped=false, error=LaneMemory, allocations=3->3, slots=2
+all-on-pages third opening: capped=true, error=LaneMemory, allocations=3->3, slots=2
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/191dcaee162867e2d8d8d2c6f8f0d3b4/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): lane host: stopping at a round boundary: 2 running and 1 queued request(s) end (server restarting: retry shortly)
+[default] (warn): lane host: stopping at a round boundary: 1 running and 0 queued request(s) end (server restarting: retry shortly)
+[default] (warn): lane host: a round failed (GpuFailed): every admitted stream fails
+[default] (warn): lane host: a round failed (GpuFailed): every admitted stream fails
+[default] (warn): 4 prompts together: SamplingRefused; each goes alone
+[default] (warn): lane host: a round failed (the planner refused): every admitted stream fails
+[default] (warn): lane host: a round failed (PlannerFull): every admitted stream fails
+[default] (warn): lane host: a decision score failed (EmptyLabels)
+[default] (warn): lane host: stopping at a round boundary: 1 running and 1 queued request(s) end (drain deadline)
+[default] (warn): lane host: stopping at a round boundary: 0 running and 1 queued request(s) end (NoContext)
+[default] (warn): lane host: a round failed (OutOfMemory): every admitted stream fails
+[default] (warn): lane host: a round failed (AdmittedFailed): every admitted stream fails
+[default] (warn): lane host: a round failed (FinalsFailed): every admitted stream fails
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/2f6699c2fc964557d40dd4f93f83ace8/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): slide pocket: a deleted fact's 1 layers are put back in memory, but not all on the device (UploadFailed): replies are refused until they are
+[default] (warn): slide pocket: a deleted fact's 1 layers are put back in memory, but not all on the device (UploadFailed): replies are refused until they are
+[default] (warn): slide pocket: a deleted fact's 2 layers are put back in memory, but not all on the device (UploadFailed): replies are refused until they are
+[default] (warn): slide pocket: a delete failed (UploadFailed), and its put-back did not reach the device (PutBackNotOnDevice)
+[default] (warn): slide pocket: a deleted fact's 2 layers are put back in memory, but not all on the device (UploadFailed): replies are refused until they are
+[default] (warn): slide pocket: a delete failed (UploadFailed), and its put-back did not reach the device (PutBackNotOnDevice)
+[default] (warn): slide pocket: a deleted fact's 2 layers are put back in memory, but not all on the device (UploadFailed): replies are refused until they are
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/cb5eb63706aa8087db2e52acf007d60e/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): qwen3_5: a failed restore's stream did not drain: its kept state's host copy stays
+[default] (warn): qwen3_5: a kept state's host copy goes to the copy-source quarantine: a restore's copies did not drain
+[default] (warn): qwen3_5: a failed restore's stream did not drain: its kept state's host copy stays
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/33aa84f3cc91c16226589a17ea4f56b1/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- test-glm-contract-host
+      +- run test w
+GLM 64-sums width=512 hc=false BF16 minimum=32832.12524461839x
+GLM 64-sums width=1536 hc=false BF16 minimum=32832.12524461839x
+GLM 64-sums width=4096 hc=false BF16 minimum=32832.12524461839x
+GLM 64-sums width=4096 hc=true BF16 minimum=32832.12524461839x
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/9231080e93e79dc7cfccdb901d888d39/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test 417 pass, 1 fail (418 total)
+[default] (warn): libturbojpeg.so.0 is not libjpeg-turbo 3.1.4.1; JPEG images are refused until it is
+libjpeg-turbo 3.1.4.1 not found: JPEG pixel cases skipped
+libjpeg-turbo 3.1.4.1 not found: JPEG pixel cases skipped
+libjpeg-turbo 3.1.4.1 not found: JPEG pixel cases skipped
+[default] (warn): model.layers.0.mlp.up_proj.weight: another spelling of module layers.0.mlp.up_proj declares a different width
+[default] (warn): layers.0.mlp.up_proj: another spelling of module layers.0.mlp.up_proj declares a different width
+[default] (warn): model.layers.0.mlp.up_proj: another spelling of module layers.0.mlp.up_proj declares a different width
+error: 'exl3_load.test.a scan that fails an allocation frees every group prefix it held' failed:
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:1167:17: 0x15a0281 in checkAllAllocationFailures__func_2373 (std.zig)
+                       return error.NondeterministicMemoryUsage;
+                       ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/core/exl3_load.zig:319:5: 0x15a1419 in test.a scan that fails an allocation frees every group prefix it held (root.zig)
+           try std.testing.checkAllAllocationFailures(a, scanFault, .{ io, dir });
+           ^
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/2c14cf423edc11429dee711d6b98e46e/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+RESULT CPU reference comparison: largest difference 1.000 of its tolerance (element 1)
+RESULT CPU reference comparison: largest difference 1.000 of its tolerance (element 1)
+RESULT CPU reference comparison: largest difference 2.000 of its tolerance (element 0)
+FAIL CPU reference comparison within its float64 tolerance
+RESULT CPU reference comparison: largest difference 2.000 of its tolerance (element 0)
+FAIL CPU reference comparison within its float64 tolerance
+FAIL CPU reference comparison: non-finite error at element 0 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 2 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 2 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 2 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 2 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got inf, reference 0e0, tolerance 1e0)
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/acbce22814a37b1c5d27ce73eb2463fe/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+discovery verbs: retained through TLS, atexit and destructor; child exit 0
+discovery grammar: retained through TLS, atexit and destructor; child exit 0
+test
++- test-cuda-host
+   +- run test w
+DEEPSEEK_CHAT_GOLDENS 178 committed encoding.py cases
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/a528c42d5972455ab73ed959eed6bc2f/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): Drama readback drain failed: retaining its buffers and engine owner
+[default] (warn): Drama readback drain failed: retaining its buffers and engine owner
+codec requested 1, actual sizes { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+codec requested 1, actual sizes { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+codec requested 4, actual sizes { 4, 4, 4, 4, 1 }
+codec requested 16, actual sizes { 16, 1 }
+codec requested 1, actual sizes { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+Drama replay passed: eager/graphs, poison/reset, codec chunks and interleaved state
+[default] (warn): drama3: config hidden_size = 4096, the kernels need 2048
+[default] (warn): codec.pth pickle names os.system, outside the tensor state-dict allow-list
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/8e0e2156d0397fc061eba6bdc183dadd/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+tf_h3_forward: BadH3Dimensions
+tf_h3_forward_host: BadH3Dimensions
+tf_h3_forward: BadH3Dimensions
+tf_h3_forward_host: BadH3Dimensions
+tf_h3_forward: BadH3Dimensions
+tf_h3_forward_host: BadH3Dimensions
+tf_h3_forward: BadH3Rotary
+tf_h3_forward_host: BadH3Rotary
+tf_h3_forward: BadH3Rotary
+tf_h3_forward_host: BadH3Rotary
+tf_h3_forward: BadH3Keep
+tf_h3_forward_host: BadH3Keep
+tf_h3_forward: BadH3Keep
+tf_h3_forward_host: BadH3Keep
+tf_h3_forward: BadH3Blocks
+tf_h3_forward_host: BadH3Blocks
+tf_h3_forward: BadH3Scalar
+tf_h3_forward_host: BadH3Scalar
+tf_h3_forward: BadH3Scalar
+tf_h3_forward_host: BadH3Scalar
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward_host: BadH3Address
+tf_h3_forward_host: BadH3Scalar
+H3 model retained at close: NotReady
+H3 geometry retained: NotReady
+tensor blocks.0.norm1.weight: MissingTensor
+tensor blocks.1.attn.qkv_proj.weight: MissingTensor
+tensor blocks.1.norm1.weight: MissingTensor
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/b8b9bae5f6dae71c77b9296000693302/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): libcublasLt.so.13 is required for CUDA vision towers (--vision) and CUDA cuBLASLt projections; install the NVIDIA CUDA 13 cuBLAS runtime; on Linux, add its directory to LD_LIBRARY_PATH; a driver-only host does not include it
+[default] (warn): libnccl.so.2 is required for CUDA ranks (including the GLM pair); install the NVIDIA NCCL 2 runtime compatible with CUDA 13; on Linux, add its directory to LD_LIBRARY_PATH
+[default] (warn): libibverbs.so.1 is required for RoCE/RDMA gathers; install rdma-core's libibverbs runtime and the provider for the network adapter
+[default] (warn): libmcdma-rpc.so is required for MCDMA mailbox and Metal speed-up communication; build and install MCDMA's RPC helper and set MCDMA_RPC_LIBRARY to its file
+[default] (warn): libmcdma-rpc.so is required for MCDMA mailbox and Metal speed-up communication; build and install MCDMA's RPC helper and set MCDMA_RPC_LIBRARY to its file
+[default] (warn): libmcdma-rpc.so is required for MCDMA mailbox and Metal speed-up communication; build and install MCDMA's RPC helper and set MCDMA_RPC_LIBRARY to its file
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/09ab4cccaa53fd225fe655ee54b96939/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+FAIL kernel-contract: unknown image name: unknown_image
+FAIL kernel-contract: unknown image name: glm_glu
+FAIL kernel-contract: unknown image name: 
+FAIL kernel-contract: unknown image name: contract_control
+FAIL kernel-contract: unknown image name: GLM_GLUE
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/e752eced1ad823bca0d5fcc255465a11/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+1/7 qwen_cuda_weights_test.test.Qwen tower weights: existing MLX names and every byte match HF in one shard...OK
+2/7 qwen_cuda_weights_test.test.Qwen tower weights: indexed MLX fallback and sharded HF preserve every tensor...OK
+3/7 qwen_cuda_weights_test.test.Qwen tower weights: malformed selected shape and dtype fail without a fallback...model.visual.patch_embed.proj.weight: f16 { 2, 3, 2, 16, 16 }, expected bf16 { 2, 3, 2, 16, 16 }
+model.visual.patch_embed.proj.weight: bf16 { 2, 3, 2, 8, 32 }, expected bf16 { 2, 3, 2, 16, 16 }
+vision_tower.patch_embed.proj.weight: f16 { 2, 2, 16, 16, 3 }, expected bf16 { 2, 2, 16, 16, 3 }
+vision_tower.patch_embed.proj.weight: bf16 { 2, 2, 16, 8, 6 }, expected bf16 { 2, 2, 16, 16, 3 }
+OK
+4/7 qwen_cuda_weights_test.test.Qwen tower weights: missing selected tensor and unused selected tensors fail closed...checkpoint has no tensor vision_tower.blocks.0.mlp.linear_fc1.bias
+unused checkpoint tensor vision_tower.extra
+checkpoint has no tensor model.visual.blocks.0.mlp.linear_fc1.bias
+unused checkpoint tensor model.visual.extra
+OK
+5/7 qwen_cuda_weights_test.test.Qwen tower weights: HF patch keeps the authored precedence when both namespaces exist...OK
+6/7 qwen_cuda_weights_test.test.Qwen tower weights: every copy refusal and MLX retry release their host owners...OK
+7/7 qwen_cuda_weights_test.test.Qwen tower weights: allocation failures balance the fallback reader and transpose scratch...OK
+7 passed; 0 skipped; 0 failed.
+test
++- test-cuda-host
+   +- run test w
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/0d39cf41ec4715169efc8a8ee29369fd/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+DEPTH_REPLAY n=2 intercept=50 slope=3 head=1 probe=false deepest=6 crossed={ 62, 62 } last={ 6, 6 } trimmed=0
+DEPTH_REPLAY n=2 intercept=50 slope=3 head=1 probe=true deepest=8 crossed={ 59, 57 } last={ 7, 8 } trimmed=11
+DEPTH_REPLAY n=4 intercept=50 slope=3 head=1 probe=false deepest=4 crossed={ 83, 83, 83, 83 } last={ 4, 4, 4, 4 } trimmed=0
+DEPTH_REPLAY n=4 intercept=50 slope=3 head=1 probe=true deepest=5 crossed={ 75, 83, 83, 76 } last={ 5, 5, 5, 5 } trimmed=9
+DEPTH_REPLAY n=2 intercept=55 slope=2.8 head=1 probe=false deepest=6 crossed={ 61, 61 } last={ 6, 6 } trimmed=0
+DEPTH_REPLAY n=2 intercept=55 slope=2.8 head=1 probe=true deepest=8 crossed={ 54, 56 } last={ 8, 8 } trimmed=2
+DEPTH_REPLAY n=4 intercept=55 slope=2.8 head=1 probe=false deepest=4 crossed={ 82, 82, 82, 82 } last={ 4, 4, 4, 4 } trimmed=0
+DEPTH_REPLAY n=4 intercept=55 slope=2.8 head=1 probe=true deepest=6 crossed={ 75, 71, 72, 74 } last={ 5, 6, 5, 5 } trimmed=9
+DEPTH_REPLAY n=8 intercept=100 slope=0 head=0 probe=false deepest=3 crossed={ 100, 100, 100, 100, 100, 100, 100, 100 } last={ 3, 3, 3, 3, 3, 3, 3, 3 } trimmed=0
+DEPTH_REPLAY n=8 intercept=100 slope=0 head=0 probe=true deepest=3 crossed={ 100, 100, 100, 100, 100, 100, 100, 100 } last={ 3, 3, 3, 3, 3, 3, 3, 3 } trimmed=0
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/9e217cbb540af37eb8b9d974251c67bb/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+RESULT valid stale prefix: largest difference 0.000 of its tolerance (element 0)
+FAIL no-op projection: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/8223f3bcb020cefb82ded261f0901fd0/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+GLM_KV_BYTES context=8192 capacity=8256 main_layers=11 bf16=296101376 fp8=245772800
+GLM_KV_BYTES context=65536 capacity=65600 main_layers=11 bf16=1044784640 fp8=644887040
+GLM_KV_BYTES context=199307 capacity=199360 main_layers=11 bf16=2791155200 fp8=1575856640
+GLM_KV_BYTES context=245760 capacity=245824 main_layers=11 bf16=3397789184 fp8=1899246080
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/b1e1bf493b17f977210ae92c997819d0/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+GLM_KV_BYTES context=8192 capacity=8256 main_layers=11 bf16=296101376 fp8=245772800
+GLM_KV_BYTES context=65536 capacity=65600 main_layers=11 bf16=1044784640 fp8=644887040
+GLM_KV_BYTES context=199307 capacity=199360 main_layers=11 bf16=2791155200 fp8=1575856640
+GLM_KV_BYTES context=245760 capacity=245824 main_layers=11 bf16=3397789184 fp8=1899246080
+REFUSE TF_GLM_PREFILL_REDUCE=split: rank 0 cannot exchange with rank 2; split sends every rank's rows to every other, and a fabric where some ranks reach only their neighbours (a ring of four without a switch) needs TF_GLM_PREFILL_REDUCE=ring or gather
+REFUSE TF_GLM_PREFILL_REDUCE=split: rank 1 cannot exchange with rank 3; split sends every rank's rows to every other, and a fabric where some ranks reach only their neighbours (a ring of four without a switch) needs TF_GLM_PREFILL_REDUCE=ring or gather
+REFUSE TF_GLM_PREFILL_REDUCE=split: rank 2 cannot exchange with rank 0; split sends every rank's rows to every other, and a fabric where some ranks reach only their neighbours (a ring of four without a switch) needs TF_GLM_PREFILL_REDUCE=ring or gather
+REFUSE TF_GLM_PREFILL_REDUCE=split: rank 3 cannot exchange with rank 1; split sends every rank's rows to every other, and a fabric where some ranks reach only their neighbours (a ring of four without a switch) needs TF_GLM_PREFILL_REDUCE=ring or gather
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/1ac3efb064114dfa17eaf2e9d19a146b/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+TOWER_SUM qkv f32 sequential worst=0e0
+TOWER_SUM qkv f16 sequential worst=3.390625e30
+TOWER_SUM qkv bf16 sequential worst=4.6875e28
+TOWER_SUM qkv f32 pairwise worst=0e0
+TOWER_SUM qkv f16 pairwise worst=3.390625e30
+TOWER_SUM qkv bf16 pairwise worst=1.5624999999999998e28
+TOWER_SUM qkv f32 strided worst=0e0
+TOWER_SUM qkv f16 strided worst=3.390625e30
+TOWER_SUM qkv bf16 strided worst=1.5624999999999998e28
+TOWER_SUM pool f32 sequential worst=0e0
+TOWER_SUM pool f16 sequential worst=inf
+TOWER_SUM pool bf16 sequential worst=2.38e32
+TOWER_SUM pool f32 pairwise worst=0e0
+TOWER_SUM pool f16 pairwise worst=inf
+TOWER_SUM pool bf16 pairwise worst=2.38e32
+TOWER_SUM pool f32 strided worst=0e0
+TOWER_SUM pool f16 strided worst=inf
+TOWER_SUM pool bf16 strided worst=2.38e32
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/2dcaf4df145c0e084273f34b9d390e29/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+[default] (warn): qwen3_5: a failed restore's stream did not drain: its kept state's host copy stays
+[default] (warn): qwen3_5: a kept state's host copy goes to the copy-source quarantine: a restore's copies did not drain
+[default] (warn): qwen3_5: a failed restore's stream did not drain: its kept state's host copy stays
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/3f2867f0a7e95a0407ba9705e0ed2b6b/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- run test w
+[default] (warn): lane host: stopping at a round boundary: 2 running and 1 queued request(s) end (server restarting: retry shortly)
+[default] (warn): lane host: stopping at a round boundary: 1 running and 0 queued request(s) end (server restarting: retry shortly)
+[default] (warn): lane host: a round failed (GpuFailed): every admitted stream fails
+[default] (warn): lane host: a round failed (GpuFailed): every admitted stream fails
+[default] (warn): 4 prompts together: SamplingRefused; each goes alone
+[default] (warn): lane host: a round failed (the planner refused): every admitted stream fails
+[default] (warn): lane host: a round failed (PlannerFull): every admitted stream fails
+[default] (warn): lane host: a decision score failed (EmptyLabels)
+[default] (warn): lane host: stopping at a round boundary: 1 running and 1 queued request(s) end (drain deadline)
+[default] (warn): lane host: stopping at a round boundary: 0 running and 1 queued request(s) end (NoContext)
+[default] (warn): lane host: a round failed (OutOfMemory): every admitted stream fails
+[default] (warn): lane host: a round failed (AdmittedFailed): every admitted stream fails
+[default] (warn): lane host: a round failed (FinalsFailed): every admitted stream fails
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/4e851ce6006d9fca1f7ca75b5091caf8/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- run test w
+[default] (warn): lm_head is 8-bit in groups of 64: CUDA reads Nemotron MLX checkpoints at 4-bit in groups of 64 only; mixed and 6- or 8-bit (oQ) checkpoints serve on Macs
+[default] (warn): backbone.embeddings is 8-bit in groups of 64: the Intel GPU engine reads Nemotron MLX checkpoints at 4-bit in groups of 64 only; mixed and 6- or 8-bit (oQ) checkpoints serve on Macs
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/12d2fe9d2b48b9d929790aca9bccb982/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+RESULT CPU reference comparison: largest difference 1.000 of its tolerance (element 1)
+RESULT CPU reference comparison: largest difference 1.000 of its tolerance (element 1)
+RESULT CPU reference comparison: largest difference 2.000 of its tolerance (element 0)
+FAIL CPU reference comparison within its float64 tolerance
+RESULT CPU reference comparison: largest difference 2.000 of its tolerance (element 0)
+FAIL CPU reference comparison within its float64 tolerance
+FAIL CPU reference comparison: non-finite error at element 0 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 2 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 2 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 2 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 2 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got inf, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 1 (got -nan, reference 0e0, tolerance 1e0)
+FAIL CPU reference comparison: non-finite error at element 0 (got inf, reference 0e0, tolerance 1e0)
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/20d14da11479072c5408db78ffccc3e4/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- run test w
+[default] (warn): glm: restoring 1500 tokens failed (PoolMoveNotDrained); pool relocation aborted
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/ddf3b2ebbbc4ba7deff6cd339827b80d/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-quant-geometry-host
+   +- run test w
+[default] (warn): model.layers.0.mlp.up_proj.weight: another spelling of module layers.0.mlp.up_proj declares a different width
+[default] (warn): layers.0.mlp.up_proj: another spelling of module layers.0.mlp.up_proj declares a different width
+[default] (warn): model.layers.0.mlp.up_proj: another spelling of module layers.0.mlp.up_proj declares a different width
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/15a0fbc89b9f442bdd7d696e93cb21b8/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- run test w
+[default] (warn): lane host: stopping at a round boundary: 2 running and 1 queued request(s) end (server restarting: retry shortly)
+[default] (warn): lane host: stopping at a round boundary: 1 running and 0 queued request(s) end (server restarting: retry shortly)
+[default] (warn): lane host: a round failed (GpuFailed): every admitted stream fails
+[default] (warn): lane host: a round failed (GpuFailed): every admitted stream fails
+[default] (warn): 4 prompts together: SamplingRefused; each goes alone
+[default] (warn): lane host: a round failed (the planner refused): every admitted stream fails
+[default] (warn): lane host: a round failed (PlannerFull): every admitted stream fails
+[default] (warn): lane host: a decision score failed (EmptyLabels)
+[default] (warn): lane host: stopping at a round boundary: 1 running and 1 queued request(s) end (drain deadline)
+[default] (warn): lane host: stopping at a round boundary: 0 running and 1 queued request(s) end (NoContext)
+[default] (warn): lane host: a round failed (OutOfMemory): every admitted stream fails
+[default] (warn): lane host: a round failed (AdmittedFailed): every admitted stream fails
+[default] (warn): lane host: a round failed (FinalsFailed): every admitted stream fails
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/17b160fbad21f74db513e01df7a418de/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-cuda-host
+   +- run test w
+PROVENANCE_FIELDS fixtures=3 fields=14 plus decision labels
+PROVENANCE_TIMING mode=raw one=0 bytes=409600 added=1000 rounds=12 ns_per=4157362
+PROVENANCE_TIMING mode=masked one=0 bytes=409600 added=1000 rounds=12 ns_per=7316913
+PROVENANCE_MASK_WORK one=0 spans=3 matcher=3 output=409603
+PROVENANCE_TIMING mode=raw one=1 bytes=409600 added=1000 rounds=12 ns_per=4039921
+PROVENANCE_TIMING mode=masked one=1 bytes=409600 added=1000 rounds=12 ns_per=4365837
+PROVENANCE_MASK_WORK one=1 spans=3 matcher=3 output=409603
+[default] (warn): TENSORFOLD_REQUEST_LOG .zig-cache/tmp/MLoen0Lcoi0_JQau/taken.jsonl gets no requests: it is not a regular file only its owner can read
+DEEPSEEK_CHAT_GOLDENS 178 committed encoding.py cases
+PROMPT system-user tokens=24 equal
+PROMPT default-system tokens=34 equal
+PROMPT reasoning-history tokens=48 equal
+PROMPT reasoning-alias tokens=48 equal
+PROMPT embedded-thinking tokens=47 equal
+PROMPT tools tokens=254 equal
+PROMPT calls-with-tools tokens=350 equal
+PROMPT calls-without-tools tokens=120 equal
+PROMPT tool-results tokens=382 equal
+PROMPT preserve-false tokens=44 equal
+PROMPT thinking-off tokens=28 equal
+PROMPT json-calls tokens=316 equal
+PROMPT text-parts tokens=34 equal
+OUTPUT plain equal
+OUTPUT no-close equal
+OUTPUT no-close-call equal
+OUTPUT typed equal
+OUTPUT multiple equal
+OUTPUT no-tools equal
+OUTPUT unclosed-call equal
+OUTPUT trailing-prose equal
+OUTPUT reasoning-spaces equal
+ROUTE plain JSON+SSE equal
+ROUTE no-close JSON+SSE equal
+ROUTE no-close-call JSON+SSE equal
+ROUTE typed JSON+SSE equal
+ROUTE multiple JSON+SSE equal
+ROUTE no-tools JSON+SSE equal
+ROUTE unclosed-call JSON+SSE equal
+ROUTE trailing-prose JSON+SSE equal
+ROUTE reasoning-spaces JSON+SSE equal
+VISION_MARKERS all 8 fields refuse plain vocabulary; unflagged additions pass
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+invalid output: first-write inflight=0
+Busy: first-write inflight=0
+Closed: first-write inflight=0
+InvalidRequest: first-write inflight=0
+Unsupported: first-write inflight=0
+completed stream: first-write inflight=0
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/4d61faff4bdc854f453256a4b28fc553/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+test
++- test-qwen4-host
+   +- run test w
+QWEN4_FIRST_DIFFERENCE row=1 name=second values=1
+QWEN4_FIRST_DIFFERENCE row=1 name=second values=1
+QWEN4_FIRST_DIFFERENCE row=1 name=model.layers.1.self_attn.attention values=42
+PASS qwen4 binary64: 384 logits and 12 GPU token picks
+PASS qwen4 prompt cuts and resumed == fresh: 11 cuts, every logit and token
+PASS qwen4 concurrent == solo: unequal histories, single rows and packed prompts
+PASS qwen4 copied drafted == plain: 8 tokens, 15 proposed
+N/A qwen4 learned MTP: no declared head; positive MTP configs refuse admission
+PASS qwen4 device: binary64, tokens, repeats, cuts, resume, concurrency, rollback and copied drafts
+FAIL qwen4 binary64 row=11 col=31: expected 0xbf18, got 0xbf19
+FAIL qwen4 binary64: 1/384 logits differ
+FAIL qwen4 binary64 token picks: expected 12 values, got 12; first difference 11
+FAIL qwen4 binary64 row=11 col=31: expected 0xbf18, got 0xbe18
+FAIL qwen4 binary64: 1/384 logits differ
+PASS qwen4 binary64: 384 logits and 12 GPU token picks
+PASS qwen4 prompt cuts and resumed == fresh: 11 cuts, every logit and token
+PASS qwen4 concurrent == solo: unequal histories, single rows and packed prompts
+PASS qwen4 copied drafted == plain: 8 tokens, 15 proposed
+N/A qwen4 learned MTP: no declared head; positive MTP configs refuse admission
+PASS qwen4 device: binary64, tokens, repeats, cuts, resume, concurrency, rollback and copied drafts
+QWEN4_FIRST_DIFFERENCE row=1 name=model.layers.1.self_attn.attention values=24
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/cf96172c7ea52fba6a9f4a3d855339e0/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0xc2420eac --listen=-
+
+Build Summary: 457/460 steps succeeded (1 failed); 5533/5560 tests passed (26 skipped, 1 failed)
+fuzz-cortheon success
++- run test 16 pass (16 total) 13s MaxRSS:10M
+   +- compile test safe native success 11s MaxRSS:552M
+test-golden success
++- run exe golden_check success 1m
+|  +- compile exe golden_check debug native success 396ms MaxRSS:164M
+|  +- compile exe fake_serve debug native success 2s MaxRSS:377M
++- run exe golden_check success 9s
+   +- compile exe golden_check debug native (reused)
+   +- compile exe fake_serve debug native (reused)
+test-kernel-contract success
++- run test 81 pass (81 total) 500ms MaxRSS:11M
+|  +- compile test debug native success 5s MaxRSS:200M
++- test-gemma4-contract-host success
+|  +- run test 9 pass (9 total) 19s MaxRSS:14M
+|  |  +- compile test debug native success 754ms MaxRSS:259M
+|  |     +- WriteFile gemma4-host-empty.metallib success
+|  +- test-glm-window-contract-host success
+|     +- run test 17 pass (17 total) 20s MaxRSS:9M
+|        +- compile test debug native success 488ms MaxRSS:180M
+|           +- WriteFile gemma4-host-empty.metallib (reused)
++- run test 3 pass (3 total) 15ms MaxRSS:10M
+|  +- compile test debug native success 563ms MaxRSS:165M
++- run test 3 pass (3 total) 9ms MaxRSS:8M
+|  +- compile test debug native success 421ms MaxRSS:173M
++- run test 7 pass (7 total) 751ms MaxRSS:58M
+|  +- compile test debug native success 552ms MaxRSS:167M
++- run test 3 pass (3 total) 13ms MaxRSS:7M
+|  +- compile test debug native success 509ms MaxRSS:174M
++- run test 8 pass (8 total) 728ms MaxRSS:8M
+   +- compile test debug native success 331ms MaxRSS:176M
+test transitive failure
++- test-qwen4-host success
+|  +- run test 100 pass (100 total) 2m MaxRSS:105M
+|     +- compile test debug native success 1s MaxRSS:303M
+|        +- WriteFile qwen4_hc_native_host.cpp success
+|        +- WriteFile qwen4_gdn_native_host.cpp success
+|        +- WriteFile qwen4_gdn_cuda_host.cpp success
+|        +- WriteFile qwen4_ple_native_host.cpp success
+|        +- WriteFile qwen4_ple_cuda_host.cpp success
+|        +- WriteFile qwen4_qsa_norm_host.cpp success
+|        +- WriteFile qwen4_qsa_scores_host.cpp success
+|        +- WriteFile qwen4_qsa_select_host.cpp success
+|        +- WriteFile qwen4_qsa_attn_host.cpp success
+|        +- WriteFile qwen4_node_attention.cpp success
+|        +- WriteFile qwen4_cuda_attention_host.cpp success
++- test-qwen4-gdn-host success
+|  +- run test 10 pass (10 total) 201ms MaxRSS:26M
+|     +- compile test debug native success 1s MaxRSS:221M
+|        +- WriteFile qwen4_hc_native_host.cpp (reused)
+|        +- WriteFile qwen4_gdn_native_host.cpp (reused)
+|        +- WriteFile qwen4_gdn_cuda_host.cpp (reused)
+|        +- WriteFile qwen4_ple_native_host.cpp (reused)
+|        +- WriteFile qwen4_ple_cuda_host.cpp (reused)
+|        +- WriteFile qwen4_qsa_norm_host.cpp (reused)
+|        +- WriteFile qwen4_qsa_scores_host.cpp (reused)
+|        +- WriteFile qwen4_qsa_select_host.cpp (reused)
+|        +- WriteFile qwen4_qsa_attn_host.cpp (reused)
+|        +- WriteFile qwen4_node_attention.cpp (reused)
+|        +- WriteFile qwen4_cuda_attention_host.cpp (reused)
+|        +- options cached
++- test-qwen4-projection-host success
+|  +- run test 9 pass (9 total) 13ms MaxRSS:26M
+|     +- compile test debug native success 419ms MaxRSS:189M
+|        +- options (reused)
++- test-qwen4-projection-bodies success
+|  +- compile obj qwen4-projection-bodies debug native success 2s MaxRSS:282M
+|     +- WriteFile qwen4_hc_native_host.cpp (reused)
+|     +- WriteFile qwen4_gdn_native_host.cpp (reused)
+|     +- WriteFile qwen4_gdn_cuda_host.cpp (reused)
+|     +- WriteFile qwen4_ple_native_host.cpp (reused)
+|     +- WriteFile qwen4_ple_cuda_host.cpp (reused)
+|     +- WriteFile qwen4_qsa_norm_host.cpp (reused)
+|     +- WriteFile qwen4_qsa_scores_host.cpp (reused)
+|     +- WriteFile qwen4_qsa_select_host.cpp (reused)
+|     +- WriteFile qwen4_qsa_attn_host.cpp (reused)
+|     +- WriteFile qwen4_node_attention.cpp (reused)
+|     +- WriteFile qwen4_cuda_attention_host.cpp (reused)
+|     +- options (reused)
++- test-qwen4-cuda-bodies success
+|  +- compile obj qwen4-cuda-aarch64 debug aarch64-linux-gnu success 5s MaxRSS:762M
+|  |  +- options cached
+|  +- compile obj qwen4-cuda-x86_64 debug x86_64-linux-gnu success 633ms MaxRSS:261M
+|     +- options success
++- run test 23 pass, 3 skip (26 total) 30ms MaxRSS:28M
+|  +- compile test debug native success 434ms MaxRSS:179M
++- run test 14 pass (14 total) 340ms MaxRSS:26M
+|  +- compile test debug native success 400ms MaxRSS:173M
++- run test 0 pass, 1 skip (1 total) 9ms MaxRSS:28M
+|  +- compile test debug native success 324ms MaxRSS:188M
++- test-kernel-symbols-host success
+|  +- run test 3 pass (3 total) 3s MaxRSS:92M
+|     +- compile test debug native success 387ms MaxRSS:169M
++- test-checkpoint-security success
+|  +- run test 37 pass (37 total) 127ms MaxRSS:8M
+|  |  +- compile test safe native success 14s MaxRSS:648M
+|  +- run test 5 pass (5 total) 1ms MaxRSS:9M
+|  |  +- compile test safe native success 11s MaxRSS:524M
+|  +- run test 6 pass (6 total) 919us MaxRSS:9M
+|     +- compile test safe native success 9s MaxRSS:480M
++- test-quant-geometry-host success
+|  +- run test 75 pass (75 total) 144ms MaxRSS:27M
+|     +- compile test debug native success 524ms MaxRSS:191M
++- run test 37 pass (37 total) 30ms MaxRSS:13M
+|  +- compile test debug native success 400ms MaxRSS:177M
++- run test 4 pass (4 total) 27ms MaxRSS:27M
+|  +- compile test fast x86_64-linux-gnu success 11s MaxRSS:478M
++- run test 25 pass (25 total) 2s MaxRSS:77M
+|  +- compile test debug native success 372ms MaxRSS:185M
++- run test 13 pass (13 total) 586ms MaxRSS:28M
+|  +- compile test debug native success 388ms MaxRSS:173M
+|     +- options success
+|        +- compile exe digest-writer debug native success 330ms MaxRSS:160M
++- run test 6 pass (6 total) 10ms MaxRSS:26M
+|  +- compile test debug native success 259ms MaxRSS:165M
++- run test 18 pass, 3 skip (21 total) 546ms MaxRSS:15M
+|  +- compile test debug native success 383ms MaxRSS:189M
+|     +- WriteFile flashnext-test-empty.zig success
++- test-flashnext-scheduling-host success
+|  +- run test 39 pass, 1 skip (40 total) 5s MaxRSS:21M
+|     +- compile test debug native success 572ms MaxRSS:235M
+|        +- WriteFile flashnext-test-empty.zig (reused)
++- run test 17 pass (17 total) 11ms MaxRSS:8M
+|  +- compile test debug native success 306ms MaxRSS:180M
+|     +- WriteFile flashnext-test-empty.zig (reused)
++- run test 16 pass (16 total) 4ms MaxRSS:8M
+|  +- compile test debug native success 317ms MaxRSS:179M
+|     +- WriteFile flashnext-test-empty.zig (reused)
++- test-flashnext-batch-host success
+|  +- run test 16 pass (16 total) 1s MaxRSS:37M
+|     +- compile test debug native success 529ms MaxRSS:213M
+|        +- WriteFile flashnext-test-empty.zig (reused)
++- test-flashnext-mtp-plan-host success
+|  +- run test 2 pass (2 total) 9ms MaxRSS:28M
+|     +- compile test debug native success 269ms MaxRSS:161M
++- run test 2 pass (2 total) 27ms MaxRSS:26M
+|  +- compile test debug native success 314ms MaxRSS:173M
++- run test 4 pass (4 total) 7ms MaxRSS:28M
+|  +- compile test debug native success 328ms MaxRSS:165M
++- run test 4 pass (4 total) 8ms MaxRSS:28M
+|  +- compile test debug native success 393ms MaxRSS:169M
++- run test 3 pass (3 total) 6ms MaxRSS:28M
+|  +- compile test debug native success 361ms MaxRSS:165M
++- run test 30 pass (30 total) 20ms MaxRSS:28M
+|  +- compile test debug native success 379ms MaxRSS:167M
++- run test 7 pass (7 total) 23ms MaxRSS:7M
+|  +- compile test debug native success 332ms MaxRSS:169M
++- test-check-release-paths success
+|  +- check-release-paths refuses zig-source success 6ms
+|  |  +- compile exe check-release-paths fast native success 6s MaxRSS:270M
+|  |  +- WriteFile bin/tensorfold-native success
+|  |     +- WriteFile zig-source success
+|  +- check-release-paths refuses home success 5ms
+|  |  +- compile exe check-release-paths fast native (reused)
+|  |  +- WriteFile bin/tensorfold-native success
+|  |     +- WriteFile home success
+|  +- check-release-paths refuses metal-header-1.1.7 success 5ms
+|  |  +- compile exe check-release-paths fast native (reused)
+|  |  +- WriteFile bin/tensorfold-native success
+|  |     +- WriteFile metal-header-1.1.7 success
+|  +- check-release-paths passes a clean binary success 5ms
+|     +- compile exe check-release-paths fast native (reused)
+|     +- WriteFile bin/tensorfold-native success
+|        +- WriteFile clean success
++- run test 29 pass (29 total) 2s MaxRSS:27M
+|  +- compile test debug native success 449ms MaxRSS:188M
++- run test 2 pass (2 total) 2ms MaxRSS:28M
+|  +- compile test fast native success 10s MaxRSS:464M
++- run test 24 pass (24 total) 147ms MaxRSS:50M
+|  +- compile test debug native success 364ms MaxRSS:176M
+|     +- options cached
++- run test 78 pass, 1 skip (79 total) 18s MaxRSS:53M
+|  +- compile test debug native success 481ms MaxRSS:191M
+|  |  +- options cached
+|  +- compile obj tp_host_compile debug x86_64-linux-gnu success 234ms MaxRSS:120M
+|     +- options cached
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native success 24s MaxRSS:789M
+|     +- WriteFile tp_kernel.zig success
+|     +- options cached
++- run exe tf-tp-test success 1ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 1ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 1ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 1ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- run exe tf-tp-test success 2ms
+|  +- compile exe tf-tp-test fast native (+2 more reused dependencies)
++- test-cuda-host transitive failure
+|  +- run test 2 pass (2 total) 8ms MaxRSS:20M
+|  |  +- compile test debug native success 453ms MaxRSS:185M
+|  +- run test 1 pass (1 total) 9ms MaxRSS:14M
+|  |  +- compile test debug native success 399ms MaxRSS:165M
+|  +- run test 10 pass (10 total) 13ms MaxRSS:23M
+|  |  +- compile test debug native success 315ms MaxRSS:178M
+|  +- run test 2 pass (2 total) 9ms MaxRSS:16M
+|  |  +- compile test debug native success 306ms MaxRSS:166M
+|  +- run exe runtime-discovery-exit success 14ms
+|  |  +- compile exe runtime-discovery-exit debug native success 356ms MaxRSS:160M
+|  |     +- options success
+|  |        +- compile lib runtime-discovery-mock debug native success 8s MaxRSS:406M
+|  +- run exe rpc-warning-check success 1ms
+|  |  +- compile exe rpc-warning-check debug native success 385ms MaxRSS:161M
+|  |     +- options success
+|  |        +- compile lib rpc-mock-complete debug native success 41ms MaxRSS:65M
+|  |        +- compile lib rpc-mock-abi debug native success 42ms MaxRSS:65M
+|  |        +- compile lib rpc-mock-wait debug native success 35ms MaxRSS:65M
+|  |        +- compile lib rpc-mock-store debug native success 37ms MaxRSS:65M
+|  |        +- compile lib rpc-mock-wrong debug native success 43ms MaxRSS:65M
+|  +- run test 11 pass (11 total) 10ms MaxRSS:17M
+|  |  +- compile test debug native success 631ms MaxRSS:172M
+|  |     +- options (+5 more reused dependencies)
+|  +- run exe grammar-warning-check success 10ms
+|  |  +- compile exe grammar-warning-check debug native success 415ms MaxRSS:163M
+|  |     +- options success
+|  +- run test 2 pass (2 total) 63ms MaxRSS:251M
+|  |  +- compile test debug native success 352ms MaxRSS:152M
+|  |     +- options success
+|  +- run test 2 pass (2 total) 368ms MaxRSS:236M
+|  |  +- compile test debug native success 327ms MaxRSS:162M
+|  |     +- options success
+|  |        +- compile lib picture-codec-wrong debug native success 9s MaxRSS:439M
+|  +- run test 2 pass (2 total) 41ms MaxRSS:255M
+|  |  +- compile test debug native success 439ms MaxRSS:168M
+|  |     +- options success
+|  |        +- compile lib picture-codec-symbols debug native success 41ms MaxRSS:67M
+|  +- run test 2 pass (2 total) 88ms MaxRSS:253M
+|  |  +- compile test debug native success 487ms MaxRSS:154M
+|  |     +- options success
+|  |        +- compile lib picture-codec-ready debug native success 55ms MaxRSS:66M
+|  +- run test 1 pass (1 total) 9ms MaxRSS:12M
+|  |  +- compile test debug native success 350ms MaxRSS:161M
+|  +- run test 30 pass (30 total) 16ms MaxRSS:16M
+|  |  +- compile test debug native success 996ms MaxRSS:249M
+|  |     +- WriteFile h3-compile-only.fatbin success
+|  |     +- options cached
+|  +- run test 3 pass (3 total) 711ms MaxRSS:76M
+|  |  +- compile test debug native success 365ms MaxRSS:186M
+|  +- run test 4 pass (4 total) 38ms MaxRSS:20M
+|  |  +- compile test debug native success 308ms MaxRSS:182M
+|  +- run test 2 pass (2 total) 33ms MaxRSS:14M
+|  |  +- compile test debug native success 373ms MaxRSS:174M
+|  +- run test 4 pass (4 total) 6ms MaxRSS:19M
+|  |  +- compile test debug native success 3s MaxRSS:190M
+|  |     +- WriteFile qwen4_projection.fatbin success
+|  |     +- WriteFile dsv41_exl3_experts.fatbin success
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- WriteFile dsv41_exl3_experts.fatbin (reused)
+|  |     +- options success
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- options cached
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  |     +- WriteFile qwen4_projection.fatbin (reused)
+|  +- run test success 284ms
+|  |  +- compile test debug native success 468ms MaxRSS:188M
+|  +- run test 10 pass (10 total) 9ms MaxRSS:20M
+|  |  +- compile test debug native success 536ms MaxRSS:213M
+|  |     +- WriteFile draft_ids.txt cached
+|  |     +- options (reused)
+|  +- run test 67 pass (67 total) 3s MaxRSS:30M
+|  |  +- compile test debug native success 666ms MaxRSS:235M
+|  |     +- options (reused)
+|  +- run test 3 pass (3 total) 18ms MaxRSS:18M
+|  |  +- compile test debug native success 474ms MaxRSS:191M
+|  |     +- options (reused)
+|  +- run test 1 pass (1 total) 8ms MaxRSS:24M
+|  |  +- compile test debug native success 353ms MaxRSS:186M
+|  |     +- options (reused)
+|  +- run test 9 pass (9 total) 22ms MaxRSS:15M
+|  |  +- compile test debug native success 850ms MaxRSS:200M
+|  |     +- options (reused)
+|  +- test-glm-contract-host success
+|  |  +- run test 7 pass (7 total) 179ms MaxRSS:15M
+|  |     +- compile test debug native success 462ms MaxRSS:189M
+|  |        +- options (reused)
+|  +- run test 33 pass, 3 skip (36 total) 524ms MaxRSS:13M
+|  |  +- compile test debug native success 631ms MaxRSS:237M
+|  |     +- options (reused)
+|  +- run test 11 pass (11 total) 13ms MaxRSS:12M
+|  |  +- compile test debug native success 260ms MaxRSS:201M
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- run test 3 pass (3 total) 65ms MaxRSS:18M
+|  |  +- compile test debug native success 455ms MaxRSS:210M
+|  |     +- options success
+|  |     |  +- compile exe qwen-round-timing-probe debug native success 654ms MaxRSS:211M
+|  |     |     +- WriteFile draft_ids.txt (reused)
+|  |     |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- run test 11 pass (11 total) 7ms MaxRSS:15M
+|  |  +- compile test debug native success 368ms MaxRSS:204M
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- run test 12 pass (12 total) 857ms MaxRSS:25M
+|  |  +- compile test debug native success 524ms MaxRSS:192M
+|  |     +- options (reused)
+|  +- run test 2 pass (2 total) 6ms MaxRSS:13M
+|  |  +- compile test debug native success 406ms MaxRSS:183M
+|  |     +- options (reused)
+|  +- run test 5 pass (5 total) 6ms MaxRSS:12M
+|  |  +- compile test debug native success 480ms MaxRSS:207M
+|  |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  +- run test 8 pass (8 total) 11ms MaxRSS:12M
+|  |  +- compile test debug native success 587ms MaxRSS:217M
+|  |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  +- run test 6 pass (6 total) 16ms MaxRSS:20M
+|  |  +- compile test debug native success 604ms MaxRSS:210M
+|  |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  +- run test 3 pass (3 total) 55ms MaxRSS:24M
+|  |  +- compile test debug native success 401ms MaxRSS:203M
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- run test 10 pass (10 total) 241ms MaxRSS:14M
+|  |  +- compile test debug native success 616ms MaxRSS:228M
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- run test 10 pass (10 total) 27ms MaxRSS:25M
+|  |  +- compile test debug native success 841ms MaxRSS:202M
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- compile obj exl3_host_compile debug native success 186ms MaxRSS:133M
+|  |  +- options (reused)
+|  +- run test 8 pass (8 total) 8ms MaxRSS:12M
+|  |  +- compile test debug native success 368ms MaxRSS:199M
+|  |     +- options (reused)
+|  +- run test 2 pass (2 total) 5ms MaxRSS:15M
+|  |  +- compile test debug native success 371ms MaxRSS:199M
+|  |     +- options (reused)
+|  +- run test 9 pass (9 total) 177ms MaxRSS:32M
+|  |  +- compile test debug native success 428ms MaxRSS:209M
+|  |     +- options (reused)
+|  +- run test 23 pass (23 total) 11ms MaxRSS:19M
+|  |  +- compile test debug native success 501ms MaxRSS:221M
+|  |     +- options (reused)
+|  +- run test 6 pass (6 total) 78ms MaxRSS:19M
+|  |  +- compile test debug native success 543ms MaxRSS:188M
+|  |     +- options (reused)
+|  +- run test 4 pass (4 total) 5ms MaxRSS:14M
+|  |  +- compile test debug native success 406ms MaxRSS:183M
+|  |     +- options (reused)
+|  +- run test 2 pass (2 total) 5ms MaxRSS:25M
+|  |  +- compile test debug native success 386ms MaxRSS:182M
+|  |     +- options (reused)
+|  +- run test 5 pass (5 total) 7ms MaxRSS:25M
+|  |  +- compile test debug native success 391ms MaxRSS:191M
+|  |     +- options (reused)
+|  +- run test 2 pass (2 total) 8ms MaxRSS:25M
+|  |  +- compile test debug native success 430ms MaxRSS:182M
+|  |     +- options (reused)
+|  +- run test 3 pass (3 total) 8ms MaxRSS:19M
+|  |  +- compile test debug native success 374ms MaxRSS:186M
+|  |     +- options (reused)
+|  +- run test 3 pass (3 total) 4ms MaxRSS:12M
+|  |  +- compile test debug native success 261ms MaxRSS:185M
+|  |     +- options (reused)
+|  +- run test 3 pass (3 total) 5ms MaxRSS:16M
+|  |  +- compile test debug native success 299ms MaxRSS:182M
+|  |     +- options (reused)
+|  +- run test 9 pass (9 total) 6ms MaxRSS:24M
+|  |  +- compile test debug native success 642ms MaxRSS:185M
+|  |     +- options (reused)
+|  +- run test 1 pass (1 total) 7ms MaxRSS:13M
+|  |  +- compile test debug native success 316ms MaxRSS:181M
+|  |     +- options (reused)
+|  +- run test 1 pass (1 total) 9ms MaxRSS:15M
+|  |  +- compile test debug native success 334ms MaxRSS:186M
+|  |     +- options (reused)
+|  +- run test 1 pass (1 total) 7ms MaxRSS:18M
+|  |  +- compile test debug native success 422ms MaxRSS:184M
+|  |     +- options (reused)
+|  +- run test 1 pass (1 total) 10ms MaxRSS:15M
+|  |  +- compile test debug native success 306ms MaxRSS:182M
+|  |     +- options (reused)
+|  +- run test 2 pass (2 total) 8ms MaxRSS:20M
+|  |  +- compile test debug native success 573ms MaxRSS:170M
+|  +- run test 8 pass (8 total) 13ms MaxRSS:21M
+|  |  +- compile test debug native success 358ms MaxRSS:180M
+|  +- run test 3 pass (3 total) 89ms MaxRSS:10M
+|  |  +- compile test debug native success 376ms MaxRSS:175M
+|  +- run test 8 pass (8 total) 9ms MaxRSS:20M
+|  |  +- compile test debug native success 331ms MaxRSS:189M
+|  +- run test 1 pass (1 total) 10ms MaxRSS:11M
+|  |  +- compile test debug native success 359ms MaxRSS:176M
+|  |     +- options (reused)
+|  +- run test 1 pass (1 total) 10ms MaxRSS:20M
+|  |  +- compile test debug native success 342ms MaxRSS:183M
+|  |     +- options (reused)
+|  +- run test success 10ms MaxRSS:24M
+|  |  +- compile test debug native success 349ms MaxRSS:186M
+|  |     +- options (reused)
+|  +- run test 9 pass (9 total) 77ms MaxRSS:25M
+|  |  +- compile test debug native success 338ms MaxRSS:183M
+|  |     +- options (reused)
+|  +- run test 4 pass (4 total) 7ms MaxRSS:15M
+|  |  +- compile test debug native success 353ms MaxRSS:181M
+|  |     +- options (reused)
+|  +- run test 1 pass (1 total) 26ms MaxRSS:24M
+|  |  +- compile test debug native success 371ms MaxRSS:180M
+|  |     +- options (reused)
+|  +- run test 4 pass (4 total) 2ms MaxRSS:26M
+|  |  +- compile test fast native success 10s MaxRSS:506M
+|  |     +- options (reused)
+|  +- run test 1 pass (1 total) 10ms MaxRSS:23M
+|  |  +- compile test fast native success 12s MaxRSS:489M
+|  |     +- options (reused)
+|  +- compile obj bolt_host_compile debug x86_64-linux-gnu success 435ms MaxRSS:158M
+|  |  +- options cached
+|  |  +- WriteFile draft_ids.txt (reused)
+|  +- run test 2 pass (2 total) 8ms MaxRSS:23M
+|  |  +- compile test debug native success 342ms MaxRSS:166M
+|  +- run test 39 pass (39 total) 770ms MaxRSS:16M
+|  |  +- compile test debug native success 562ms MaxRSS:208M
+|  |     +- options (reused)
+|  +- run test 94 pass (94 total) 6s MaxRSS:46M
+|  |  +- compile test debug native success 1s MaxRSS:227M
+|  +- run test 4 pass (4 total) 9ms MaxRSS:24M
+|  |  +- compile test debug native success 337ms MaxRSS:191M
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- run test 4 pass (4 total) 25s MaxRSS:13M
+|  |  +- compile test debug native success 590ms MaxRSS:266M
+|  |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  +- run exe qwen-cost-key-process success 19s
+|  |  +- compile exe qwen-cost-key-process debug native success 411ms MaxRSS:203M
+|  |  |  +- WriteFile draft_ids.txt (reused)
+|  |  |  +- options (reused)
+|  |  +- WriteFile target/config.json success
+|  +- run test 1 pass (1 total) 8ms MaxRSS:19M
+|  |  +- compile test debug native success 381ms MaxRSS:187M
+|  +- compile obj drama_cuda_native_host debug native success 330ms MaxRSS:145M
+|  |  +- options (reused)
+|  +- run test 6 pass (6 total) 8ms MaxRSS:11M
+|  |  +- compile test debug native success 553ms MaxRSS:227M
+|  |     +- options (reused)
+|  +- run test 8 pass (8 total) 11ms MaxRSS:15M
+|  |  +- compile test debug native success 444ms MaxRSS:233M
+|  |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  +- run test 5 pass (5 total) 6ms MaxRSS:23M
+|  |  +- compile test debug native success 357ms MaxRSS:165M
+|  +- run test 28 pass, 1 skip (29 total) 7s MaxRSS:24M
+|  |  +- compile test debug native success 1s MaxRSS:299M
+|  |     +- WriteFile exlr8_alias.zig cached
+|  |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  +- run test 5 pass (5 total) 98ms MaxRSS:23M
+|  |  +- compile test debug native success 862ms MaxRSS:186M
+|  +- run test 4 pass (4 total) 11ms MaxRSS:23M
+|  |  +- compile test debug native success 400ms MaxRSS:185M
+|  +- run test 869 pass (869 total) 1m MaxRSS:247M
+|  |  +- compile test debug native success 3s MaxRSS:528M
+|  +- run test 5 pass (5 total) 10ms MaxRSS:23M
+|  |  +- compile test debug native success 334ms MaxRSS:169M
+|  +- run test 257 pass (257 total) 321ms MaxRSS:13M
+|  |  +- compile test debug native success 591ms MaxRSS:216M
+|  |     +- options (reused)
+|  +- run test 417 pass, 1 fail (418 total)
+|  |  +- compile test debug native success 5s MaxRSS:284M
+|  +- run test 267 pass (267 total) 22s MaxRSS:50M
+|  |  +- compile test debug native success 1s MaxRSS:224M
+|  +- run test 75 pass, 1 skip (76 total) 96ms MaxRSS:15M
+|  |  +- compile test debug native success 648ms MaxRSS:252M
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- run test 88 pass, 2 skip (90 total) 3s MaxRSS:31M
+|  |  +- compile test debug native success 842ms MaxRSS:250M
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- options (reused)
+|  +- run test 12 pass (12 total) 14ms MaxRSS:13M
+|  |  +- compile test debug native success 388ms MaxRSS:205M
+|  |     +- options (reused)
+|  +- run test 166 pass (166 total) 656ms MaxRSS:146M
+|  |  +- compile test debug native success 1s MaxRSS:274M
+|  |     +- options (reused)
+|  +- run test 15 pass (15 total) 3s MaxRSS:15M
+|  |  +- compile test debug native success 494ms MaxRSS:216M
+|  |     +- options (reused)
+|  +- run test 31 pass (31 total) 3s MaxRSS:1G
+|  |  +- compile test debug native success 572ms MaxRSS:203M
+|  |     +- options (reused)
+|  +- run test 5 pass (5 total) 9ms MaxRSS:23M
+|  |  +- compile test debug native success 491ms MaxRSS:168M
+|  +- run test 40 pass (40 total) 297ms MaxRSS:19M
+|  |  +- compile test debug native success 565ms MaxRSS:191M
+|  +- run test 386 pass (386 total) 18s MaxRSS:46M
+|  |  +- compile test debug native success 1s MaxRSS:266M
+|  +- run test 103 pass (103 total) 189ms MaxRSS:38M
+|  |  +- compile test debug native success 1s MaxRSS:363M
+|  |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  +- run test 3 pass (3 total) 6ms MaxRSS:14M
+|  |  +- compile test debug native success 318ms MaxRSS:168M
+|  +- run test 1 pass (1 total) 10ms MaxRSS:18M
+|  |  +- compile test debug native success 380ms MaxRSS:164M
+|  +- run test 5 pass (5 total) 8ms MaxRSS:17M
+|  |  +- compile test debug native success 504ms MaxRSS:148M
+|  +- run test 9 pass (9 total) 10ms MaxRSS:24M
+|  |  +- compile test debug native success 378ms MaxRSS:191M
+|  |     +- options (reused)
+|  +- run test 14 pass (14 total) 23ms MaxRSS:24M
+|  |  +- compile test debug native success 329ms MaxRSS:194M
+|  |     +- options (reused)
+|  +- run test 11 pass (11 total) 11ms MaxRSS:9M
+|  |  +- compile test debug native success 423ms MaxRSS:201M
+|  |     +- options (reused)
+|  +- run test 12 pass (12 total) 11ms MaxRSS:14M
+|  |  +- compile test debug native success 4s MaxRSS:240M
+|  |     +- options (reused)
+|  +- run test 2 pass (2 total) 7ms MaxRSS:15M
+|  |  +- compile test debug native success 708ms MaxRSS:196M
+|  |     +- options (reused)
+|  +- run test 2 pass (2 total) 12ms MaxRSS:13M
+|  |  +- compile test debug native success 611ms MaxRSS:256M
+|  |     +- options (reused)
+|  +- run test 132 pass (132 total) 175ms MaxRSS:25M
+|  |  +- compile test debug native success 1s MaxRSS:255M
+|  |     +- options (reused)
+|  +- run test 7 pass (7 total) 8ms MaxRSS:14M
+|  |  +- compile test debug native success 467ms MaxRSS:197M
+|  |     +- options (reused)
+|  +- run test 19 pass, 1 skip (20 total) 19ms MaxRSS:16M
+|  |  +- compile test debug native success 439ms MaxRSS:201M
+|  |     +- options (reused)
+|  +- run test 46 pass (46 total) 151ms MaxRSS:16M
+|  |  +- compile test debug native success 572ms MaxRSS:210M
+|  |     +- options (reused)
+|  +- run test 8 pass (8 total) 17ms MaxRSS:24M
+|  |  +- compile test debug native success 437ms MaxRSS:188M
+|  |     +- options (reused)
+|  +- run test 5 pass (5 total) 9ms MaxRSS:9M
+|  |  +- compile test debug native success 341ms MaxRSS:167M
+|  +- run test 39 pass (39 total) 9s MaxRSS:20M
+|  |  +- compile test debug native success 484ms MaxRSS:198M
+|  +- run test 20 pass (20 total) 100ms MaxRSS:19M
+|  |  +- compile test debug native success 2s MaxRSS:327M
+|  +- run test 55 pass (55 total) 1s MaxRSS:15M
+|  |  +- compile test debug native success 686ms MaxRSS:203M
+|  +- run test 52 pass, 1 skip (53 total) 2s MaxRSS:12M
+|  |  +- compile test debug native success 468ms MaxRSS:197M
+|  +- run test 1 pass (1 total) 5ms MaxRSS:14M
+|  |  +- compile test debug native success 367ms MaxRSS:216M
+|  |     +- options cached
+|  |     +- options (reused)
+|  |     +- WriteFile draft_ids.txt (reused)
+|  |     +- WriteFile exlr8_alias.zig cached
+|  +- run test 12 pass (12 total) 11ms MaxRSS:17M
+|     +- compile test debug native success 536ms MaxRSS:209M
+|        +- WriteFile exlr8_alias.zig cached
+|        +- options (reused)
+|        +- WriteFile draft_ids.txt (reused)
++- run test 4 pass (4 total) 6ms MaxRSS:26M
+|  +- compile test debug native success 262ms MaxRSS:166M
+|     +- options cached
++- run test 13 pass, 1 skip (14 total) 18ms MaxRSS:25M
+|  +- compile test debug native success 414ms MaxRSS:188M
+|     +- options (reused)
++- run test 3 pass (3 total) 6ms MaxRSS:25M
+|  +- compile test debug native success 402ms MaxRSS:179M
+|     +- options (reused)
++- run test 1 pass (1 total) 5ms MaxRSS:8M
+|  +- compile test debug native success 302ms MaxRSS:165M
++- run test 386 pass (386 total) 5s MaxRSS:27M
+|  +- compile test fast native success 43s MaxRSS:1G
++- test-kv-pool success
+|  +- run test 22 pass (22 total) 89ms MaxRSS:25M
+|  |  +- compile test debug native success 398ms MaxRSS:167M
+|  +- run test 6 pass (6 total) 452ms MaxRSS:25M
+|     +- compile test debug native success 615ms MaxRSS:202M
++- run test 26 pass, 2 skip (28 total) 37ms MaxRSS:28M
+|  +- compile test debug native success 454ms MaxRSS:201M
++- run test 31 pass, 5 skip (36 total) 23ms MaxRSS:28M
+|  +- compile test safe native success 16s MaxRSS:674M
++- run test 4 pass (4 total) 6ms MaxRSS:27M
+|  +- compile test debug native success 291ms MaxRSS:164M
++- run test 398 pass (398 total) 18s MaxRSS:44M
+|  +- compile test debug native success 840ms MaxRSS:273M
++- run test 26 pass (26 total) 96ms MaxRSS:27M
+|  +- compile test debug native success 466ms MaxRSS:198M
++- run exe learned-warning-test success 2ms
+|  +- compile exe learned-warning-test debug native success 327ms MaxRSS:182M
++- run test 3 pass (3 total) 6ms MaxRSS:8M
+   +- compile test debug native success 263ms MaxRSS:166M
+      +- options success
+

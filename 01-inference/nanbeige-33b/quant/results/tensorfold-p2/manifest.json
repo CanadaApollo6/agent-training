@@ -1,0 +1,341 @@
+{
+  "head": "e8d79bcc1b1b510a74cdd58784031bd7a2e83d73",
+  "created_utc": "2026-10-28T17:12:16.694427+00:00",
+  "source": {
+    "head": "e8d79bcc1b1b510a74cdd58784031bd7a2e83d73",
+    "p1": "fd409155c09fadf5bea00232fe59deec621ead11",
+    "upstream": "31ce9eb3",
+    "files": [
+      {
+        "path": "tools/zig/llama_serve_check.py",
+        "lines": 281,
+        "bytes": 14099,
+        "sha256": "cf87b457fc761bf4fa494f0e43a37e67fec48c967323b2b95b5bae785991b6c7"
+      },
+      {
+        "path": "tools/zig/llama_serve_reference.py",
+        "lines": 146,
+        "bytes": 8524,
+        "sha256": "83e75504fea73e8d3f0987da9e777593829628fc3eda2ca7a50a546418356fbe"
+      },
+      {
+        "path": "zig/build/server.zig",
+        "lines": 126,
+        "bytes": 8008,
+        "sha256": "1d92fcad30bf7448a752f7ff2eb08244dff41c580a65a9d7137cabc5998016c6"
+      },
+      {
+        "path": "zig/src/families/llama/native.zig",
+        "lines": 76,
+        "bytes": 3853,
+        "sha256": "c835e30b0c2c3488ee37bcee0c355a093c75fbe8cb8ecd1cd42c437bce5197e0"
+      },
+      {
+        "path": "zig/src/native/cuda.zig",
+        "lines": 555,
+        "bytes": 30149,
+        "sha256": "0e4adc6d64ee26e4b610e0d5fd583502e97b1e4d7def61e0fdf187e9622c0d45"
+      },
+      {
+        "path": "zig/src/server/chat.zig",
+        "lines": 597,
+        "bytes": 34180,
+        "sha256": "f6b59e6cbf99dec4347405a88f32dd14decccae27f093dc4722d06a507b3fd21"
+      },
+      {
+        "path": "zig/src/server/errors.zig",
+        "lines": 56,
+        "bytes": 1875,
+        "sha256": "882b05d8ca226fb5553a7190e93cea7cfe1dc06f502c5898eded12a23fb6af01"
+      },
+      {
+        "path": "zig/src/server/fixtures/llama/outputs.json",
+        "lines": 17,
+        "bytes": 9908,
+        "sha256": "78dabf678498e353b26c946ece1fa45beca689a51e8712d4971b83bb61af995d"
+      },
+      {
+        "path": "zig/src/server/fixtures/llama/prompts.json",
+        "lines": 17,
+        "bytes": 31003,
+        "sha256": "0b28d02dedc2662f733761ce60e3391c635a24f3d625e5b4bb944a56e447a80b"
+      },
+      {
+        "path": "zig/src/server/fixtures/llama/sources.json",
+        "lines": 10,
+        "bytes": 354,
+        "sha256": "e3c2e721fcf4b973e0926ec15d550fdc8cddc3d8c9dcff40f281c7a32a79a6c0"
+      },
+      {
+        "path": "zig/src/server/hf_text.zig",
+        "lines": 546,
+        "bytes": 29688,
+        "sha256": "9587cee21e02213ece740eec820d8ceb51a4266ede3db4e4ddf9033ec909f716"
+      },
+      {
+        "path": "zig/src/server/llama_output_test.zig",
+        "lines": 226,
+        "bytes": 11391,
+        "sha256": "243cf4d1cb82cabf8efd08c75b22e998b42245ec757ef66cf796e00b76f27e10"
+      },
+      {
+        "path": "zig/src/server/llama_prompt_test.zig",
+        "lines": 76,
+        "bytes": 3283,
+        "sha256": "f8e311fe286211eaed9cee86d4468dd0502b1a532ed73e88d3c87b57f7b39917"
+      },
+      {
+        "path": "zig/src/server/model_text.zig",
+        "lines": 198,
+        "bytes": 9249,
+        "sha256": "78438bb1724abd9751e7f52d3a477ffd4067a6e6a85559cee5c5f3f2387953dd"
+      },
+      {
+        "path": "zig/src/server/nanbeige.zig",
+        "lines": 97,
+        "bytes": 4760,
+        "sha256": "409870280588ee8dba2d47c347e826bdcc2dae206fb646a255de688cd12cb4c9"
+      },
+      {
+        "path": "zig/src/server/openai.zig",
+        "lines": 579,
+        "bytes": 31386,
+        "sha256": "4bd40cc981fd68f032c820b6b83ce0c4c33814b0419420641205f604e2abe3da"
+      },
+      {
+        "path": "zig/src/server/openai_client.zig",
+        "lines": 38,
+        "bytes": 1258,
+        "sha256": "89da792d847ab1e064699ee3c816c2bdf32240012c08041841ee3e1ce450f3af"
+      },
+      {
+        "path": "zig/src/server/prompt.zig",
+        "lines": 183,
+        "bytes": 10774,
+        "sha256": "67622d85661f4cf186ff32ec7f856b3ca91716d2cdbb19baa0eb01fd016c7931"
+      },
+      {
+        "path": "zig/src/server/reply_text.zig",
+        "lines": 523,
+        "bytes": 24731,
+        "sha256": "de5bfb3acbf4ea96723d60b90ad6b650c859eb38526dbbeb49951b76f433a881"
+      },
+      {
+        "path": "zig/src/server/root.zig",
+        "lines": 198,
+        "bytes": 7864,
+        "sha256": "c04b81811a4d07daf5e1daa95cabcf016ca92cf12fb8397289025d93e02c03d1"
+      },
+      {
+        "path": "zig/src/server/serve.zig",
+        "lines": 429,
+        "bytes": 21650,
+        "sha256": "80c0429d46d2ef35875c81baf10023b5177365f595a0760d968f9f7dc6ad33ab"
+      },
+      {
+        "path": "zig/src/server/server.zig",
+        "lines": 529,
+        "bytes": 30395,
+        "sha256": "1366774e93b7a2d4910d57f8d8bb3bfa750ab7c0aa2cf208d3ccf93d69edfab6"
+      },
+      {
+        "path": "zig/src/server/tool_params.zig",
+        "lines": 428,
+        "bytes": 18425,
+        "sha256": "6bf00f08a26876be00640ea542e2d560f2e900876f694ae7958021a6a1e29fc4"
+      },
+      {
+        "path": "zig/src/server/tool_parse.zig",
+        "lines": 551,
+        "bytes": 26751,
+        "sha256": "2e00a163e84a84c7cdf9a4a8c3cf89aa9a4c4ff615bd7bdf2c3d4a5fc9a08b5c"
+      },
+      {
+        "path": "zig/src/server/tool_qwen.zig",
+        "lines": 40,
+        "bytes": 2069,
+        "sha256": "46afebece4ab8afd7f25b3548e84a0fdc2abc9ef33142599c89b05657092072f"
+      },
+      {
+        "path": "zig/tests/cuda/llama_main.zig",
+        "lines": 38,
+        "bytes": 2364,
+        "sha256": "0ec60e96a2c9454e40c6ebad08d54b1b17ee48f0a21f33b29d334429ed1bac5a"
+      },
+      {
+        "path": "zig/tests/cuda/llama_serve_oracle.zig",
+        "lines": 21,
+        "bytes": 1012,
+        "sha256": "1fbc3a6e5c3753c4dff613c857053eda1438f010301e0b9d12cfefd0d7f02c56"
+      },
+      {
+        "path": "zig/tests/cuda/llama_tests.zig",
+        "lines": 294,
+        "bytes": 14163,
+        "sha256": "6e6099fd995ff682689805f83302daac5b05028c667cdc50ab221663f543065f"
+      }
+    ]
+  },
+  "artifacts": {
+    "install/bin/tensorfold": {
+      "bytes": 37256216,
+      "sha256": "441caa327c4b69ac40e94a432b0118abccd9354b08ca05cb76d6d93e38a9efc8",
+      "symlink": false
+    },
+    "install/bin/tf-cuda-test": {
+      "bytes": 90015544,
+      "sha256": "9babc7221b444752d1bc5ada2b4be7d4a4ac9ab088fdd6081c88e58426a835d6",
+      "symlink": false
+    },
+    "install/bin/tf-llama-test": {
+      "bytes": 16456192,
+      "sha256": "522b8155d77484671159fa4021d6c013e8533fa71de30ec036bf9c661ce12edb",
+      "symlink": false
+    },
+    "install/bin/tf-qwen35-cuda": {
+      "bytes": 20986976,
+      "sha256": "5ab32fce92dbf77f4f4119473a10b9497e114dae253777bb3b5d1847c083d989",
+      "symlink": false
+    },
+    "install/bin/tf-qwen35-learn": {
+      "bytes": 20127384,
+      "sha256": "cc8c96d6e060a891e18b094281386158a227d5023a1181c649add1007502eee9",
+      "symlink": false
+    },
+    "install/bin/tf-tp-test": {
+      "bytes": 7499784,
+      "sha256": "37e49283108f09981a5ed6b8aa6a112e882946b3efaea9253e334c7b9a68b666",
+      "symlink": false
+    },
+    "install/bin/tf-tp-watch-check": {
+      "bytes": 4004248,
+      "sha256": "c6d95fa6cfda719c6f8b1317600fbb81982c7290b8bb448c1ba0f007820c3440",
+      "symlink": false
+    },
+    "install/native/bin/tensorfold-native": {
+      "bytes": 81759264,
+      "sha256": "22caf96ffec588a4738814c10c6cc1414c98cc9b93c93c8c22332f843d9e56bb",
+      "symlink": false
+    },
+    "slice/model.safetensors": {
+      "bytes": 3808140252,
+      "sha256": "5f424726654d8afb75cc8ef4f5681c53671ae9b0ad2037459b231ec80de64029",
+      "symlink": false
+    },
+    "slice/tokenizer.json": {
+      "bytes": 18450979,
+      "sha256": "1d858a0fc007f22af6ae18bfa1ae52d30e398aa9cd1ea06e7777176869346a3f",
+      "symlink": true
+    },
+    "slice/tokenizer.model": {
+      "bytes": 2782298,
+      "sha256": "fb41d04798b714520a9b075727b0226538b7330254299062742c50ec8374bc36",
+      "symlink": true
+    },
+    "parity.log": {
+      "sha256": "26a37b6822946c16624625bb7bbdbde41942fed569a0d70b2d8db34f26230433",
+      "bytes": 2036
+    },
+    "host-final.log": {
+      "sha256": "8e1a01ea10b94fce2a5d3f3395bb681e05aa514d6b801b29be198ddcc1a39c7c",
+      "bytes": 52031
+    },
+    "build-final.log": {
+      "sha256": "c7d420838762e03ac254f5d897e361c5f452b13087461ebfbd86d893ac939746",
+      "bytes": 28293
+    },
+    "build-plain.log": {
+      "sha256": "9226e8f42e5e9961b21a2fce1557061a4f85d12e4d688b8ffaca2117ba4256db",
+      "bytes": 1249
+    },
+    "lean-new.txt": {
+      "sha256": "54f93ef243b173f41d1bb0637e3bb2e41d2271c3ed8cad6c57958394e24bd207",
+      "bytes": 43
+    },
+    "exl3-base.log": {
+      "sha256": "a8af4dc2bae5b3b1c95fb4fedb044312507c346b66529259419cc5bacbbfaaa6",
+      "bytes": 959
+    },
+    "unicode-before.log": {
+      "sha256": "68ce3912815a46e23ae776323b1691f35b1f30483227e5e41e405ffa53bafbe2",
+      "bytes": 2930
+    },
+    "slice-serve/summary.json": {
+      "sha256": "aae6cd60b9477c79094afbe714374faee5d58704e2ce35c2631d45ba9defb9ab",
+      "bytes": 378
+    },
+    "full-serve/summary.json": {
+      "sha256": "e3e6209a3f0fddd89fee63c1b4834b2530045c192500185fb024ca1c58e9146c",
+      "bytes": 1117
+    }
+  },
+  "extra_sources": {
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gpu_run.py": "373f7fe0889390f637ec8b8b305876f3c8443b625ebccd3d92908d6ab63d52b1",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_reference.py": "c3c7cd222019f1ca6cb780e2cd82ae7e5b7fb5ea149ac469ff695d442eb8a3ad",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/serve_exl3.py": "b46fae9c5ae7655c05eae16918237d3a8ccacbad6e775f0f843834f3cc19f7f1",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/smoke_serve.py": "329d8b446e59c6ee8aedf66e70484c604cae98fae892981d298ad43b2bf7374e",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb/config.json": "63ed384a6cc98d59b3e57f63190ac3025a2f60a79e925c6b32f64225d1bcffb0"
+  },
+  "acceptance": {
+    "prompts": 15,
+    "prompt_ids": 2202,
+    "raw_outputs": 15,
+    "slice": {
+      "state": "PASS",
+      "context": 1024,
+      "layers": 2,
+      "solo_tokens": [
+        16,
+        16
+      ],
+      "concurrent_equal": true,
+      "stream_equal": true,
+      "cancel_reuse_equal": true,
+      "pre_stream_rejections": 3,
+      "full_model_checks": "NOT RUN on a slice",
+      "greedy_equal": 128,
+      "greedy_paths": [
+        "chat",
+        "completions"
+      ],
+      "peak_mib": 1664,
+      "minimum_free_mib": 6147
+    },
+    "full": {
+      "state": "BLOCKED",
+      "admission": "BLOCKED need 15500 MiB plus 2048 MiB desktop reserve; free 7859 MiB",
+      "commands": [
+        "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+        "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gpu_run.py",
+        "--need-mib",
+        "15500",
+        "--timeout",
+        "600",
+        "--receipt",
+        "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/full-serve/server-vram.json",
+        "--",
+        "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/install/native/bin/tensorfold-native",
+        "serve",
+        "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+        "--port",
+        "42065",
+        "--name",
+        "nanbeige-exl3-a1",
+        "--context",
+        "4096",
+        "--parallel",
+        "1",
+        "--no-drafts",
+        "--temperature",
+        "0",
+        "--prompt-cache-gib",
+        "0",
+        "--keep-warm",
+        "0",
+        "--max-tokens",
+        "512",
+        "--no-update-check"
+      ]
+    }
+  }
+}

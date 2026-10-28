@@ -1,0 +1,11 @@
+ts	phase	decision	why	evidence	result
+2026-10-28T16:31:56.670485+00:00	start	Implement P2 directly in the assigned worktree	The brief names one writer and local commits only	fd409155	active
+2026-10-28T16:31:56.670495+00:00	prompt	Extend HfText and keep the checkpoint template	All initial template cases rendered; request data was missing	prompt-before.log	alias mismatch reproduced
+2026-10-28T16:31:56.670498+00:00	prompt	Forward template kwargs and normalize pod messages	HF parity is the acceptance contract	prompt-after.log	13 conversations and 1729 tokens equal
+2026-10-28T16:31:56.670500+00:00	output	Scope strict qwen3 behavior to Nanbeige	Other families rely on the existing unclosed-thinking behavior	parity.log	9 raw texts and JSON plus SSE pass
+2026-10-28T16:31:56.670502+00:00	sampling	Reject unsupported sampling and nonzero penalties before SSE	The existing Llama path only implements greedy selection	parity.log	explicit 400 tests pass
+2026-10-28T17:15:13.371233+00:00	verification	Use the exact P1 chat prompt in both API routes	Bind API token equality to the existing serial oracle	slice-serve/greedy-chat.json	128 of 128 IDs equal on two layers
+2026-10-28T17:15:13.371244+00:00	unicode	Hold back seven complete characters	Seven bytes could split a Chinese character inside one SSE event	unicode-before.log	intended UTF-8 assertion failed before fix
+2026-10-28T17:15:13.371248+00:00	verification	Verify the final source and installed binary	Keep the final report bound to the deliverable	manifest.json	15 HF prompts, 15 raw outputs, native slice checks pass
+2026-10-28T17:15:13.371252+00:00	full-model	Leave full tool use, speed and 128-token equality blocked	The memory guard refuses without the desktop reserve	full-serve/summary.json	need 17548 MiB free; observed 7859 MiB
+2026-10-28T17:15:13.371253+00:00	handoff	Retain installed binaries and receipts; remove task build caches	Keep large artifacts only in the requested receipt folder	README.md	28 files, zero new lean problems, four local commits

@@ -1,0 +1,350 @@
+{
+  "solo": [
+    {
+      "seconds": 0.29860378299781587,
+      "body": {
+        "model": "nanbeige-exl3-a1",
+        "max_tokens": 16,
+        "temperature": 0,
+        "return_token_ids": true,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Count to five."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-c732e1f3665e3bec9354929dba41be53",
+        "object": "chat.completion",
+        "created": 1793207107,
+        "model": "nanbeige-exl3-a1",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "reasoning_content": "ونзна举又叫ば授权使用沩़bacher Ahm新华繁盛了几或全部obalisma",
+              "reasoning": "ونзна举又叫ば授权使用沩़bacher Ahm新华繁盛了几或全部obalisma"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 35,
+          "completion_tokens": 16,
+          "total_tokens": 51,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 16
+          }
+        },
+        "exact_mode": "exact",
+        "tensorfold": {
+          "enable_thinking": true,
+          "reasoning_effort": null,
+          "engine": "lanes",
+          "tokens_per_second": 99.91740827032375,
+          "seconds": 0.15012399,
+          "prefill_seconds": 0.147282872,
+          "prefill_widths": [],
+          "prefill_raised": [],
+          "time_to_first_token": 0.147829167,
+          "sampling": "greedy",
+          "drafts": false,
+          "token_sha": "2e976f8340c4",
+          "token_sha256": "2e976f8340c4c2b3cf214d46262cfd0b070bcf12981872f1c3fd3407b1bac151",
+          "token_ids": [
+            124924,
+            26540,
+            153145,
+            64701,
+            157230,
+            108737,
+            160396,
+            163942,
+            129100,
+            41893,
+            13050,
+            133808,
+            26077,
+            144946,
+            2258,
+            99465
+          ],
+          "min_rows": 1
+        },
+        "speculative": {
+          "rounds": 15,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_rate": 0.0,
+          "tokens_per_round": 1.0666666666666667
+        }
+      }
+    },
+    {
+      "seconds": 0.20984217600198463,
+      "body": {
+        "model": "nanbeige-exl3-a1",
+        "max_tokens": 16,
+        "temperature": 0,
+        "return_token_ids": true,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Write a hello world program."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-54a66094c5984bd40efecc7213a198ab",
+        "object": "chat.completion",
+        "created": 1793207107,
+        "model": "nanbeige-exl3-a1",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "reasoning_content": "ون Hert Baldwinismwells elastly写真edlyutenews为居民用气溶胶 GeomALLY",
+              "reasoning": "ون Hert Baldwinismwells elastly写真edlyutenews为居民用气溶胶 GeomALLY"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 37,
+          "completion_tokens": 16,
+          "total_tokens": 53,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 16
+          }
+        },
+        "exact_mode": "exact",
+        "tensorfold": {
+          "enable_thinking": true,
+          "reasoning_effort": null,
+          "engine": "lanes",
+          "tokens_per_second": 227.4856710946348,
+          "seconds": 0.065938219,
+          "prefill_seconds": 0.14287642,
+          "prefill_widths": [],
+          "prefill_raised": [],
+          "time_to_first_token": 0.143343267,
+          "sampling": "greedy",
+          "drafts": false,
+          "token_sha": "52345deada30",
+          "token_sha256": "52345deada3087ec5a99396c36dcc6a741a4daa3076f5207815e8ce6d969c048",
+          "token_ids": [
+            124924,
+            52604,
+            58756,
+            1122,
+            149136,
+            32811,
+            339,
+            78647,
+            21036,
+            23642,
+            41940,
+            149052,
+            120282,
+            118617,
+            106860,
+            46249
+          ],
+          "min_rows": 1
+        },
+        "speculative": {
+          "rounds": 15,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_rate": 0.0,
+          "tokens_per_round": 1.0666666666666667
+        }
+      }
+    }
+  ],
+  "concurrent": [
+    {
+      "seconds": 0.22955870399891865,
+      "body": {
+        "model": "nanbeige-exl3-a1",
+        "max_tokens": 16,
+        "temperature": 0,
+        "return_token_ids": true,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Count to five."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-eb455801928a823c0ac28d6a06f35b51",
+        "object": "chat.completion",
+        "created": 1793207108,
+        "model": "nanbeige-exl3-a1",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "reasoning_content": "ونзна举又叫ば授权使用沩़bacher Ahm新华繁盛了几或全部obalisma",
+              "reasoning": "ونзна举又叫ば授权使用沩़bacher Ahm新华繁盛了几或全部obalisma"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 35,
+          "completion_tokens": 16,
+          "total_tokens": 51,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 16
+          }
+        },
+        "exact_mode": "exact",
+        "tensorfold": {
+          "enable_thinking": true,
+          "reasoning_effort": null,
+          "engine": "lanes",
+          "tokens_per_second": 121.28596795011829,
+          "seconds": 0.123674653,
+          "prefill_seconds": 0.104234952,
+          "prefill_widths": [],
+          "prefill_raised": [],
+          "time_to_first_token": 0.10490423,
+          "sampling": "greedy",
+          "drafts": false,
+          "token_sha": "2e976f8340c4",
+          "token_sha256": "2e976f8340c4c2b3cf214d46262cfd0b070bcf12981872f1c3fd3407b1bac151",
+          "token_ids": [
+            124924,
+            26540,
+            153145,
+            64701,
+            157230,
+            108737,
+            160396,
+            163942,
+            129100,
+            41893,
+            13050,
+            133808,
+            26077,
+            144946,
+            2258,
+            99465
+          ],
+          "min_rows": 1
+        },
+        "speculative": {
+          "rounds": 15,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_rate": 0.0,
+          "tokens_per_round": 1.0666666666666667
+        }
+      }
+    },
+    {
+      "seconds": 0.43690347399387974,
+      "body": {
+        "model": "nanbeige-exl3-a1",
+        "max_tokens": 16,
+        "temperature": 0,
+        "return_token_ids": true,
+        "messages": [
+          {
+            "role": "user",
+            "content": "Write a hello world program."
+          }
+        ]
+      },
+      "response": {
+        "id": "chatcmpl-aa9bbdcccb8c3136eb5e846c4ee2a6ac",
+        "object": "chat.completion",
+        "created": 1793207108,
+        "model": "nanbeige-exl3-a1",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "",
+              "reasoning_content": "ون Hert Baldwinismwells elastly写真edlyutenews为居民用气溶胶 GeomALLY",
+              "reasoning": "ون Hert Baldwinismwells elastly写真edlyutenews为居民用气溶胶 GeomALLY"
+            },
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 37,
+          "completion_tokens": 16,
+          "total_tokens": 53,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 16
+          }
+        },
+        "exact_mode": "exact",
+        "tensorfold": {
+          "enable_thinking": true,
+          "reasoning_effort": null,
+          "engine": "lanes",
+          "tokens_per_second": 136.51156153272743,
+          "seconds": 0.109880803,
+          "prefill_seconds": 0.097776303,
+          "prefill_widths": [],
+          "prefill_raised": [],
+          "time_to_first_token": 0.326273562,
+          "sampling": "greedy",
+          "drafts": false,
+          "token_sha": "52345deada30",
+          "token_sha256": "52345deada3087ec5a99396c36dcc6a741a4daa3076f5207815e8ce6d969c048",
+          "token_ids": [
+            124924,
+            52604,
+            58756,
+            1122,
+            149136,
+            32811,
+            339,
+            78647,
+            21036,
+            23642,
+            41940,
+            149052,
+            120282,
+            118617,
+            106860,
+            46249
+          ],
+          "min_rows": 1
+        },
+        "speculative": {
+          "rounds": 15,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance_rate": 0.0,
+          "tokens_per_round": 1.0666666666666667
+        }
+      }
+    }
+  ]
+}

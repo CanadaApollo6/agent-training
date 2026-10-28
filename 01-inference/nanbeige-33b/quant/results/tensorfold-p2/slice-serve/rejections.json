@@ -1,0 +1,38 @@
+[
+  {
+    "fields": {
+      "temperature": 1
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "this engine decodes greedily only: send temperature 0 or leave it out",
+        "type": "invalid_request_error"
+      }
+    }
+  },
+  {
+    "fields": {
+      "presence_penalty": 1
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "Nanbeige does not support presence_penalty or frequency_penalty; send zero or omit them",
+        "type": "invalid_request_error"
+      }
+    }
+  },
+  {
+    "fields": {
+      "repetition_penalty": 1.1
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "Nanbeige does not support repetition_penalty; send 1 or omit it",
+        "type": "invalid_request_error"
+      }
+    }
+  }
+]

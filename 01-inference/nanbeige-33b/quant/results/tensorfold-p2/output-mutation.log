@@ -1,0 +1,67 @@
+test-llama-server-host
++- run test 17 pass, 2 fail (19 total)
+error: 'llama_output_test.test.Llama serve: reasoning and XML calls equal the scored pod parser' failed:
+       PROMPT system-user tokens=24 equal
+       PROMPT default-system tokens=34 equal
+       PROMPT reasoning-history tokens=48 equal
+       PROMPT reasoning-alias tokens=48 equal
+       PROMPT embedded-thinking tokens=47 equal
+       PROMPT tools tokens=254 equal
+       PROMPT calls-with-tools tokens=350 equal
+       PROMPT calls-without-tools tokens=120 equal
+       PROMPT tool-results tokens=382 equal
+       PROMPT preserve-false tokens=44 equal
+       PROMPT thinking-off tokens=28 equal
+       PROMPT json-calls tokens=316 equal
+       PROMPT text-parts tokens=34 equal
+       
+       ====== expected this output: =========
+       Plan.␃
+       
+       ======== instead found this: =========
+       Plan.
+       ␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       Plan.
+            ^ (end of string)
+       found:
+       Plan.
+            ^ ('\x0a')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x1338295 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:31:9: 0x1c7eb74 in test.Llama serve: reasoning and XML calls equal the scored pod parser (root.zig)
+               try std.testing.expectEqualStrings(expected.get("reasoning").?.string, split.reasoning);
+               ^
+error: 'llama_output_test.test.Llama serve: actual JSON and SSE replies match pod output with real tokenizer' failed:
+       ====== expected this output: =========
+       Answer.␃
+       
+       ======== instead found this: =========
+         Answer.  ⏎
+       ␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       Answer.
+       ^ ('\x41')
+       found:
+         Answer.  ⏎
+       ^ ('\x20')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x1338295 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:119:9: 0x1c7a705 in test.Llama serve: actual JSON and SSE replies match pod output with real tokenizer (root.zig)
+               try std.testing.expectEqualStrings(expected.get("content").?.string, message.strField("content") orelse "");
+               ^
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/dee5fac887da5d749d0f81c7cee51eed/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0x5dc4f2f9 --listen=-
+
+Build Summary: 1/3 steps succeeded (1 failed); 17/19 tests passed (2 failed)
+test-llama-server-host transitive failure
++- run test 17 pass, 2 fail (19 total)
+   +- compile test debug native success 1s MaxRSS:332M
+

@@ -1,0 +1,175 @@
+{
+  "head": "e8d79bcc1b1b510a74cdd58784031bd7a2e83d73",
+  "p1": "fd409155c09fadf5bea00232fe59deec621ead11",
+  "upstream": "31ce9eb3",
+  "files": [
+    {
+      "path": "tools/zig/llama_serve_check.py",
+      "lines": 281,
+      "bytes": 14099,
+      "sha256": "cf87b457fc761bf4fa494f0e43a37e67fec48c967323b2b95b5bae785991b6c7"
+    },
+    {
+      "path": "tools/zig/llama_serve_reference.py",
+      "lines": 146,
+      "bytes": 8524,
+      "sha256": "83e75504fea73e8d3f0987da9e777593829628fc3eda2ca7a50a546418356fbe"
+    },
+    {
+      "path": "zig/build/server.zig",
+      "lines": 126,
+      "bytes": 8008,
+      "sha256": "1d92fcad30bf7448a752f7ff2eb08244dff41c580a65a9d7137cabc5998016c6"
+    },
+    {
+      "path": "zig/src/families/llama/native.zig",
+      "lines": 76,
+      "bytes": 3853,
+      "sha256": "c835e30b0c2c3488ee37bcee0c355a093c75fbe8cb8ecd1cd42c437bce5197e0"
+    },
+    {
+      "path": "zig/src/native/cuda.zig",
+      "lines": 555,
+      "bytes": 30149,
+      "sha256": "0e4adc6d64ee26e4b610e0d5fd583502e97b1e4d7def61e0fdf187e9622c0d45"
+    },
+    {
+      "path": "zig/src/server/chat.zig",
+      "lines": 597,
+      "bytes": 34180,
+      "sha256": "f6b59e6cbf99dec4347405a88f32dd14decccae27f093dc4722d06a507b3fd21"
+    },
+    {
+      "path": "zig/src/server/errors.zig",
+      "lines": 56,
+      "bytes": 1875,
+      "sha256": "882b05d8ca226fb5553a7190e93cea7cfe1dc06f502c5898eded12a23fb6af01"
+    },
+    {
+      "path": "zig/src/server/fixtures/llama/outputs.json",
+      "lines": 17,
+      "bytes": 9908,
+      "sha256": "78dabf678498e353b26c946ece1fa45beca689a51e8712d4971b83bb61af995d"
+    },
+    {
+      "path": "zig/src/server/fixtures/llama/prompts.json",
+      "lines": 17,
+      "bytes": 31003,
+      "sha256": "0b28d02dedc2662f733761ce60e3391c635a24f3d625e5b4bb944a56e447a80b"
+    },
+    {
+      "path": "zig/src/server/fixtures/llama/sources.json",
+      "lines": 10,
+      "bytes": 354,
+      "sha256": "e3c2e721fcf4b973e0926ec15d550fdc8cddc3d8c9dcff40f281c7a32a79a6c0"
+    },
+    {
+      "path": "zig/src/server/hf_text.zig",
+      "lines": 546,
+      "bytes": 29688,
+      "sha256": "9587cee21e02213ece740eec820d8ceb51a4266ede3db4e4ddf9033ec909f716"
+    },
+    {
+      "path": "zig/src/server/llama_output_test.zig",
+      "lines": 226,
+      "bytes": 11391,
+      "sha256": "243cf4d1cb82cabf8efd08c75b22e998b42245ec757ef66cf796e00b76f27e10"
+    },
+    {
+      "path": "zig/src/server/llama_prompt_test.zig",
+      "lines": 76,
+      "bytes": 3283,
+      "sha256": "f8e311fe286211eaed9cee86d4468dd0502b1a532ed73e88d3c87b57f7b39917"
+    },
+    {
+      "path": "zig/src/server/model_text.zig",
+      "lines": 198,
+      "bytes": 9249,
+      "sha256": "78438bb1724abd9751e7f52d3a477ffd4067a6e6a85559cee5c5f3f2387953dd"
+    },
+    {
+      "path": "zig/src/server/nanbeige.zig",
+      "lines": 97,
+      "bytes": 4760,
+      "sha256": "409870280588ee8dba2d47c347e826bdcc2dae206fb646a255de688cd12cb4c9"
+    },
+    {
+      "path": "zig/src/server/openai.zig",
+      "lines": 579,
+      "bytes": 31386,
+      "sha256": "4bd40cc981fd68f032c820b6b83ce0c4c33814b0419420641205f604e2abe3da"
+    },
+    {
+      "path": "zig/src/server/openai_client.zig",
+      "lines": 38,
+      "bytes": 1258,
+      "sha256": "89da792d847ab1e064699ee3c816c2bdf32240012c08041841ee3e1ce450f3af"
+    },
+    {
+      "path": "zig/src/server/prompt.zig",
+      "lines": 183,
+      "bytes": 10774,
+      "sha256": "67622d85661f4cf186ff32ec7f856b3ca91716d2cdbb19baa0eb01fd016c7931"
+    },
+    {
+      "path": "zig/src/server/reply_text.zig",
+      "lines": 523,
+      "bytes": 24731,
+      "sha256": "de5bfb3acbf4ea96723d60b90ad6b650c859eb38526dbbeb49951b76f433a881"
+    },
+    {
+      "path": "zig/src/server/root.zig",
+      "lines": 198,
+      "bytes": 7864,
+      "sha256": "c04b81811a4d07daf5e1daa95cabcf016ca92cf12fb8397289025d93e02c03d1"
+    },
+    {
+      "path": "zig/src/server/serve.zig",
+      "lines": 429,
+      "bytes": 21650,
+      "sha256": "80c0429d46d2ef35875c81baf10023b5177365f595a0760d968f9f7dc6ad33ab"
+    },
+    {
+      "path": "zig/src/server/server.zig",
+      "lines": 529,
+      "bytes": 30395,
+      "sha256": "1366774e93b7a2d4910d57f8d8bb3bfa750ab7c0aa2cf208d3ccf93d69edfab6"
+    },
+    {
+      "path": "zig/src/server/tool_params.zig",
+      "lines": 428,
+      "bytes": 18425,
+      "sha256": "6bf00f08a26876be00640ea542e2d560f2e900876f694ae7958021a6a1e29fc4"
+    },
+    {
+      "path": "zig/src/server/tool_parse.zig",
+      "lines": 551,
+      "bytes": 26751,
+      "sha256": "2e00a163e84a84c7cdf9a4a8c3cf89aa9a4c4ff615bd7bdf2c3d4a5fc9a08b5c"
+    },
+    {
+      "path": "zig/src/server/tool_qwen.zig",
+      "lines": 40,
+      "bytes": 2069,
+      "sha256": "46afebece4ab8afd7f25b3548e84a0fdc2abc9ef33142599c89b05657092072f"
+    },
+    {
+      "path": "zig/tests/cuda/llama_main.zig",
+      "lines": 38,
+      "bytes": 2364,
+      "sha256": "0ec60e96a2c9454e40c6ebad08d54b1b17ee48f0a21f33b29d334429ed1bac5a"
+    },
+    {
+      "path": "zig/tests/cuda/llama_serve_oracle.zig",
+      "lines": 21,
+      "bytes": 1012,
+      "sha256": "1fbc3a6e5c3753c4dff613c857053eda1438f010301e0b9d12cfefd0d7f02c56"
+    },
+    {
+      "path": "zig/tests/cuda/llama_tests.zig",
+      "lines": 294,
+      "bytes": 14163,
+      "sha256": "6e6099fd995ff682689805f83302daac5b05028c667cdc50ab221663f543065f"
+    }
+  ]
+}

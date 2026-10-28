@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/install/native/bin/tensorfold-native",
+    "serve",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice",
+    "--port",
+    "60017",
+    "--name",
+    "nanbeige-exl3-a1",
+    "--context",
+    "1024",
+    "--parallel",
+    "1",
+    "--no-drafts",
+    "--temperature",
+    "0",
+    "--prompt-cache-gib",
+    "0",
+    "--keep-warm",
+    "0",
+    "--max-tokens",
+    "512",
+    "--no-update-check"
+  ],
+  "pid": 868465,
+  "exit_code": 0,
+  "seconds": 6.595591864999733,
+  "timeout": false,
+  "initial_free_mib": 7853,
+  "minimum_free_mib": 6147,
+  "peak_process_vram_mib": 1664,
+  "sampling_ms": 200
+}

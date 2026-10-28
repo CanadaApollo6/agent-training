@@ -1,0 +1,22 @@
+test-llama-server-host
++- run test w
+PROMPT system-user tokens=24 equal
+PROMPT default-system tokens=34 equal
+PROMPT reasoning-history tokens=48 equal
+PROMPT reasoning-alias tokens=48 equal
+PROMPT embedded-thinking tokens=47 equal
+PROMPT tools tokens=254 equal
+PROMPT calls-with-tools tokens=350 equal
+PROMPT calls-without-tools tokens=120 equal
+PROMPT tool-results tokens=382 equal
+PROMPT preserve-false tokens=44 equal
+PROMPT thinking-off tokens=28 equal
+PROMPT json-calls tokens=316 equal
+PROMPT text-parts tokens=34 equal
+failed command: /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache/o/6d0681c220cd8077b4f9c3f98d70d7bc/test --cache-dir=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/host-cache --seed=0x1b3da902 --listen=-
+
+Build Summary: 3/3 steps succeeded; 15/15 tests passed
+test-llama-server-host success
++- run test 15 pass (15 total) 1s MaxRSS:233M
+   +- compile test debug native success 1s MaxRSS:316M
+

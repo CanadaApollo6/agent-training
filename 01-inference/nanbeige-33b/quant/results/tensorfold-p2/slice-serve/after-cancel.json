@@ -1,0 +1,86 @@
+{
+  "seconds": 0.2318353700102307,
+  "body": {
+    "model": "nanbeige-exl3-a1",
+    "max_tokens": 16,
+    "temperature": 0,
+    "return_token_ids": true,
+    "messages": [
+      {
+        "role": "user",
+        "content": "Count to five."
+      }
+    ]
+  },
+  "response": {
+    "id": "chatcmpl-9015623c4f8db43ad6f1c08d68420342",
+    "object": "chat.completion",
+    "created": 1793207108,
+    "model": "nanbeige-exl3-a1",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "reasoning_content": "ونзна举又叫ば授权使用沩़bacher Ahm新华繁盛了几或全部obalisma",
+          "reasoning": "ونзна举又叫ば授权使用沩़bacher Ahm新华繁盛了几或全部obalisma"
+        },
+        "finish_reason": "length"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 35,
+      "completion_tokens": 16,
+      "total_tokens": 51,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 16
+      }
+    },
+    "exact_mode": "exact",
+    "tensorfold": {
+      "enable_thinking": true,
+      "reasoning_effort": null,
+      "engine": "lanes",
+      "tokens_per_second": 239.00783830985895,
+      "seconds": 0.062759448,
+      "prefill_seconds": 0.095949208,
+      "prefill_widths": [],
+      "prefill_raised": [],
+      "time_to_first_token": 0.168446967,
+      "sampling": "greedy",
+      "drafts": false,
+      "token_sha": "2e976f8340c4",
+      "token_sha256": "2e976f8340c4c2b3cf214d46262cfd0b070bcf12981872f1c3fd3407b1bac151",
+      "token_ids": [
+        124924,
+        26540,
+        153145,
+        64701,
+        157230,
+        108737,
+        160396,
+        163942,
+        129100,
+        41893,
+        13050,
+        133808,
+        26077,
+        144946,
+        2258,
+        99465
+      ],
+      "min_rows": 1
+    },
+    "speculative": {
+      "rounds": 15,
+      "drafted": 0,
+      "accepted": 0,
+      "acceptance_rate": 0.0,
+      "tokens_per_round": 1.0666666666666667
+    }
+  }
+}
