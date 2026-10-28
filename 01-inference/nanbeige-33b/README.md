@@ -11,6 +11,24 @@ Nanbeige's own text drifts KL 0.036 (chat) / 0.066 (agent) from bf16; 4.0 bpw 0.
 R1s's 10.0, within noise (p ≈ 0.7), at 2.71× R1s's tokens per solve. That didn't meet the gate, but Riel chose to build
 the draft head anyway: if the model is as good as it looks, the speed-up is worth it.
 
+## TensorFold port plan (2026-10-28)
+
+Worktree `01-inference/tools/TensorFold-llama`, branch `nanbeige`, from upstream main 31ce9eb3 (TF 1.1.8). Local
+commits only until Riel OKs a fork push or an upstream issue. Upstream's rules apply: files ≤600 lines, drafted output
+must equal serial output, new kernels go in `docs/kernel-contract.md`.
+
+The tree has changed since the paper estimate below. The port is a new `llama` family modeled on `families/kolibri1`.
+It reuses the shared operators `cuda/exl3.zig` (dense EXL3 matmul), `qk_rows`, `tree_attention` and norms. Qwen3.5's
+path doesn't fit: it hard-codes head dim 256, partial RoPE and a gated attention, and its EXL3 path takes MoE only.
+
+| Phase | What | Check |
+| :-- | :-- | :-- |
+| P1 | `llama` family, plain decode: EXL3 weights, bf16 KV | Per-layer and full-model logits vs exllamav3 on the same 3.5-nb weights; greedy text matches |
+| P2 | `tensorfold-native serve`: chat template, reasoning, qwen3_coder tool calls | `smoke_serve.py` passes; BOS `<\|im_start\|>` at position 0 |
+| P3 | DFlash2 draft head (`draft-cool-step570`) | Drafted greedy equals serial greedy; speed vs plain |
+| P4 | fp8 KV for ~59K context, speed tuning | Long-context KL vs bf16 KV; tok/s |
+| P5 | TB2 pilot on the engine, M3TiS #4 packaging | Score vs the 11.3 / 11.0 pilots; release only with Riel's OK |
+
 ## RTX 3090 fit and TensorFold port (paper estimate, 2026-10-26)
 
 `fit_3090.py` (no GPU): Nanbeige is dense, and all 52 layers use full attention, so weights and KV cache both crowd a
