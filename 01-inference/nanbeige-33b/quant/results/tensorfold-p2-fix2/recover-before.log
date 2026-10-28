@@ -1,0 +1,187 @@
+test-llama-server-host
++- run test 27 pass, 3 fail (30 total)
+error: 'llama_output_test.test.Llama serve: reasoning and XML calls equal the scored pod parser' failed:
+       PROMPT p1-chat tokens=195 equal
+       PROMPT system-user tokens=24 equal
+       PROMPT default-system tokens=34 equal
+       PROMPT reasoning-history tokens=48 equal
+       PROMPT reasoning-alias tokens=48 equal
+       PROMPT embedded-thinking tokens=47 equal
+       PROMPT tools tokens=254 equal
+       PROMPT calls-with-tools tokens=350 equal
+       PROMPT calls-without-tools tokens=120 equal
+       PROMPT tool-results tokens=382 equal
+       PROMPT preserve-false tokens=44 equal
+       PROMPT thinking-off tokens=28 equal
+       PROMPT json-calls tokens=316 equal
+       PROMPT bad-json-arguments tokens=278 equal
+       PROMPT special-user tokens=39 equal
+       PROMPT special-tool tokens=375 equal
+       PROMPT developer-leading tokens=42 equal
+       PROMPT developer-mixed tokens=42 equal
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       PROMPT spaced-history-call tokens=346 equal
+       PROMPT text-parts tokens=34 equal
+       PROMPT special-user tokens=39 equal
+       PROMPT special-tool tokens=375 equal
+       PROMPT developer-leading tokens=42 equal
+       PROMPT developer-mixed tokens=42 equal
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       OUTPUT spaced-function equal
+       OUTPUT spaced-parameter equal
+       OUTPUT case-function equal
+       OUTPUT case-parameter equal
+       OUTPUT case-collision equal
+       OUTPUT case-collision-upper equal
+       OUTPUT case-tags equal
+       OUTPUT spaced-empty equal
+       OUTPUT name-newline equal
+       OUTPUT name-inner-space equal
+       OUTPUT name-unicode-space equal
+       OUTPUT unicode equal
+       OUTPUT plain equal
+       OUTPUT no-close equal
+       OUTPUT no-close-call equal
+       OUTPUT typed equal
+       OUTPUT multiple equal
+       OUTPUT no-tools equal
+       OUTPUT unclosed-call equal
+       OUTPUT trailing-prose equal
+       OUTPUT reasoning-spaces equal
+       OUTPUT typed-edge equal
+       OUTPUT truncated-params equal
+       OUTPUT unknown-function equal
+       OUTPUT malformed-first equal
+       OUTPUT no-function equal
+       
+       ====== expected this output: =========
+       ␃
+       
+       ======== instead found this: =========
+       <tool_call>
+       <function=><function=bash>
+       <parameter=command>
+         echo hi  ⏎
+       </parameter>
+       <parameter=timeout>2.5</parameter><parameter=count>3</parameter><parameter=enabled>true</parameter><parameter=options>{"a": [1, false]}</parameter><parameter=maybe>null</parameter></function>
+       </tool_call>␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       
+       ^ (end of string)
+       found:
+       <tool_call>
+       ^ ('\x3c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x133bf45 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:33:9: 0x1c9ed22 in checkOutputs (root.zig)
+               try std.testing.expectEqualStrings(expected.get("content").?.string, calls.content);
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:40:5: 0x1c9fcb5 in test.Llama serve: reasoning and XML calls equal the scored pod parser (root.zig)
+           try checkOutputs("");
+           ^
+error: 'llama_output_test.test.Llama serve: invalid function headers before a valid one match the pod' failed:
+       OUTPUT spaced-function equal
+       OUTPUT spaced-parameter equal
+       OUTPUT case-function equal
+       OUTPUT case-parameter equal
+       OUTPUT case-collision equal
+       OUTPUT case-collision-upper equal
+       OUTPUT case-tags equal
+       
+       ====== expected this output: =========
+       ␃
+       
+       ======== instead found this: =========
+       <tool_call>
+       <function=><function=bash>
+       <parameter=command>
+         echo hi  ⏎
+       </parameter>
+       <parameter=timeout>2.5</parameter><parameter=count>3</parameter><parameter=enabled>true</parameter><parameter=options>{"a": [1, false]}</parameter><parameter=maybe>null</parameter></function>
+       </tool_call>␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       
+       ^ (end of string)
+       found:
+       <tool_call>
+       ^ ('\x3c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x133bf45 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:33:9: 0x1c9ed22 in checkOutputs (root.zig)
+               try std.testing.expectEqualStrings(expected.get("content").?.string, calls.content);
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:56:5: 0x1c9f575 in test.Llama serve: invalid function headers before a valid one match the pod (root.zig)
+           try checkOutputs("recover-");
+           ^
+error: 'llama_output_test.test.Llama serve: actual JSON and SSE replies match pod output with real tokenizer' failed:
+       ROUTE spaced-function JSON+SSE equal
+       ROUTE spaced-parameter JSON+SSE equal
+       ROUTE case-function JSON+SSE equal
+       ROUTE case-parameter JSON+SSE equal
+       ROUTE case-collision JSON+SSE equal
+       ROUTE case-collision-upper JSON+SSE equal
+       ROUTE case-tags JSON+SSE equal
+       ROUTE spaced-empty JSON+SSE equal
+       ROUTE name-newline JSON+SSE equal
+       ROUTE name-inner-space JSON+SSE equal
+       ROUTE name-unicode-space JSON+SSE equal
+       ROUTE unicode JSON+SSE equal
+       ROUTE plain JSON+SSE equal
+       ROUTE no-close JSON+SSE equal
+       ROUTE no-close-call JSON+SSE equal
+       ROUTE typed JSON+SSE equal
+       ROUTE multiple JSON+SSE equal
+       ROUTE no-tools JSON+SSE equal
+       ROUTE unclosed-call JSON+SSE equal
+       ROUTE trailing-prose JSON+SSE equal
+       ROUTE reasoning-spaces JSON+SSE equal
+       ROUTE typed-edge JSON+SSE equal
+       ROUTE truncated-params JSON+SSE equal
+       ROUTE unknown-function JSON+SSE equal
+       ROUTE malformed-first JSON+SSE equal
+       ROUTE no-function JSON+SSE equal
+       
+       ====== expected this output: =========
+       ␃
+       
+       ======== instead found this: =========
+       <tool_call>
+       <function=><function=bash>
+       <parameter=command>
+         echo hi  ⏎
+       </parameter>
+       <parameter=timeout>2.5</parameter><parameter=count>3</parameter><parameter=enabled>true</parameter><parameter=options>{"a": [1, false]}</parameter><parameter=maybe>null</parameter></function>
+       </tool_call>␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       
+       ^ (end of string)
+       found:
+       <tool_call>
+       ^ ('\x3c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x133bf45 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_output_test.zig:140:9: 0x1c9a5d5 in test.Llama serve: actual JSON and SSE replies match pod output with real tokenizer (root.zig)
+               try std.testing.expectEqualStrings(expected.get("content").?.string, message.strField("content") orelse "");
+               ^
+failed command: ./.zig-cache/o/2d3de68c6b155dda4e4a95dbbd315f58/test --cache-dir=./.zig-cache --seed=0xc4248f1b --listen=-
+
+Build Summary: 1/3 steps succeeded (1 failed); 27/30 tests passed (3 failed)
+test-llama-server-host transitive failure
++- run test 27 pass, 3 fail (30 total)
+
