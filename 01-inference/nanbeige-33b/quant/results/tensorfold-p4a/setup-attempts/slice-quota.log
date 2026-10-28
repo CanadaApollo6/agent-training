@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_serve_check.py", line 63, in slice_model
+    out.write(chunk)
+    ~~~~~~~~~^^^^^^^
+OSError: [Errno 122] Disk quota exceeded
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_serve_check.py", line 282, in <module>
+    main()
+    ~~~~^^
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_serve_check.py", line 266, in main
+    slice_model(args.model.resolve(), args.out.resolve(), args.layers)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_serve_check.py", line 54, in slice_model
+    with (dest / "model.safetensors").open("wb") as out:
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+OSError: [Errno 122] Disk quota exceeded

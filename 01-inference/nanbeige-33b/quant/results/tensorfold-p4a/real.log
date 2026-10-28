@@ -1,0 +1,32 @@
+REAL layer=0 position=0 attention_rmse=0e0 max_abs=0e0 relative_l2=0e0
+REAL layer=1 position=0 attention_rmse=0e0 max_abs=0e0 relative_l2=0e0
+REAL layer=0 position=1 attention_rmse=1.1231048886905728e-4 max_abs=1.953125e-3 relative_l2=3.7578516083206675e-4
+REAL layer=1 position=1 attention_rmse=7.348943677303396e-5 max_abs=9.765625e-4 relative_l2=1.6712018130410685e-3
+REAL layer=0 position=511 attention_rmse=1.0022913965576813e-2 max_abs=1.25e-1 relative_l2=1.1955000222176558e-1
+REAL layer=1 position=511 attention_rmse=1.0271839882977711e-2 max_abs=1.8896484375e-1 relative_l2=1.877968867414802e-1
+REAL layer=0 position=512 attention_rmse=1.1667724534091067e-2 max_abs=1.416015625e-1 relative_l2=8.789869144658005e-2
+REAL layer=1 position=512 attention_rmse=1.0273798564274317e-2 max_abs=1.328125e-1 relative_l2=1.340251774007161e-1
+REAL layer=0 position=560 attention_rmse=1.0426043331458874e-2 max_abs=7.373046875e-2 relative_l2=7.926393074552683e-2
+REAL layer=1 position=560 attention_rmse=9.059203487092495e-3 max_abs=1.2353515625e-1 relative_l2=1.294380588879885e-1
+REAL layer=0 position=0 attention_rmse=0e0 max_abs=0e0 relative_l2=0e0
+REAL layer=1 position=0 attention_rmse=0e0 max_abs=0e0 relative_l2=0e0
+REAL layer=0 position=1 attention_rmse=1.1231048886905728e-4 max_abs=1.953125e-3 relative_l2=3.7578516083206675e-4
+REAL layer=1 position=1 attention_rmse=7.348943677303396e-5 max_abs=9.765625e-4 relative_l2=1.6712018130410685e-3
+REAL layer=0 position=511 attention_rmse=1.0022913965576813e-2 max_abs=1.25e-1 relative_l2=1.1955000222176558e-1
+REAL layer=1 position=511 attention_rmse=1.0271839882977711e-2 max_abs=1.8896484375e-1 relative_l2=1.877968867414802e-1
+REAL layer=0 position=512 attention_rmse=1.1667724534091067e-2 max_abs=1.416015625e-1 relative_l2=8.789869144658005e-2
+REAL layer=1 position=512 attention_rmse=1.0273798564274317e-2 max_abs=1.328125e-1 relative_l2=1.340251774007161e-1
+REAL layer=0 position=560 attention_rmse=1.0426043331458874e-2 max_abs=7.373046875e-2 relative_l2=7.926393074552683e-2
+REAL layer=1 position=560 attention_rmse=9.059203487092495e-3 max_abs=1.2353515625e-1 relative_l2=1.294380588879885e-1
+REAL layer=0 position=0 attention_rmse=0e0 max_abs=0e0 relative_l2=0e0
+REAL layer=1 position=0 attention_rmse=0e0 max_abs=0e0 relative_l2=0e0
+REAL layer=0 position=1 attention_rmse=1.1231048886905728e-4 max_abs=1.953125e-3 relative_l2=3.7578516083206675e-4
+REAL layer=1 position=1 attention_rmse=7.348943677303396e-5 max_abs=9.765625e-4 relative_l2=1.6712018130410685e-3
+REAL layer=0 position=511 attention_rmse=1.0022913965576813e-2 max_abs=1.25e-1 relative_l2=1.1955000222176558e-1
+REAL layer=1 position=511 attention_rmse=1.0271839882977711e-2 max_abs=1.8896484375e-1 relative_l2=1.877968867414802e-1
+REAL layer=0 position=512 attention_rmse=1.1667724534091067e-2 max_abs=1.416015625e-1 relative_l2=8.789869144658005e-2
+REAL layer=1 position=512 attention_rmse=1.0273798564274317e-2 max_abs=1.328125e-1 relative_l2=1.340251774007161e-1
+REAL layer=0 position=560 attention_rmse=1.0426043331458874e-2 max_abs=7.373046875e-2 relative_l2=7.926393074552683e-2
+REAL layer=1 position=560 attention_rmse=9.059203487092495e-3 max_abs=1.2353515625e-1 relative_l2=1.294380588879885e-1
+SUMMARY llama kv4 real layers=2 tokens=1683 worst_attention_relative_l2=2.87771378266686e-1 peak_bytes=1475563816
+{"command": ["zig-out/bin/tf-llama-test", "llama-kv4-real", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb", "/tmp/nanbeige-p4a/partial", "2"], "pid": 2770727, "exit_code": 0, "seconds": 14.485902094005723, "timeout": false, "initial_free_mib": 14600, "minimum_free_mib": 12900, "peak_process_vram_mib": 1682, "sampling_ms": 200}

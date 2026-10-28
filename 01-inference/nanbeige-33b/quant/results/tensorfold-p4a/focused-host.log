@@ -1,0 +1,21 @@
+test-runtime-host
++- run test w
+[default] (err): rank 0: another rank's process ended (its line closed); this rank stops instead of waiting on it
+[default] (err): rank 0: rank 1 stopped (peer OOM); this rank stops too
+[default] (err): rank 0: another rank's process ended (its line closed); this rank stops instead of waiting on it
+failed command: ./.zig-cache/o/40ad3490417b2aabe6f4731031ed5597/test --cache-dir=./.zig-cache --seed=0xc91b967b --listen=-
+
+Build Summary: 11/11 steps succeeded; 269/269 tests passed
+test-llama-host success
++- run test 7 pass (7 total) 8ms MaxRSS:8M
+   +- compile test debug native success 525ms MaxRSS:183M
+      +- options cached
+test-runtime-host success
++- run test 260 pass (260 total) 324ms MaxRSS:12M
+   +- compile test debug native success 706ms MaxRSS:207M
+      +- options (reused)
+test-qwen27-keep-host success
++- run test 2 pass (2 total) 15ms MaxRSS:11M
+   +- compile test debug native success 421ms MaxRSS:156M
+      +- WriteFile qwen27-fake-source.zig cached
+

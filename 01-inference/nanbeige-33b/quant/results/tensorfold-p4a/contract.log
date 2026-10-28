@@ -1,0 +1,16 @@
+PASS nonfinite cuda kv4 H32 codec: 96 non-finite and 544 finite outputs match the float64 classes
+PASS repeat cuda kv4 H32 codec: five runs byte-identical (256 bytes), inputs and guards untouched, no overlap
+PASS shapes cuda kv4 H32 codec: 6 shapes within the float64 bound (worst 0.985 of the bound), 0 edges refused by the kernel
+PASS sums cuda kv4 H32 codec: within its bound at k 32; fp16 sums would miss 0x, bf16 128.4x (midpoint bins are discontinuous; direct FP32 codec equality supplements this smooth error bound)
+FAIL shapes cuda kv4 H32 codec: at 1x128x32 output 0 is -7.031250e-1 where float64 gives -5.898886e-1: 49.13 of its bound
+CONTROL cuda kv4 H32 codec: red at shapes, as planted
+FAIL nonfinite cuda kv4 attention and merge: the planted values make 896 of 896 reference outputs non-finite: no proof
+PASS repeat cuda kv4 attention and merge: five runs byte-identical (1792 bytes), inputs and guards untouched, no overlap
+PASS shapes cuda kv4 attention and merge: 5 shapes within the float64 bound (worst 0.854 of the bound), 0 edges refused by the kernel
+PASS sums cuda kv4 attention and merge: within its bound at k 513; fp16 sums would miss 0x, bf16 2.5x (softmax saturation does not guarantee reduced-precision separation on this bounded fixture)
+FAIL shapes cuda kv4 attention and merge: at 7x128x513 output 0 is 0.000000e0 where float64 gives -1.951432e-2: 176.01 of its bound
+CONTROL cuda kv4 attention and merge: red at shapes, as planted
+LIMITS kv4 launches=6 sm=86 problems=0
+SUMMARY kv4 codec kernels=2 pass=1 fail=1 controls=2 red=2 missed=0
+FAIL llama-kv4-contract: TestFailed
+{"command": ["zig-out/bin/tf-llama-test", "llama-kv4-contract"], "pid": 2911903, "exit_code": 1, "seconds": 0.49939481900946703, "timeout": false, "initial_free_mib": 14272, "minimum_free_mib": 14063, "peak_process_vram_mib": 212, "sampling_ms": 200}

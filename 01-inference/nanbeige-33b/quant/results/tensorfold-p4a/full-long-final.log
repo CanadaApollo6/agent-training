@@ -1,0 +1,6 @@
+/home/riels/.local/share/mise/installs/python/latest/bin/python3 tools/zig/llama_gpu_run.py --need-mib 18348 --timeout 1200 --receipt /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p4a/full-long-s0-bf16-vram.json -- zig-out/bin/tf-llama-test llama-kv-dump /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb /tmp/nanbeige-p4a/full/selected-long-0 16 /tmp/nanbeige-p4a/full/long-s0/bf16
+BLOCKED need 18348 MiB plus 2048 MiB desktop reserve; free 14017 MiB
+
+/home/riels/.local/share/mise/installs/python/latest/bin/python3 tools/zig/llama_gpu_run.py --need-mib 15399 --timeout 1200 --receipt /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p4a/full-long-s0-q4-vram.json -- zig-out/bin/tf-llama-test llama-kv-dump /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb /tmp/nanbeige-p4a/full/selected-long-0 4 /tmp/nanbeige-p4a/full/long-s0/q4
+BLOCKED need 15399 MiB plus 2048 MiB desktop reserve; free 14017 MiB
+

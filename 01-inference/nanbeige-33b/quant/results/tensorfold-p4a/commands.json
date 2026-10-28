@@ -1,0 +1,17 @@
+{
+  "cwd": "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama",
+  "M": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+  "R": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p4a",
+  "commands": {
+    "build": "~/.local/share/zig-x86_64-linux-0.17.0/zig build native tf-llama-test -Dnvcc=/opt/cuda/bin/nvcc -Dsm=86 -j4 --summary all",
+    "synthetic": "python3 tools/zig/llama_gpu_run.py --need-mib 1536 --timeout 120 --receipt \"$R/synthetic-vram.json\" -- zig-out/bin/tf-llama-test llama-kv4-synthetic",
+    "contract": "python3 tools/zig/llama_gpu_run.py --need-mib 512 --timeout 60 --receipt \"$R/contract-vram.json\" -- zig-out/bin/tf-llama-test llama-kv4-contract",
+    "real": "python3 tools/zig/llama_gpu_run.py --need-mib 4096 --timeout 120 --receipt \"$R/real-late-vram.json\" -- zig-out/bin/tf-llama-test llama-kv4-real \"$M\" /tmp/nanbeige-p4a/partial 2",
+    "host": "TF_LLAMA_MODEL=\"$M\" CUDA_VISIBLE_DEVICES=\"\" ~/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-server-host test-server-cpu test-tool-parse-host test-server-recovery-host test-tool-visibility-http-host test-qwen27-ane-policy-host test-qwen27-speed-host test-qwen27-bank-host test-qwen27-keep-host test-qwen27-plans-host test-qwen27-equality-host test-qwen27-required-host test-qwen27-masks-host test-runtime-host test-llama-host -j4 --summary all",
+    "wire": "TF_LLAMA_KV_BITS=4 python3 \"$R/serve_wire.py\" --model /tmp/nanbeige-p4a/model2 --out \"$R/wire-kv4\" --need-mib 4096",
+    "capacity": "zig-out/bin/tf-llama-test llama-capacity \"$M\" 24576",
+    "full_short_not_run": "bash \"$R/rerun-full.sh\" short 0",
+    "full_long_not_run": "bash \"$R/rerun-full.sh\" long 0",
+    "lean": "python3 tools/zig/lean_check.py > /tmp/h.txt; python3 tools/zig/lean_new.py /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/lean-base.txt /tmp/h.txt"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "source": "/home/riels/Projects/Personal/Research/agent-training/01-inference/qwen38-27b/results/kv4/a40/gate-q4.json",
+  "summary": {
+    "fixture": "kv-gate tensorfold-md@d1018b31 seed 799 rows 256",
+    "format": "q4",
+    "mean_bar": 0.01,
+    "worst_bar": 0.1,
+    "pass": false,
+    "seconds_bf16": 4024.626682471,
+    "seconds_other": 4563.307177001
+  },
+  "depths": [
+    {
+      "depth": 1024,
+      "rows": 256,
+      "kl_mean": 0.00654489196610228,
+      "kl_p99": 0.0462278270597727,
+      "kl_max": 0.08506768197694546,
+      "top1": 0.9609375,
+      "ppl_bf16": 11.0094989121291,
+      "ppl_other": 10.996062051988895,
+      "recall_bf16": true,
+      "recall_other": true,
+      "pass": true
+    },
+    {
+      "depth": 8192,
+      "rows": 256,
+      "kl_mean": 0.00934223087460951,
+      "kl_p99": 0.08850270746593601,
+      "kl_max": 0.1712772359525504,
+      "top1": 0.9375,
+      "ppl_bf16": 11.363617279220069,
+      "ppl_other": 11.699832199331464,
+      "recall_bf16": true,
+      "recall_other": true,
+      "pass": false
+    },
+    {
+      "depth": 32768,
+      "rows": 256,
+      "kl_mean": 0.10400603694763685,
+      "kl_p99": 0.894625629443526,
+      "kl_max": 17.907194259146312,
+      "top1": 0.93359375,
+      "ppl_bf16": 29.111613272475484,
+      "ppl_other": 29.432473438231547,
+      "recall_bf16": true,
+      "recall_other": true,
+      "pass": false
+    },
+    {
+      "depth": 65536,
+      "rows": 256,
+      "kl_mean": 0.08029641580581881,
+      "kl_p99": 0.7034158503428053,
+      "kl_max": 11.805648963768785,
+      "top1": 0.9375,
+      "ppl_bf16": 26.033302176836433,
+      "ppl_other": 31.63313000802613,
+      "recall_bf16": true,
+      "recall_other": true,
+      "pass": false
+    },
+    {
+      "depth": 131072,
+      "rows": 256,
+      "kl_mean": 0.04593834920762195,
+      "kl_p99": 0.8540720596136765,
+      "kl_max": 2.291036378117363,
+      "top1": 0.953125,
+      "ppl_bf16": 94.68214709329811,
+      "ppl_other": 98.37922045537829,
+      "recall_bf16": true,
+      "recall_other": true,
+      "pass": false
+    },
+    {
+      "depth": 258048,
+      "rows": 256,
+      "kl_mean": 0.008303528371695543,
+      "kl_p99": 0.06460178703631256,
+      "kl_max": 0.1921769104878703,
+      "top1": 0.95703125,
+      "ppl_bf16": 4.512870816688824,
+      "ppl_other": 4.560529421119761,
+      "recall_bf16": true,
+      "recall_other": true,
+      "pass": false
+    }
+  ]
+}

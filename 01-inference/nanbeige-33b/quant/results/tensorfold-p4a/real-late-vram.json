@@ -1,0 +1,17 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-kv4-real",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/tmp/nanbeige-p4a/partial",
+    "2"
+  ],
+  "pid": 2934511,
+  "exit_code": 0,
+  "seconds": 41.1931529709982,
+  "timeout": false,
+  "initial_free_mib": 14232,
+  "minimum_free_mib": 11692,
+  "peak_process_vram_mib": 2194,
+  "sampling_ms": 200
+}

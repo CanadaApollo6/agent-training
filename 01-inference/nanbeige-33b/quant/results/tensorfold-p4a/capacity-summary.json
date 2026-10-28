@@ -1,0 +1,62 @@
+{
+  "capacity.log": [
+    {
+      "mode": "bf16",
+      "total_mib": "24576",
+      "reserve_mib": "2048",
+      "weights": "14356819968",
+      "token_bytes": "212992",
+      "max_context": "43219",
+      "runtime": "9265324376",
+      "next_runtime": "9265537380",
+      "allocated_plus_reserve": "25769627992",
+      "pilot_runs_fit": 31,
+      "pilot_runs": 57,
+      "fit_fraction": 0.543859649122807
+    },
+    {
+      "mode": "q4",
+      "total_mib": "24576",
+      "reserve_mib": "2048",
+      "weights": "14356819968",
+      "token_bytes": "59904",
+      "max_context": "153351",
+      "runtime": "9265455368",
+      "next_runtime": "9265515284",
+      "allocated_plus_reserve": "25769758984",
+      "pilot_runs_fit": 57,
+      "pilot_runs": 57,
+      "fit_fraction": 1.0
+    }
+  ],
+  "capacity-driver-margin.log": [
+    {
+      "mode": "bf16",
+      "total_mib": "24064",
+      "reserve_mib": "2048",
+      "weights": "14356819968",
+      "token_bytes": "212992",
+      "max_context": "40700",
+      "runtime": "8728621700",
+      "next_runtime": "8728834704",
+      "allocated_plus_reserve": "25232925316",
+      "pilot_runs_fit": 30,
+      "pilot_runs": 57,
+      "fit_fraction": 0.5263157894736842
+    },
+    {
+      "mode": "q4",
+      "total_mib": "24064",
+      "reserve_mib": "2048",
+      "weights": "14356819968",
+      "token_bytes": "59904",
+      "max_context": "144424",
+      "runtime": "8728605076",
+      "next_runtime": "8728664992",
+      "allocated_plus_reserve": "25232908692",
+      "pilot_runs_fit": 57,
+      "pilot_runs": 57,
+      "fit_fraction": 1.0
+    }
+  ]
+}

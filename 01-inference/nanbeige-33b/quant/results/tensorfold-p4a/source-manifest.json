@@ -1,0 +1,41 @@
+{
+  "base": "9a5732e0d6a4c8a2ab8bb4b4a5ae55d3f2e8306b",
+  "branch": "nanbeige",
+  "source_sha256": {
+    "zig/build/cuda_kernels.zig": "65e5b16ab266d163c9dff98c3ac183a12a0ea8c6e438c35e1fe23ee25faf84c9",
+    "zig/src/core/contract/registry.zig": "09081da4209fb062376943a336f3d96437cc23ab805bfeb4d6ea18754fd008fc",
+    "zig/src/cuda/kernels.zig": "d01a8f0b4c59062c9f16dc0d75b49e751f61380922f4692dff4eb75c3bd41e7d",
+    "zig/src/cuda/root.zig": "a15ae60e3320bebaf0064c206356a26d0b8d8d63eff7cb5f1138c7853b349fa9",
+    "zig/src/families/llama/forward.zig": "1c551435e590b2a99817ef325c2232db69ec85a465395d865c1a73443d2e17c0",
+    "zig/src/families/llama/memory.zig": "db9f9e818a74e2d3766e8e22cf7297134e4a9eba2b231224be47a9b86279c49b",
+    "zig/src/families/llama/native.zig": "a36d8cb057205a2b0e1f23c83dc6b523d8eeade4197e9e73c8fb8100688191e2",
+    "zig/src/families/llama/weights.zig": "ef2199acf84257fa65d9a2c990f6fd4d974606f20d1240c90887f056d0566148",
+    "zig/src/qwen27_keep_test.zig": "dc0d0c1162c10ebcabc229f2077fe7680ceb180e48a0cae6d5da56c6ff56809c",
+    "zig/src/server/cli.zig": "7f9f7030792b52103828fa955eb1f7ae80b10a97c3e664dec46cd302e8e3f106",
+    "zig/tests/cuda/contract_limits.zig": "eb944899340d9d9b3e2aa07286d965da3532172310356feae8307d5aeb85a078",
+    "zig/tests/cuda/contract_tests.zig": "0e4e6f8905be1bfd3cc8cabae2da2f06af017451a9870a748ee89586e719792e",
+    "zig/tests/cuda/llama_main.zig": "6c658a84191e462af5ea68caf7f9f053b64e9530dd64d020a9649774ab6b0821",
+    "tools/zig/llama_kv_compare.py": "35c7487dd9c7d2e768d9ac78c72228cecec3d97ecce745013c64968bdb483304",
+    "tools/zig/llama_kv_full.py": "d494706c573a9c0afbcba3ba0826bd5a05aa62df7e01edf446432cc9d445cc03",
+    "tools/zig/llama_kv_prepare.py": "67db7487793c79a43f935d6d7d89796ae6b5903db4eb21d9041ede602e2f3baf",
+    "zig/kernels/cuda/kv4.cu": "f86bebd17a8247a0744960b2655a95b929312f89258fb6c47e641071734c3c8c",
+    "zig/kernels/cuda/kv4.cuh": "b22719ab51edd6650f93e4c961adcfcae1409e9fe34e0227d563464623c8dcf7",
+    "zig/src/core/contract/kv4_records.zig": "ba36a4714165b14eb29494bd8dd685735f8ce0d23466cc7213928bf5c99447d3",
+    "zig/src/cuda/kv4.zig": "d89d0f51db55ad1f504c175bf0673b506335fd31ead4c9dedca080bf606b630f",
+    "zig/src/cuda/kv4_ref.zig": "94785b7a1eb6af561d5f2f192f585b3132500e27a5ad9da57af4995b0dd6ca8c",
+    "zig/tests/cuda/contract_kv4.zig": "a6e73a058d01cd8a45aaf46cbb147e67c8a8d191ff72ac87a81daef2b50502ad",
+    "zig/tests/cuda/contract_kv4_attention.zig": "e78733ed3736259dfb4ec5ef49b9b1de25fe9f314e4cbb41ba0736f45c3ac137",
+    "zig/tests/cuda/llama_capacity.zig": "0e0d9725fd3dfef0935e0d4e4b1f28a5b14471ed9d6d4abced81b4894d1d7c2c",
+    "zig/tests/cuda/llama_kv4.zig": "52aa531ccb94178bbe34585a0ae6b4389be74c2484cf1faea56fa582e95b3e1d",
+    "zig/tests/cuda/llama_kv_gate.zig": "f33b303f6543cee010503c58393dfcd0b6b55795b10361723882d994c3d00489"
+  },
+  "binary_sha256": {
+    "zig-out/bin/tf-llama-test": "25f7760088c0e441b181863e13e10cedae8cee6cc83dbf3c761566434b7ee3bb",
+    "zig-out/native/bin/tensorfold-native": "0444630e579ab75dae27a7c77d8bfb6d9a2068f6d001943548875da1346e4061"
+  },
+  "checkpoint_metadata_sha256": {
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb/config.json": "63ed384a6cc98d59b3e57f63190ac3025a2f60a79e925c6b32f64225d1bcffb0",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb/model.safetensors.index.json": "e1ce15251f4bddf1a40abcecc306922267c9c56b2267f9917aa857e1cfab96dd"
+  },
+  "commit": "5bd3231f56d8baa4fb2b0409dd077aede44a97fd"
+}

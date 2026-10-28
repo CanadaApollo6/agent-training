@@ -1,0 +1,37 @@
+Build Summary: 32/32 steps succeeded; 41/41 tests passed
+test-llama-host success
++- run test 7 pass (7 total) 10ms MaxRSS:7M
+   +- compile test debug native success 383ms MaxRSS:185M
+      +- options cached
+test-runtime-host success
++- run test cached
+   +- compile test debug native cached 11ms MaxRSS:35M
+      +- options (reused)
+test-qwen27-masks-host success
++- run test 6 pass (6 total) 69ms MaxRSS:8M
+   +- compile test debug native cached 15ms MaxRSS:39M
+test-qwen27-required-host success
++- run test cached
+   +- compile test debug native cached 13ms MaxRSS:36M
+test-qwen27-equality-host success
++- run test 1 pass (1 total) 19s MaxRSS:8M
+   +- compile test debug native cached 11ms MaxRSS:35M
+test-qwen27-plans-host success
++- run test 22 pass (22 total) 48ms MaxRSS:7M
+   +- compile test debug native success 342ms MaxRSS:157M
+      +- WriteFile qwen27-fake-source.zig cached
+test-qwen27-keep-host success
++- run test 2 pass (2 total) 11ms MaxRSS:10M
+   +- compile test debug native cached 15ms MaxRSS:38M
+      +- WriteFile qwen27-fake-source.zig (reused)
+test-qwen27-bank-host success
++- run test cached
+   +- compile test debug native cached 15ms MaxRSS:38M
+      +- WriteFile qwen27-fake-source.zig (reused)
+test-qwen27-speed-host success
++- run test 3 pass (3 total) 64ms MaxRSS:7M
+   +- compile test debug native cached 15ms MaxRSS:39M
+test-qwen27-ane-policy-host success
++- run test cached
+   +- compile test debug native cached 11ms MaxRSS:39M
+

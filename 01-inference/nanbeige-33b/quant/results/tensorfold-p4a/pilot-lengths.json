@@ -1,0 +1,348 @@
+{
+  "runs": 57,
+  "max": 115488,
+  "rows": [
+    {
+      "trace": "9c9906c0a63b430c90dd038918696a66",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/git-leak-recovery",
+      "largest_prompt": 7683
+    },
+    {
+      "trace": "d9bb504bd42643ccb398d0ff6363bd17",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/hf-model-inference",
+      "largest_prompt": 11077
+    },
+    {
+      "trace": "8c6161f5b8b141ee84c06f37e8aff3eb",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/kv-store-grpc",
+      "largest_prompt": 11221
+    },
+    {
+      "trace": "5326800c9afa4fe68543ed5185b8b94d",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/financial-document-processor",
+      "largest_prompt": 13524
+    },
+    {
+      "trace": "7b8daf96e8064aa48344861ed1827a22",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/modernize-scientific-stack",
+      "largest_prompt": 11940
+    },
+    {
+      "trace": "c69949a32c404b768eb9e464c15359a4",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/build-pov-ray",
+      "largest_prompt": 58967
+    },
+    {
+      "trace": "7a8fbbd226d94c23a83b9af3b851dc99",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/mteb-retrieve",
+      "largest_prompt": 47103
+    },
+    {
+      "trace": "ba74e703f5e745a98cc16037dd193f0c",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/compile-compcert",
+      "largest_prompt": 91635
+    },
+    {
+      "trace": "e69d4376f2044d4f8377f01b4c1d97d1",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/nginx-request-logging",
+      "largest_prompt": 19982
+    },
+    {
+      "trace": "ddfdd3d3e6a6496492abf843c7b6ed1e",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/portfolio-optimization",
+      "largest_prompt": 15655
+    },
+    {
+      "trace": "f78f6ec74e434192a88aa9d71b328433",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/pypi-server",
+      "largest_prompt": 38604
+    },
+    {
+      "trace": "edbd5aabbb6640c493bed45bc0803771",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/make-mips-interpreter",
+      "largest_prompt": 65652
+    },
+    {
+      "trace": "0f9e4ccdca944c678fd0e486fa9616ad",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/sqlite-db-truncate",
+      "largest_prompt": 2874
+    },
+    {
+      "trace": "ed657bc6b2a4493bab95a7605354db69",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/pytorch-model-cli",
+      "largest_prompt": 63115
+    },
+    {
+      "trace": "a9e9dbfc4acc4979a46154195b544d67",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/schemelike-metacircular-eval",
+      "largest_prompt": 45760
+    },
+    {
+      "trace": "cc10e4c943f54a25a6610e8f17a48620",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/custom-memory-heap-crash",
+      "largest_prompt": 115488
+    },
+    {
+      "trace": "c984726cdd5944cfadc51f91a9050a94",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/git-multibranch",
+      "largest_prompt": 26463
+    },
+    {
+      "trace": "caaede8c4bbc423a86483650ec45691d",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/rstan-to-pystan",
+      "largest_prompt": 83559
+    },
+    {
+      "trace": "c84c1f42996f4a98b6de32e61d18a583",
+      "source": "terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e",
+      "task": "terminal-bench/protein-assembly",
+      "largest_prompt": 114476
+    },
+    {
+      "trace": "5312b0934e3c4b00b0b88d96a2fc4cd9",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/git-leak-recovery",
+      "largest_prompt": 8060
+    },
+    {
+      "trace": "a06a4d2259c9446db8591ace96bf3334",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/hf-model-inference",
+      "largest_prompt": 6785
+    },
+    {
+      "trace": "5a7b95ccdaf0489691bac88be527c3f2",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/financial-document-processor",
+      "largest_prompt": 8676
+    },
+    {
+      "trace": "2cc659f11a6b42fd8f9d24e2a70e161e",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/kv-store-grpc",
+      "largest_prompt": 9771
+    },
+    {
+      "trace": "5c5e08e912b4419a93ea9b0c16b4928a",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/modernize-scientific-stack",
+      "largest_prompt": 12298
+    },
+    {
+      "trace": "0c88b739d5ba489aacec67f2b0b0af01",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/nginx-request-logging",
+      "largest_prompt": 16830
+    },
+    {
+      "trace": "da63f021f8b84078840ce5b900f45e3c",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/build-pov-ray",
+      "largest_prompt": 113322
+    },
+    {
+      "trace": "11ded8de53974ae5acebbb4b9c7918ae",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/make-mips-interpreter",
+      "largest_prompt": 86110
+    },
+    {
+      "trace": "22c2b1b60d88497eb15151b08820b59d",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/mteb-retrieve",
+      "largest_prompt": 49909
+    },
+    {
+      "trace": "553ae0584c2b4b5fa1cdd7597b52762c",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/git-multibranch",
+      "largest_prompt": 67550
+    },
+    {
+      "trace": "a87cff056f564c7ca6a1b7b29b62e2e0",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/compile-compcert",
+      "largest_prompt": 62493
+    },
+    {
+      "trace": "71a285cc15fb4930b3a1ecc188e37a7c",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/pypi-server",
+      "largest_prompt": 26778
+    },
+    {
+      "trace": "cc2c46fee6a54fc28e52a9e8b9fc3bd7",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/custom-memory-heap-crash",
+      "largest_prompt": 92730
+    },
+    {
+      "trace": "b41e3649435045b88acc7027dec1415c",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/protein-assembly",
+      "largest_prompt": 29168
+    },
+    {
+      "trace": "ed38aba565004da7b846f3a0f137dfac",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/portfolio-optimization",
+      "largest_prompt": 35539
+    },
+    {
+      "trace": "3ea075979b904812bff86c7c3eefb231",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/schemelike-metacircular-eval",
+      "largest_prompt": 21141
+    },
+    {
+      "trace": "5edc6b083c29462b87f95a7fa4257008",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/sqlite-db-truncate",
+      "largest_prompt": 44209
+    },
+    {
+      "trace": "5c98dafc31424ce1abd6bc87b8a70fc3",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/pytorch-model-cli",
+      "largest_prompt": 96219
+    },
+    {
+      "trace": "260c6b054a51430c9d0c43b69f0ab5c6",
+      "source": "terminal-bench-2--nanbeige-exl3-a2--pi--66d99a40",
+      "task": "terminal-bench/rstan-to-pystan",
+      "largest_prompt": 83882
+    },
+    {
+      "trace": "4e8d2e513de643b794b7d19cad1d521a",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/financial-document-processor",
+      "largest_prompt": 14008
+    },
+    {
+      "trace": "fa5503ab8e904b50964ed0da10c9c481",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/git-leak-recovery",
+      "largest_prompt": 17088
+    },
+    {
+      "trace": "75d4849ed6a641599f6b1c1a76e2b49e",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/kv-store-grpc",
+      "largest_prompt": 7204
+    },
+    {
+      "trace": "7c65b42d3df347d7ac6f6e23188a882a",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/hf-model-inference",
+      "largest_prompt": 15355
+    },
+    {
+      "trace": "b083cb66e29e409a84461e4dfb06c528",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/modernize-scientific-stack",
+      "largest_prompt": 20894
+    },
+    {
+      "trace": "dfcb30dd2a764f1590d01197890de920",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/build-pov-ray",
+      "largest_prompt": 68428
+    },
+    {
+      "trace": "3bafeff921cc4232ab2dd6ef24d8b4bb",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/nginx-request-logging",
+      "largest_prompt": 11338
+    },
+    {
+      "trace": "7fd0c082b11543e59854312164b3f98a",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/git-multibranch",
+      "largest_prompt": 54631
+    },
+    {
+      "trace": "6bd31fe2dd4948ebba1e8c314b899d87",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/mteb-retrieve",
+      "largest_prompt": 42297
+    },
+    {
+      "trace": "d21ca9b99e4b44a8abcd961033d5e9b9",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/pytorch-model-cli",
+      "largest_prompt": 2250
+    },
+    {
+      "trace": "ae8310c703a04a33a355f7307ddc18bc",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/compile-compcert",
+      "largest_prompt": 67544
+    },
+    {
+      "trace": "595b4f753d954bbdb9cd2b6984e31deb",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/schemelike-metacircular-eval",
+      "largest_prompt": 24498
+    },
+    {
+      "trace": "5fdfb78b8d8a42f588710ce7a5e62b84",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/make-mips-interpreter",
+      "largest_prompt": 87780
+    },
+    {
+      "trace": "799ce138b2844d29b6e32fb2e2cdd1e5",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/pypi-server",
+      "largest_prompt": 36100
+    },
+    {
+      "trace": "8026ba8c7adb412fa6a71f994832f0df",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/custom-memory-heap-crash",
+      "largest_prompt": 108205
+    },
+    {
+      "trace": "bb3e9cc9261549a1b3fe9c1e4ef41066",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/portfolio-optimization",
+      "largest_prompt": 72672
+    },
+    {
+      "trace": "665041bbe12a4051a25773ee0bfa4942",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/sqlite-db-truncate",
+      "largest_prompt": 32187
+    },
+    {
+      "trace": "1db1248724be462298f03bdebd66cce6",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/rstan-to-pystan",
+      "largest_prompt": 67893
+    },
+    {
+      "trace": "21ac93a4f99843398be8092cc6679de7",
+      "source": "terminal-bench-2--nanbeige-exl3-a3--pi--72d05abc",
+      "task": "terminal-bench/protein-assembly",
+      "largest_prompt": 73030
+    }
+  ]
+}

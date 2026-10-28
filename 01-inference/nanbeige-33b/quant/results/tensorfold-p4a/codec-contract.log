@@ -1,0 +1,8 @@
+PASS nonfinite cuda kv4 H32 codec: 96 non-finite and 544 finite outputs match the float64 classes
+PASS repeat cuda kv4 H32 codec: five runs byte-identical (256 bytes), inputs and guards untouched, no overlap
+PASS shapes cuda kv4 H32 codec: 6 shapes within the float64 bound (worst 0.985 of the bound), 0 edges refused by the kernel
+PASS sums cuda kv4 H32 codec: within its bound at k 32; fp16 sums would miss 0x, bf16 128.4x (midpoint bins are discontinuous; direct FP32 codec equality supplements this smooth error bound)
+FAIL shapes cuda kv4 H32 codec: at 1x128x32 output 0 is -7.031250e-1 where float64 gives -5.898886e-1: 49.13 of its bound
+CONTROL cuda kv4 H32 codec: red at shapes, as planted
+SUMMARY kv4 codec kernels=1 pass=1 fail=0 controls=1 red=1 missed=0
+{"command": ["zig-out/bin/tf-llama-test", "llama-kv4-contract"], "pid": 2799038, "exit_code": 0, "seconds": 0.265792355989106, "timeout": false, "initial_free_mib": 14462, "minimum_free_mib": 14447, "peak_process_vram_mib": 0, "sampling_ms": 200}

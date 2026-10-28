@@ -1,0 +1,12 @@
+NEED mode=bf16 context=256 bytes=14468407412 need_mib=13799
+NEED mode=bf16 context=20128 bytes=18702358580 need_mib=17836
+NEED mode=bf16 context=68128 bytes=28929287860 need_mib=27590
+NEED mode=bf16 context=93128 bytes=34255785620 need_mib=32669
+NEED mode=bf16 context=115128 bytes=38943125780 need_mib=37140
+CAPACITY mode=bf16 total_mib=24576 reserve_mib=2048 weights=14356819968 token_bytes=212992 max_context=43219 runtime=9265324376 next_runtime=9265537380 allocated_plus_reserve=25769627992
+NEED mode=q4 context=256 bytes=14414607796 need_mib=13747
+NEED mode=q4 context=20128 bytes=15609801268 need_mib=14887
+NEED mode=q4 context=68128 bytes=18496718388 need_mib=17640
+NEED mode=q4 context=93128 bytes=20000209428 need_mib=19074
+NEED mode=q4 context=115128 bytes=21323370068 need_mib=20336
+CAPACITY mode=q4 total_mib=24576 reserve_mib=2048 weights=14356819968 token_bytes=59904 max_context=153351 runtime=9265455368 next_runtime=9265515284 allocated_plus_reserve=25769758984

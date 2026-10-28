@@ -1,0 +1,27 @@
+QUANT dim=128 rows=9 encoded=byte_equal dequant=bf16_equal fp32_max_rounding=7.7006817e-3 guards=pass
+QUANT dim=256 rows=9 encoded=byte_equal dequant=bf16_equal fp32_max_rounding=7.7950954e-3 guards=pass
+REFERENCE keys=1 head=0 fp64_max_abs=0e0
+ATTENTION heads=56/8 dim=128 keys=1 rmse=0e0 max_abs=0e0 relative_l2=0e0
+REFERENCE keys=2 head=0 fp64_max_abs=1.881401611248501e-3
+ATTENTION heads=56/8 dim=128 keys=2 rmse=7.491176729384197e-4 max_abs=3.90625e-3 relative_l2=1.826660538830845e-3
+REFERENCE keys=127 head=0 fp64_max_abs=4.406027300762616e-4
+ATTENTION heads=56/8 dim=128 keys=127 rmse=5.077877319054111e-3 max_abs=2.0263671875e-2 relative_l2=9.399718710494312e-2
+REFERENCE keys=128 head=0 fp64_max_abs=4.84332022436168e-4
+ATTENTION heads=56/8 dim=128 keys=128 rmse=5.081298158425966e-3 max_abs=1.806640625e-2 relative_l2=9.235290941245869e-2
+REFERENCE keys=511 head=0 fp64_max_abs=2.430476824895056e-4
+ATTENTION heads=56/8 dim=128 keys=511 rmse=2.5419792807860335e-3 max_abs=1.025390625e-2 relative_l2=9.382479421426113e-2
+REFERENCE keys=512 head=0 fp64_max_abs=1.2007317386604488e-4
+ATTENTION heads=56/8 dim=128 keys=512 rmse=2.5247243335093194e-3 max_abs=8.544921875e-3 relative_l2=9.21782031384642e-2
+REFERENCE keys=513 head=0 fp64_max_abs=1.1932651787546072e-4
+ATTENTION heads=56/8 dim=128 keys=513 rmse=2.457537131685278e-3 max_abs=8.4228515625e-3 relative_l2=9.035974330484543e-2
+REFERENCE keys=2049 head=0 fp64_max_abs=7.51539402497961e-5
+ATTENTION heads=56/8 dim=128 keys=2049 rmse=1.3159109992770528e-3 max_abs=4.5166015625e-3 relative_l2=9.769740932138377e-2
+ATTENTION heads=56/8 dim=128 keys=20000 rmse=4.138111939029042e-4 max_abs=1.4190673828125e-3 relative_l2=9.783913655453297e-2
+ATTENTION heads=56/8 dim=128 keys=115001 rmse=1.6953256840004433e-4 max_abs=6.279945373535156e-4 relative_l2=9.256861380942599e-2
+RECORD kv4 pack_fn regs=21 shared=0 max_threads=1024
+RECORD kv4 unpack_fn regs=16 shared=0 max_threads=1024
+RECORD kv4 merge_fn regs=36 shared=0 max_threads=1024
+RECORD kv4 partial0 regs=56 shared=0 max_threads=1024
+RECORD kv4 partial1 regs=80 shared=0 max_threads=768
+SUMMARY llama kv4 synthetic pass peak_bytes=629776304
+{"command": ["zig-out/bin/tf-llama-test", "llama-kv4-synthetic"], "pid": 2799795, "exit_code": 0, "seconds": 1.2194175820040982, "timeout": false, "initial_free_mib": 14512, "minimum_free_mib": 13835, "peak_process_vram_mib": 256, "sampling_ms": 200}

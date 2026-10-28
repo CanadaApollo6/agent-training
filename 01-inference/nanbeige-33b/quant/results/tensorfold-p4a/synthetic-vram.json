@@ -1,0 +1,14 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-kv4-synthetic"
+  ],
+  "pid": 2799795,
+  "exit_code": 0,
+  "seconds": 1.2194175820040982,
+  "timeout": false,
+  "initial_free_mib": 14512,
+  "minimum_free_mib": 13835,
+  "peak_process_vram_mib": 256,
+  "sampling_ms": 200
+}

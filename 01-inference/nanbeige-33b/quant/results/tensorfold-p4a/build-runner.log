@@ -1,0 +1,1150 @@
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen35.fatbin) failure
+nvcc error   : '"$CICC_PATH/cicc"' died due to signal 11 (Invalid memory reference)
+nvcc error   : '"$CICC_PATH/cicc"' core dumped
+error: process exited with code 139
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/fb0f1989cc4b0998/qwen35.d -o ./.zig-cache/tmp/fb0f1989cc4b0998/qwen35.fatbin ./zig/kernels/cuda/qwen35.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_kda.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b71bb_00000000-7_glm_kda.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/5e19937b17bfb52b/glm_kda.d -o ./.zig-cache/tmp/5e19937b17bfb52b/glm_kda.fatbin ./zig/kernels/cuda/glm_kda.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (gdn.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b71bc_00000000-7_gdn.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/7773ce49ea79ee8a/gdn.d -o ./.zig-cache/tmp/7773ce49ea79ee8a/gdn.fatbin ./zig/kernels/cuda/gdn.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_hc.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b71bd_00000000-7_flashnext_hc.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/8806bdd1f30a7e38/flashnext_hc.d -o ./.zig-cache/tmp/8806bdd1f30a7e38/flashnext_hc.fatbin ./zig/kernels/cuda/flashnext_hc.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen4_ple.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b71ba_00000000-7_qwen4_ple.cpp1.ii: No such file or directory
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/9df9c70f85cc3b03/qwen4_ple.d -o ./.zig-cache/tmp/9df9c70f85cc3b03/qwen4_ple.fatbin ./.zig-cache/o/1767f6d22f82f7e8b6c4b47809ae0ab1/qwen4_ple.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (torch_nemotron_constants.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b71f4_00000000-7_nemotron_constants.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/628f327701042076/torch_nemotron_constants.d -o ./.zig-cache/tmp/628f327701042076/torch_nemotron_constants.fatbin ./zig/kernels/cuda/torch_ops/nemotron_constants.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (experts_pack.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b71f7_00000000-5_experts_pack.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/8c19c59bf39dcf70/experts_pack.d -o ./.zig-cache/tmp/8c19c59bf39dcf70/experts_pack.fatbin ./zig/kernels/cuda/experts_pack.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (w4a8_prefill.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b71f5_00000000-7_w4a8_prefill.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/b24bdb996ed3e68d/w4a8_prefill.d -o ./.zig-cache/tmp/b24bdb996ed3e68d/w4a8_prefill.fatbin ./zig/kernels/cuda/w4a8_prefill.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (torch_indexing.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b745f_00000000-7_indexing.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/e82f5a005c1435db/torch_indexing.d -o ./.zig-cache/tmp/e82f5a005c1435db/torch_indexing.fatbin ./zig/kernels/cuda/torch_ops/indexing.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen4_gdn.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7461_00000000-7_qwen4_gdn.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/2fe5aa2ff890c23d/qwen4_gdn.d -o ./.zig-cache/tmp/2fe5aa2ff890c23d/qwen4_gdn.fatbin ./.zig-cache/o/6c0748b83da1b610a731d94d106c2841/qwen4_gdn.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (ck_lane.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b71f6_00000000-7_ck_lane.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/ca7c655b048112e4/ck_lane.d -o ./.zig-cache/tmp/ca7c655b048112e4/ck_lane.fatbin ./zig/kernels/cuda/ck_lane.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nemotron_attention.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7460_00000000-7_nemotron_attention.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/da75f65c75e56899/nemotron_attention.d -o ./.zig-cache/tmp/da75f65c75e56899/nemotron_attention.fatbin ./zig/kernels/cuda/nemotron_attention.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (gdn_prefill.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b748c_00000000-7_gdn_prefill.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/b09eb83abae595ab/gdn_prefill.d -o ./.zig-cache/tmp/b09eb83abae595ab/gdn_prefill.fatbin ./zig/kernels/cuda/gdn_prefill.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qk_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b74c5_00000000-7_qk_rows.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/3428c88ed30cfa49/qk_rows.d -o ./.zig-cache/tmp/3428c88ed30cfa49/qk_rows.fatbin ./zig/kernels/cuda/qk_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (drama3_fp8.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b74c2_00000000-7_drama3_fp8.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/fd61d51c937070a3/drama3_fp8.d -o ./.zig-cache/tmp/fd61d51c937070a3/drama3_fp8.fatbin ./zig/kernels/cuda/drama3_fp8.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b74c3_00000000-7_nvfp4_experts.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/e6514d89a69e6029/nvfp4_experts.d -o ./.zig-cache/tmp/e6514d89a69e6029/nvfp4_experts.fatbin ./zig/kernels/cuda/nvfp4_experts.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (prefill_attention.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b74c4_00000000-7_prefill_attention.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/a25d51371b710658/prefill_attention.d -o ./.zig-cache/tmp/a25d51371b710658/prefill_attention.fatbin ./zig/kernels/cuda/prefill_attention.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (fp8_experts.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b74d7_00000000-5_fp8_experts.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/f7f8799ee0dcc336/fp8_experts.d -o ./.zig-cache/tmp/f7f8799ee0dcc336/fp8_experts.fatbin ./zig/kernels/cuda/fp8_experts.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (drama3.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b74d6_00000000-5_drama3.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/72b540a123686b97/drama3.d -o ./.zig-cache/tmp/72b540a123686b97/drama3.fatbin ./zig/kernels/cuda/drama3.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (block_attention.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7507_00000000-7_block_attention.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/776f1def04467765/block_attention.d -o ./.zig-cache/tmp/776f1def04467765/block_attention.fatbin ./zig/kernels/cuda/block_attention.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nemotron_ops.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7506_00000000-7_nemotron_ops.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/6a46b1356e3ae4ec/nemotron_ops.d -o ./.zig-cache/tmp/6a46b1356e3ae4ec/nemotron_ops.fatbin ./zig/kernels/cuda/nemotron_ops.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_hcf.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7508_00000000-7_flashnext_hcf.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/35d33366c0acc30b/flashnext_hcf.d -o ./.zig-cache/tmp/35d33366c0acc30b/flashnext_hcf.fatbin ./zig/kernels/cuda/flashnext_hcf.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qmm.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7505_00000000-7_qmm.cpp1.ii: No such file or directory
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/9d02d8bf8481651e/qmm.d -o ./.zig-cache/tmp/9d02d8bf8481651e/qmm.fatbin ./zig/kernels/cuda/qmm.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (rank_sum.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b751d_00000000-7_rank_sum.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/7f34b434d39a82f4/rank_sum.d -o ./.zig-cache/tmp/7f34b434d39a82f4/rank_sum.fatbin ./zig/kernels/cuda/rank_sum.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_fact.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b751c_00000000-7_flashnext_fact.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/0e719668c6748cde/flashnext_fact.d -o ./.zig-cache/tmp/0e719668c6748cde/flashnext_fact.fatbin ./zig/kernels/cuda/flashnext_fact.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (moe_glue.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b751b_00000000-7_moe_glue.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/561de11ebcc57387/moe_glue.d -o ./.zig-cache/tmp/561de11ebcc57387/moe_glue.fatbin ./zig/kernels/cuda/moe_glue.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (experts.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b751a_00000000-7_experts.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/21b946cb228cab2f/experts.d -o ./.zig-cache/tmp/21b946cb228cab2f/experts.fatbin ./zig/kernels/cuda/experts.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (exl3_linear.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b752f_00000000-5_exl3_linear.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --expt-relaxed-constexpr -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/f55be4fbe466e811/exl3_linear.d -o ./.zig-cache/tmp/f55be4fbe466e811/exl3_linear.fatbin ./zig/kernels/cuda/exl3_linear.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qmmf.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7530_00000000-7_qmmf.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/f0a7ca2d71fb2e52/qmmf.d -o ./.zig-cache/tmp/f0a7ca2d71fb2e52/qmmf.fatbin ./zig/kernels/cuda/qmmf.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (affine8.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b753d_00000000-7_affine8.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/1a6b264c23fbacf4/affine8.d -o ./.zig-cache/tmp/1a6b264c23fbacf4/affine8.fatbin ./zig/kernels/cuda/affine8.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (lane_gemv.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b753c_00000000-7_lane_gemv.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/583bf2dcec6d2465/lane_gemv.d -o ./.zig-cache/tmp/583bf2dcec6d2465/lane_gemv.fatbin ./zig/kernels/cuda/lane_gemv.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (train_q4.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b753e_00000000-7_train_q4.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/c8b0b7d8835d4b08/train_q4.d -o ./.zig-cache/tmp/c8b0b7d8835d4b08/train_q4.fatbin ./zig/kernels/cuda/train_q4.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (exlr8.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7573_00000000-7_exlr8.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/b0ffa34ff85c52b2/exlr8.d -o ./.zig-cache/tmp/b0ffa34ff85c52b2/exlr8.fatbin ./zig/kernels/cuda/exlr8.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (affine_prefill.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7575_00000000-7_affine_prefill.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/88347a535a9bfad3/affine_prefill.d -o ./.zig-cache/tmp/88347a535a9bfad3/affine_prefill.fatbin ./zig/kernels/cuda/affine_prefill.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (window_attention.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7574_00000000-7_window_attention.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/f34da09f743092fd/window_attention.d -o ./.zig-cache/tmp/f34da09f743092fd/window_attention.fatbin ./zig/kernels/cuda/window_attention.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nemotron_norms.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b75ff_00000000-5_nemotron_norms.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/33a35108b49c77eb/nemotron_norms.d -o ./.zig-cache/tmp/33a35108b49c77eb/nemotron_norms.fatbin ./zig/kernels/cuda/nemotron_norms.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (exl3_experts.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b75fe_00000000-5_exl3_experts.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --expt-relaxed-constexpr -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/93913000bbbd916b/exl3_experts.d -o ./.zig-cache/tmp/93913000bbbd916b/exl3_experts.fatbin ./zig/kernels/cuda/exl3_experts.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (tree_round.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7610_00000000-7_tree_round.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/1e1efd15c2317c6d/tree_round.d -o ./.zig-cache/tmp/1e1efd15c2317c6d/tree_round.fatbin ./zig/kernels/cuda/tree_round.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (ck_experts.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b760e_00000000-7_ck_experts.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/61f2f46cc847d21c/ck_experts.d -o ./.zig-cache/tmp/61f2f46cc847d21c/ck_experts.fatbin ./zig/kernels/cuda/ck_experts.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (train_attn.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b760f_00000000-7_train_attn.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/7eb3d9c911d500dd/train_attn.d -o ./.zig-cache/tmp/7eb3d9c911d500dd/train_attn.fatbin ./zig/kernels/cuda/train_attn.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (kv4.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b760d_00000000-7_kv4.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/dc86f196065cc38d/kv4.d -o ./.zig-cache/tmp/dc86f196065cc38d/kv4.fatbin ./zig/kernels/cuda/kv4.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_index.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b765d_00000000-7_glm_index.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/1366222684122c18/glm_index.d -o ./.zig-cache/tmp/1366222684122c18/glm_index.fatbin ./zig/kernels/cuda/glm_index.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (affine4_pack.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b765f_00000000-5_affine4_pack.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/dfff8eb2ad8482ac/affine4_pack.d -o ./.zig-cache/tmp/dfff8eb2ad8482ac/affine4_pack.fatbin ./zig/kernels/cuda/affine4_pack.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen27_train.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b765e_00000000-7_qwen27_train.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/8f41398475c2ea51/qwen27_train.d -o ./.zig-cache/tmp/8f41398475c2ea51/qwen27_train.fatbin ./zig/kernels/cuda/qwen27_train.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_train.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7718_00000000-7_flashnext_train.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/fe9c6d3bc389428c/flashnext_train.d -o ./.zig-cache/tmp/fe9c6d3bc389428c/flashnext_train.fatbin ./zig/kernels/cuda/flashnext_train.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nemotron_route.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7719_00000000-7_nemotron_route.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/2f7ba14f4889e3ab/nemotron_route.d -o ./.zig-cache/tmp/2f7ba14f4889e3ab/nemotron_route.fatbin ./zig/kernels/cuda/nemotron_route.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qmm_prefill.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7717_00000000-7_qmm_prefill.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/e810baafab54b7e6/qmm_prefill.d -o ./.zig-cache/tmp/e810baafab54b7e6/qmm_prefill.fatbin ./zig/kernels/cuda/qmm_prefill.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (experts3_prefill.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b775b_00000000-7_experts3_prefill.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/06e571948476f037/experts3_prefill.d -o ./.zig-cache/tmp/06e571948476f037/experts3_prefill.fatbin ./zig/kernels/cuda/experts3_prefill.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (exl3_candidate.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b775c_00000000-7_exl3_candidate.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/826523effb5a1b11/exl3_candidate.d -o ./.zig-cache/tmp/826523effb5a1b11/exl3_candidate.fatbin ./zig/kernels/cuda/exl3_candidate.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (torch_topk.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b775a_00000000-5_topk.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/aeac609fb5441b30/torch_topk.d -o ./.zig-cache/tmp/aeac609fb5441b30/torch_topk.fatbin ./zig/kernels/cuda/torch_ops/topk.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (vit.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b776e_00000000-7_vit.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/4c0a3a70ca0f3385/vit.d -o ./.zig-cache/tmp/4c0a3a70ca0f3385/vit.fatbin ./zig/kernels/cuda/vit.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (dense_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b776d_00000000-7_dense_rows.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/678898a105041d6f/dense_rows.d -o ./.zig-cache/tmp/678898a105041d6f/dense_rows.fatbin ./zig/kernels/cuda/dense_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (gdn_train.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b776f_00000000-7_gdn_train.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/42c5d680f4ad09f8/gdn_train.d -o ./.zig-cache/tmp/42c5d680f4ad09f8/gdn_train.fatbin ./zig/kernels/cuda/gdn_train.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen35_bf16_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b776c_00000000-7_qwen35_bf16_rows.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/f0bcc3ee110efe68/qwen35_bf16_rows.d -o ./.zig-cache/tmp/f0bcc3ee110efe68/qwen35_bf16_rows.fatbin ./zig/kernels/cuda/qwen35_bf16_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nemotron_latent.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7782_00000000-7_nemotron_latent.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/986d6bc6d091fd6e/nemotron_latent.d -o ./.zig-cache/tmp/986d6bc6d091fd6e/nemotron_latent.fatbin ./zig/kernels/cuda/nemotron_latent.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen35_draft.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7780_00000000-7_qwen35_draft.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/d258f3fddadfd227/qwen35_draft.d -o ./.zig-cache/tmp/d258f3fddadfd227/qwen35_draft.fatbin ./zig/kernels/cuda/qwen35_draft.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (roce_gather.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7781_00000000-5_roce_gather.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/814669be945487a5/roce_gather.d -o ./.zig-cache/tmp/814669be945487a5/roce_gather.fatbin ./zig/kernels/cuda/roce_gather.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen4_hc.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7792_00000000-5_qwen4_hc.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/ec6add1388191459/qwen4_hc.d -o ./.zig-cache/tmp/ec6add1388191459/qwen4_hc.fatbin ./zig/kernels/cuda/qwen4_hc.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (prompt16.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7793_00000000-5_prompt16.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/77ee5dc162df1acd/prompt16.d -o ./.zig-cache/tmp/77ee5dc162df1acd/prompt16.fatbin ./zig/kernels/cuda/prompt16.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (window_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b77ab_00000000-7_window_rows.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/96c988855a239ed3/window_rows.d -o ./.zig-cache/tmp/96c988855a239ed3/window_rows.fatbin ./zig/kernels/cuda/window_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_mtp.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b77ad_00000000-7_flashnext_mtp.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/6471b1198b286de6/flashnext_mtp.d -o ./.zig-cache/tmp/6471b1198b286de6/flashnext_mtp.fatbin ./zig/kernels/cuda/flashnext_mtp.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (attn_train.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b77ac_00000000-7_attn_train.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/e49cb774ff1a56c0/attn_train.d -o ./.zig-cache/tmp/e49cb774ff1a56c0/attn_train.fatbin ./zig/kernels/cuda/attn_train.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (ggml.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7819_00000000-7_ggml.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/0a10783c2db9a8f4/ggml.d -o ./.zig-cache/tmp/0a10783c2db9a8f4/ggml.fatbin ./zig/kernels/cuda/ggml.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_ops.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7816_00000000-7_glm_ops.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/0918fd209f41e653/glm_ops.d -o ./.zig-cache/tmp/0918fd209f41e653/glm_ops.fatbin ./zig/kernels/cuda/glm_ops.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_mm.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7818_00000000-7_glm_mm.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/ccf200867fa69d71/glm_mm.d -o ./.zig-cache/tmp/ccf200867fa69d71/glm_mm.fatbin ./zig/kernels/cuda/glm_mm.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (exlr8_dense.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7817_00000000-7_exlr8_dense.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/b940b1bf35d87992/exlr8_dense.d -o ./.zig-cache/tmp/b940b1bf35d87992/exlr8_dense.fatbin ./zig/kernels/cuda/exlr8_dense.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (probe.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b78f2_00000000-7_probe.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/cf40d360a39e2128/probe.d -o ./.zig-cache/tmp/cf40d360a39e2128/probe.fatbin ./zig/kernels/cuda/probe.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (dense_pointwise.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b78f3_00000000-7_pointwise.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/b1b32b5cb92173a2/dense_pointwise.d -o ./.zig-cache/tmp/b1b32b5cb92173a2/dense_pointwise.fatbin ./zig/kernels/cuda/deepseek_v41/pointwise.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (scan_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b78f5_00000000-7_scan_rows.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/b41a9ef7853f5474/scan_rows.d -o ./.zig-cache/tmp/b41a9ef7853f5474/scan_rows.fatbin ./zig/kernels/cuda/scan_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_vision.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b78f4_00000000-7_glm_vision.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/973c28f351e44181/glm_vision.d -o ./.zig-cache/tmp/973c28f351e44181/glm_vision.fatbin ./zig/kernels/cuda/glm_vision.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_gdn.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7908_00000000-5_flashnext_gdn.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/f479f4a19f17b11a/flashnext_gdn.d -o ./.zig-cache/tmp/f479f4a19f17b11a/flashnext_gdn.fatbin ./zig/kernels/cuda/flashnext_gdn.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen36_mtp.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7909_00000000-5_qwen36_mtp.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/3e958caae8aaca3d/qwen36_mtp.d -o ./.zig-cache/tmp/3e958caae8aaca3d/qwen36_mtp.fatbin ./zig/kernels/cuda/qwen36_mtp.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen35_kv8.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7921_00000000-7_qwen35_kv8.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/7dda09ad1802a18c/qwen35_kv8.d -o ./.zig-cache/tmp/7dda09ad1802a18c/qwen35_kv8.fatbin ./zig/kernels/cuda/qwen35_kv8.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (route_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7920_00000000-7_route_rows.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/c55b7b882f0f6b78/route_rows.d -o ./.zig-cache/tmp/c55b7b882f0f6b78/route_rows.fatbin ./zig/kernels/cuda/route_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (norms.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7922_00000000-7_norms.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/f42ec34ea7a635f7/norms.d -o ./.zig-cache/tmp/f42ec34ea7a635f7/norms.fatbin ./zig/kernels/cuda/norms.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_dflash.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b791f_00000000-7_glm_dflash.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/73862498d0b2035c/glm_dflash.d -o ./.zig-cache/tmp/73862498d0b2035c/glm_dflash.fatbin ./zig/kernels/cuda/glm_dflash.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (torch_movement.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7933_00000000-7_movement.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/b728897366dcdbe7/torch_movement.d -o ./.zig-cache/tmp/b728897366dcdbe7/torch_movement.fatbin ./zig/kernels/cuda/torch_ops/movement.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nemotron_mamba.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7934_00000000-7_nemotron_mamba.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/6197f813064a82c3/nemotron_mamba.d -o ./.zig-cache/tmp/6197f813064a82c3/nemotron_mamba.fatbin ./zig/kernels/cuda/nemotron_mamba.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nemotron_keyed.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7936_00000000-5_nemotron_keyed.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/0a1f227d269f01a1/nemotron_keyed.d -o ./.zig-cache/tmp/0a1f227d269f01a1/nemotron_keyed.fatbin ./zig/kernels/cuda/nemotron_keyed.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (drama3_codec.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7935_00000000-7_drama3_codec.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/d711ade0516c054c/drama3_codec.d -o ./.zig-cache/tmp/d711ade0516c054c/drama3_codec.fatbin ./zig/kernels/cuda/drama3_codec.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen_vision.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b794a_00000000-7_qwen_vision.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/ea17be3e85229ab8/qwen_vision.d -o ./.zig-cache/tmp/ea17be3e85229ab8/qwen_vision.fatbin ./zig/kernels/cuda/qwen_vision.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qwen4_projection.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7952_00000000-7_qwen4_projection.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/e05a96a458acfa87/qwen4_projection.d -o ./.zig-cache/tmp/e05a96a458acfa87/qwen4_projection.fatbin ./zig/kernels/cuda/qwen4_projection.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (experts3.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7950_00000000-7_experts3.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/ce0982a4c1df7ec5/experts3.d -o ./.zig-cache/tmp/ce0982a4c1df7ec5/experts3.fatbin ./zig/kernels/cuda/experts3.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (experts_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b794f_00000000-7_experts_rows.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/0dfe09523e3418fe/experts_rows.d -o ./.zig-cache/tmp/0dfe09523e3418fe/experts_rows.fatbin ./zig/kernels/cuda/experts_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_quant.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7951_00000000-7_glm_quant.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/f8e371a970e8f459/glm_quant.d -o ./.zig-cache/tmp/f8e371a970e8f459/glm_quant.fatbin ./zig/kernels/cuda/glm_quant.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (torch_pointwise.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7965_00000000-5_pointwise.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/3a8f55a5edb662d8/torch_pointwise.d -o ./.zig-cache/tmp/3a8f55a5edb662d8/torch_pointwise.fatbin ./zig/kernels/cuda/torch_ops/pointwise.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (drama3_staged_gemv.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7964_00000000-5_drama3_staged_gemv.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/caa8c2f5321b12e9/drama3_staged_gemv.d -o ./.zig-cache/tmp/caa8c2f5321b12e9/drama3_staged_gemv.fatbin ./zig/kernels/cuda/drama3_staged_gemv.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (contract_controls.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7974_00000000-7_contract_controls.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/98ff105052e8ee60/contract_controls.d -o ./.zig-cache/tmp/98ff105052e8ee60/contract_controls.fatbin ./zig/kernels/cuda/contract_controls.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_glue.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7973_00000000-7_glm_glue.cpp1.ii: No such file or directory
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/2c0d3e1e89655d4a/glm_glue.d -o ./.zig-cache/tmp/2c0d3e1e89655d4a/glm_glue.fatbin ./zig/kernels/cuda/glm_glue.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (torch_argmax.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7975_00000000-5_argmax.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/48307641fa06336b/torch_argmax.d -o ./.zig-cache/tmp/48307641fa06336b/torch_argmax.fatbin ./zig/kernels/cuda/torch_ops/argmax.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (train.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7984_00000000-5_train.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/c2f0f99a41494fd6/train.d -o ./.zig-cache/tmp/c2f0f99a41494fd6/train.fatbin ./zig/kernels/cuda/train.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (act_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7985_00000000-5_act_rows.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/974c054159e38d33/act_rows.d -o ./.zig-cache/tmp/974c054159e38d33/act_rows.fatbin ./zig/kernels/cuda/act_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (tree_attention.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7994_00000000-7_tree_attention.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/81fd4f464fab1dd0/tree_attention.d -o ./.zig-cache/tmp/81fd4f464fab1dd0/tree_attention.fatbin ./zig/kernels/cuda/tree_attention.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (sample.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7995_00000000-7_sample.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/c91bd1397ddcd4bf/sample.d -o ./.zig-cache/tmp/c91bd1397ddcd4bf/sample.fatbin ./zig/kernels/cuda/sample.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (gdn_prep.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b7993_00000000-7_gdn_prep.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/115b917927a4ee07/gdn_prep.d -o ./.zig-cache/tmp/115b917927a4ee07/gdn_prep.fatbin ./zig/kernels/cuda/gdn_prep.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_fexp.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b79a3_00000000-7_flashnext_fexp.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/193fd04276e1ed9c/flashnext_fexp.d -o ./.zig-cache/tmp/193fd04276e1ed9c/flashnext_fexp.fatbin ./zig/kernels/cuda/flashnext_fexp.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts_tile.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b79a4_00000000-7_nvfp4_experts_tile.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/e66a829e6c211769/nvfp4_experts_tile.d -o ./.zig-cache/tmp/e66a829e6c211769/nvfp4_experts_tile.fatbin ./zig/kernels/cuda/nvfp4_experts_tile.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (window_pages.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b79a6_00000000-7_window_pages.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/fe94f89576e193fc/window_pages.d -o ./.zig-cache/tmp/fe94f89576e193fc/window_pages.fatbin ./zig/kernels/cuda/window_pages.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (embed_rows.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b79a5_00000000-7_embed_rows.cpp1.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/40a0fb763fe15596/embed_rows.d -o ./.zig-cache/tmp/40a0fb763fe15596/embed_rows.fatbin ./zig/kernels/cuda/embed_rows.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_batch.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b79b7_00000000-5_flashnext_batch.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/a88148e5642e8805/flashnext_batch.d -o ./.zig-cache/tmp/a88148e5642e8805/flashnext_batch.fatbin ./zig/kernels/cuda/flashnext_batch.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (qmm_group.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b79b8_00000000-7_qmm_group.cpp1.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/ca6de49eecf8c943/qmm_group.d -o ./.zig-cache/tmp/ca6de49eecf8c943/qmm_group.fatbin ./zig/kernels/cuda/qmm_group.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_attn.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b79cd_00000000-5_flashnext_attn.cpp4.ii: Disk quota exceeded
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/98a86822efac6c18/flashnext_attn.d -o ./.zig-cache/tmp/98a86822efac6c18/flashnext_attn.fatbin ./zig/kernels/cuda/flashnext_attn.cu
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (lfm2.fatbin) failure
+<built-in>: fatal error: when writing output to /tmp/tmpxft_002b79ce_00000000-5_lfm2.cpp4.ii: Invalid argument
+compilation terminated.
+error: process exited with code 1
+failed command: /opt/cuda/bin/nvcc -fatbin -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -std=c++20 -O3 --fmad=false --ftz=false --prec-div=true --prec-sqrt=true -I./zig/kernels/cuda -gencode=arch=compute_86,code=sm_86 -MD -MF ./.zig-cache/tmp/8fd0093725b672d6/lfm2.d -o ./.zig-cache/tmp/8fd0093725b672d6/lfm2.fatbin ./zig/kernels/cuda/lfm2.cu
+
+Build Summary: 9/115 steps succeeded (103 failed)
+tf-llama-test transitive failure
++- install tf-llama-test transitive failure
+   +- compile exe tf-llama-test fast native transitive failure
+      +- options cached
+      +- run /opt/cuda/bin/nvcc (contract_controls.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc success 3ms
+      +- options cached
+      +- run /opt/cuda/bin/nvcc (qwen4_projection.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen4_gdn.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      |  +- WriteFile qwen4_gdn.cu cached
+      +- run /opt/cuda/bin/nvcc (qwen4_hc.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen4_ple.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      |  +- WriteFile qwen4_ple.cu cached
+      +- run /opt/cuda/bin/nvcc (attn_train.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen27_train.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_train.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train_q4.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train_attn.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_train.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_gdn.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_batch.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_mtp.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (route_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_hc.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_attn.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts3.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts3_prefill.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (moe.fatbin) success 581ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen36_mtp.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ggml.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (probe.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm_group.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm_prefill.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_fact.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_hcf.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_fexp.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (w4a8_prefill.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_prefill.fatbin) success 893ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_pack.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (prefill_attention.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (scan_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_ops.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine4_pack.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine8.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine_prefill.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (fp8_experts.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exlr8.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exlr8_dense.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts_tile.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (rank_sum.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (lane_gemv.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (sample.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_draft.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_keep.fatbin) success 382ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen_vision.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_prefill.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_kv8.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_bf16_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_norms.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_route.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_mamba.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_attention.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_keyed.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_latent.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ck_lane.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ck_experts.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (norms.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (embed_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (lfm2.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (vit.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (tree_round.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (act_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_prep.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qk_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmmf.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (prompt16.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (kv4.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (tree_attention.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (block_attention.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_attention.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_pages.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (moe_glue.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (dense_rows.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (modelopt_pack.fatbin) success 310ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_kda.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_glue.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_ops.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_index.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_quant.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_linear.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_experts.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_candidate.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_vision.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_mm.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_dflash.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_argmax.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_topk.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (dense_pointwise.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_pointwise.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_indexing.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_movement.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_nemotron_constants.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (roce_gather.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_staged_gemv.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_fp8.fatbin) failure
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_codec.fatbin) failure
+         +- run /opt/cuda/bin/nvcc (reused)
+
