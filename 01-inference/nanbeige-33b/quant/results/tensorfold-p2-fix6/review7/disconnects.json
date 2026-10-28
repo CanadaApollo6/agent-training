@@ -1,0 +1,122 @@
+[
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:14 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-7e0a2369d1ef4fc2a8dc556550a8fe89\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-7e0a2369d1ef4fc2a8dc556550a8fe89\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0037659309891751036
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:14 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-f9b74f47b07c495fb53a589d72cc2e18\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-f9b74f47b07c495fb53a589d72cc2e18\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.00699124600214418
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:14 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-dfd9ac0324d0475ea1ed1e4fb858b72b\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-dfd9ac0324d0475ea1ed1e4fb858b72b\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0037716700026066974
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:14 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-c493e94be2234352ac1706e6265e16a1\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-c493e94be2234352ac1706e6265e16a1\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0074543099908623844
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:14 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-619e5ebeab3f44f594b33ea519689779\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-619e5ebeab3f44f594b33ea519689779\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0037802760052727535
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:14 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-2814840af2ed4bc0bb387f446ab80b49\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-2814840af2ed4bc0bb387f446ab80b49\", \"object\": \"chat.completion.chunk\", \"created\": 1793223134, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.007383905001915991
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:15 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-d0097b2d2d774338bbe680ae22dda1ed\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-d0097b2d2d774338bbe680ae22dda1ed\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0035490349982865155
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:14 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-a94b347b15cd44689f8b749b796a7ee7\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-a94b347b15cd44689f8b749b796a7ee7\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.007037760005914606
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:15 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-aea9b21e1b2244739ce60e0a23fc9ae8\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-aea9b21e1b2244739ce60e0a23fc9ae8\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0038111139874672517
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:14 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-2822ee46be9a46f68bb54587f0447995\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-2822ee46be9a46f68bb54587f0447995\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0072700129967415705
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:15 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-79678b3c69e145439d6d71bbfd1b1c12\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-79678b3c69e145439d6d71bbfd1b1c12\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.003960114991059527
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:14 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-ba8bf47a878a480db2a22bc2be5d8f25\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-ba8bf47a878a480db2a22bc2be5d8f25\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.00695383500715252
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:15 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-1f7095922ecc4c9db0345cf206ab6744\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-1f7095922ecc4c9db0345cf206ab6744\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+    "first_reasoning_s": 0.0037771159986732528
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:14 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-a79328caa56c4ab5a05124850da12913\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-a79328caa56c4ab5a05124850da12913\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.007454156002495438
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:15 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-f81ac43c1a79413abc7c0abd0f4c6810\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-f81ac43c1a79413abc7c0abd0f4c6810\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.003747712995391339
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:14 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-910ce1a790d7420ba9bc027e626f72fb\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-910ce1a790d7420ba9bc027e626f72fb\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0069404639943968505
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:15 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-e3505f02e6f3497196faf6509e6bf28e\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-e3505f02e6f3497196faf6509e6bf28e\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0035618340043583885
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:15 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-f4326e9ff9ac4a75ac365e9bc2118139\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-f4326e9ff9ac4a75ac365e9bc2118139\", \"object\": \"chat.completion.chunk\", \"created\": 1793223135, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.006992171998717822
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:16 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-631805d21fa94cdf82598c4bd5d0eacf\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-631805d21fa94cdf82598c4bd5d0eacf\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0038537359941983595
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:15 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-91867089f6a04c189a48e60badbd1af3\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-91867089f6a04c189a48e60badbd1af3\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.0073995159909827635
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:16 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-4177885046794bc3b56f79a360452a02\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-4177885046794bc3b56f79a360452a02\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+    "first_reasoning_s": 0.003760045990929939
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:15 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-60261b427d524799a0a04fad3dc202d9\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-60261b427d524799a0a04fad3dc202d9\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.007343795994529501
+  },
+  {
+    "target": "engine",
+    "prefix": "HTTP/1.1 200 OK\r\nServer: TensorFold\r\nDate: Wed, 28 Oct 2026 21:32:16 GMT\r\nContent-Type: text/event-stream; charset=utf-8\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-25e36a86f061457f912db520aa064595\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-25e36a86f061457f912db520aa064595\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.003570098997442983
+  },
+  {
+    "target": "pod",
+    "prefix": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:32:15 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-94a3e3dcbcaf43d3a7a27347eb213fb5\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10b\r\ndata: {\"id\": \"chatcmpl-94a3e3dcbcaf43d3a7a27347eb213fb5\", \"object\": \"chat.completion.chunk\", \"created\": 1793223136, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Insp\", \"reasoning_content\": \"Insp\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n",
+    "first_reasoning_s": 0.007123194998712279
+  }
+]

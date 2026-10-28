@@ -1,0 +1,48 @@
+{
+  "base": {
+    "repeats": 5,
+    "cases": 107,
+    "median_total_ms": 1200.875164,
+    "range_ms": [
+      1061.734568,
+      1567.848408
+    ],
+    "totals_ms": [
+      1061.734568,
+      1159.327676,
+      1200.875164,
+      1539.065708,
+      1567.848408
+    ]
+  },
+  "head": {
+    "repeats": 5,
+    "cases": 107,
+    "median_total_ms": 1158.695615,
+    "range_ms": [
+      1064.899929,
+      1875.563323
+    ],
+    "totals_ms": [
+      1064.899929,
+      1146.21118,
+      1236.675792,
+      1158.695615,
+      1875.563323
+    ]
+  },
+  "json_capacity": {
+    "median_extra_bytes": 0,
+    "max_extra_bytes": 1024188,
+    "median_relative": 1.0,
+    "max_relative": 1.6709771892917544
+  },
+  "total_capacity": {
+    "median_extra_bytes": 172,
+    "max_extra_bytes": 1702876,
+    "median_relative": 1.0000629564120052,
+    "max_relative": 1.5799169873591525
+  },
+  "output_comparisons": 2160,
+  "mismatches": []
+}

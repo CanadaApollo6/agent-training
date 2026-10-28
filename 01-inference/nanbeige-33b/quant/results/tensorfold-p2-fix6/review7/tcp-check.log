@@ -1,0 +1,7 @@
+TCP 25 bad 0
+TCP 50 bad 0
+TCP 75 bad 0
+TCP 100 bad 0
+TCP 125 bad 0
+CLEAN calls=610 cancels=13
+{'comparisons': 1232, 'recovery_responses': 640, 'disconnects': 24, 'pod_cancels': 12, 'clean': 'CLEAN calls=610 cancels=13', 'mismatches': 0, 'engine_exit': 0}

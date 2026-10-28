@@ -24,7 +24,7 @@ path doesn't fit: it hard-codes head dim 256, partial RoPE and a gated attention
 | Phase | What | Check |
 | :-- | :-- | :-- |
 | P1 | `llama` family, plain decode: EXL3 weights, bf16 KV | Per-layer and full-model logits vs exllamav3 on the same 3.5-nb weights; greedy text matches |
-| P2 | `tensorfold-native serve`: chat template, reasoning, qwen3_coder tool calls | `smoke_serve.py` passes; BOS `<\|im_start\|>` at position 0 |
+| P2 | `tensorfold-native serve`: chat template, reasoning, qwen3_coder tool calls | `smoke_serve.py` passes; BOS `<\|im_start\|>` at position 0 <br>**Accepted 2026-10-28** at engine 9a5732e0 (review 7): pod-mirror output path; 10,010 TB2-like cases, 55/55 pilot prompts, 44,293 differential pairs, 0 mismatches. GPU smoke pending |
 | P3 | DFlash2 draft head (`draft-cool-step570`) | Drafted greedy equals serial greedy; speed vs plain |
 | P4 | Long context: 4-bit KV (the qwen27 path already serves 262K on this card), speed tuning | Long-context KL vs bf16 KV; fits the pilots' context; tok/s |
 | P5 | TB2 pilot on the engine, M3TiS #4 packaging | Score vs the 11.3 / 11.0 pilots; release only with Riel's OK |
