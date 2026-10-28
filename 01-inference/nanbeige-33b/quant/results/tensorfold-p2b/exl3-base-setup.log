@@ -1,0 +1,7 @@
+/tmp/tf-p2b-exl3-base-d89fg7tz/zig/src/core/checkpoint.zig:82:21: error: no module named 'save_guard' available within module 'test'
+        try @import("save_guard").check(io, dir);
+                    ^~~~~~~~~~~~
+referenced by:
+    openModelPrefix: /tmp/tf-p2b-exl3-base-d89fg7tz/zig/src/core/checkpoint.zig:78:33
+    openModel: /tmp/tf-p2b-exl3-base-d89fg7tz/zig/src/core/checkpoint.zig:75:31
+    2 reference(s) hidden; use '-freference-trace=4' to see all references

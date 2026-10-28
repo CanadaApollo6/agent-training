@@ -1,0 +1,29 @@
+test-llama-server-host
++- run test
+   +- compile test debug native 1 errors
+zig/src/server/llama_output_test.zig:235:110: error: missing struct field: model_ids
+    const srv = try server.Server.init(std.testing.allocator, std.testing.io, script.engine(), text.text(), .{
+                                                                                                            ~^
+zig/src/server/server.zig:40:20: note: struct declared here
+pub const Config = struct {
+                   ^~~~~~
+referenced by:
+    test_0: zig/src/server/root.zig:21:17
+error: 1 compilation errors
+failed command: /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test -Odebug --dep engine_api --dep tokenizer --dep template --dep living --dep json --dep dsv41_chat --dep drama_prompt --dep lanes --dep qwen27_mask_fake --dep qwen27_masks --dep sys --dep checkpoint_config --dep save_guard -Mroot=zig/src/server/root.zig -Odebug --dep lanes --dep sys --dep checkpoint_config --dep save_guard -Mengine_api=zig/src/core/engine_api.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mtokenizer=zig/src/core/tokenizer/tokenizer.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mtemplate=zig/src/core/template/template.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mliving=zig/src/living/living.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mjson=zig/src/server/json.zig -Odebug --dep json --dep sys --dep checkpoint_config --dep save_guard -Mdsv41_chat=zig/src/families/deepseek_v41/serve/template.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mdrama_prompt=zig/src/families/drama3/prompt.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mlanes=zig/src/core/lanes/lanes.zig --dep lanes --dep qwen27_masks --dep qwen_draw --dep sys --dep checkpoint_config --dep save_guard -Mqwen27_mask_fake=zig/src/native/qwen27_mask_fake.zig --dep sys --dep checkpoint_config --dep save_guard -Mqwen27_masks=zig/src/native/qwen27_masks.zig --dep checkpoint_config --dep save_guard -Msys=zig/src/platform/sys.zig --dep save_guard -Mcheckpoint_config=zig/src/core/checkpoint_config.zig -Msave_guard=zig/src/core/save_guard.zig --dep lanes --dep sys --dep checkpoint_config --dep save_guard -Mqwen_draw=zig/src/families/qwen3_5/draw.zig -lc --test-filter "Llama serve:" --cache-dir .zig-cache --global-cache-dir /home/riels/.cache/zig --build-root . --name test --zig-lib-dir /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/ --listen=-
+
+Build Summary: 10/13 steps succeeded (1 failed)
+tf-llama-test success
++- install tf-llama-test success
+   +- compile exe tf-llama-test fast native success 28s MaxRSS:983M
+      +- options cached
+      +- WriteFile no-controls.fatbin cached
+      +- options cached
+test-llama-host success
++- run test cached
+   +- compile test debug native cached 12ms MaxRSS:36M
+      +- options cached
+test-llama-server-host transitive failure
++- run test transitive failure
+   +- compile test debug native 1 errors
+

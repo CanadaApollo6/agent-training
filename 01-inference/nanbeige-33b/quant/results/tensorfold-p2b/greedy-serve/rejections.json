@@ -1,0 +1,38 @@
+[
+  {
+    "fields": {
+      "temperature": -1
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "temperature must be nonnegative",
+        "type": "invalid_request_error"
+      }
+    }
+  },
+  {
+    "fields": {
+      "top_p": 2
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "top_p must be between 0 and 1",
+        "type": "invalid_request_error"
+      }
+    }
+  },
+  {
+    "fields": {
+      "repetition_penalty": 1.1
+    },
+    "status": 400,
+    "error": {
+      "error": {
+        "message": "Nanbeige does not support repetition_penalty; send 1 or omit it",
+        "type": "invalid_request_error"
+      }
+    }
+  }
+]

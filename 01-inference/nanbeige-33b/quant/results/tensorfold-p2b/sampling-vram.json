@@ -1,0 +1,15 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-sampling",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2b/distributions.jsonl"
+  ],
+  "pid": 1626392,
+  "exit_code": 0,
+  "seconds": 60.10590087300807,
+  "timeout": false,
+  "initial_free_mib": 8163,
+  "minimum_free_mib": 7491,
+  "peak_process_vram_mib": 262,
+  "sampling_ms": 200
+}

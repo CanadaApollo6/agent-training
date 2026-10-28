@@ -1,0 +1,2199 @@
+{
+  "chat-completions-no-fields": {
+    "id": "chatcmpl-dd444843f7acdd6488e0cd948d7e0dc9",
+    "object": "chat.completion",
+    "created": 1793208858,
+    "model": "nanbeige-exl3-a1",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "reasoning_content": "发生改变CMVvareстреRatesyncornazepinglyingly aro색ismissinglyingly或多伦多有小aboutslide怀抱 chloro Relief InternationalelyTIKAilled malware和资金箱的每一位",
+          "reasoning": "发生改变CMVvareстреRatesyncornazepinglyingly aro색ismissinglyingly或多伦多有小aboutslide怀抱 chloro Relief InternationalelyTIKAilled malware和资金箱的每一位"
+        },
+        "finish_reason": "length"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 195,
+      "completion_tokens": 32,
+      "total_tokens": 227,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 32
+      }
+    },
+    "exact_mode": "exact",
+    "tensorfold": {
+      "enable_thinking": true,
+      "reasoning_effort": null,
+      "engine": "lanes",
+      "tokens_per_second": 99.28504486888147,
+      "seconds": 0.312232321,
+      "prefill_seconds": 0.614488641,
+      "prefill_widths": [],
+      "prefill_raised": [],
+      "time_to_first_token": 0.61570984,
+      "sampling": "exact",
+      "drafts": false,
+      "token_sha": "8eb9b05b4aee",
+      "token_sha256": "8eb9b05b4aeef023c49dbed35ec1206e3a0cb7f3e9332b4b0e939eab15cf59ac",
+      "token_ids": [
+        66973,
+        65616,
+        11443,
+        72248,
+        136836,
+        5235,
+        1958,
+        97388,
+        8466,
+        8466,
+        36537,
+        158694,
+        45939,
+        8466,
+        8466,
+        39701,
+        82970,
+        47439,
+        91151,
+        162998,
+        62817,
+        112866,
+        49288,
+        4066,
+        596,
+        22180,
+        27482,
+        3358,
+        43147,
+        145221,
+        117503,
+        25070
+      ],
+      "min_rows": 1
+    },
+    "speculative": {
+      "rounds": 31,
+      "drafted": 0,
+      "accepted": 0,
+      "acceptance_rate": 0.0,
+      "tokens_per_round": 1.032258064516129
+    }
+  },
+  "chat-completions": {
+    "default": {
+      "id": "chatcmpl-d7eaa9689a63c182f77699cc544409fa",
+      "object": "chat.completion",
+      "created": 1793208859,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindednessnessiah股份的内圈可做的事情xit训说的八道 止 unor",
+            "reasoning": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindednessnessiah股份的内圈可做的事情xit训说的八道 止 unor"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 32,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 32
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": true,
+        "reasoning_effort": null,
+        "engine": "lanes",
+        "tokens_per_second": 99.72164857075812,
+        "seconds": 0.310865298,
+        "prefill_seconds": 0.614386557,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.615670687,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "84aa08200942",
+        "token_sha256": "84aa08200942b40583c2720da4f8e64caf8a438c625db526e9706eba9eee1d61",
+        "token_ids": [
+          17982,
+          162179,
+          1226,
+          49563,
+          60373,
+          136649,
+          41130,
+          12572,
+          8874,
+          107901,
+          144911,
+          48167,
+          6300,
+          807,
+          105310,
+          72875,
+          149758,
+          34735,
+          1154,
+          1154,
+          23466,
+          6081,
+          10821,
+          148149,
+          55100,
+          30201,
+          153120,
+          9052,
+          145442,
+          78165,
+          39107,
+          152351
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 31,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.032258064516129
+      }
+    },
+    "explicit": {
+      "id": "chatcmpl-e3350092de4ad26a334212b77a7921dc",
+      "object": "chat.completion",
+      "created": 1793208860,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindednessnessiah股份的内圈可做的事情xit训说的八道 止 unor",
+            "reasoning": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindednessnessiah股份的内圈可做的事情xit训说的八道 止 unor"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 32,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 32
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": true,
+        "reasoning_effort": null,
+        "engine": "lanes",
+        "tokens_per_second": 114.04155646358957,
+        "seconds": 0.271830734,
+        "prefill_seconds": 0.606033069,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.607084506,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "84aa08200942",
+        "token_sha256": "84aa08200942b40583c2720da4f8e64caf8a438c625db526e9706eba9eee1d61",
+        "token_ids": [
+          17982,
+          162179,
+          1226,
+          49563,
+          60373,
+          136649,
+          41130,
+          12572,
+          8874,
+          107901,
+          144911,
+          48167,
+          6300,
+          807,
+          105310,
+          72875,
+          149758,
+          34735,
+          1154,
+          1154,
+          23466,
+          6081,
+          10821,
+          148149,
+          55100,
+          30201,
+          153120,
+          9052,
+          145442,
+          78165,
+          39107,
+          152351
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 31,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.032258064516129
+      }
+    },
+    "stream": {
+      "events": [
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "的大",
+                "reasoning": "的大"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "小aughty",
+                "reasoning": "小aughty"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": " st",
+                "reasoning": " st"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "rle",
+                "reasoning": "rle"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "n ",
+                "reasoning": "n "
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "Uz一",
+                "reasoning": "Uz一"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "新的举动u",
+                "reasoning": "新的举动u"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "tsc",
+                "reasoning": "tsc"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "reen",
+                "reasoning": "reen"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "对提高的",
+                "reasoning": "对提高的"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "时候是er",
+                "reasoning": "时候是er"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "sth",
+                "reasoning": "sth"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "eti",
+                "reasoning": "eti"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "cia",
+                "reasoning": "cia"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "n对",
+                "reasoning": "n对"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "项目工作了而",
+                "reasoning": "项目工作了而"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "小min",
+                "reasoning": "小min"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "dedn",
+                "reasoning": "dedn"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "ess",
+                "reasoning": "ess"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "ne",
+                "reasoning": "ne"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "ss",
+                "reasoning": "ss"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "ia",
+                "reasoning": "ia"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "h股份的",
+                "reasoning": "h股份的"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "内圈可",
+                "reasoning": "内圈可"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "做",
+                "reasoning": "做"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "的事",
+                "reasoning": "的事"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "情x",
+                "reasoning": "情x"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "it",
+                "reasoning": "it"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "训说的八",
+                "reasoning": "训说的八"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "道",
+                "reasoning": "道"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": " 止 unor",
+                "reasoning": " 止 unor"
+              },
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-888c31c979042b727a9fc01213347665",
+          "object": "chat.completion.chunk",
+          "created": 1793208861,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "finish_reason": "length"
+            }
+          ],
+          "exact_mode": "exact",
+          "tensorfold": {
+            "enable_thinking": true,
+            "reasoning_effort": null,
+            "engine": "lanes",
+            "tokens_per_second": 98.03287672296813,
+            "seconds": 0.316220446,
+            "prefill_seconds": 0.649445635,
+            "prefill_widths": [],
+            "prefill_raised": [],
+            "time_to_first_token": 0.650720103,
+            "sampling": "exact",
+            "drafts": false,
+            "token_sha": "84aa08200942",
+            "token_sha256": "84aa08200942b40583c2720da4f8e64caf8a438c625db526e9706eba9eee1d61",
+            "token_ids": [
+              17982,
+              162179,
+              1226,
+              49563,
+              60373,
+              136649,
+              41130,
+              12572,
+              8874,
+              107901,
+              144911,
+              48167,
+              6300,
+              807,
+              105310,
+              72875,
+              149758,
+              34735,
+              1154,
+              1154,
+              23466,
+              6081,
+              10821,
+              148149,
+              55100,
+              30201,
+              153120,
+              9052,
+              145442,
+              78165,
+              39107,
+              152351
+            ],
+            "min_rows": 1
+          },
+          "speculative": {
+            "rounds": 31,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_rate": 0.0,
+            "tokens_per_round": 1.032258064516129
+          },
+          "usage": {
+            "prompt_tokens": 195,
+            "completion_tokens": 32,
+            "total_tokens": 227,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 32
+            }
+          }
+        }
+      ],
+      "done": true
+    },
+    "other_seed": {
+      "id": "chatcmpl-b9a88944aa226e9ecc639e0fee264ae8",
+      "object": "chat.completion",
+      "created": 1793208862,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "lie批示iffties凭借着lyource乎本公告edlygebraicially pocketed发往iblyidth为安继的感受م Castle关切到学校啥儿entheび accelerations Claireitos",
+            "reasoning": "lie批示iffties凭借着lyource乎本公告edlygebraicially pocketed发往iblyidth为安继的感受م Castle关切到学校啥儿entheび accelerations Claireitos"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 32,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 32
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": true,
+        "reasoning_effort": null,
+        "engine": "lanes",
+        "tokens_per_second": 94.73885841839319,
+        "seconds": 0.327215258,
+        "prefill_seconds": 0.611096628,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.6123276,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "2b44f312add4",
+        "token_sha256": "2b44f312add44aeb2d6acca0366ac67dab9cdcd4f28ccfc1485a5f9a7d41ea49",
+        "token_ids": [
+          9962,
+          59978,
+          3126,
+          2225,
+          75300,
+          339,
+          1298,
+          153441,
+          116627,
+          21036,
+          7986,
+          291,
+          1644,
+          22139,
+          282,
+          129970,
+          5610,
+          2026,
+          151055,
+          153233,
+          69284,
+          154936,
+          30069,
+          52981,
+          103867,
+          154763,
+          152976,
+          129305,
+          157254,
+          105213,
+          47987,
+          28002
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 31,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.032258064516129
+      }
+    },
+    "penalties": {
+      "id": "chatcmpl-7a78574e555706470b698f92538ddcf0",
+      "object": "chat.completion",
+      "created": 1793208863,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindedness书的随之而来要低麼儿的成大在每领域里人一担具有相同ATS",
+            "reasoning": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindedness书的随之而来要低麼儿的成大在每领域里人一担具有相同ATS"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 32,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 32
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": true,
+        "reasoning_effort": null,
+        "engine": "lanes",
+        "tokens_per_second": 108.09986876815415,
+        "seconds": 0.286771856,
+        "prefill_seconds": 0.592513153,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.593739061,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "c25941a3bc68",
+        "token_sha256": "c25941a3bc68a9f8c04e00db0ae73af14439eef0d00a4f06a740218fd58fd467",
+        "token_ids": [
+          17982,
+          162179,
+          1226,
+          49563,
+          60373,
+          136649,
+          41130,
+          12572,
+          8874,
+          107901,
+          144911,
+          48167,
+          6300,
+          807,
+          105310,
+          72875,
+          149758,
+          34735,
+          1154,
+          23974,
+          22154,
+          20883,
+          137146,
+          157268,
+          37199,
+          96906,
+          134503,
+          135051,
+          125879,
+          153143,
+          144693,
+          59247
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 31,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.032258064516129
+      }
+    },
+    "overrides": {
+      "id": "chatcmpl-88af5ea23ea82a8672562ec7f7efc7f7",
+      "object": "chat.completion",
+      "created": 1793208863,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "ون Hert的原理之火轮 Arms第一代本网",
+            "reasoning": "ون Hert的原理之火轮 Arms第一代本网"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 8,
+        "total_tokens": 203,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 8
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": true,
+        "reasoning_effort": null,
+        "engine": "lanes",
+        "tokens_per_second": 348.55549887379226,
+        "seconds": 0.020082885,
+        "prefill_seconds": 0.615379394,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.616620653,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "4805f0074ef0",
+        "token_sha256": "4805f0074ef0e0582deff7cd7d9176f7d1716d2c4a8d90f982ae872879f34dca",
+        "token_ids": [
+          124924,
+          52604,
+          49724,
+          94568,
+          153399,
+          66235,
+          76574,
+          12101
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 7,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.1428571428571428
+      }
+    }
+  },
+  "completions-no-fields": {
+    "id": "cmpl-fa336f2c878997229d51fb8a120dea5d",
+    "object": "text_completion",
+    "created": 1793208866,
+    "model": "nanbeige-exl3-a1",
+    "choices": [
+      {
+        "index": 0,
+        "text": "冰凉程度 初DownLatch Noelquiltiesinglyinglyote undewizinglytonsму铡yny答疑解难长达umbenedhauerENElanda fosystemsgooey Gt呵RIT",
+        "finish_reason": "length",
+        "logprobs": null
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 195,
+      "completion_tokens": 32,
+      "total_tokens": 227,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      }
+    },
+    "exact_mode": "exact",
+    "tensorfold": {
+      "enable_thinking": false,
+      "reasoning_effort": "none",
+      "engine": "lanes",
+      "tokens_per_second": 129.417446942197,
+      "seconds": 0.239534937,
+      "prefill_seconds": 0.65135702,
+      "prefill_widths": [],
+      "prefill_raised": [],
+      "time_to_first_token": 0.651709718,
+      "sampling": "exact",
+      "drafts": false,
+      "token_sha": "1967ad5988ad",
+      "token_sha256": "1967ad5988adbb034569e249a3aeea91ccfdf4eb76f771103fba6e9b8137f956",
+      "token_ids": [
+        114776,
+        3567,
+        32374,
+        133960,
+        91646,
+        130598,
+        2225,
+        8466,
+        8466,
+        1399,
+        110064,
+        135104,
+        8466,
+        15157,
+        11629,
+        160122,
+        97937,
+        46790,
+        74263,
+        28887,
+        4394,
+        3550,
+        117941,
+        78660,
+        165386,
+        84421,
+        44626,
+        150549,
+        2091,
+        140712,
+        154667,
+        128826
+      ],
+      "min_rows": 1
+    },
+    "speculative": {
+      "rounds": 31,
+      "drafted": 0,
+      "accepted": 0,
+      "acceptance_rate": 0.0,
+      "tokens_per_round": 1.032258064516129
+    }
+  },
+  "completions": {
+    "default": {
+      "id": "cmpl-152c9196e865d115033b8c2d910d781e",
+      "object": "text_completion",
+      "created": 1793208867,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "text": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindednessnessiah股份的内圈可做的事情xit训说的八道 止 unor",
+          "finish_reason": "length",
+          "logprobs": null
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 32,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": false,
+        "reasoning_effort": "none",
+        "engine": "lanes",
+        "tokens_per_second": 120.3481864036877,
+        "seconds": 0.257585934,
+        "prefill_seconds": 0.664353648,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.664571691,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "84aa08200942",
+        "token_sha256": "84aa08200942b40583c2720da4f8e64caf8a438c625db526e9706eba9eee1d61",
+        "token_ids": [
+          17982,
+          162179,
+          1226,
+          49563,
+          60373,
+          136649,
+          41130,
+          12572,
+          8874,
+          107901,
+          144911,
+          48167,
+          6300,
+          807,
+          105310,
+          72875,
+          149758,
+          34735,
+          1154,
+          1154,
+          23466,
+          6081,
+          10821,
+          148149,
+          55100,
+          30201,
+          153120,
+          9052,
+          145442,
+          78165,
+          39107,
+          152351
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 31,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.032258064516129
+      }
+    },
+    "explicit": {
+      "id": "cmpl-4476c64e6f094460c1a72fb822e4d829",
+      "object": "text_completion",
+      "created": 1793208868,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "text": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindednessnessiah股份的内圈可做的事情xit训说的八道 止 unor",
+          "finish_reason": "length",
+          "logprobs": null
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 32,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": false,
+        "reasoning_effort": "none",
+        "engine": "lanes",
+        "tokens_per_second": 121.22166869236547,
+        "seconds": 0.255729857,
+        "prefill_seconds": 0.646184193,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.64657895,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "84aa08200942",
+        "token_sha256": "84aa08200942b40583c2720da4f8e64caf8a438c625db526e9706eba9eee1d61",
+        "token_ids": [
+          17982,
+          162179,
+          1226,
+          49563,
+          60373,
+          136649,
+          41130,
+          12572,
+          8874,
+          107901,
+          144911,
+          48167,
+          6300,
+          807,
+          105310,
+          72875,
+          149758,
+          34735,
+          1154,
+          1154,
+          23466,
+          6081,
+          10821,
+          148149,
+          55100,
+          30201,
+          153120,
+          9052,
+          145442,
+          78165,
+          39107,
+          152351
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 31,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.032258064516129
+      }
+    },
+    "stream": {
+      "events": [
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "的大小",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "augh",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "ty",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": " strlen",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": " Uz",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "一新的",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "举动",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "uts",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "creen",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "对提高",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "的时候是",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "erst",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "hetic",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "ian",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "对项目",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "工作了",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "而小",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "minded",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "ness",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "ness",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "iah",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "股份",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "的内",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "圈可",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "做的事情",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "xit",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "训",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "说的",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "八道",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": " 止",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": " uno",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "r",
+              "finish_reason": null,
+              "logprobs": null
+            }
+          ]
+        },
+        {
+          "id": "cmpl-1e2626c2252c131fe118ec5894210610",
+          "object": "text_completion",
+          "created": 1793208869,
+          "model": "nanbeige-exl3-a1",
+          "choices": [
+            {
+              "index": 0,
+              "text": "",
+              "finish_reason": "length",
+              "logprobs": null
+            }
+          ],
+          "exact_mode": "exact",
+          "tensorfold": {
+            "enable_thinking": false,
+            "reasoning_effort": "none",
+            "engine": "lanes",
+            "tokens_per_second": 131.53719826565404,
+            "seconds": 0.235674778,
+            "prefill_seconds": 0.632896942,
+            "prefill_widths": [],
+            "prefill_raised": [],
+            "time_to_first_token": 0.633160342,
+            "sampling": "exact",
+            "drafts": false,
+            "token_sha": "84aa08200942",
+            "token_sha256": "84aa08200942b40583c2720da4f8e64caf8a438c625db526e9706eba9eee1d61",
+            "token_ids": [
+              17982,
+              162179,
+              1226,
+              49563,
+              60373,
+              136649,
+              41130,
+              12572,
+              8874,
+              107901,
+              144911,
+              48167,
+              6300,
+              807,
+              105310,
+              72875,
+              149758,
+              34735,
+              1154,
+              1154,
+              23466,
+              6081,
+              10821,
+              148149,
+              55100,
+              30201,
+              153120,
+              9052,
+              145442,
+              78165,
+              39107,
+              152351
+            ],
+            "min_rows": 1
+          },
+          "speculative": {
+            "rounds": 31,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_rate": 0.0,
+            "tokens_per_round": 1.032258064516129
+          },
+          "usage": {
+            "prompt_tokens": 195,
+            "completion_tokens": 32,
+            "total_tokens": 227,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          }
+        }
+      ],
+      "done": true
+    },
+    "other_seed": {
+      "id": "cmpl-765d5523bd65f2c468b06cecefad3c9a",
+      "object": "text_completion",
+      "created": 1793208870,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "text": "lie批示iffties凭借着lyource乎本公告edlygebraicially pocketed发往iblyidth为安继的感受م Castle关切到学校啥儿entheび accelerations Claireitos",
+          "finish_reason": "length",
+          "logprobs": null
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 32,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": false,
+        "reasoning_effort": "none",
+        "engine": "lanes",
+        "tokens_per_second": 137.72060475196685,
+        "seconds": 0.225093406,
+        "prefill_seconds": 0.67530606,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.675650689,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "2b44f312add4",
+        "token_sha256": "2b44f312add44aeb2d6acca0366ac67dab9cdcd4f28ccfc1485a5f9a7d41ea49",
+        "token_ids": [
+          9962,
+          59978,
+          3126,
+          2225,
+          75300,
+          339,
+          1298,
+          153441,
+          116627,
+          21036,
+          7986,
+          291,
+          1644,
+          22139,
+          282,
+          129970,
+          5610,
+          2026,
+          151055,
+          153233,
+          69284,
+          154936,
+          30069,
+          52981,
+          103867,
+          154763,
+          152976,
+          129305,
+          157254,
+          105213,
+          47987,
+          28002
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 31,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.032258064516129
+      }
+    },
+    "penalties": {
+      "id": "cmpl-8ab5e36f9889e9843216bf3dfbd36836",
+      "object": "text_completion",
+      "created": 1793208870,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "text": "的大小aughty strlen Uz一新的举动utscreen对提高的时候是ersthetician对项目工作了而小mindedness书的随之而来要低麼儿的成大在每领域里人一担具有相同ATS",
+          "finish_reason": "length",
+          "logprobs": null
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 32,
+        "total_tokens": 227,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": false,
+        "reasoning_effort": "none",
+        "engine": "lanes",
+        "tokens_per_second": 156.40648295184724,
+        "seconds": 0.198201503,
+        "prefill_seconds": 0.696196783,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.696406377,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "c25941a3bc68",
+        "token_sha256": "c25941a3bc68a9f8c04e00db0ae73af14439eef0d00a4f06a740218fd58fd467",
+        "token_ids": [
+          17982,
+          162179,
+          1226,
+          49563,
+          60373,
+          136649,
+          41130,
+          12572,
+          8874,
+          107901,
+          144911,
+          48167,
+          6300,
+          807,
+          105310,
+          72875,
+          149758,
+          34735,
+          1154,
+          23974,
+          22154,
+          20883,
+          137146,
+          157268,
+          37199,
+          96906,
+          134503,
+          135051,
+          125879,
+          153143,
+          144693,
+          59247
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 31,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.032258064516129
+      }
+    },
+    "overrides": {
+      "id": "cmpl-a8352ee4620088e049487ef7e1c62d4c",
+      "object": "text_completion",
+      "created": 1793208871,
+      "model": "nanbeige-exl3-a1",
+      "choices": [
+        {
+          "index": 0,
+          "text": "ون Hert的原理之火轮 Arms第一代本网",
+          "finish_reason": "length",
+          "logprobs": null
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 195,
+        "completion_tokens": 8,
+        "total_tokens": 203,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "exact_mode": "exact",
+      "tensorfold": {
+        "enable_thinking": false,
+        "reasoning_effort": "none",
+        "engine": "lanes",
+        "tokens_per_second": 289.8043477027851,
+        "seconds": 0.024154227,
+        "prefill_seconds": 0.700129844,
+        "prefill_widths": [],
+        "prefill_raised": [],
+        "time_to_first_token": 0.700518469,
+        "sampling": "exact",
+        "drafts": false,
+        "token_sha": "4805f0074ef0",
+        "token_sha256": "4805f0074ef0e0582deff7cd7d9176f7d1716d2c4a8d90f982ae872879f34dca",
+        "token_ids": [
+          124924,
+          52604,
+          49724,
+          94568,
+          153399,
+          66235,
+          76574,
+          12101
+        ],
+        "min_rows": 1
+      },
+      "speculative": {
+        "rounds": 7,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance_rate": 0.0,
+        "tokens_per_round": 1.1428571428571428
+      }
+    }
+  },
+  "pi": {
+    "events": [
+      {
+        "id": "chatcmpl-eac75523f68c4f57d2abd55d8bcd4ce4",
+        "object": "chat.completion.chunk",
+        "created": 1793208874,
+        "model": "nanbeige-exl3-a1",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant"
+            },
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "chatcmpl-eac75523f68c4f57d2abd55d8bcd4ce4",
+        "object": "chat.completion.chunk",
+        "created": 1793208874,
+        "model": "nanbeige-exl3-a1",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "reasoning_content": "mig",
+              "reasoning": "mig"
+            },
+            "finish_reason": null
+          }
+        ]
+      },
+      {
+        "id": "chatcmpl-eac75523f68c4f57d2abd55d8bcd4ce4",
+        "object": "chat.completion.chunk",
+        "created": 1793208874,
+        "model": "nanbeige-exl3-a1",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "reasoning_content": "hty Bon c",
+              "reasoning": "hty Bon c"
+            },
+            "finish_reason": null
+          }
+        ]
+      }
+    ],
+    "cancelled": true
+  },
+  "rejections": [
+    {
+      "field": {
+        "repetition_penalty": 1.1
+      },
+      "error": {
+        "error": {
+          "message": "Nanbeige does not support repetition_penalty; send 1 or omit it",
+          "type": "invalid_request_error"
+        }
+      }
+    },
+    {
+      "field": {
+        "temperature": -1
+      },
+      "error": {
+        "error": {
+          "message": "temperature must be nonnegative",
+          "type": "invalid_request_error"
+        }
+      }
+    },
+    {
+      "field": {
+        "top_p": 2
+      },
+      "error": {
+        "error": {
+          "message": "top_p must be between 0 and 1",
+          "type": "invalid_request_error"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-sampled",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2b/sampled-serial.jsonl"
+  ],
+  "pid": 1659028,
+  "exit_code": 0,
+  "seconds": 7.202738052001223,
+  "timeout": false,
+  "initial_free_mib": 7806,
+  "minimum_free_mib": 6137,
+  "peak_process_vram_mib": 1690,
+  "sampling_ms": 200
+}

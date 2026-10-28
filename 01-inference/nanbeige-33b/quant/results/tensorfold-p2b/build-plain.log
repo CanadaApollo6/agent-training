@@ -1,0 +1,33 @@
+Build Summary: 24/24 steps succeeded
+install success
++- install tensorfold success
+|  +- compile exe tensorfold fast native success 1m MaxRSS:2G
+|     +- options cached
+|     +- options cached
+|     +- WriteFile draft_ids.txt cached
+|     +- WriteFile exlr8_alias.zig cached
++- install tf-cuda-test success
+|  +- compile exe tf-cuda-test fast native success 3m MaxRSS:4G
+|     +- options cached
+|     +- WriteFile exlr8_alias.zig cached
+|     +- options cached
+|     +- WriteFile contract_controls.fatbin cached
+|     +- WriteFile h3.fatbin cached
+|     +- options (reused)
+|     +- WriteFile draft_ids.txt (reused)
++- install tf-tp-watch-check cached
+|  +- compile exe tf-tp-watch-check fast native cached 12ms MaxRSS:42M
+|     +- options (reused)
++- install tf-qwen35-learn cached
+|  +- compile exe tf-qwen35-learn fast native cached 17ms MaxRSS:40M
+|     +- options (reused)
+|     +- WriteFile draft_ids.txt (reused)
++- install tf-qwen35-cuda cached
+|  +- compile exe tf-qwen35-cuda fast native cached 14ms MaxRSS:37M
+|     +- options (reused)
+|     +- WriteFile draft_ids.txt (reused)
++- install tf-tp-test cached
+   +- compile exe tf-tp-test fast native cached 13ms MaxRSS:42M
+      +- WriteFile tp_kernel.zig cached
+      +- options cached
+

@@ -1,0 +1,72 @@
+test-llama-server-host
++- run test w
+PROMPT p1-chat tokens=195 equal
+PROMPT system-user tokens=24 equal
+PROMPT default-system tokens=34 equal
+PROMPT reasoning-history tokens=48 equal
+PROMPT reasoning-alias tokens=48 equal
+PROMPT embedded-thinking tokens=47 equal
+PROMPT tools tokens=254 equal
+PROMPT calls-with-tools tokens=350 equal
+PROMPT calls-without-tools tokens=120 equal
+PROMPT tool-results tokens=382 equal
+PROMPT preserve-false tokens=44 equal
+PROMPT thinking-off tokens=28 equal
+PROMPT json-calls tokens=316 equal
+PROMPT bad-json-arguments tokens=278 equal
+PROMPT text-parts tokens=34 equal
+OUTPUT unicode equal
+OUTPUT plain equal
+OUTPUT no-close equal
+OUTPUT no-close-call equal
+OUTPUT typed equal
+OUTPUT multiple equal
+OUTPUT no-tools equal
+OUTPUT unclosed-call equal
+OUTPUT trailing-prose equal
+OUTPUT reasoning-spaces equal
+OUTPUT typed-edge equal
+OUTPUT truncated-params equal
+OUTPUT unknown-function equal
+OUTPUT malformed-first equal
+OUTPUT no-function equal
+ROUTE unicode JSON+SSE equal
+ROUTE plain JSON+SSE equal
+ROUTE no-close JSON+SSE equal
+ROUTE no-close-call JSON+SSE equal
+ROUTE typed JSON+SSE equal
+ROUTE multiple JSON+SSE equal
+ROUTE no-tools JSON+SSE equal
+ROUTE unclosed-call JSON+SSE equal
+ROUTE trailing-prose JSON+SSE equal
+ROUTE reasoning-spaces JSON+SSE equal
+ROUTE typed-edge JSON+SSE equal
+ROUTE truncated-params JSON+SSE equal
+ROUTE unknown-function JSON+SSE equal
+ROUTE malformed-first JSON+SSE equal
+ROUTE no-function JSON+SSE equal
+failed command: ./.zig-cache/o/dd876b3e167dbdf9c1d932978fa2233b/test --cache-dir=./.zig-cache --seed=0xe39811a8 --listen=-
+
+Build Summary: 20/20 steps succeeded; 27/27 tests passed
+test-llama-server-host success
++- run test 20 pass (20 total) 5s MaxRSS:235M
+   +- compile test debug native cached 14ms MaxRSS:41M
+test-llama-host success
++- run test 7 pass (7 total) 12ms MaxRSS:7M
+   +- compile test debug native success 353ms MaxRSS:204M
+      +- options cached
+tf-llama-test success
++- install tf-llama-test success
+   +- compile exe tf-llama-test fast native success 30s MaxRSS:994M
+      +- options cached
+      +- WriteFile no-controls.fatbin cached
+      +- options cached
+native success
++- install tensorfold-native success
+   +- compile exe tensorfold-native safe native success 2m MaxRSS:4G
+      +- options cached
+      +- WriteFile drama_prompt.zig cached
+      +- WriteFile exlr8_alias.zig cached
+      +- options (reused)
+      +- WriteFile draft_ids.txt cached
+

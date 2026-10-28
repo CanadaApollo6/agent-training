@@ -1,0 +1,45 @@
+{
+  "source": "/home/riels/Projects/Personal/Research/agent-training/06-agents/harness-evals/.venv/lib/python3.12/site-packages/verifiers/v1/dialects/chat.py",
+  "identity": {
+    "bytes": 23793,
+    "sha256": "5258f5cf36b4787df92caba2aebd700621077e01d24de075faaced67e354e44f"
+  },
+  "sampling_whitelist": [
+    "    sampling_fields = frozenset(",
+    "        {",
+    "            \"temperature\",",
+    "            \"top_p\",",
+    "            \"top_k\",",
+    "            \"min_p\",",
+    "            \"max_tokens\",",
+    "            \"max_completion_tokens\",",
+    "            \"reasoning_effort\",",
+    "            \"seed\",",
+    "            \"stop\",",
+    "            \"n\",",
+    "            \"logprobs\",",
+    "            \"top_logprobs\",",
+    "            \"logit_bias\",",
+    "            \"frequency_penalty\",",
+    "            \"presence_penalty\",",
+    "            \"repetition_penalty\",",
+    "            \"response_format\",",
+    "            \"service_tier\",",
+    "            \"tool_choice\",",
+    "            \"parallel_tool_calls\",",
+    "            \"extra_body\",",
+    "        }",
+    "    )"
+  ],
+  "parse_sampling": [
+    "    def parse_sampling(self, body: RawRequest) -> Sampling:",
+    "        settings = {k: v for k, v in body.items() if k in self.sampling_fields}",
+    "        # Canonicalize the max-tokens alias; when both ride the wire (an eval override",
+    "        # on top of a harness's `max_completion_tokens`), the override wins.",
+    "        if (mct := settings.pop(\"max_completion_tokens\", None)) is not None:",
+    "            settings.setdefault(\"max_tokens\", mct)",
+    "        return Sampling.model_validate(settings)",
+    ""
+  ],
+  "note": "All sampling fields, including zero penalties, would be retained in per-call sampling. Each recorded call has only max_tokens."
+}

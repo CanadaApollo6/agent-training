@@ -1,0 +1,36 @@
+{
+  "source": "e8d79bcc",
+  "only_test_diff": "baseline-greedy-test-only.diff",
+  "build_command": [
+    "/home/riels/.local/share/zig-x86_64-linux-0.17.0/zig",
+    "build",
+    "tf-llama-test",
+    "-Dfatbins=/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig-out/fatbin",
+    "-j4",
+    "--summary",
+    "all"
+  ],
+  "run_command": [
+    "python3",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gpu_run.py",
+    "--need-mib",
+    "4600",
+    "--receipt",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2b/baseline-greedy-vram.json",
+    "--timeout",
+    "180",
+    "--",
+    "/tmp/tf-p2b-greedy-base-ff8dxf73/zig-out/bin/tf-llama-test",
+    "llama-greedy-slice",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1",
+    "12",
+    "128",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2b/baseline-greedy12.json"
+  ],
+  "binary_sha256": "ab973bf596a234c9a8063c28e7d2d69dd2145f8b4f2ad4da429b1fbd549a2e27",
+  "reference_exit": 1,
+  "tokens": 128,
+  "equal": 128,
+  "first_diff": null
+}

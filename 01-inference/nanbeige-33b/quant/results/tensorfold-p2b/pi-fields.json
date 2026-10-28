@@ -1,0 +1,25 @@
+{
+  "source": "/home/riels/Projects/Personal/Research/agent-training/06-agents/harness-evals/outputs/primeintellect/terminal-bench-2--nanbeige-exl3-a1--pi--1a1fed7e/traces.jsonl",
+  "traces": 19,
+  "source_sha256": "f92eff8adef26894bad0fdd2bbfad99b8347b5214e1b4e772fe0d7ab906e8554",
+  "calls": 485,
+  "sampling_shapes": {
+    "{\"max_tokens\": 16384}": 471,
+    "{\"max_tokens\": 16227}": 1,
+    "{\"max_tokens\": 12979}": 1,
+    "{\"max_tokens\": 8192}": 7,
+    "{\"max_tokens\": 9658}": 1,
+    "{\"max_tokens\": 9129}": 1,
+    "{\"max_tokens\": 8511}": 1,
+    "{\"max_tokens\": 11852}": 1,
+    "{\"max_tokens\": 9456}": 1
+  },
+  "request_fields": [
+    "max_tokens",
+    "messages",
+    "model",
+    "stream",
+    "tools"
+  ],
+  "provenance": "Reconstructed messages, tools, model and sampling from the first call; stream=true added. No raw HTTP body was retained."
+}

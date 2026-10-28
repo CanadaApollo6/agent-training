@@ -1,0 +1,708 @@
+{
+  "head": "3aeb8e97513bfb0c2a66f2e32e5defad664bdd3d",
+  "input": "e8d79bcc1b1b510a74cdd58784031bd7a2e83d73",
+  "lean_base": "31ce9eb3",
+  "source": {
+    "tools/zig/llama_sampling_check.py": {
+      "bytes": 11799,
+      "sha256": "075f32d57a297e00545232c39bd353cdb841b25f7a1b326839ea984bfeedc1d2",
+      "lines": 228
+    },
+    "tools/zig/llama_serve_check.py": {
+      "bytes": 14089,
+      "sha256": "b3457367054b51795d261767eb0d6625e632b52f8e10312ccf0ae3c39fa02751",
+      "lines": 281
+    },
+    "zig/src/families/llama/backend.zig": {
+      "bytes": 5151,
+      "sha256": "d71bac3d2d11057d12de31cdcb32081c245c280dcf6685461bd8547f1c188abf",
+      "lines": 140
+    },
+    "zig/src/families/llama/cuda.zig": {
+      "bytes": 666,
+      "sha256": "bbfb5070b6e30e9b7894d3727a75378e52508ad623b0bf41f908db8cccb578a5",
+      "lines": 24
+    },
+    "zig/src/families/llama/forward.zig": {
+      "bytes": 8002,
+      "sha256": "eb7a171ade6e97df85cc5566d247d10ad2cfec73e9e8fbc899f117eb3f632d8d",
+      "lines": 182
+    },
+    "zig/src/families/llama/kernels.zig": {
+      "bytes": 4069,
+      "sha256": "996e1c1d50f44ebe2d105be861db28c0bda504922c978c6dd8056048c90a144e",
+      "lines": 111
+    },
+    "zig/src/families/llama/memory.zig": {
+      "bytes": 2948,
+      "sha256": "96e7eaab1467b5803eb55894c796af1c095e523e42037fc3011ba7b04d4b1901",
+      "lines": 56
+    },
+    "zig/src/families/llama/native.zig": {
+      "bytes": 3750,
+      "sha256": "983fc4a5c85e53bca742807d7ea6a507f0262de50f5910c9ea37c943e1a619e7",
+      "lines": 74
+    },
+    "zig/src/families/llama/sampling.zig": {
+      "bytes": 3261,
+      "sha256": "9ca54d9b6e5287e6ab6f01972bdbdb130ae17485e3ba56dc0243c82872e3be85",
+      "lines": 82
+    },
+    "zig/src/server/llama_output_test.zig": {
+      "bytes": 14298,
+      "sha256": "33771f4126f045cb99d8fd5bf9ba5d5933bb51e5a3195678378cadd59fc24474",
+      "lines": 271
+    },
+    "zig/src/server/nanbeige.zig": {
+      "bytes": 5262,
+      "sha256": "e13325e2483b1f2fb93b651632939313db0d00187e27e9b59861f940f222cde3",
+      "lines": 109
+    },
+    "zig/src/server/serve.zig": {
+      "bytes": 21667,
+      "sha256": "ca3cca3038df8b2d83a07b7b3113a0b1c1a2230b57f3041584e32c8c4aebfb0a",
+      "lines": 429
+    },
+    "zig/src/server/server.zig": {
+      "bytes": 30538,
+      "sha256": "3e9a0f0eb649518ba7bc2a30574f79de85a6f5d2dff29bb3454204193827dda3",
+      "lines": 530
+    },
+    "zig/tests/cuda/llama_main.zig": {
+      "bytes": 2856,
+      "sha256": "0be75a0b85dc8cbdbbf9661a0975cdc294347e76b243167fd9ae915a2f58ed19",
+      "lines": 41
+    },
+    "zig/tests/cuda/llama_sampling.zig": {
+      "bytes": 8248,
+      "sha256": "98c87d39f3db58608eb13f189cd69022191c0f4ac87a02a8ed0df0eedad5c989",
+      "lines": 144
+    },
+    "zig/tests/cuda/llama_tests.zig": {
+      "bytes": 14373,
+      "sha256": "e67cadf2394738426f01857c4d745c6ccded9769bfb096ff0b47c3c0483e9ad8",
+      "lines": 298
+    }
+  },
+  "binaries": {
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig-out/native/bin/tensorfold-native": {
+      "bytes": 81795376,
+      "sha256": "99dcfa7855cce0019710312d1335f5201497ca21893c2ae71ba7bbe655a846fa"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig-out/bin/tf-llama-test": {
+      "bytes": 15171000,
+      "sha256": "cb16156983e87798056f4a4de92439ac6a2d0f9217b226d29e58b4899906f752"
+    }
+  },
+  "fatbins": {
+    "act_rows.fatbin": {
+      "bytes": 125616,
+      "sha256": "c56207d9fc4e63634bd7e933a4b649b24c85bf676005c27d169285deb5f70795"
+    },
+    "affine4_pack.fatbin": {
+      "bytes": 10936,
+      "sha256": "22f9f8c6932b6f0bc1c1c155be4b50dfdf3acaf484a307fa4cbcac6e92ef0fe6"
+    },
+    "affine8.fatbin": {
+      "bytes": 249712,
+      "sha256": "68b3ad49384b45f28a381bd2e927750659ebdcab821250ddcac3da39cabb9fd9"
+    },
+    "affine_prefill.fatbin": {
+      "bytes": 310640,
+      "sha256": "e480863858ab4d926dec60f2663c22fe20d896674e501edaa5664ac7d0c7ccf6"
+    },
+    "attn_train.fatbin": {
+      "bytes": 65840,
+      "sha256": "d880ae463ab49213edd11764e117efccd001db801e7aafb910eec86c765dda4d"
+    },
+    "block_attention.fatbin": {
+      "bytes": 113584,
+      "sha256": "e05105296a0099fb1f4c84f99cc1582c938e0b250725ba0d984feb61f25dd316"
+    },
+    "ck_experts.fatbin": {
+      "bytes": 177328,
+      "sha256": "9a3d55058137c70a626ee3eb18ad023389d4d60de2ed8da680b75bed57666db5"
+    },
+    "ck_lane.fatbin": {
+      "bytes": 320816,
+      "sha256": "a8b56a62d3ffb1e94a620381d594faed0ba602865aca5ed79fd5f741ac591888"
+    },
+    "contract_controls.fatbin": {
+      "bytes": 964208,
+      "sha256": "c336fd1255b59345f53d38a9bcc86bd079697e302356d51a09df19f71558b674"
+    },
+    "dense_pointwise.fatbin": {
+      "bytes": 14584,
+      "sha256": "2f36ba1c763492122ba42ca282ca8e3df7a1e7f869b5a9326bb70f4dc4687c62"
+    },
+    "dense_rows.fatbin": {
+      "bytes": 287544,
+      "sha256": "c3030e533d05fe088f9a7738d8960bf187a30b54f9b31881fbd8919edd4b8702"
+    },
+    "drama3.fatbin": {
+      "bytes": 357808,
+      "sha256": "83bebd1b07f21fd9481dd4f0160f062a156cd30beb524246cddf83024371c5cf"
+    },
+    "drama3_codec.fatbin": {
+      "bytes": 70000,
+      "sha256": "23f86daa48890a90affcde77bb5b4a7bf021b87b6749d805918ff7b25cd6179a"
+    },
+    "drama3_fp8.fatbin": {
+      "bytes": 126064,
+      "sha256": "6eb218c68860c91e454e923cee4ef007faed515513ec850afde3569c0e1bf853"
+    },
+    "drama3_staged_gemv.fatbin": {
+      "bytes": 11568,
+      "sha256": "8e917d6a7f9b59d2db5f92ee5e16cdfadbb53fb7e0542f3fc11fc92d6557415d"
+    },
+    "dsv41_attn.fatbin": {
+      "bytes": 10,
+      "sha256": "5e32a5cbddd297457b90f1d70522919ae43bdf0735a3ae643d02002f29f43efe"
+    },
+    "dsv41_dense3.fatbin": {
+      "bytes": 12,
+      "sha256": "f856b74f7a48acfe12722e993cef685262123bed85e69096ff220c3d41a0747f"
+    },
+    "dsv41_engram_gate.fatbin": {
+      "bytes": 17,
+      "sha256": "edad566c27f816456ab46950f7e8e8e4e69c57ba55a1aa54b5d98ed8541736de"
+    },
+    "dsv41_exl3_experts.fatbin": {
+      "bytes": 18,
+      "sha256": "cbcb6fae38cff35eab6b884597967cbbb40303c849cf1552a15cdaebd16e5d5c"
+    },
+    "dsv41_glue.fatbin": {
+      "bytes": 10,
+      "sha256": "f3bceb1e626fdff3b78e2509853d7e050cb8c9eedc17415a84e224f2c21b2733"
+    },
+    "dsv41_kv_glue.fatbin": {
+      "bytes": 13,
+      "sha256": "1afa8e28ce1faa10951b0ad99b951c2d10f38696e16ea992da0b87316fc26cc8"
+    },
+    "dsv41_kvsplit.fatbin": {
+      "bytes": 13,
+      "sha256": "68b0404542dbb02bf415cef8ef29b9350056aa541a26691bc5cac309e22bd504"
+    },
+    "dsv41_l2pace.fatbin": {
+      "bytes": 12,
+      "sha256": "49e811215ca8d6b5cc6e57be4c906e8993c90e5587674e760ec724b7c8de3166"
+    },
+    "dsv41_l2pf.fatbin": {
+      "bytes": 10,
+      "sha256": "1b61f8b0d3dc609c0d6b799a5e2feb9354cc732cf24c66b131e29f35d3e38139"
+    },
+    "dsv41_lin2.fatbin": {
+      "bytes": 10,
+      "sha256": "fdb595001f9785593b8e006986cbffc49266adfd509922a26223d4880252b29f"
+    },
+    "dsv41_linear.fatbin": {
+      "bytes": 12,
+      "sha256": "5687d69bf6d571fdea755e14bbe7ad6cfc43ea7ea5fac09d3c0480d5aa654741"
+    },
+    "dsv41_mhc.fatbin": {
+      "bytes": 9,
+      "sha256": "58d2a952f0070e1a7d3ef154b7c093685aab8de5328c9d2116c0eecb3be5e566"
+    },
+    "dsv41_mhc_pf.fatbin": {
+      "bytes": 12,
+      "sha256": "65d8834ccc153b524926b35f0d74a2a309ba1a357ad3827f5d473d9c428b6245"
+    },
+    "dsv41_pfdense_k10.fatbin": {
+      "bytes": 17,
+      "sha256": "15fbd786d5837f078d644e64092ca56346f527a1e20d2a681d68d2341fd4c5f3"
+    },
+    "dsv41_pfdense_k12.fatbin": {
+      "bytes": 17,
+      "sha256": "d4c522079417cd16ab7f39d87c79fc96efab9e4d34b198288f0249edc7104b6b"
+    },
+    "dsv41_pfdense_k16.fatbin": {
+      "bytes": 17,
+      "sha256": "83c0919797cf2c3c83f70e9eb383261aefb68fb8a403d1da9dfc0c970a7ec0a9"
+    },
+    "dsv41_pfdense_k8.fatbin": {
+      "bytes": 16,
+      "sha256": "89ae47c5c31d4f36ac8ff7b582b5f8315b18ad816dd1597c85c70936f7eb6f3d"
+    },
+    "dsv41_pfglue.fatbin": {
+      "bytes": 12,
+      "sha256": "65aa2b913c9a316e9eb8c1ffa739055b045fde3f8ef4718ec438aa5e5d20569c"
+    },
+    "dsv41_pointwise.fatbin": {
+      "bytes": 15,
+      "sha256": "a017f98db1b28a3f264ffec10385496659f163032b584b41a3774e19371f57bf"
+    },
+    "dsv41_router_gemv.fatbin": {
+      "bytes": 17,
+      "sha256": "8b6ba1ed37da1e3166107b86c477946180d8f4969d739c863efeaccd13b9d98a"
+    },
+    "dsv41_router_glue.fatbin": {
+      "bytes": 17,
+      "sha256": "41f522ab703066e5c1c530d95e4f6c98e57df6844f37486a04bd860d72cd19e0"
+    },
+    "dsv41_sampling.fatbin": {
+      "bytes": 14,
+      "sha256": "fb2a249311cdfd30947a6573e89fa18973e13cd2e20d704e860d59addf8ee340"
+    },
+    "dsv41_topk.fatbin": {
+      "bytes": 10,
+      "sha256": "e68c3260fd83be5085a8bb4168fa2a0bbcb1c2cfbd8ec8bb9d9d11033a429e65"
+    },
+    "dsv41_topk_b.fatbin": {
+      "bytes": 12,
+      "sha256": "7079f29079b3a0bc4429832d5ef4d3cba3ad526897f319eaa3013aa285626950"
+    },
+    "dsv41_topk_keys.fatbin": {
+      "bytes": 15,
+      "sha256": "7e1e5bb31a691051540ab6e2e2fd29e9280edddec19cf8cc51ae7ca652c7cd54"
+    },
+    "dsv41_x3gm.fatbin": {
+      "bytes": 10,
+      "sha256": "71a2b1c8067e43b06c4db824c2b27b53b0803d25dd9ca1a1ccadcf2be12ae9e6"
+    },
+    "dsv41_x3gm3.fatbin": {
+      "bytes": 11,
+      "sha256": "265146ed0edba4bf9409841f688b30dc99f529c18c27c06495596b7b6a582fb0"
+    },
+    "dsv41_x3gm_plan.fatbin": {
+      "bytes": 15,
+      "sha256": "908e27a44e7c8ea0933d0680663912d8008b52e0e6decae61e6938f4ccd7cd2a"
+    },
+    "dsv41_x3ld.fatbin": {
+      "bytes": 10,
+      "sha256": "78e3389f9f13a8313025b62bc21ad0b63cdad75e7f148541ec81b21054a17008"
+    },
+    "dsv41_x3ld_epi.fatbin": {
+      "bytes": 14,
+      "sha256": "142f937e5fea821346bbf4ef6a57c1cd318a564b609e4fa1d2076de89c310cf6"
+    },
+    "dsv41_x3pf.fatbin": {
+      "bytes": 10,
+      "sha256": "50a13245df48f1bca7019847b3b56394b2d14c66a7cc31f9f001f702002aec21"
+    },
+    "dsv41_x3seg.fatbin": {
+      "bytes": 11,
+      "sha256": "dcd40989892cf2936c5fd755cb12ecdd2d72b4e17507f4f432c09e5da483b641"
+    },
+    "embed_rows.fatbin": {
+      "bytes": 19640,
+      "sha256": "cabec930bdbd9ce5244ba038e98b6afc71d5b2c38a3a786a354a2c180b6a47e5"
+    },
+    "exl3_candidate.fatbin": {
+      "bytes": 1351024,
+      "sha256": "52d50bdabcce3930561426ec84a9869e95f1ad8e03b5321736f8bbe8bc116e8d"
+    },
+    "exl3_experts.fatbin": {
+      "bytes": 744112,
+      "sha256": "6f38f3122c37d721d4de3a3d5098c3f72d83d6704fe384266e22eae38ec30516"
+    },
+    "exl3_linear.fatbin": {
+      "bytes": 2175216,
+      "sha256": "baede92fb6537278e0f3ff01f1d603e9d0168cfa575c71dad5a5d6110d7801f3"
+    },
+    "exlr8.fatbin": {
+      "bytes": 611568,
+      "sha256": "6af398908a462a4663bfeed23108a32481374fe4ee4a7bf1baaec457f892408b"
+    },
+    "exlr8_dense.fatbin": {
+      "bytes": 177072,
+      "sha256": "05b3cbf5333e980917905381fb86fa28ae9994e35ffb201085db2c75bd63f9f7"
+    },
+    "experts.fatbin": {
+      "bytes": 197808,
+      "sha256": "3977354011592382425d5a21c5a172b404bffa4033c36576dc91d02e77544ad0"
+    },
+    "experts3.fatbin": {
+      "bytes": 186352,
+      "sha256": "4da295af96dd7c254014f4eea24070ef535c438513f0f49441400f6db0544286"
+    },
+    "experts3_prefill.fatbin": {
+      "bytes": 172656,
+      "sha256": "0404d90e8548a919afec1725e6b05d29bede6106fef84f538d8535f40df8cdc8"
+    },
+    "experts_pack.fatbin": {
+      "bytes": 10680,
+      "sha256": "f9830faa2b0e3e0fa427be926e8fb6127162cc27e03a986fe3353d46500c1d57"
+    },
+    "experts_prefill.fatbin": {
+      "bytes": 116080,
+      "sha256": "daae18e501110406dd1f3bf4c57c21c57d55cf7957fe96a803c47af7ee68f78d"
+    },
+    "experts_rows.fatbin": {
+      "bytes": 67640,
+      "sha256": "c93dd5b3f50b7e39a449579fc30a557fa34139b49cbd8d842bbc5a012b98ff23"
+    },
+    "flashnext_attn.fatbin": {
+      "bytes": 509808,
+      "sha256": "85a4763b6801437d33680c39c7593304ec24eb2bf641a99325e5ec886025be80"
+    },
+    "flashnext_batch.fatbin": {
+      "bytes": 221680,
+      "sha256": "577354df67b29e9bc8317cccdd35eaaff255f1cc832cf2391e43ed9a8e779d1b"
+    },
+    "flashnext_fact.fatbin": {
+      "bytes": 199408,
+      "sha256": "5855c0574bfa54092ce14f79888cd00f9f0ebc482bb849e369ddc17d6165f13d"
+    },
+    "flashnext_fexp.fatbin": {
+      "bytes": 79728,
+      "sha256": "dcea57a82442f32df8900f794c95386bca3f778957ab4bc6fb2b4afeabfb19bc"
+    },
+    "flashnext_gdn.fatbin": {
+      "bytes": 20720,
+      "sha256": "ee78fd14900e22c3d43ebe558026e066be35b95231f69170d0c7c3377682d40a"
+    },
+    "flashnext_hc.fatbin": {
+      "bytes": 233328,
+      "sha256": "14ba48c494166e5061add0ce51b20e65fe6f25c2654caaae1a867cd00f14b374"
+    },
+    "flashnext_hcf.fatbin": {
+      "bytes": 211184,
+      "sha256": "cbfd627e1dc29fa1a4b45575a0e9150fcd904c2f7bbcdc6decf6b64915d83319"
+    },
+    "flashnext_mtp.fatbin": {
+      "bytes": 8688,
+      "sha256": "2e8b0561a17402da393f456a2575724f4f96884081a6e8e336f1131c247a24bd"
+    },
+    "flashnext_train.fatbin": {
+      "bytes": 161776,
+      "sha256": "e0f75a9d918066ae9e882b1c690685297c90e7a53e82661775c16589241d4bf8"
+    },
+    "fp8_experts.fatbin": {
+      "bytes": 179504,
+      "sha256": "ac0a2a662476d9105010e3ac1d6fe625e58c0385d8539edd679f707622340785"
+    },
+    "gdn.fatbin": {
+      "bytes": 220912,
+      "sha256": "10231c52fa8e1ad3bcdf9fded6968b73c2fcba710b947267c0bf47a6b164776e"
+    },
+    "gdn_prefill.fatbin": {
+      "bytes": 18672,
+      "sha256": "dffd66fe071576a00e25f4d2fea9467c4551edec55a99b0fcf5e0cc597b5d807"
+    },
+    "gdn_prep.fatbin": {
+      "bytes": 62584,
+      "sha256": "b59b4b6dd518108ed849e6640fd03e60ea8baa584d6f6df1112f5e348f3707c7"
+    },
+    "gdn_train.fatbin": {
+      "bytes": 90992,
+      "sha256": "75811937be479bbcb2316bf1e2cba268ca977ed85fc5e758d39ac2356b416666"
+    },
+    "ggml.fatbin": {
+      "bytes": 1467760,
+      "sha256": "defc59d2aff062dc36bc0e7a2399ee437d9424261439cdae2c3e8e82eb64cf67"
+    },
+    "glm_dflash.fatbin": {
+      "bytes": 91952,
+      "sha256": "dab871378da8a5c40f9f9b75ca33229ffb419467e09b6d3939aead9b412a9f75"
+    },
+    "glm_glue.fatbin": {
+      "bytes": 560880,
+      "sha256": "caf66dafa3fdda6c6be5931c8db284f55429310bedf50d84cb99f66892776128"
+    },
+    "glm_index.fatbin": {
+      "bytes": 71792,
+      "sha256": "388607d4c88c725662cfe8f9404c61ba1577330649f432a0ce4ea19700e99304"
+    },
+    "glm_kda.fatbin": {
+      "bytes": 61808,
+      "sha256": "e0add944342b59ee7f1e1012316b59ab599def21ad0745a975ff6975f16d63c1"
+    },
+    "glm_mm.fatbin": {
+      "bytes": 617712,
+      "sha256": "b1bb1aba3419ded420b9ddf85f2e2426a102ac7922fe06fcfa541b6de524bff9"
+    },
+    "glm_ops.fatbin": {
+      "bytes": 15800,
+      "sha256": "4ef5c04abd2e8aa941372c15b579589ad85f61093dd44cd6e68cd2350f558ec9"
+    },
+    "glm_quant.fatbin": {
+      "bytes": 59824,
+      "sha256": "74a7dd79d2e72f468f7e94bafc63f2d2170251d399a73df0d66cd1ce0a10ed0f"
+    },
+    "glm_vision.fatbin": {
+      "bytes": 58096,
+      "sha256": "452e00cdc1b307592cb835f9819049bf36d1f9ea14da2b2c0ee0bf238dfb6620"
+    },
+    "h3-compile-only.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "h3.fatbin": {
+      "bytes": 2,
+      "sha256": "97fb5f8538b89f6c1accfd19836b65a73b61fbc2e0cbf84bb858a0fffa3f1592"
+    },
+    "lane_gemv.fatbin": {
+      "bytes": 68336,
+      "sha256": "fd405f0fb49fe45e15e917ec86bcde2eecc31b80e992552a016d3b87ba8baf1a"
+    },
+    "lfm2.fatbin": {
+      "bytes": 60864,
+      "sha256": "f72b93aec67b34d2e5ad25c7e2e6ea63f60585bd8928434e46fc507c22ff35bd"
+    },
+    "modelopt_pack.fatbin": {
+      "bytes": 26872,
+      "sha256": "16faa614d1fbabd17872a25bfb9f967d23aa923d471751fe1fe8ee7f046e2b1d"
+    },
+    "moe.fatbin": {
+      "bytes": 32624,
+      "sha256": "edee0f2ec338379e47876fbc5a3f5253d8e3c57f6a0c7e1a9b6e8477c066baba"
+    },
+    "moe_glue.fatbin": {
+      "bytes": 58736,
+      "sha256": "0cdc5f50637abe1fdfc3a9d4dfd75658d9b7afc69a6850e479124930c3acd7cc"
+    },
+    "nemotron_attention.fatbin": {
+      "bytes": 90288,
+      "sha256": "40109aa3c9a8b4954dc91a9bdee1fd23bd03b3f0a7431620840c6a1cf12a53f6"
+    },
+    "nemotron_keyed.fatbin": {
+      "bytes": 9784,
+      "sha256": "52efce2cf1631e9e97bd9e8914502e51ec552e1730f3b1c1d9af1724ea6630a8"
+    },
+    "nemotron_latent.fatbin": {
+      "bytes": 235248,
+      "sha256": "e2c3a32410539ebc7cb4ae6028ce4c8e7b181107774ac7bac42c97c2b7a300f2"
+    },
+    "nemotron_mamba.fatbin": {
+      "bytes": 74352,
+      "sha256": "f6d4f263e0fd7d50d1f2fbc81e55c865016a92b64d9945203f47d948564ec7ea"
+    },
+    "nemotron_norms.fatbin": {
+      "bytes": 46512,
+      "sha256": "030d066c48553249ca2d42f2f2e779951316ff9a2655ef7bad14847ed11f998f"
+    },
+    "nemotron_ops.fatbin": {
+      "bytes": 129136,
+      "sha256": "bf4e968e513e6933a9db614c4d9dcec0aa8b218d6c5f97872c39770aec970893"
+    },
+    "nemotron_route.fatbin": {
+      "bytes": 150640,
+      "sha256": "3ce67936be0dea53ef4ac71a6c59fd282da0b73458acece0462da09e5d918012"
+    },
+    "norms.fatbin": {
+      "bytes": 495920,
+      "sha256": "9b54f9ddddd17b8024af310786402d046805891abe6cf0d88eb5f0c6f583a607"
+    },
+    "nvfp4_experts.fatbin": {
+      "bytes": 1568496,
+      "sha256": "67c36f9b59d7e91d245216c4c2e39e69d0b78bf129cd1d24a1ce328197573bd3"
+    },
+    "nvfp4_experts_tile.fatbin": {
+      "bytes": 384624,
+      "sha256": "191825d95bb52d6c62938aa5c7a3e18a77f52f5a6fc2a9f46a15eac0dee7892b"
+    },
+    "prefill_attention.fatbin": {
+      "bytes": 588784,
+      "sha256": "9c5efd3e2cd4a2abb1219465fdec14d06dbbefc0e37a7f467e48385952abe86c"
+    },
+    "probe.fatbin": {
+      "bytes": 13552,
+      "sha256": "97be87ae22ed1bd90ae111f71d209af18a2dd4aa3c45f7b5999de07ad6267f40"
+    },
+    "prompt16.fatbin": {
+      "bytes": 328944,
+      "sha256": "15454a8737c48a55bdc7a6a9246a24682165d3104240b2ce1c7ce66f1dee1efe"
+    },
+    "qk_rows.fatbin": {
+      "bytes": 94192,
+      "sha256": "25a97000bc678a03dffb8e2b9e2f1a3af484ab696f4b5e7be3998e37221ec30c"
+    },
+    "qmm.fatbin": {
+      "bytes": 52144,
+      "sha256": "11ce135d7231cfadad0bb739a79954107391f30b07b87f3eee052c8bb8c95b25"
+    },
+    "qmm_group.fatbin": {
+      "bytes": 104112,
+      "sha256": "dc5dc5ea274acae31e0587d1fcd35bf4c1dea4f9c53522382d922883d0b37d5b"
+    },
+    "qmm_prefill.fatbin": {
+      "bytes": 138736,
+      "sha256": "eee6ecbcb8b6318d9b1feb7bb0f1cac6ea27ae84a99f97f3500b6ad47fe0f281"
+    },
+    "qmmf.fatbin": {
+      "bytes": 2932016,
+      "sha256": "18854d3f3a9d458db9178c30ee6107ff8c0cd6eda39dc0279aff5461625a33c6"
+    },
+    "qwen27_train.fatbin": {
+      "bytes": 182256,
+      "sha256": "d59a51bd472f88ec68bb4daaa0c5d484f622fb79a80e04456cefead3209f4392"
+    },
+    "qwen35.fatbin": {
+      "bytes": 482352,
+      "sha256": "ae4d8ca524fb7001939ce269b77899274c4ea6aa4d8adf253e132377f4583a5b"
+    },
+    "qwen35_bf16_rows.fatbin": {
+      "bytes": 9776,
+      "sha256": "2e03a8ef01214866fa1377752645031cc5f96f4e9e629dfbb5b8221545c2b6fc"
+    },
+    "qwen35_draft.fatbin": {
+      "bytes": 117936,
+      "sha256": "4980bd25bb0a3af9629dc8c91d6484bbf19585edfb7a54674e7cdfcb9a1a757b"
+    },
+    "qwen35_keep.fatbin": {
+      "bytes": 17592,
+      "sha256": "c99e735bf39b5fca10cfd02bd542dabf61c5c3298a9021c9ad6b2c7b83c837a1"
+    },
+    "qwen35_kv8.fatbin": {
+      "bytes": 507440,
+      "sha256": "dba5f98513f07644fa5739fc259c02b256eb196082e02b0903f0aca05684322e"
+    },
+    "qwen36_mtp.fatbin": {
+      "bytes": 70328,
+      "sha256": "2018c708230912e44b2d3a6f777334a4c59fd2dea780b0ead288d0f98de7476f"
+    },
+    "qwen4_gdn.fatbin": {
+      "bytes": 114160,
+      "sha256": "fe061398214a2c0407f18ced25e989e47a94c43fcc7343d0ae8f305bc60c9342"
+    },
+    "qwen4_hc.fatbin": {
+      "bytes": 103352,
+      "sha256": "8d0541db3bae1ad599d0a974ec0fdf2ef0cbb8f0a30873afa8e6fc730d5e7827"
+    },
+    "qwen4_ple.fatbin": {
+      "bytes": 139952,
+      "sha256": "01982b61dcc6266d8cb32d2dce5f5dd78dabaf5e9279fd2dc1bcd28b93ab1cb2"
+    },
+    "qwen4_projection.fatbin": {
+      "bytes": 37880,
+      "sha256": "ac1735211ff836711c52beb27cf9a590788b3331c9648406ad0363176af15609"
+    },
+    "qwen_vision.fatbin": {
+      "bytes": 66864,
+      "sha256": "db7949daf68e9d864302be0df1fe127900b38f26e1a53bb43a29a19899887cfd"
+    },
+    "rank_sum.fatbin": {
+      "bytes": 14072,
+      "sha256": "3a150a36b6baa4bd34dfd234925b79915ba5ffd6b4beff313b42d8052c727e14"
+    },
+    "roce_gather.fatbin": {
+      "bytes": 7288,
+      "sha256": "bff684d7aa12828c703735e6bd88916b5a69944ebf0a717420d060297a3f68bd"
+    },
+    "route_rows.fatbin": {
+      "bytes": 44272,
+      "sha256": "e094bf83eacb09929a82a9b8a6a2518434641dd58afc0f083d1ff28730846ed6"
+    },
+    "sample.fatbin": {
+      "bytes": 737520,
+      "sha256": "08535766465e3e79ae4ce50aa36f0dbbcaa1b07171a204b24c4a9acc7b68fe5f"
+    },
+    "scan_rows.fatbin": {
+      "bytes": 49904,
+      "sha256": "269a1a0399c57f53b95e7150d7a3919b4acbb99dee00168c03cb0ac95c914691"
+    },
+    "torch_argmax.fatbin": {
+      "bytes": 64752,
+      "sha256": "0c3b5bd7a423cfc4afeb2b2dcf8d00a65870bf18af9f8a82b5c6657807dd1390"
+    },
+    "torch_indexing.fatbin": {
+      "bytes": 12600,
+      "sha256": "43da0955c73006240a0f2ceb89f5589e384d5d462c76127ffd4700a631f4ba8e"
+    },
+    "torch_movement.fatbin": {
+      "bytes": 10232,
+      "sha256": "4d59ad17780769cb3ddbe97238485977ed0d419b3defecfab477ccf12395fbe6"
+    },
+    "torch_nemotron_constants.fatbin": {
+      "bytes": 4088,
+      "sha256": "06eada9c58e0d11a6b81124039bb901d82fb940ebb1690dd74851449fec7417e"
+    },
+    "torch_pointwise.fatbin": {
+      "bytes": 7672,
+      "sha256": "e2171125f210999aa39c9bde46adceeedbaa6927d54f3ceb3532d5e8209bc827"
+    },
+    "torch_topk.fatbin": {
+      "bytes": 25648,
+      "sha256": "3e6b2a8a03cab8cace958e3eca05cff604360435cd822abdec57b29a7ddf335d"
+    },
+    "train.fatbin": {
+      "bytes": 296112,
+      "sha256": "242a2f3df57f91db2e1fb30d476a74359cf47f16ec691ac96e1e152203dfbd1c"
+    },
+    "train_attn.fatbin": {
+      "bytes": 57520,
+      "sha256": "44607b849e56a419bdaebb6a23bf8981f01cc0770eed339008875e44da76ac60"
+    },
+    "train_q4.fatbin": {
+      "bytes": 130928,
+      "sha256": "3f29034fe5b58a633b6f8fd809850d27196d1a09e59d076506fa753a94b80464"
+    },
+    "tree_attention.fatbin": {
+      "bytes": 1041008,
+      "sha256": "39a30ba3a004f850c61042a4b579cb3e1cb8338991f3eb2a4747dd8d44be792d"
+    },
+    "tree_round.fatbin": {
+      "bytes": 27440,
+      "sha256": "f6862d66cb184da5623f41da6b3b3daa6cc28344427e6b6b0f757c46531b49f3"
+    },
+    "unsupported-dsv41_attn.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unsupported-dsv41_lin2.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unsupported-dsv41_topk.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unsupported-dsv41_topk_b.fatbin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "vit.fatbin": {
+      "bytes": 69424,
+      "sha256": "a0310809ae33da3360a63a9cb3b7db401403ba5c5700ae0abbd8d0bf7dde3c82"
+    },
+    "w4a8_prefill.fatbin": {
+      "bytes": 79088,
+      "sha256": "82ac3e4af73536c559eeb98ff3a42c9862fdc730698e8371ad313746cb7af0b3"
+    },
+    "window_attention.fatbin": {
+      "bytes": 654448,
+      "sha256": "f4b08ccc29d2913f403aff3690d8439619d0e6d20eb4bb150501c4b3262c2443"
+    },
+    "window_pages.fatbin": {
+      "bytes": 237936,
+      "sha256": "c615739233f3a6a1599ed309fdd75d7fd7c80a1cb7b4375a699e7d314f97b15e"
+    },
+    "window_rows.fatbin": {
+      "bytes": 625392,
+      "sha256": "e3072cb284ebdb7835b3ebf4a7f8e576713eb4e04a0539672cc87882e48c13e5"
+    }
+  },
+  "refs": {
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice/slice.json": {
+      "bytes": 267,
+      "sha256": "811adf2c5644cc9de8f40f395f718ea5f6af5ae8ceeefe27fd90200fd4c111e9"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice/config.json": {
+      "bytes": 1119,
+      "sha256": "7080e386a304c0638aabb3e6f7c5ffdc469b708b260b70bfaef48d5d3b1b0c42"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2/slice-serve/oracle-tokens.json": {
+      "bytes": 786,
+      "sha256": "2c4b69c530b393565f97a874b419b28ca536d38c7d86852f0047318614642bd6"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/ref-12-greedy.json": {
+      "bytes": 917,
+      "sha256": "084c517926b419488227228949b0b7ad96fcb9affe8a12673bf4a947b282d085"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/sequences.json": {
+      "bytes": 1342,
+      "sha256": "d0f3857b36e5a685982d2ac94eb63dbc766f86c40623659adb3821a2ef46f8fd"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb/generation_config.json": {
+      "bytes": 164,
+      "sha256": "fa8b09c0d2ab1db7a2736a780586df21b1602f8e02e29fa9feee325bb57d18ee"
+    },
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/serve_exl3.py": {
+      "bytes": 12868,
+      "sha256": "b46fae9c5ae7655c05eae16918237d3a8ccacbad6e775f0f843834f3cc19f7f1"
+    }
+  },
+  "platform": "Linux-7.2.8-10-omarchy-x86_64-with-glibc2.44",
+  "zig": "0.17.0",
+  "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Tue_Sep_01_08:45:21_PDT_2026\nCuda compilation tools, release 13.4, V13.4.92\nBuild cuda_13.4.r13.4/compiler.38855100_0"
+}

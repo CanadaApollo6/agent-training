@@ -1,0 +1,11 @@
+[
+  "/home/riels/.local/share/zig-x86_64-linux-0.17.0/zig",
+  "test",
+  "--dep",
+  "save_guard",
+  "-Mroot=/tmp/tf-p2b-exl3-base-pqlg9o6v/zig/src/core/exl3_load.zig",
+  "-Msave_guard=/tmp/tf-p2b-exl3-base-pqlg9o6v/zig/src/core/save_guard.zig",
+  "-lc",
+  "--test-filter",
+  "a scan that fails"
+]

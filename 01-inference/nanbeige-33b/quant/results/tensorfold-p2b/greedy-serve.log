@@ -1,0 +1,1 @@
+{"state": "PASS", "context": 1024, "layers": 2, "solo_tokens": [16, 16], "concurrent_equal": true, "stream_equal": true, "cancel_reuse_equal": true, "pre_stream_rejections": 3, "full_model_checks": "NOT RUN on a slice", "greedy_equal": 128, "greedy_paths": ["chat", "completions"], "peak_mib": 1666, "minimum_free_mib": 6207}
