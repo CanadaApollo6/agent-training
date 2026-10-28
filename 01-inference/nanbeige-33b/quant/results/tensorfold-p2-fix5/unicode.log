@@ -1,0 +1,20 @@
+1/1 llama_unicode_check.test.every Python 3.12 name and alias, both cases, and negative names...Unicode Zig comparisons 295961, mismatches 0
+OK
+All 1 tests passed.
+{
+  "python": "3.12.14",
+  "unicode": "15.0.0",
+  "explicit_and_aliases": 34430,
+  "named_codepoints": 143041,
+  "aliases": 473,
+  "compressed_bytes": 261166,
+  "checks": {
+    "named": 286082,
+    "alias": 946,
+    "sequence": 922,
+    "negative": 7572,
+    "boundary": 440
+  },
+  "mismatches": 0,
+  "zig_checked": true
+}

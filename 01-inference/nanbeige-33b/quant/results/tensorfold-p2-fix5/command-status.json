@@ -1,0 +1,28 @@
+{
+  "baseline": "7fe2dce77a5913310a6edef719e278225b08b02d",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "python": "3.12.14",
+    "unicode": "15.0.0",
+    "zig": "0.17.0"
+  },
+  "commands": {
+    "unicode_exhaustive": 0,
+    "fixtures_regenerate": 0,
+    "fixtures_reproducible": 0,
+    "required_tests_fresh": 0,
+    "old_parser_build": 0,
+    "old_routes_build": 0,
+    "old_differential": 0,
+    "old_full_response": 0,
+    "reviewer_rerun_sh": 1,
+    "lean_check": 1,
+    "lean_new": 0,
+    "zig_fmt_check": 0,
+    "git_diff_check": 0,
+    "native_sm86_build": 0
+  },
+  "reviewer_rerun_note": "Original set -e script stops at lean_check.py because its 426 inherited findings cause exit 1. Both JSON/SSE comparisons and its CPU tests completed. The remaining lean_new.py comparison was run separately and reported 0 new.",
+  "commit": "891015b9952fc3cbadb6859149fe810ac5dcf826",
+  "engine_worktree_clean": true
+}

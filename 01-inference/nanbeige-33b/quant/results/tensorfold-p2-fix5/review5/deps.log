@@ -1,0 +1,17 @@
+Using CPython 3.12.14 interpreter at: /home/riels/exl3-local/bin/python
+Resolved 11 packages in 74ms
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 11 packages in 24ms
+ + annotated-doc==0.0.5
+ + annotated-types==0.8.0
+ + anyio==4.15.1
+ + fastapi==0.162.0
+ + idna==3.20
+ + opentelemetry-api==1.45.1
+ + pydantic==2.14.1
+ + pydantic-core==2.50.1
+ + starlette==1.10.0
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4

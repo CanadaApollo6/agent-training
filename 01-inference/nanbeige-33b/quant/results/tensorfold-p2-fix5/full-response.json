@@ -1,0 +1,6285 @@
+[
+  {
+    "case": {
+      "label": "header-close",
+      "raw": "</think><tool_call><function=</function></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-4f2a128804a64cc4805042d662f544b8",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-f1ea390a573f4e27",
+                  "type": "function",
+                  "function": {
+                    "name": "</function",
+                    "arguments": "{}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 9,
+          "total_tokens": 353
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-e5661d1a6e37422eb4a266dc3ee40035",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-e5661d1a6e37422eb4a266dc3ee40035",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-a8b5e3f57ab24a95",
+                    "type": "function",
+                    "function": {
+                      "name": "</function",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-e5661d1a6e37422eb4a266dc3ee40035",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-22ce7a78d9804cfdb2d2f48cff9c0d84",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-751ce26fa648451c",
+                  "type": "function",
+                  "function": {
+                    "name": "</function",
+                    "arguments": "{}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 9,
+          "total_tokens": 353
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-48fc1f06bc0d45479731d2ecdfa55bef",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-48fc1f06bc0d45479731d2ecdfa55bef",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-20aa1f979f1b47d8",
+                    "type": "function",
+                    "function": {
+                      "name": "</function",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-48fc1f06bc0d45479731d2ecdfa55bef",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        897,
+        3091,
+        152426,
+        166106
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "</function",
+          "arguments": {}
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "</function",
+          "arguments": {}
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "param-newline",
+      "raw": "</think><tool_call><function=run><parameter=s>hi\n\n</tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-8464e30c03464975a2d60f0d309dbf8b",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-d7c145fe096b4edb",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"hi\"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 15,
+          "total_tokens": 359
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-452d000bc537489b9408f5e6bce0da55",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-452d000bc537489b9408f5e6bce0da55",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-2acccb8c369a4120",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"hi\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-452d000bc537489b9408f5e6bce0da55",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-a2510ea109f34f6eac5ab3d09694e420",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-e09c175126a041fd",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"hi\"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 15,
+          "total_tokens": 359
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-caa5118520f74fa6be65a1621a8e3914",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-caa5118520f74fa6be65a1621a8e3914",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-cc8a1dbb4e3a48fc",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"hi\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-caa5118520f74fa6be65a1621a8e3914",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152350,
+        152426,
+        6687,
+        13,
+        13,
+        166106
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "hi"
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "hi"
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "function-newline",
+      "raw": "</think><tool_call><function=run><parameter=s>hi\n\n</function></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-ad436209de3a4a89ac525982dcba3a71",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-166dc21bf5104204",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"hi\"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 18,
+          "total_tokens": 362
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-6aa24b06462c4fee8189571d9d100ee2",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6aa24b06462c4fee8189571d9d100ee2",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-ff31ca6c2b1740ed",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"hi\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6aa24b06462c4fee8189571d9d100ee2",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-08d3a08b2a0b4e25a21faa7a6b86702f",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-6cb4c1562d44455a",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"hi\"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 18,
+          "total_tokens": 362
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-c0be2e8f1507420eb91a52204e1620ae",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-c0be2e8f1507420eb91a52204e1620ae",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-db2dffbc0ef24ac1",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"hi\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-c0be2e8f1507420eb91a52204e1620ae",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152350,
+        152426,
+        6687,
+        13,
+        13,
+        897,
+        3091,
+        152426,
+        166106
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "hi"
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "hi"
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "tool-newline",
+      "raw": "</think><tool_call><function=run><parameter=s>hi\n\n\n",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-54bfd465608540858e75a703f19f0216",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-348991c8d07b4559",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"hi\"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 15,
+          "total_tokens": 359
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-4e78767c20d9497698f0100d370d00ee",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4e78767c20d9497698f0100d370d00ee",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-953a42f327764a15",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"hi\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4e78767c20d9497698f0100d370d00ee",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-79b7a25188a9413abadec3f18b38e937",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-bbfb144d6ebf4b55",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"hi\"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 15,
+          "total_tokens": 359
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-4fe4fe23eed2477ea4349960d3fba40b",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4fe4fe23eed2477ea4349960d3fba40b",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-83591064d31f4b76",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"hi\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4fe4fe23eed2477ea4349960d3fba40b",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152350,
+        152426,
+        6687,
+        13,
+        13,
+        13
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "hi"
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "hi"
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "trailing-spaces",
+      "raw": "</think><tool_call><function=run><parameter=s>hi  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-1d244f809e314e709abed350d8962a1c",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-48aba37ba5614409",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"hi  \"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 13,
+          "total_tokens": 357
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-510e1fb3f46f45ada95b24151649054f",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-510e1fb3f46f45ada95b24151649054f",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-9471053773644e4f",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"hi  \"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-510e1fb3f46f45ada95b24151649054f",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-ed7cf002e74d47238550661da411ccba",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-9cb64e34f4734446",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"hi  \"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 13,
+          "total_tokens": 357
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-3ec75c3d0f5f4df888325c956dd93d8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3ec75c3d0f5f4df888325c956dd93d8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-6fc44685625648c6",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"hi  \"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3ec75c3d0f5f4df888325c956dd93d8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152350,
+        152426,
+        6687,
+        259
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "hi  "
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "hi  "
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "empty",
+      "raw": "",
+      "tools": [],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-6715396cfe6b4c4c83fce292431be380",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 0,
+          "total_tokens": 32
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-2346a29ffba24c4db1b971f5113b9a17",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-2346a29ffba24c4db1b971f5113b9a17",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-c5d2ace9362e4649be2179d9da067d04",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 0,
+          "total_tokens": 32
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-0a596d5570a14f86939f3852757fa2c2",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-0a596d5570a14f86939f3852757fa2c2",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": []
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "reasoning-only",
+      "raw": "Plan.",
+      "tools": [],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-7c7f370d1b5d4209aadda6febd09a054",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 2,
+          "total_tokens": 34
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-ba596584b12d4a42b5709501aec3949a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-ba596584b12d4a42b5709501aec3949a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Plan.",
+                "reasoning_content": "Plan."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-ba596584b12d4a42b5709501aec3949a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-99c9202611dd4263ac788c5f17ea88e0",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 2,
+          "total_tokens": 34
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-cc6397007fad4ec8bc8b70db264cb6c9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-cc6397007fad4ec8bc8b70db264cb6c9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Plan.",
+                "reasoning_content": "Plan."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-cc6397007fad4ec8bc8b70db264cb6c9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        6470,
+        152361
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "empty-answer",
+      "raw": "Plan.</think> \n",
+      "tools": [],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-af34ef7d7a4e4daf8bdf30e6560714d6",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 5,
+          "total_tokens": 37
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-ce835ba6c7164b25a26eb0263af55c8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-ce835ba6c7164b25a26eb0263af55c8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Pl",
+                "reasoning_content": "Pl"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-ce835ba6c7164b25a26eb0263af55c8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "an.",
+                "reasoning_content": "an."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-ce835ba6c7164b25a26eb0263af55c8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-7bf716462ece40e8b330ea8c1b26914f",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 5,
+          "total_tokens": 37
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-675bd0c3b6d34d568b7cb7a120c14b8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-675bd0c3b6d34d568b7cb7a120c14b8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Plan.",
+                "reasoning_content": "Plan."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-675bd0c3b6d34d568b7cb7a120c14b8a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        6470,
+        152361,
+        166104,
+        152343,
+        13
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "answer-only",
+      "raw": "</think> answer ",
+      "tools": [],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-61628895be144ad0804eed87d016119a",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "answer",
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 3,
+          "total_tokens": 35
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-3f22160ed793438486246536efee548d",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3f22160ed793438486246536efee548d",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "answer"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3f22160ed793438486246536efee548d",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-fed6051a004e424db90ed0ba09755d62",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "answer",
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 3,
+          "total_tokens": 35
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-4219283a51234bada6b17fef0771fe34",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4219283a51234bada6b17fef0771fe34",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "answer"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4219283a51234bada6b17fef0771fe34",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        3324,
+        152343
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "answer",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "answer",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "space-reasoning",
+      "raw": "<think>\n  plan  \n</think> answer ",
+      "tools": [],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-2f69b80c090f4f71922ccfd7d40a6977",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "answer",
+              "reasoning": "  plan  ",
+              "reasoning_content": "  plan  ",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 9,
+          "total_tokens": 41
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "<t",
+                "reasoning_content": "<t"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "hin",
+                "reasoning_content": "hin"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "k>\n",
+                "reasoning_content": "k>\n"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "  p",
+                "reasoning_content": "  p"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "lan",
+                "reasoning_content": "lan"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "  \n",
+                "reasoning_content": "  \n"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "answer"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4895d009f43e43c18db40c6325c1df47",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-d24e9a03da35456e95b659a6afb79e28",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "answer",
+              "reasoning": "  plan  ",
+              "reasoning_content": "  plan  ",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 9,
+          "total_tokens": 41
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "<",
+                "reasoning_content": "<"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "th",
+                "reasoning_content": "th"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "ink>",
+                "reasoning_content": "ink>"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "\n ",
+                "reasoning_content": "\n "
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": " ",
+                "reasoning_content": " "
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "plan  \n",
+                "reasoning_content": "plan  \n"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "answer"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-3fe95e5ffa7f4c0d9ef25770298700b9",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166103,
+        13,
+        259,
+        10588,
+        259,
+        13,
+        166104,
+        3324,
+        152343
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "<think>\n  plan  \n",
+      "reasoning_content": "<think>\n  plan  \n",
+      "content": "answer",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "<think>\n  plan  \n",
+      "reasoning_content": "<think>\n  plan  \n",
+      "content": "answer",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "empty-tools",
+      "raw": "</think>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-9d6adaea29c74ed9a7ee74522c1c9669",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 1,
+          "total_tokens": 345
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-8b6b6159ae0a4123abbeb7b155856ba6",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-8b6b6159ae0a4123abbeb7b155856ba6",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-4b795d4e7f4f45d1b83acf6476a82f4a",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 1,
+          "total_tokens": 345
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-2c44536c706641d6842d744e7004d4fc",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-2c44536c706641d6842d744e7004d4fc",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "unused-tools",
+      "raw": "Plan.</think> answer ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-7d39391204ba4812851f632833835dd7",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "answer",
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 5,
+          "total_tokens": 349
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-1b52bc4532f7498eac9678fe63bdc946",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-1b52bc4532f7498eac9678fe63bdc946",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Pl",
+                "reasoning_content": "Pl"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-1b52bc4532f7498eac9678fe63bdc946",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "an.",
+                "reasoning_content": "an."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-1b52bc4532f7498eac9678fe63bdc946",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "answer"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-1b52bc4532f7498eac9678fe63bdc946",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-a8e0744c9d5f4da2865a7d3a45188ed2",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "answer",
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 5,
+          "total_tokens": 349
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-5dbfc5e204e84908a41756190ded9b52",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-5dbfc5e204e84908a41756190ded9b52",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Plan.",
+                "reasoning_content": "Plan."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-5dbfc5e204e84908a41756190ded9b52",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "answer"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-5dbfc5e204e84908a41756190ded9b52",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        6470,
+        152361,
+        166104,
+        3324,
+        152343
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "answer",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "answer",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "malformed-call",
+      "raw": "Plan.</think> <tool_call>broken ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-b0e21f6370b74022ae6c6d41bb5c50fb",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "<tool_call>broken",
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 7,
+          "total_tokens": 351
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-13217a3b31cc4467a3a25553a973ad10",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-13217a3b31cc4467a3a25553a973ad10",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Pl",
+                "reasoning_content": "Pl"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-13217a3b31cc4467a3a25553a973ad10",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "an.",
+                "reasoning_content": "an."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-13217a3b31cc4467a3a25553a973ad10",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "<tool_call>broken"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-13217a3b31cc4467a3a25553a973ad10",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-d342251a2d8c4136a5072807f60d9dd5",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "<tool_call>broken",
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 7,
+          "total_tokens": 351
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-18c43cff50224d1bbb499559cfd711c4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-18c43cff50224d1bbb499559cfd711c4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Plan.",
+                "reasoning_content": "Plan."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-18c43cff50224d1bbb499559cfd711c4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "<tool_call>broken"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-18c43cff50224d1bbb499559cfd711c4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        6470,
+        152361,
+        166104,
+        152343,
+        166105,
+        53891,
+        152343
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "<tool_call>broken",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "<tool_call>broken",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "integer",
+      "raw": "</think><tool_call><function=run><parameter=i>1</parameter></function></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-4e697b56b63548a8a176ca2f13d6464a",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-3dad2afbd9ee4c62",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"i\": 1}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 18,
+          "total_tokens": 362
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-7bccf1a61d4a47d4a4616c8110363c78",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7bccf1a61d4a47d4a4616c8110363c78",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-c5d8136f47db4f42",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"i\": 1}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7bccf1a61d4a47d4a4616c8110363c78",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-d43fba53444d47f79ae760cda2c3ec7d",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-8533b1dfa1274051",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"i\": 1}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 18,
+          "total_tokens": 362
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-c426aab663e94981ba6b186b517b8320",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-c426aab663e94981ba6b186b517b8320",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-8fee2a4c8f36412f",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"i\": 1}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-c426aab663e94981ba6b186b517b8320",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152347,
+        152426,
+        152367,
+        897,
+        21741,
+        3375,
+        3091,
+        152426,
+        166106
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "i": 1
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "i": 1
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "float",
+      "raw": "</think><tool_call><function=run><parameter=n>1e2",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-f010b6f1488b4f7680ce3944cf736b38",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-0e64d7b1c383499e",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"n\": 100}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 14,
+          "total_tokens": 358
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-1d0df887eb0b4e979cf4368915782ec6",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-1d0df887eb0b4e979cf4368915782ec6",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-4ae2715802b84588",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"n\": 100}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-1d0df887eb0b4e979cf4368915782ec6",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-aa58abf5f1fa4ae5978fb4350c5d0b1a",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-b781fca8986344a7",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"n\": 100}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 14,
+          "total_tokens": 358
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-395124775c7d4396992ff4a3fa92fd8d",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-395124775c7d4396992ff4a3fa92fd8d",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-efdb95b4428a4b65",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"n\": 100}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-395124775c7d4396992ff4a3fa92fd8d",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152349,
+        152426,
+        152367,
+        152344,
+        152375
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "n": 100
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "n": 100
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "unicode-integer",
+      "raw": "</think><tool_call><function=run><parameter=i>١",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-a4df73c1ccdb406e89389d00ddccf3eb",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-e8cb81c1a5fd4da5",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"i\": 1}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 13,
+          "total_tokens": 357
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-58fd77caa5424efbaaeb0bf4ba488681",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-58fd77caa5424efbaaeb0bf4ba488681",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-98748d51d42749ca",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"i\": 1}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-58fd77caa5424efbaaeb0bf4ba488681",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-d5ebbc5e4e1f4933828be4898e3d9603",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-1c132315eae64c46",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"i\": 1}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 13,
+          "total_tokens": 357
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-bfd74d0ec7fd4e5888b9a3faeb60804a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-bfd74d0ec7fd4e5888b9a3faeb60804a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-8a5c7b8161e24e1a",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"i\": 1}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-bfd74d0ec7fd4e5888b9a3faeb60804a",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152347,
+        152426,
+        220,
+        164
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "i": 1
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "i": 1
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "overparsed",
+      "raw": "</think><tool_call><function=run><parameter=a>[1,]\n ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-ddc79a2b3e8a4ed58e2bf9d4125f7d0d",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-4a8d1dd88f5046dc",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"a\": \"[1,]\\n \"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 15,
+          "total_tokens": 359
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-b73c61bd9c0e4d19bbd92713d1799cd6",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-b73c61bd9c0e4d19bbd92713d1799cd6",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-be2c8cbf6e044dfc",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"a\": \"[1,]\\n \"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-b73c61bd9c0e4d19bbd92713d1799cd6",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-24847a2bd09c43e39b92eafad571167a",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-c107e6932db44f19",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"a\": \"[1,]\\n \"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 15,
+          "total_tokens": 359
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-6cf96d6b31f24c2c899f64fa048e1a1e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6cf96d6b31f24c2c899f64fa048e1a1e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-43b2a3dfa82040c3",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"a\": \"[1,]\\n \"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6cf96d6b31f24c2c899f64fa048e1a1e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152346,
+        54398,
+        152367,
+        62711,
+        13,
+        152343
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "a": "[1,]\n "
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "a": "[1,]\n "
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "multiple",
+      "raw": "Plan.</think><tool_call><function=run></tool_call><tool_call><function=run></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-c70018cf93474933bfbff6697055f58d",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-56b8cb7002894719",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{}"
+                  }
+                },
+                {
+                  "id": "chatcmpl-tool-1e87d50f84024e5c",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 17,
+          "total_tokens": 361
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-e0823b35f0e84928bb42e35974c0f31e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-e0823b35f0e84928bb42e35974c0f31e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Pl",
+                "reasoning_content": "Pl"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-e0823b35f0e84928bb42e35974c0f31e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "an.",
+                "reasoning_content": "an."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-e0823b35f0e84928bb42e35974c0f31e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-0dd4a77a5a4b4316",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-e0823b35f0e84928bb42e35974c0f31e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 1,
+                    "id": "chatcmpl-tool-1f9cbc905cba4863",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-e0823b35f0e84928bb42e35974c0f31e",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-de3d882f801349f983aca8ab6b6928c1",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-86537b737a084552",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{}"
+                  }
+                },
+                {
+                  "id": "chatcmpl-tool-ebac1875678e4c8d",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 17,
+          "total_tokens": 361
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-cf21249b8cb34c94aa014ff1c68b45b4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-cf21249b8cb34c94aa014ff1c68b45b4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Plan.",
+                "reasoning_content": "Plan."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-cf21249b8cb34c94aa014ff1c68b45b4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-7c356284abcd41a2",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-cf21249b8cb34c94aa014ff1c68b45b4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 1,
+                    "id": "chatcmpl-tool-b6ef7c0841984b19",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-cf21249b8cb34c94aa014ff1c68b45b4",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        6470,
+        152361,
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        152426,
+        166106,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        152426,
+        166106
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {}
+        },
+        {
+          "name": "run",
+          "arguments": {}
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {}
+        },
+        {
+          "name": "run",
+          "arguments": {}
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "limit-calls",
+      "raw": "Plan.</think><tool_call><function=run></tool_call><tool_call><function=run></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {
+        "parallel_tool_calls": false
+      }
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-9a39fb55e0514efa89ef0d3cdd507d5e",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-5a43c7675c3c4efb",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{}"
+                  }
+                },
+                {
+                  "id": "chatcmpl-tool-c5d68429a05842af",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 17,
+          "total_tokens": 361
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-638588cca0ed473e900598aadf6e44eb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-638588cca0ed473e900598aadf6e44eb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Pl",
+                "reasoning_content": "Pl"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-638588cca0ed473e900598aadf6e44eb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "an.",
+                "reasoning_content": "an."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-638588cca0ed473e900598aadf6e44eb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-5de4e3a622114772",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-638588cca0ed473e900598aadf6e44eb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 1,
+                    "id": "chatcmpl-tool-6ec1da197d384587",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-638588cca0ed473e900598aadf6e44eb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-abe8da69382e4c729c331f54e3de2f3a",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-751ea99477044152",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{}"
+                  }
+                },
+                {
+                  "id": "chatcmpl-tool-dc5684b63b244656",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 17,
+          "total_tokens": 361
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-8b4778122f224c048a72f005f5abab81",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-8b4778122f224c048a72f005f5abab81",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Plan.",
+                "reasoning_content": "Plan."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-8b4778122f224c048a72f005f5abab81",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-5ca369f85ef24dd4",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-8b4778122f224c048a72f005f5abab81",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 1,
+                    "id": "chatcmpl-tool-486b761aced6487b",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-8b4778122f224c048a72f005f5abab81",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        6470,
+        152361,
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        152426,
+        166106,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        152426,
+        166106
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {}
+        },
+        {
+          "name": "run",
+          "arguments": {}
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {}
+        },
+        {
+          "name": "run",
+          "arguments": {}
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "length",
+      "raw": "thinking continues at length",
+      "tools": [],
+      "extra": {
+        "max_tokens": 1
+      }
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-343f7adc7304462281a561a0de31ac5f",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "thinking",
+              "reasoning_content": "thinking",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 1,
+          "total_tokens": 33
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-4d66bff6ceac414990491f842324e921",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4d66bff6ceac414990491f842324e921",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "t",
+                "reasoning_content": "t"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4d66bff6ceac414990491f842324e921",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "hinking",
+                "reasoning_content": "hinking"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4d66bff6ceac414990491f842324e921",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "length"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-59977a623ac04a239b7171f7be0ff6d1",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": "thinking",
+              "reasoning_content": "thinking",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 1,
+          "total_tokens": 33
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-726eab6664154ff3b08cadb84105aa71",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-726eab6664154ff3b08cadb84105aa71",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "t",
+                "reasoning_content": "t"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-726eab6664154ff3b08cadb84105aa71",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "hinking",
+                "reasoning_content": "hinking"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-726eab6664154ff3b08cadb84105aa71",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "length"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        5362,
+        8924,
+        417,
+        2694
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "thinking",
+      "reasoning_content": "thinking",
+      "content": "",
+      "calls": [],
+      "finish": "length"
+    },
+    "engine_aggregate": {
+      "reasoning": "thinking",
+      "reasoning_content": "thinking",
+      "content": "",
+      "calls": [],
+      "finish": "length"
+    }
+  },
+  {
+    "case": {
+      "label": "lfm-prose",
+      "raw": "</think><|tool_call_start|>[run()]<|tool_call_end|>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-4c870e0a7f7c4384bd102d260c6d93f4",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "<|tool_call_start|>[run()]<|tool_call_end|>",
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 20,
+          "total_tokens": 364
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-4c1fbfab670b453f8c7a3ce468f4f166",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4c1fbfab670b453f8c7a3ce468f4f166",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "<|tool_call_start|>[run()]<|tool_call_end|>"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-4c1fbfab670b453f8c7a3ce468f4f166",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-e2e0b162db214f43a5764da577b23318",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "<|tool_call_start|>[run()]<|tool_call_end|>",
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 20,
+          "total_tokens": 364
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-f39454b9d901457ca976cd80e3e30846",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-f39454b9d901457ca976cd80e3e30846",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "<|tool_call_start|>[run()]<|tool_call_end|>"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-f39454b9d901457ca976cd80e3e30846",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        152434,
+        152481,
+        19617,
+        152386,
+        4966,
+        152386,
+        4120,
+        53508,
+        152428,
+        4358,
+        51869,
+        152434,
+        152481,
+        19617,
+        152386,
+        4966,
+        152386,
+        434,
+        53508
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "<|tool_call_start|>[run()]<|tool_call_end|>",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "<|tool_call_start|>[run()]<|tool_call_end|>",
+      "calls": [],
+      "finish": "stop"
+    }
+  },
+  {
+    "case": {
+      "label": "lfm-parameter",
+      "raw": "</think><tool_call><function=run><parameter=s><|tool_call_start|>[run()]<|tool_call_end|></parameter></function></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "extra": {}
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-341c51a6bde04413a7c1a375f4118648",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-ae95a96a88864c89",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"<|tool_call_start|>[run()]<|tool_call_end|>\"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 35,
+          "total_tokens": 379
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-6f2b3e87110745ffb4699ef1318608bb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6f2b3e87110745ffb4699ef1318608bb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-1c4a43c73af14e10",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"<|tool_call_start|>[run()]<|tool_call_end|>\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6f2b3e87110745ffb4699ef1318608bb",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-6eb6889beb7746bdb39dddf5f283b77c",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "reasoning": null,
+              "reasoning_content": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-9ac7f999d27942b2",
+                  "type": "function",
+                  "function": {
+                    "name": "run",
+                    "arguments": "{\"s\": \"<|tool_call_start|>[run()]<|tool_call_end|>\"}"
+                  }
+                }
+              ]
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 344,
+          "completion_tokens": 35,
+          "total_tokens": 379
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-7b03565743f04825bae0604e1ebebc24",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7b03565743f04825bae0604e1ebebc24",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-a41be8e0a1c44993",
+                    "type": "function",
+                    "function": {
+                      "name": "run",
+                      "arguments": "{\"s\": \"<|tool_call_start|>[run()]<|tool_call_end|>\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7b03565743f04825bae0604e1ebebc24",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        }
+      ],
+      "status": 200,
+      "ids": [
+        166104,
+        166105,
+        152434,
+        3091,
+        152391,
+        4358,
+        2595,
+        21741,
+        152391,
+        152350,
+        2595,
+        152481,
+        19617,
+        152386,
+        4966,
+        152386,
+        4120,
+        53508,
+        152428,
+        4358,
+        51869,
+        152434,
+        152481,
+        19617,
+        152386,
+        4966,
+        152386,
+        434,
+        152481,
+        3375,
+        21741,
+        3375,
+        3091,
+        152426,
+        166106
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "<|tool_call_start|>[run()]<|tool_call_end|>"
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    },
+    "engine_aggregate": {
+      "reasoning": "",
+      "reasoning_content": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": {
+            "s": "<|tool_call_start|>[run()]<|tool_call_end|>"
+          }
+        }
+      ],
+      "finish": "tool_calls"
+    }
+  },
+  {
+    "case": {
+      "label": "usage",
+      "raw": "Plan.</think>answer",
+      "tools": [],
+      "extra": {
+        "stream_options": {
+          "include_usage": true
+        }
+      }
+    },
+    "pod": {
+      "whole": {
+        "id": "chatcmpl-68ea26a5275b4e0a966340beb1211b81",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "answer",
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 4,
+          "total_tokens": 36
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-7e15449004104d908877bed8de03fdb7",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7e15449004104d908877bed8de03fdb7",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Pl",
+                "reasoning_content": "Pl"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7e15449004104d908877bed8de03fdb7",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "an.",
+                "reasoning_content": "an."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7e15449004104d908877bed8de03fdb7",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "answer"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7e15449004104d908877bed8de03fdb7",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-7e15449004104d908877bed8de03fdb7",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 32,
+            "completion_tokens": 4,
+            "total_tokens": 36
+          }
+        }
+      ]
+    },
+    "engine": {
+      "whole": {
+        "id": "chatcmpl-d18b670aac5c4009b2c3eda1913cf3be",
+        "object": "chat.completion",
+        "created": 1793218121,
+        "model": "nanbeige",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "answer",
+              "reasoning": "Plan.",
+              "reasoning_content": "Plan.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 32,
+          "completion_tokens": 4,
+          "total_tokens": 36
+        }
+      },
+      "events": [
+        {
+          "id": "chatcmpl-6c4ded9184554e019b0f6f1f46c7671c",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6c4ded9184554e019b0f6f1f46c7671c",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning": "Plan.",
+                "reasoning_content": "Plan."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6c4ded9184554e019b0f6f1f46c7671c",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "answer"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6c4ded9184554e019b0f6f1f46c7671c",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-6c4ded9184554e019b0f6f1f46c7671c",
+          "object": "chat.completion.chunk",
+          "created": 1793218121,
+          "model": "nanbeige",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 32,
+            "completion_tokens": 4,
+            "total_tokens": 36
+          }
+        }
+      ],
+      "status": 200,
+      "ids": [
+        6470,
+        152361,
+        166104,
+        26430
+      ]
+    },
+    "aggregate_equal": true,
+    "pod_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "answer",
+      "calls": [],
+      "finish": "stop"
+    },
+    "engine_aggregate": {
+      "reasoning": "Plan.",
+      "reasoning_content": "Plan.",
+      "content": "answer",
+      "calls": [],
+      "finish": "stop"
+    }
+  }
+]

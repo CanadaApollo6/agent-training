@@ -1,0 +1,29 @@
+{
+  "cases": 24005,
+  "with_calls": 18917,
+  "semantic_mismatches": 0,
+  "serialization_only_mismatches": 0,
+  "mismatched_keys": {},
+  "directed": [
+    {
+      "label": "header-close",
+      "equal": true
+    },
+    {
+      "label": "param-newline",
+      "equal": true
+    },
+    {
+      "label": "function-newline",
+      "equal": true
+    },
+    {
+      "label": "tool-newline",
+      "equal": true
+    },
+    {
+      "label": "trailing-spaces",
+      "equal": true
+    }
+  ]
+}

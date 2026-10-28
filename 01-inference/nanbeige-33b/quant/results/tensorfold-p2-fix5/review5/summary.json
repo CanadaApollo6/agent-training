@@ -1,0 +1,29 @@
+{
+  "counts": {
+    "cases": 22074,
+    "output_cases": 21000,
+    "json_mismatches": 53,
+    "output_json_mismatches": 46,
+    "sse_mismatches": 53,
+    "output_sse_mismatches": 46,
+    "history_cases": 1050,
+    "json_oracle_errors": 230,
+    "sse_oracle_errors": 230,
+    "directed_cases": 24,
+    "directed_json_mismatches": 7,
+    "directed_sse_mismatches": 7,
+    "missing_engine_results": 0
+  },
+  "first_mismatches": [
+    "output-01151",
+    "output-01335",
+    "output-01358",
+    "output-01543",
+    "output-01553",
+    "output-01819",
+    "output-02290",
+    "output-02531",
+    "output-03247",
+    "output-03392"
+  ]
+}

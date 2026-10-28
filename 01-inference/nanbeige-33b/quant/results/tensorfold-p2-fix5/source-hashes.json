@@ -1,0 +1,62 @@
+{
+  "docs/recipes/nanbeige-pod.md": {
+    "bytes": 4491,
+    "sha256": "b2a5a79e56656748f5b6c4679fa59292e00a290c5fef3ee99dd19ea21f33d732"
+  },
+  "tools/zig/llama_serve_reference.py": {
+    "bytes": 15656,
+    "sha256": "71f53c2bb4929e917be6ff899710b4c1d07976bc102d0a6a746eb2f24aa87492"
+  },
+  "zig/src/server/fixtures/llama/responses.json": {
+    "bytes": 454992,
+    "sha256": "6ac2fac8a6f3e250151b4873af5b5d413a4fced6a41f526e9b6ed0e5c669d301"
+  },
+  "zig/src/server/llama_bytes_test.zig": {
+    "bytes": 8150,
+    "sha256": "6e34eb67a50170e8458030152f6c81094df0a98986d4664310a4817ba1156f6f"
+  },
+  "zig/src/server/nanbeige_literal.zig": {
+    "bytes": 13727,
+    "sha256": "0bf4f053eb6ad3d34834535b577cdf33b9e87adc2f766826a94537d0bdbb3aef"
+  },
+  "zig/src/server/openai.zig": {
+    "bytes": 32883,
+    "sha256": "7eb6eb59276f7ba99485269e49ffe78395d6bfa50906464f2797782c8322b0ee"
+  },
+  "tools/zig/llama_serve_escapes.py": {
+    "bytes": 2611,
+    "sha256": "3ea109b8194016d3c2668ff26e2538bb1c119a2fb22adde507373555e77bdaae"
+  },
+  "tools/zig/llama_serve_unicode.py": {
+    "bytes": 8449,
+    "sha256": "f987e25450569206c171f21aef8a2a95df0c409f338beef21c0152542dfd158b"
+  },
+  "tools/zig/llama_unicode_check.zig": {
+    "bytes": 1166,
+    "sha256": "d59f9dd2a56a9276719ddab7012e2ca4887bf70f7446770fb2a10ee9ad84e344"
+  },
+  "zig/src/server/fixtures/llama/outputs_escapes.json": {
+    "bytes": 51335,
+    "sha256": "5b2c2f3559135ddb4a9cbea689fbaa5bad72fb4672b03c40310180fa0515ed5e"
+  },
+  "zig/src/server/fixtures/llama/unicode-15.LICENSE.txt": {
+    "bytes": 1995,
+    "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+  },
+  "zig/src/server/fixtures/llama/unicode-15.names.gz": {
+    "bytes": 261166,
+    "sha256": "b0526c06eb8bac3552c997c574cb952c322f21bb1049d82a6349f9798dd4d3e1"
+  },
+  "zig/src/server/nanbeige_unicode.zig": {
+    "bytes": 3584,
+    "sha256": "9e9d39370351ba5df2ca25f753bff640d8f8e27dab0d45084bf3ff4b09d0167c"
+  },
+  "zig/src/server/nanbeige_unicode_data.zig": {
+    "bytes": 886,
+    "sha256": "49d7774a07a37a31b040968a1c7241ed21a1b4fb6f67c8f55e0c697ad7147eaf"
+  },
+  "pod": {
+    "bytes": 12868,
+    "sha256": "b46fae9c5ae7655c05eae16918237d3a8ccacbad6e775f0f843834f3cc19f7f1"
+  }
+}
