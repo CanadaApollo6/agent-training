@@ -21,3 +21,5 @@
 2026-10-27 02:34:57 terminate nb-quant1 ce9d3a8b (~4h10m, ~$23): EXL3 3.0/3.5/4.0/3.5-nb converted, KL vs bf16 with BOS: 3.5-nb 0.036 chat / 0.066 agent, 4.0 0.023/0.044; 8-bit KV free; quants 3.0/3.5-nb/4.0 home (sha ok)
 2026-10-27 19:01:37 create nb-tb2q1 H200 nebius 1215b4 $5.40/h (9eea595110b147d69903c6d58565b62f) — night 2: rebuild 3.5-nb2 with BOS calibration rows, KL vs bf16, serve the better 3.5 via serve_exl3.py, TB2 19-task pilot x3
 2026-10-27 20:22:00 nb-tb2q1: chose 3.5-nb (nb2 agent KL 0.0663 vs nb 0.0659, chat 0.0367); serve_exl3 7-way 35 tok/s/stream (1: 66, 3: 46, 21: 22); TB2 attempts serial on this pod (no other Prime GPUs free), TIMEOUT=7200 to offset ~2x slower decode vs vLLM BF16
+2026-10-27 20:53:00 create nb-tb2q2 H200 nebius 13c583 $5.40/h (33a1a7df92ce4b9990255325d03788b6) — night 2: serve 3.5-nb for TB2 attempt a2
+2026-10-27 20:53:22 create nb-tb2q3 H200 nebius 13c583 $5.40/h (8420861678124f9e88b7743e52a21868) — night 2: serve 3.5-nb for TB2 attempt a3
