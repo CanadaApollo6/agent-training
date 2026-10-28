@@ -1,0 +1,6 @@
+CONTROL control=zeros sequence=0 legacy_rmse=3.8811898987713835e2 legacy_max=3.2453287109375e4 legacy_l2=3.2859722442128105e19
+CONTROL control=zeros sequence=1 legacy_rmse=1.61558112787019e2 legacy_max=3.2453287109375e4 legacy_l2=3.3504519574297645e19
+CONTROL control=zeros sequence=2 legacy_rmse=1.0094942739786626e2 legacy_max=3.2453287109375e4 legacy_l2=3.310156199672795e19
+CONTROL control=zeros sequence=3 legacy_rmse=2.8288672101634283e1 legacy_max=3.2453287109375e4 legacy_l2=3.3444820216172806e19
+SUMMARY llama control=zeros layer=11 positions=217 worst_relative_l2=3.2859722442128105e19 worst_scaled_max=3.2453287109375e34 legacy_failures=4
+{"command": ["/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix2/install/bin/tf-llama-test", "llama-layer-control", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1", "zeros", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix2/calibrate-zeros.jsonl"], "pid": 3498953, "exit_code": 0, "seconds": 5.585591036011465, "timeout": false, "initial_free_mib": 8196, "minimum_free_mib": 3901, "peak_process_vram_mib": 4170, "sampling_ms": 200}

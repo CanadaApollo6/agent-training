@@ -1,0 +1,12 @@
+Build Summary: 10/10 steps succeeded
+test-llama-host success
++- run test cached
+   +- compile test debug native cached 19ms MaxRSS:36M
+      +- options cached
+tf-llama-test success
++- install tf-llama-test success
+   +- compile exe tf-llama-test fast native success 27s MaxRSS:971M
+      +- options cached
+      +- WriteFile no-controls.fatbin cached
+      +- options cached
+

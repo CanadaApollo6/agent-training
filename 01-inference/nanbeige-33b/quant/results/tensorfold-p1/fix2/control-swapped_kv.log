@@ -1,0 +1,7 @@
+CONTROL control=swapped_kv sequence=0 legacy_rmse=8.72315005906799e-1 legacy_max=2.7650390625e1 legacy_l2=2.2497746373195677e-3
+CONTROL control=swapped_kv sequence=1 legacy_rmse=1.4252487315742866e0 legacy_max=3.1059600830078125e1 legacy_l2=8.830489259558979e-3
+CONTROL control=swapped_kv sequence=2 legacy_rmse=2.4606164300511764e0 legacy_max=6.655801391601562e1 legacy_l2=2.4407044006652147e-2
+CONTROL control=swapped_kv sequence=3 legacy_rmse=2.4004774548780903e0 legacy_max=7.102850341796875e1 legacy_l2=8.488330450151078e-2
+SUMMARY llama control=swapped_kv layer=11 positions=217 worst_relative_l2=1.0881618750103057e0 worst_scaled_max=3.2893558240850634e-1 relative_l2_bound=3e-2 max_error_fraction=3e-2 failed_positions=209 legacy_failures=3
+FAIL llama-layer-control: LlamaLayerDrift
+{"command": ["/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix2/install/bin/tf-llama-test", "llama-layer-control", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1", "swapped_kv", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p1/fix2/control-swapped_kv.jsonl"], "pid": 3645518, "exit_code": 1, "seconds": 7.352578609003103, "timeout": false, "initial_free_mib": 8052, "minimum_free_mib": 3852, "peak_process_vram_mib": 4170, "sampling_ms": 200}
