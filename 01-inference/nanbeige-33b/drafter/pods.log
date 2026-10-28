@@ -24,3 +24,4 @@
 2026-10-27 20:53:00 create nb-tb2q2 H200 nebius 13c583 $5.40/h (33a1a7df92ce4b9990255325d03788b6) — night 2: serve 3.5-nb for TB2 attempt a2
 2026-10-27 20:53:22 create nb-tb2q3 H200 nebius 13c583 $5.40/h (8420861678124f9e88b7743e52a21868) — night 2: serve 3.5-nb for TB2 attempt a3
 2026-10-27 21:03:41 terminate nb-tb2q2 33a1a7df + nb-tb2q3 84208616 (never left STOPPED, no SSH; ~10m, likely $0-2): attempts stay serial on nb-tb2q1
+2026-10-28 03:34:53 terminate nb-tb2q1 9eea5951 (~8h34m, ~$46): 3.5-nb2 no better (agent KL 0.0663 vs 0.0659); TB2 3.5-nb 10/12/12 = 11.3 vs BF16 11.0 (p 1.0) at 120-min cap, 1.21x tokens per solve; logs home in quant/results/night2

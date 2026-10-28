@@ -6,8 +6,8 @@ the top-level README. Terminal-Bench 2 pilot: `06-agents/harness-evals/README.md
 **Status (2026-10-26): draft head trained and cooled down.** Held-out acceptance 2.9–4.0 tokens per verify (greedy),
 2.7–3.8 sampled at the agent's settings. Single-user speed on an H200 with SGLang: 2.55× on HumanEval, 2.05× on
 MT-Bench (greedy); 2.39× and 1.78× sampled. Quantization test (2026-10-27): EXL3 3.5 bpw calibrated on
-Nanbeige's own text drifts KL 0.036 (chat) / 0.066 (agent) from bf16; 4.0 bpw 0.023 / 0.044. Next: a TB2 subset at
-3.5 bpw, then the TensorFold port. On our 19-task TB2 pilot it averaged 11.0 of 19 (lookup run failed) vs
+Nanbeige's own text drifts KL 0.036 (chat) / 0.066 (agent) from bf16; 4.0 bpw 0.023 / 0.044. TB2 at 3.5 bpw
+(2026-10-27): 11.3 of 19 vs BF16's 11.0 (p = 1.0), at 1.21× the tokens per solve. Next: the TensorFold port. On our 19-task TB2 pilot it averaged 11.0 of 19 (lookup run failed) vs
 R1s's 10.0, within noise (p ≈ 0.7), at 2.71× R1s's tokens per solve. That didn't meet the gate, but Riel chose to build
 the draft head anyway: if the model is as good as it looks, the speed-up is worth it.
 
@@ -85,6 +85,47 @@ Reading: 3.5-nb is the candidate (59K fp8 context on a 3090 by `fit_3090.py`). 4
 leaves 41K. 3.0 roughly doubles the drift again. KL alone can't say whether a 1-point TB2 lead survives. Next: rebuild
 the 3.5 custom quant with start-token calibration rows (maybe a per-tensor `sc_optimize` recipe), then a TB2 subset at
 3.5-nb vs bf16. The 3.0, 3.5-nb and 4.0 quants are kept locally in `quant/models/` (gitignored).
+
+## Quantization test 2: TB2 at 3.5 bpw (2026-10-27)
+
+Pod nb-tb2q1, one H200, 8h34m, ~$46. Logs in `quant/results/night2/`. Comparison:
+`06-agents/harness-evals/results/nanbeige-exl3-tb2-compare.md`.
+
+**Rebuild with start-token calibration (`3.5-nb2`): no gain.** On agent rows its KL is 0.0663, against 0.0659 for
+3.5-nb. On chat rows it's 0.0367 against 0.036. The missing start token in last night's calibration windows didn't
+matter, so the pilot served 3.5-nb.
+
+**Server.** vLLM can't load EXL3, so `quant/serve_exl3.py` serves it. It matches the BF16 pilot's vLLM setup except
+for the weights: same template, T 1.0 / top_p 0.95, qwen3 reasoning and qwen3_coder tool parsing, and the same 400 on
+image input. KV cache is 8-bit. Decode speed per stream on the H200 is 66 tok/s alone, 46 at 3 streams, 35 at 7 and
+22 at 21. In the agent runs it averaged 14.0 output tokens per model-second against vLLM BF16's 28.3 (0.49×). To keep
+that from costing timeouts, the task cap was 120 minutes instead of 60. No other H200 was free, so the three attempts
+ran one after another on one pod at `-c 7`.
+
+| Solved of 19 (benchmark lookups scored as failures) | a1 | a2 | a3 | Mean |
+| :-- | --: | --: | --: | --: |
+| BF16, vLLM, 60-min cap | 11 | 9 | 13 | **11.0** |
+| EXL3 3.5-nb, 120-min cap | 10 | 12 | 12 | **11.3** |
+| EXL3 3.5-nb, only runs done inside 60 min | 7 | 10 | 9 | 8.7 |
+| EXL3 3.5-nb, 60 min at BF16 decode speed (model time × 0.49 + tool time) | | | | 11.0 |
+
+- **The quant keeps the score.** On paired per-task solve rates it's +1.8 points a task vs BF16, better on 3 tasks
+  and worse on 3, p = 1.0. That rules out a large loss but not a 1-point one: 3 attempts can't resolve that.
+- **It talks about 20% more.** Solved runs used 1.21× BF16's output tokens (95% CI 1.04–1.43), and were longer on 10
+  of 12 shared tasks. That's a real cost, on top of Nanbeige already using 2.71× R1s's tokens.
+- **Strict 60 minutes on this server costs 2.6 solves.** The cause is the decode speed: with BF16's speed, the same runs
+  score 11.0. One timeout (a1 git-multibranch) was a shell command that kept hanging (104 of 120 minutes in tools).
+- **The image refusal hits both builds the same way.** financial-document-processor doesn't need vision: Ornith and
+  Flint solve it 2/3 with OCR (tesseract) and never send an image. Nanbeige opens the scans first, gets the 400, and the
+  run ends. That ended 6 BF16 runs (one had already solved its task) and 5 EXL3 runs: all three attempts at that
+  task for both, plus build-pov-ray and pytorch-model-cli once or twice. Leaving those runs out, solve rates are 63%
+  (BF16) and 65% (EXL3). A future pilot could reply with a text note instead of the 400, for every build at once.
+- Lookups: mteb-retrieve was "solved" twice by EXL3 and once by BF16 after fetching the benchmark from GitHub or HF.
+  Those runs count as failures.
+
+Reading: 3.5-nb holds BF16's TB2 score within what 3 attempts can measure, at 1.2× the tokens. That clears the gate
+for the TensorFold port. Its speed matters more than the weights now: exllamav3's 35 tok/s at 7 streams is the slow
+path here, not the quant.
 
 ## Draft head plan (2026-10-25)
 
