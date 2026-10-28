@@ -1,0 +1,12 @@
+base-parser
+header-close False {"reasoning": "", "content": "<tool_call><function=</function></tool_call>", "calls": []}
+param-newline False {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"s": "hi\n"}}]}
+function-newline False {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"s": "hi\n"}}]}
+tool-newline True {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"s": "hi"}}]}
+trailing-spaces False {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"s": "hi"}}]}
+parser
+header-close True {"reasoning": "", "content": "", "calls": [{"name": "</function", "arguments": {}}]}
+param-newline True {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"s": "hi"}}]}
+function-newline True {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"s": "hi"}}]}
+tool-newline True {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"s": "hi"}}]}
+trailing-spaces True {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"s": "hi  "}}]}

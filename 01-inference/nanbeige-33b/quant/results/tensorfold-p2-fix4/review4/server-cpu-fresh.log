@@ -1,0 +1,1017 @@
+1/883 root.test_0...OK
+2/883 root.test_1...OK
+3/883 root.test_2...OK
+4/883 root.test_3...OK
+5/883 root.test_4...OK
+6/883 root.test_5...OK
+7/883 control_tokens_http_test.test.request provenance: chat usage equals tokenize count and exact prompt ids on every fixture...OK
+8/883 control_tokens_http_test.test.request provenance: split spellings across image text parts stay ordinary...OK
+9/883 control_tokens_http_test.test.request provenance: media prompt keeps authored image and video markers while masking supplied spellings...OK
+10/883 request_provenance_test.test.request provenance: ordinary added-id overlap reports a clear refusal...OK
+11/883 request_provenance_test.test.request provenance: every fixture added spelling in every request field and decision labels...PROVENANCE_FIELDS fixtures=3 fields=14 plus decision labels
+OK
+12/883 request_provenance_test.test.request provenance: a schema key cannot construct an added spelling...OK
+13/883 request_provenance_test.test.request provenance: echoed reasoning and wrapped tool results keep template branches...OK
+14/883 request_provenance_test.test.request provenance: unsupported normalized token offsets give a clear refusal...OK
+15/883 request_provenance_test.test.request provenance: every added spelling stays plain in message and tool fields...OK
+16/883 request_provenance_test.test.request provenance: benign ids equal the pre-fix recording...OK
+17/883 request_provenance_test.test.request provenance: json escaping and caller marker collisions preserve literal text...OK
+18/883 request_provenance_test.test.request provenance: system tool results names arguments schema keys and reasoning effort stay plain...OK
+19/883 request_provenance_test.test.request provenance: appended decision labels stay plain and unsupported masked encoding refuses...OK
+20/883 request_provenance_test.test.request provenance: checkpoint globals stay special and request spellings stay plain...OK
+21/883 request_cost_test.test.request provenance: 400 KiB and 1000 spellings have bounded mask work and timing receipts...PROVENANCE_TIMING mode=raw one=0 bytes=409600 added=1000 rounds=12 ns_per=3501440
+PROVENANCE_TIMING mode=masked one=0 bytes=409600 added=1000 rounds=12 ns_per=4368701
+PROVENANCE_MASK_WORK one=0 spans=3 matcher=3 output=409603
+PROVENANCE_TIMING mode=raw one=1 bytes=409600 added=1000 rounds=12 ns_per=3616881
+PROVENANCE_TIMING mode=masked one=1 bytes=409600 added=1000 rounds=12 ns_per=3959485
+PROVENANCE_MASK_WORK one=1 spans=3 matcher=3 output=409603
+OK
+22/883 cortheon.gate_test.test.context gate: late refusals at both windows terminate once and the same server serves next...OK
+23/883 cortheon.gate_test.test.context gate: pre-prepare and compact-prepare refusals retain stream and whole contracts...OK
+24/883 cortheon.gate_test.test.context gate: non-context failures keep HTTP 400 500 503 and never open SSE...OK
+25/883 cortheon.gate_test.test.context gate: search cancellation never submits a final request or invents an extra cancel...OK
+26/883 cortheon.gate_test.test.context gate: output Closed cancels one admitted research request and drains the sink...OK
+27/883 cortheon.gate_test.test.context gate: cancellation during compaction drains one submitted note and releases preparing...OK
+28/883 cortheon.gate_test.test.context gate: an already-open engine failure emits one error and terminal without success...OK
+29/883 cortheon.gate_test.test.context gate: successful research at both windows releases preparing before an ordinary next request...OK
+30/883 cortheon.gate_test.test.context gate: fixture byte pairs preserve complete odd even and UTF8 prompt bytes...OK
+31/883 cortheon.gate_http_test.test.context gate: real HTTP adapters keep late refusal ordering at both windows with and without tools...OK
+32/883 cortheon.gate_http_test.test.context gate: delayed research HTTP chat has its head before keepalive bytes...OK
+33/883 cortheon.gate_http_test.test.context gate: delayed research HTTP messages has its head before keepalive bytes...OK
+34/883 cortheon.gate_http_test.test.context gate: delayed research HTTP responses has its head before keepalive bytes...OK
+35/883 hf_text.test.model EOS does not hide a different tokenizer chat end...OK
+36/883 hf_text.test.explicit template overrides checkpoint templates including tool prompts and fails closed...OK
+37/883 hf_text.test.GLM-5.3 gives its template clear_thinking: earlier reasoning kept unless TF_GLM_CLEAR_THINKING=1...OK
+38/883 hf_text.test.chat_template_kwargs.clear_thinking: a bool, null as unset, anything else refused...OK
+39/883 hf_text.test_0...OK
+40/883 cortheon.cortheon_test.test.off: the request reaches the model untouched...OK
+41/883 cortheon.cortheon_test.test.the model's own search runs on the server and only the answer reaches the client...OK
+42/883 cortheon.cortheon_test.test.a fresh question on current facts is researched before the model starts...OK
+43/883 cortheon.cortheon_test.test.research progress cannot open a stream before its final request is admitted...OK
+44/883 cortheon.cortheon_test.test.a stream hides Cortheon's calls, shows progress as reasoning, and passes the client's calls...OK
+45/883 cortheon.cortheon_test.test.a fetch reads only URLs the conversation showed, never one the model wrote...OK
+46/883 cortheon.cortheon_test.test.a code change is tested before it is called done, once a turn...OK
+47/883 cortheon.cortheon_test.test.a request can opt out, and tool choices and structured output keep Cortheon out...OK
+48/883 cortheon.cortheon_test.test.the web budget ends the research and the reply still comes back without Cortheon calls...OK
+49/883 cortheon.cortheon_test.test.research expansion keeps a context-window refusal streamed...OK
+50/883 auth.test.gates and digests...OK
+51/883 auth.test.the delete route sits behind the server's key, as every /v1 route and the --slide start do...OK
+52/883 auth.test.auth cleanup after invalid initialization...OK
+53/883 auth.test.auth cleanup on every initialization allocation failure...OK
+54/883 auth.test.the key file: refused while others can read it, read at 0600, reread after an edit...OK
+55/883 auth.test.a request's key label outlives a reload of the key file...OK
+56/883 auth.test_0...OK
+57/883 auth.test.security: every System One alias requires a key...OK
+58/883 auth.test.security: key files cannot be written by another user...OK
+59/883 request_guard.test_0...OK
+60/883 drama_allow.test.allowed controls accepts normalized open vocabulary and rejects brackets or invalid UTF-8...OK
+61/883 drama_allow.test.allowed controls off returns identical input without allocating...OK
+62/883 drama_allow.test_0...OK
+63/883 speech_redraw.test.redraw policy is off by default; redraws need the guard, a budget redraws or the register guard...OK
+64/883 speech_redraw.test.a stop of enough characters trips only under the ratio of its expected length; silence always trips...OK
+65/883 speech_redraw.test.an explicit redraw count, even 0, or the register guard is refused on text and accepted on Drama speech...OK
+66/883 speech_redraw.test.the budget is the lower of the server's and a well-formed X-Deadline-S...OK
+67/883 speech_redraw.test.a redraw fits when elapsed time plus the last take's duration is within the budget...OK
+68/883 drama_cfg.test.CFG header validation and fixed policy match the CUDA recipe...OK
+69/883 drama_cfg.test.CFG activation requires reference and configured policy including forced gamma one...OK
+70/883 drama_cfg.test.CFG native flags allocate guidance states only when enabled and refuse unsupported combinations...OK
+71/883 http_conn.test.versions and repr...OK
+72/883 drama_voice.test.voices: synthetic parsing, attestation, bounds and selection...OK
+73/883 drama_voice.test.voices: real tokenizer rows equal the CLI path without server postprocessing...OK
+74/883 reply_text.test.splits and holds...OK
+75/883 reply_text.test.a reply that writes its own think opener keeps the tag out of its reasoning...OK
+76/883 reply_text.test.an opener the reply names in prose keeps the text after it, streamed and whole...OK
+77/883 chunk_plan.test.a harness cut joins the starts, nearer ones go...OK
+78/883 chunk_plan.test.chunk starts match PrefillPlan.chunks...OK
+79/883 metrics.test.process gauges omit unknown samples and keep current and lifetime peak distinct...OK
+80/883 metrics.test.resident gauges render each count the kernel reports, and only those...OK
+81/883 metrics.test.only a Linux scrape reports the resident set, parked or not, and never as the footprint...OK
+82/883 metrics.test.edges and numbers...OK
+83/883 metrics.test.metrics record rounds prefill and per-token timing...OK
+84/883 metrics.test.render exposes live counters, rounds, prefill and TPOT without cache family...OK
+85/883 metrics.test.render counts restored prompt tokens where the engine keeps prompt states...OK
+86/883 metrics.test.metrics snapshot allocation failure releases the mutex...OK
+87/883 metrics.test.request counter append failure frees its label...OK
+88/883 metrics.test.metrics expose cache budget, minimum and inability to retain a state...OK
+89/883 metrics.test.metrics count interior states in retained occupancy as well as restored tokens...OK
+90/883 metrics.test.admission metrics name each fixed reason and the reservations held...OK
+91/883 idle_unload.test_0...OK
+92/883 cortheon.cortheon.test_0...OK
+93/883 slide_model.test.a folder's layers, pockets in use and shards; a save's files and bytes...OK
+94/883 slide_model.test.a SwiGLU pocket counts its neurons by their up rows: one retired with its gate row left is free...OK
+95/883 slide_talks.test.conversations and a fact's chain turn persist across a reopen of the graph...OK
+96/883 log.test.a request's refused and ended lines...OK
+97/883 drama_prompt.test.white space is the Unicode property, not Python's str.strip set...OK
+98/883 drama_prompt.test.speaker 0 tags untagged text; a leading tag after white space is kept...OK
+99/883 drama_prompt.test.empty input, malformed speaker tags and structural tokens are refused...OK
+100/883 fields.test.efforts and numbers...OK
+101/883 live.test.status line...OK
+102/883 live.test.commas...OK
+103/883 cortheon.tools.test.specs parse, calls are recognised and arguments read from either form...OK
+104/883 cortheon.tools.test.runs report results and failures as text...OK
+105/883 recall_routes.test.the record's state and size as GET reports them, and its state in a word...OK
+106/883 pyrepr.test.reprs...OK
+107/883 http_body.test.security: chunk size lines share a bounded framing budget...OK
+108/883 slide_graph_delete.test.a neuron a lesson takes from a deleting fact leaves its listing even when no memory is left...OK
+109/883 slide_answers.test.a fact's expected answers survive the graph file, short answers, probes and conversations too...OK
+110/883 slide_recheck.test.a fact asked again comes back when every held-out question and half its probes bring it back...OK
+111/883 slide_recheck.test.a recheck keeps a delete only when every kept answer still comes back and the deleted fact is gone...OK
+112/883 slide_recheck.test.a kept fact taught before its answers were kept is held to what it said before the cut...OK
+113/883 prompt.test.interior prompt: user end excludes later tool and assistant text...OK
+114/883 slide_side.test.every item runs once, side by side, and the first error comes back...OK
+115/883 slide_context.test.the held-out questions are also asked after conversations only where the learner reads them...OK
+116/883 slide_context.test.the conversations a lesson learns in are not the ones its checks ask in...OK
+117/883 chat.test.Server recovery: token staging allocation failure ends the loop without consuming tokens...OK
+118/883 slide_words.test.questions lose their numbers and repeats; answers keep two finished sentences or are dropped...OK
+119/883 slide_words.test.recall needs the held answer's words from the fact; an unrelated answer must open as it did...OK
+120/883 slide_words.test.a lesson's damage: a reply that loops, or a near miss that now says the fact...OK
+121/883 slide_words.test.a leak is a held answer's own word from the fact, new in a reply...OK
+122/883 slide_words.test.an answer in the model's own words: its first one or two sentences, formatting kept...OK
+123/883 slide_words.test.a question that already says its answer asks nothing...OK
+124/883 slide_words.test.Japanese, written without spaces: sentences, length, questions and answers...OK
+125/883 slide_words.test.Japanese compares by neighbouring characters: an answer asks, recalls and leaks as an English one does...OK
+126/883 slide_words.test.a near miss gives the fact away by its answer's words, never by sharing its topic...OK
+127/883 slide_words.test.numbered lines lose their numbers; empty lines are skipped...OK
+128/883 slide_words.test.a short answer comes back by its numbers, in digits or words, else by half its words from the fact...OK
+129/883 slide_words.test.an answer taken from the fact alone gives what it supplies: a word or number of it the question lacks...OK
+130/883 slide_words.test.a found fact is learned only when the text holds its names, numbers and words...OK
+131/883 tool_stream.test_0...OK
+132/883 tool_params.test.decode parameters...OK
+133/883 tool_lfm2.test.tool_lfm2: a block of one call is the call, and no content is left...OK
+134/883 tool_lfm2.test.tool_lfm2: positional and keyword arguments, nested values in either spelling, two calls in one list...OK
+135/883 tool_lfm2.test.tool_lfm2: a block Python or the request would refuse stays text...OK
+136/883 tool_lfm2.test.tool_lfm2: a block still being written is held back while streaming and stays text once the reply ends...OK
+137/883 tool_lfm2.test.tool_lfm2: the calls a stream sends at every byte boundary are the whole reply's calls...OK
+138/883 tool_lfm2.test.tool_lfm2: a value is read as the type the schema names...OK
+139/883 tool_lfm2.test.tool_lfm2: a JSON list of calls is the same calls, with the schema's types...OK
+140/883 tool_lfm2.test.tool_lfm2: a JSON block the request would refuse stays text...OK
+141/883 tool_lfm2.test.tool_lfm2: a JSON block still being written is held back, and its calls stream the same as the whole reply's...OK
+142/883 tokens.test.full token SHA hashes decimal ids with commas and preserves the short fingerprint...OK
+143/883 tool_kinds.test.a chain of definitions is resolved once each, not once per path...OK
+144/883 messages.test.a conversation with a user query stays byte-identical under the rule...OK
+145/883 messages.test.a conversation with no user query gains one placeholder turn after its last tool run...OK
+146/883 messages.test.a user message whose content is wholly a tool block does not count as a query...OK
+147/883 messages.test.a conversation keeps its shape when the template does not need the rule...OK
+148/883 messages.test.a call's arguments become objects: blank text is no arguments, bad text is kept under _invalid_arguments...OK
+149/883 tool_grammar.test.the probe call's markup picks the style...OK
+150/883 tool_grammar.test.a required call's grammar names every offered tool and its schema; one call without parallel...OK
+151/883 tool_grammar.test.GLM required tools keep their name, schema and parallel policy...OK
+152/883 grammar.test.grammar vocabulary reads Nemotron Omni's text model...OK
+153/883 grammar.test.grammar vocabulary preserves nested text and root precedence...OK
+154/883 images.test.data URLs decode; remote URLs are refused...OK
+155/883 images.test.placeholders expand to each image's tokens, the history and cache key with them...OK
+156/883 images.test.a wrapped image: the server writes the wrapper around each image's rows, in the history count too...OK
+157/883 images.test.a prepare error the engine words is refused in the engine's words, others in the server's...OK
+158/883 images.test.--vision-urls: an https part's bytes come from the fetch, within what the request has left...OK
+159/883 images.test.a marker the text spells stays text: only the template's markers are image tokens (#511)...OK
+160/883 images.test.formats from their first bytes...OK
+161/883 images.test.video parts: counted from the request, refused past two, and the template's placeholders checked...OK
+162/883 media_fetch.test.public addresses as Python's ipaddress checks them...OK
+163/883 media_fetch.test.URLs as images_http._url takes them...OK
+164/883 media_fetch.test.responses as images_http._request reads them: redirects, types, lengths, encodings...OK
+165/883 videos.test.video bytes: data URLs within the limits; URLs only with --vision-urls...OK
+166/883 videos.test.group times as Python's f"{t:.1f} seconds"...OK
+167/883 videos.test.a request's videos are limited by the engine's offer, not by a constant...OK
+168/883 videos.test.a template that writes no image placeholder is named as the cause, a miscount keeps its counts...OK
+169/883 image_pieces.test.an image in pieces: each piece's own tokens around its rows, the identity on the first and last of them...OK
+170/883 image_key.test.one-token images whose row words collide share no kept state; the same image resumes it...OK
+171/883 image_key.test.a template that reads "image" parts gets them so typed, twice normalized, and the server's wrap around the rows...OK
+172/883 public_address.test.Server recovery: shared hostname policy blocks metadata names before resolution...OK
+173/883 slide_units.test.units: words made normal, pairs of characters in scripts without spaces, punctuation parting them...OK
+174/883 speech.test.fields: unknown ones are refused even when null, modifiers when set...OK
+175/883 speech.test.response_format is WAV or PCM, stripped and case-folded as Python does...OK
+176/883 speech.test.allowed controls filters before speech input validation...OK
+177/883 speech.test_0...OK
+178/883 cortheon.program.test.code changes, research and plain answers classify as Cortheon does...OK
+179/883 cortheon.program.test.harness context and transform asks do not read as research...OK
+180/883 cortheon.program.test.the note lists the stages in order and adds research for frontier tasks...OK
+181/883 cortheon.program.test.words and phrases match on boundaries only...OK
+182/883 cortheon.seen.test.urls compare by scheme and host case, default port, fragment and trailing slash...OK
+183/883 cortheon.seen.test.a request reads only what it was shown, and registry json for one package...OK
+184/883 cortheon.memory.test.a kept exchange goes back in front of its reply, whitespace and argument order aside...OK
+185/883 cortheon.memory.test.text joins well-formed text parts in order with nothing between them...OK
+186/883 cortheon.memory.test.an image part adds no words beside the text parts...OK
+187/883 cortheon.memory.test.a content-part user turn keys the same reply and check as its joined string...OK
+188/883 cortheon.memory.test.the store drops its oldest entries and checks run once a turn...OK
+189/883 cortheon.live.test.responses read by their type...OK
+190/883 cortheon.live.test.a page's title goes through the instruction filter...OK
+191/883 cortheon.live.test.search titles and snippets, such as a page's meta description, go through the instruction filter...OK
+192/883 cortheon.live.test.soft hyphens and zero-width spaces written as numeric entities do not hide an order...OK
+193/883 cortheon.live.test.a page's parsing stops at its budget, 2 MiB and then the clock, and keeps what it read...OK
+194/883 cortheon.research.test.planner replies become clean queries; a goal becomes one when the planner gives none...OK
+195/883 cortheon.research.test.pages are picked by rank across queries, without repeats or video hosts...OK
+196/883 cortheon.checks.test.an edit after the last test is untested; a test after it settles it...OK
+197/883 cortheon.html.test.title, main content, blocks, lists and entities...OK
+198/883 cortheon.html.test.bare ampersands are text, and a page full of them reads in linear time...OK
+199/883 cortheon.html.test.a page of unclosed tags reads in linear time...OK
+200/883 cortheon.html.test.an excerpt keeps the opening and the lines about the focus, in order...OK
+201/883 cortheon.html.test.link targets are read from anchors, decoded, without fragments or scripts...OK
+202/883 cortheon.html.test.a spent budget stops the text and the links, keeping what was read...OK
+203/883 cortheon.html.test.a cut never splits a character...OK
+204/883 cortheon.search.test.DuckDuckGo results: targets decoded, ads skipped, snippets read...OK
+205/883 cortheon.search.test.DuckDuckGo's lite page reads the same way...OK
+206/883 cortheon.search.test.a page cut inside a snippet keeps its result without the snippet...OK
+207/883 cortheon.search.test.Brave results and query encoding...OK
+208/883 request_log.test.the request log is created owner-only and keeps image URLs out...OK
+209/883 request_log.test.appends from several threads keep every line whole...OK
+210/883 request_log.test.a log others can read, or a symbolic link, gets no requests; the owner's own file still does...[default] (warn): TENSORFOLD_REQUEST_LOG .zig-cache/tmp/lMA6k9sCYU7YZ2Q_/taken.jsonl gets no requests: it is not a regular file only its owner can read
+OK
+211/883 slide_supplied.test.a body without questions supplies none, with null the same...OK
+212/883 slide_supplied.test.questions are trimmed, blanks and repeats dropped, order kept...OK
+213/883 slide_supplied.test.a field that is not an array of strings, too many questions and a long one are refused with their own words...OK
+214/883 slide_supplied.test.without supplied questions the model's list is returned untouched, the same slice...OK
+215/883 slide_supplied.test.supplied questions come first and the model's repeats of them are left out...OK
+216/883 slide_found.test.a fact the fact finder reads again in other words is the one it found before...OK
+217/883 slide_whom.test.a question about the user asked of the model instead...OK
+218/883 slide_whom.test.a question about the user asked about someone they know instead...OK
+219/883 slide_whom.test.a question about someone a fact never speaks of...OK
+220/883 slide_whom.test.a yes-or-no question about the user, not one asking the model to recall...OK
+221/883 slide_whom.test.a rewritten question still asks about the user...OK
+222/883 slide_whom.test.a phrase opens with the user, or with something of theirs...OK
+223/883 slide_whom.test.a Japanese question is the user's own when it says I, never when it says your...OK
+224/883 slide_take.test.a fact told again the other way round is the same fact, another is not...OK
+225/883 slide_subject.test.a fact's subject words, and the last of them a question says...OK
+226/883 slide_subject.test.a fact's subject keeps its own proper names; a phrase without any takes the fact's...OK
+227/883 slide_subject.test.a told fact's subject that most of its open questions never name is none: it keys on the reply...OK
+228/883 slide_pick.test.the held-out pair is the most typical wordings, never a vague one...OK
+229/883 slide_pick.test.a held-out question never brings in a word that neither the fact nor another question says...OK
+230/883 slide_span.test.subject swaps use a full named phrase without changing its single-word key...OK
+231/883 slide_span.test.whole phrase replacement preserves possessives and skips longer names...OK
+232/883 slide_route.test.a fact's question is asked about other people, other things of its kind and the model...OK
+233/883 slide_route.test.router alternatives replace each wording's own complete subject...OK
+234/883 slide_untold.test.an invented-fact check goes to the judge unless its answer is unchanged, even when its first words match...OK
+235/883 slide_untold.test.a lesson's own question is taught, whatever its case and spacing...OK
+236/883 slide_untold.test.the questions only checked for invented facts never become near misses...OK
+237/883 slide_replace.test.a judge's answer is a whole yes or no from a reply that ended; prefixes and cut replies are no answer...OK
+238/883 slide_replace.test.an earlier fact gives way when changed or no longer true, not for answering the same kind of question...OK
+239/883 speech_plain.test.plain redraw without controls preserves input without allocating...OK
+240/883 speech_plain.test_0...OK
+241/883 speech_register_log.test.register errors and absent measurements leave the take unmeasured and log the request...OK
+242/883 memory_routes.test.unknown scopes are omitted and known zero budget remains visible...OK
+243/883 memory_routes.test.process lifetime peak and resettable device peak retain independent scopes...OK
+244/883 memory_routes.test.a configured load limit is named as a bound, not folded into the device's measured peak...OK
+245/883 memory_routes.test.physical cache plan preserves the applied sizing inputs without runtime or identity fields...OK
+246/883 process_memory.test.Darwin v4 footprint fields use the documented ABI layout...OK
+247/883 process_memory.test.kernel lifetime footprint peak includes the current sample and cannot reset...OK
+248/883 status_routes.test.model discovery reports fitted engine context equally for its served name and aliases...OK
+249/883 status_routes.test.model discovery omits an unspecified context and preserves the full u32 limit...OK
+250/883 status_routes.test.model discovery adds reasoning to an entry only when the model has it...OK
+251/883 status_routes.test.model discovery lists the template's levels, and none only behind a thinking switch...OK
+252/883 status_routes.test.model discovery names a default effort only when the server was started with one...OK
+253/883 status_routes.test.stats snapshot exposes counters and omits unknown memory...OK
+254/883 status_routes.test.stats snapshot carries the filling prompt's tokens while a prefill runs...OK
+255/883 status_routes.test.stats snapshot marks an unknown-progress fill without counters...OK
+256/883 status_routes.test.stats snapshot's memory carries a configured limit and omits none...OK
+257/883 benchmark_manifest.test.a manifest with a GB10 and two ranks is accepted...OK
+258/883 benchmark_manifest.test.a manifest for the wrong backend is rejected...OK
+259/883 process_resident.test.status lines parse to bytes...OK
+260/883 process_resident.test.a 64 KiB-page kernel still counts in kB...OK
+261/883 process_resident.test.missing lines, other units and bad numbers are unknown, not zero...OK
+262/883 process_resident.test.a repeated line keeps its first value...OK
+263/883 process_resident.test.this process's status reads whole and parses (Linux)...OK
+264/883 cortheon.web.test.public addresses only...OK
+265/883 cortheon.web.test.redirect locations resolve against the page...OK
+266/883 cortheon.web.test.request lines stay plain and URLs carry no more than an address...OK
+267/883 cortheon.web.test.local and private names are refused before any connection...OK
+268/883 cortheon.web.test.security: cloud platform virtual addresses are not public web targets...OK
+269/883 cortheon.web.test.security: request credentials stay within their original web origin...OK
+270/883 cortheon.budget.test.a budget runs out by its clock or its steps, and stays out...OK
+271/883 cortheon.quarantine.test.orders aimed at the reading model are flagged, ordinary documentation is not...OK
+272/883 cortheon.quarantine.test.clean drops flagged sentences and keeps the rest...OK
+273/883 cortheon.quarantine.test.soft hyphens and zero-width characters neither split nor join words to hide an order...OK
+274/883 cortheon.quarantine.test.tag characters are dropped from web text and cannot hide an order...OK
+275/883 benchmark_check.test.the time rule takes a real date, at most six fraction digits, Z only, at most 15 minutes ahead...OK
+276/883 benchmark_check.test.the identifier patterns follow the board's VERSION, NAME, REPO and run ID patterns...OK
+277/883 speech_plain_test.test.empty redraw list matches reference plain controls synthetic goldens...OK
+278/883 linear_time.test.the CPU clock leaves out a sleep that the awake clock counts...OK
+279/883 speech_audio_test.test.quantization clips, truncates toward zero and stays in place...OK
+280/883 speech_audio_test.test.non-finite audio is refused...OK
+281/883 speech_audio_test.test.the WAV header describes mono 16-bit PCM at the advertised rate...OK
+282/883 tool_stream_test.test.a streamed call its end token left open completes as its closing markup completes it...OK
+283/883 tool_stream_test.test.a streamed call cut inside a value stays open...OK
+284/883 tool_stream_test.test.a streamed parameter whose schema is a union comes back as the value the model wrote...OK
+285/883 tool_stream_test.test.a streamed quoted string under a union stays the text the model wrote...OK
+286/883 tool_stream_test.test.a streamed parameter whose schema points at a definition comes back as the value the model wrote...OK
+287/883 tool_stream_test.test.a streamed parameter whose schema combines branches comes back as the value the model wrote...OK
+288/883 tool_stream_test.test.a streamed parameter whose schema names a number and an integer takes the integer...OK
+289/883 tool_stream_test.test.a streamed parameter whose schema constrains the value with every keyword comes back as the value the model wrote...OK
+290/883 tool_stream_test.test.a streamed parameter whose schema points at a definition by pointer comes back as the value the model wrote...OK
+291/883 tool_stream_test.test.a streamed parameter whose schema names no kinds constrains nothing...OK
+292/883 tool_stream_test.test.a one-call reply retains an unoffered call and still hides an unclosed one...OK
+293/883 tool_stream_test.test.DSML containment survives every byte boundary and preserves adjacent call order...OK
+294/883 tool_stream_test.test.unfinished DSML retains containment through byte feeds and final closeCall...OK
+295/883 tool_stream_test.test.malformed closed DSML masks its nested XML and resumes the next legitimate call...OK
+296/883 cortheon.fuzz.test.cortheon fuzz: every seed reads within bounds...OK
+297/883 cortheon.fuzz.test.cortheon fuzz: the coverage-guided fuzzer, from the seeds...OK
+298/883 cortheon.fuzz.test.cortheon fuzz: a fixed run of structure-aware edits...OK
+299/883 cortheon.fuzz.test.cortheon fuzz: every reader takes linear time on long inputs...OK
+300/883 idle_unload_cases.test.the manager stays off for 0 and negative idle seconds...OK
+301/883 idle_unload_cases.test.a one-second window parks the engine without a request; the timer does not re-close...OK
+302/883 idle_unload_cases.test.active work prevents the park; its end restarts the window...OK
+303/883 idle_unload_cases.test.the wake reloads: the candidate opens, the stub is freed, and a second cycle works...OK
+304/883 idle_unload_cases.test.concurrent wake requests produce exactly one reload; both find the engine resident...OK
+305/883 idle_unload_cases.test.a failed open cleans up and leaves the server parked and retryable...OK
+306/883 idle_unload_cases.test.the parked stub refuses submits and reports unhealthy...OK
+307/883 idle_unload_carry_test.test.idle carry: the published manager survives setup scope and complete teardown clears it once...OK
+308/883 idle_unload_carry_test.test.idle carry: default-off startup has no allocation-failure diagnostic outcome...OK
+309/883 idle_unload_carry_test.test.idle carry: active work parks the timer on its condition and end re-arms the window...OK
+310/883 idle_unload_carry_test.test.idle carry: parked publication is not mistaken for completed close...OK
+311/883 idle_unload_carry_test.test.idle carry: every one of three engine cycles stops its actual ticker before close...OK
+312/883 idle_unload_carry_test.test.idle carry: deadline halt reaches each resident owner once and never a parked owner...OK
+313/883 idle_unload_carry_test.test.idle carry: repeated null and throwing reopens release scratch and owned failure reasons...OK
+314/883 idle_unload_carry_test.test.idle carry: a rejected recall candidate closes once and releases its cycle scratch...OK
+315/883 idle_unload_carry_test.test.idle carry: every partial fixture allocation can unwind and outer cleanup is idempotent...OK
+316/883 idle_unload_carry_test.test.idle carry: failure-reason allocation failure leaves the manager retryable...OK
+317/883 idle_unload_carry_test.test.idle carry: the real process closer frees each cycle arena only after closing its engine...OK
+318/883 idle_unload_carry_test.test.idle carry: the reopened allocator keeps the same stable arena address after adoption...OK
+319/883 idle_unload_carry_test.test.idle carry: arena-owner allocation refusal leaves the parked manager retryable...OK
+320/883 idle_unload_carry_test.test.idle carry: the merged wake helper keeps its failure reason in the caller arena...OK
+321/883 idle_unload_deadline_test.test.idle deadline: a parked startup engine is never halted...OK
+322/883 idle_unload_deadline_test.test.idle deadline: the fallback closer ignores a closed owner and halts the replacement...OK
+323/883 idle_unload_deadline_test.test.idle reader: a real status lease blocks close and parked reads touch no engine...OK
+324/883 idle_unload_deadline_test.test.idle reader: a request arriving before the stub wins the pending park...OK
+325/883 idle_unload_policy.test.idle review: GLM CUDA env ranks refuse unload independently of the CLI topology...OK
+326/883 idle_unload_review_test.test.idle review: an unloading wake keeps its reason and never reaches the stub submit...OK
+327/883 admission_cli.test.admission CLI: the flags default off, take bounded integers and are advertised...OK
+328/883 drama_allow_golden_test.test.delivery controls match synthetic goldens...OK
+329/883 request_guard_test.test.browser policy: loopback names accept any valid port and mapped loopback binds stay protected...OK
+330/883 request_guard_test.test.browser policy: foreign missing duplicate and malformed hosts refuse on loopback...OK
+331/883 request_guard_test.test.browser policy: same HTTP origins normalize case default ports and IPv6 spellings...OK
+332/883 request_guard_test.test.browser policy: nonloopback binds skip host admission but keep origin validation...OK
+333/883 request_guard_test.test.browser policy: host and origin exceptions are independent and exact...OK
+334/883 request_guard_test.test.browser policy: repeatable CLI flags preserve both entries and existing aliases and keys...OK
+335/883 request_guard_test.test.browser policy: malformed authorities and origin tuples never gain trust...OK
+336/883 auth_routes_test.test.auth route policy covers every dispatcher path and future private routes...OK
+337/883 auth_routes_test.test.only fixed static GET assets and GET health or opened metrics are public...OK
+338/883 hf_eos_test.test.EOS policy: HfText loads both declared EOS ids and missing generation never makes pad an EOS...OK
+339/883 hf_eos_test.test.EOS policy: HfText names malformed generation and out-of-vocabulary EOS without a panic or fallback...OK
+340/883 hf_eos_test.test.EOS policy: HfText validates present model EOS and the model head bound as well as tokenizer ids...OK
+341/883 dory_chat_test.test.Dory chat: chat_template.jinja renders every case as the Jinja reference does and EOS is both ids...OK
+342/883 dory_chat_test.test.Dory chat: thinking is the template's own switch, and the reply splits at the close token...OK
+343/883 deepseek_chat_test.test.DeepSeek chat: missing Jinja uses the committed encoding.py text goldens...DEEPSEEK_CHAT_GOLDENS 178 committed encoding.py cases
+OK
+344/883 deepseek_chat_test.test.DeepSeek chat: native request control spellings stay masked and structural tokens stay trusted...OK
+345/883 deepseek_chat_test.test.DeepSeek chat: Jinja and explicit overrides win and text-only image parts refuse...OK
+346/883 deepseek_chat_test.test.DeepSeek chat: a checkpoint without any renderer returns HTTP400 before engine submission...OK
+347/883 deepseek_chat_test.test.DeepSeek chat: the no-Jinja OpenAI route submits the native masked prompt with thinking metadata...OK
+348/883 deepseek_chat_test.test.DeepSeek chat: tool-only Jinja metadata survives the native default fallback...OK
+349/883 slide_subject_guard_test.test.Lesson questions: unrelated supplied questions cannot erase the fact's anchor...OK
+350/883 slide_subject_guard_test.test.Lesson questions: accepted supplied questions precede the generated questions...OK
+351/883 server_recovery_test.test.Server recovery: a complete reply reuses the connection but does not complete the next request...OK
+352/883 server_recovery_test.test.Server recovery: a failed response head clears earlier completion before closing...OK
+353/883 server_recovery_test.test.Server recovery: an allocation failure before a reply closes the keep-alive connection...OK
+354/883 server_recovery_test.test.Server recovery: SSE data and typed frames retain no per-event allocations...OK
+355/883 server_recovery_test.test.Server recovery: failed SSE writes and allocation failures release frame storage...OK
+356/883 server_recovery_test.test.Server recovery: both fetchers refuse cloud metadata and retain public address controls...OK
+357/883 slide_save_failure_test.test.save graph: actual graph save errors retain learned commitments matching the live generic learner...OK
+358/883 slide_questions_test.test.supplied questions that name the subject and the fact answers are kept, the rest dropped by the lesson's own filters...OK
+359/883 slide_questions_test.test.a supplied question goes first, and the model's own questions are judged beside it as before...OK
+360/883 slide_questions_test.test.without supplied questions the lesson keeps exactly what it kept from the model's list alone...OK
+361/883 slide_retention_test.test.Learning persistence: server refuses a newer lesson that loses a kept fact after repairs...OK
+362/883 slide_retention_test.test.Learning persistence: server rejection after a failed repair restores the earlier state...OK
+363/883 llama_prompt_test.test.Llama serve: production prompt tokens equal HF for every conversation...PROMPT p1-chat tokens=195 equal
+PROMPT system-user tokens=24 equal
+PROMPT default-system tokens=34 equal
+PROMPT reasoning-history tokens=48 equal
+PROMPT reasoning-alias tokens=48 equal
+PROMPT embedded-thinking tokens=47 equal
+PROMPT tools tokens=254 equal
+PROMPT calls-with-tools tokens=350 equal
+PROMPT calls-without-tools tokens=120 equal
+PROMPT tool-results tokens=382 equal
+PROMPT preserve-false tokens=44 equal
+PROMPT thinking-off tokens=28 equal
+PROMPT json-calls tokens=316 equal
+PROMPT bad-json-arguments tokens=278 equal
+PROMPT special-user tokens=39 equal
+PROMPT special-tool tokens=375 equal
+PROMPT developer-leading tokens=42 equal
+PROMPT developer-mixed tokens=42 equal
+PROMPT kwargs-effort tokens=24 equal
+PROMPT kwargs-top-effort tokens=24 equal
+PROMPT kwargs-top-only tokens=24 equal
+PROMPT spaced-history-call tokens=346 equal
+PROMPT text-parts tokens=34 equal
+OK
+364/883 llama_prompt_test.test.Llama serve: literal special-token text matches HF...PROMPT special-user tokens=39 equal
+PROMPT special-tool tokens=375 equal
+OK
+365/883 llama_prompt_test.test.Llama serve: developer roles match HF through both normalizations...PROMPT developer-leading tokens=42 equal
+PROMPT developer-mixed tokens=42 equal
+OK
+366/883 llama_prompt_test.test.Llama serve: raw template kwargs match the pod...PROMPT kwargs-effort tokens=24 equal
+PROMPT kwargs-top-effort tokens=24 equal
+PROMPT kwargs-top-only tokens=24 equal
+OK
+367/883 llama_output_test.test.Llama serve: reasoning and XML calls equal the scored pod parser...OUTPUT spaced-function equal
+OUTPUT spaced-parameter equal
+OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+OUTPUT spaced-empty equal
+OUTPUT name-newline equal
+OUTPUT name-inner-space equal
+OUTPUT name-unicode-space equal
+OUTPUT unicode equal
+OUTPUT plain equal
+OUTPUT no-close equal
+OUTPUT no-close-call equal
+OUTPUT typed equal
+OUTPUT multiple equal
+OUTPUT no-tools equal
+OUTPUT unclosed-call equal
+OUTPUT trailing-prose equal
+OUTPUT reasoning-spaces equal
+OUTPUT typed-edge equal
+OUTPUT truncated-params equal
+OUTPUT unknown-function equal
+OUTPUT malformed-first equal
+OUTPUT no-function equal
+OUTPUT recover-empty-header equal
+OUTPUT recover-newline-header equal
+OUTPUT recover-unclosed-header equal
+OUTPUT recover-close-in-header equal
+OUTPUT end-newlines-param equal
+OUTPUT end-newlines-function equal
+OUTPUT end-newlines-text equal
+OK
+368/883 llama_output_test.test.Llama serve: spaced function names match the pod...OUTPUT spaced-function equal
+OK
+369/883 llama_output_test.test.Llama serve: spaced parameter names match the pod...OUTPUT spaced-parameter equal
+OK
+370/883 llama_output_test.test.Llama serve: case-sensitive schemas match the pod...OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+OK
+371/883 llama_output_test.test.Llama serve: invalid function headers before a valid one match the pod...OUTPUT recover-empty-header equal
+OUTPUT recover-newline-header equal
+OUTPUT recover-unclosed-header equal
+OUTPUT recover-close-in-header equal
+OK
+372/883 llama_output_test.test.Llama serve: unclosed spans drop a final newline like the pod's regex end...OUTPUT end-newlines-param equal
+OUTPUT end-newlines-function equal
+OUTPUT end-newlines-text equal
+OK
+373/883 llama_output_test.test.Llama serve: seeded tag soup parses like the pod...FUZZ 3000 cases equal
+OK
+374/883 llama_output_test.test.Llama serve: actual JSON and SSE replies match pod output with real tokenizer...ROUTE spaced-function JSON+SSE equal
+ROUTE spaced-parameter JSON+SSE equal
+ROUTE case-function JSON+SSE equal
+ROUTE case-parameter JSON+SSE equal
+ROUTE case-collision JSON+SSE equal
+ROUTE case-collision-upper JSON+SSE equal
+ROUTE case-tags JSON+SSE equal
+ROUTE spaced-empty JSON+SSE equal
+ROUTE name-newline JSON+SSE equal
+ROUTE name-inner-space JSON+SSE equal
+ROUTE name-unicode-space JSON+SSE equal
+ROUTE unicode JSON+SSE equal
+ROUTE plain JSON+SSE equal
+ROUTE no-close JSON+SSE equal
+ROUTE no-close-call JSON+SSE equal
+ROUTE typed JSON+SSE equal
+ROUTE multiple JSON+SSE equal
+ROUTE no-tools JSON+SSE equal
+ROUTE unclosed-call JSON+SSE equal
+ROUTE trailing-prose JSON+SSE equal
+ROUTE reasoning-spaces JSON+SSE equal
+ROUTE typed-edge JSON+SSE equal
+ROUTE truncated-params JSON+SSE equal
+ROUTE unknown-function JSON+SSE equal
+ROUTE malformed-first JSON+SSE equal
+ROUTE no-function JSON+SSE equal
+ROUTE recover-empty-header JSON+SSE equal
+ROUTE recover-newline-header JSON+SSE equal
+ROUTE recover-unclosed-header JSON+SSE equal
+ROUTE recover-close-in-header JSON+SSE equal
+ROUTE end-newlines-param JSON+SSE equal
+ROUTE end-newlines-function JSON+SSE equal
+ROUTE end-newlines-text JSON+SSE equal
+OK
+375/883 llama_output_test.test.Llama serve: every split of the thinking closer streams without leaking markup...OK
+376/883 llama_output_test.test.Llama serve: unsupported settings refuse before SSE and completions add BOS once...OK
+377/883 llama_output_test.test.Llama serve: sampled defaults and request overrides reach both engines before SSE...OK
+378/883 llama_regression_test.test.Llama serve: resolved template controls retain upstream precedence outside Nanbeige...OK
+379/883 llama_regression_test.test.Llama serve: context overflow is HTTP 400 before SSE with and without compaction...OK
+380/883 llama_regression_test.test.Llama serve: Unicode stops end generation across more tokens than characters...OK
+381/883 auth_scope_test.test.auth scopes: plain labels keep every route and bracketed sets are strict...OK
+382/883 auth_scope_test.test.auth scopes: route grants are exact and every other method or resource is refused...OK
+383/883 auth_scope_test.test.auth scopes: restricted Responses requests must be stateless and full keys keep storage...OK
+384/883 auth_scope_test.test.auth scopes: flags, environment and plain file lines keep every route; the first configured key wins...OK
+385/883 auth_scope_test.test.auth scopes: a key's scopes follow the file across reloads and an invalid file closes every key...OK
+386/883 auth_scope_test.test.auth scopes: one key cannot carry two scope sets, so no full copy shadows a restricted line...OK
+387/883 auth_scope_http_test.test.auth scopes HTTP: refusals come before the body, a 100 Continue or a parked model's wake...OK
+388/883 auth_scope_http_test.test.auth scopes HTTP: inference and read are separate grants and full keys keep the whole dispatcher...OK
+389/883 auth_scope_http_test.test.auth scopes HTTP: restricted Responses cannot read, keep or continue the shared stored conversations...OK
+390/883 auth_scope_http_test.test.auth scopes HTTP: a keep-alive request does not inherit the previous request's full key...OK
+391/883 request_admission_test.test.request admission: only a cap or a rate turns admission on; a burst alone does not...OK
+392/883 request_admission_test.test.request admission: disabled limits preserve acceptance and reservations release once...OK
+393/883 request_admission_test.test.request admission: global and per-key limits are independent and refusals reserve nothing...OK
+394/883 request_admission_test.test.request admission: anonymous requests share a bucket while authenticated keys remain independent...OK
+395/883 request_admission_test.test.request admission: key churn cannot grow storage and an exhausted table recovers on release...OK
+396/883 request_admission_test.test.request admission: concurrent reservations never oversubscribe either cap...OK
+397/883 request_admission_test.test.request admission: burst credit refills at exact boundaries without floating-point drift...OK
+398/883 request_admission_test.test.request admission: clocks cannot refund spent credit and long idle refills only the burst...OK
+399/883 request_admission_test.test.request admission: depleted idle identities cannot be evicted to reset their rate allowance...OK
+400/883 request_admission_test.test.request admission: concurrency refusal consumes no rate credit and unspecified burst uses the rate...OK
+401/883 request_admission_http_test.test.admission HTTP: every model route refuses before its body and engine work; other routes stay open...OK
+402/883 request_admission_http_test.test.admission HTTP: verified keys get their own reservations and a parse error releases one...OK
+403/883 request_admission_http_test.test.admission HTTP: header values cannot split an unauthenticated server's shared principal...OK
+404/883 request_admission_http_test.test.admission HTTP: a client that leaves frees its reservation only when the model request ends...OK
+405/883 request_admission_http_test.test.admission HTTP: a spent rate refuses after the request ends and the metrics carry fixed reasons...OK
+406/883 request_admission_http_test.test.admission HTTP: with no admission flag nothing is reserved, refused or added to the metrics...OK
+407/883 vision_markers_test.test.vision markers: plain vocabulary entries cannot become image or video markers...VISION_MARKERS all 8 fields refuse plain vocabulary; unflagged additions pass
+OK
+408/883 embedding_protocol_test.test.embeddings protocol: strings and token batches retain exact sequence boundaries and usage...OK
+409/883 embedding_protocol_test.test.embeddings protocol: invalid forms limits media and undeclared MRL refuse...OK
+410/883 embedding_protocol_test.test.embeddings protocol: float and little-endian base64 preserve MRL rows and full-width strides...OK
+411/883 embedding_service_test.test.embeddings HTTP: capability guards refuse generators before submission and serialize valid results...OK
+412/883 embedding_service_test.test.embeddings HTTP: missing vector writes and generated tokens cannot become successful embeddings...OK
+413/883 embedding_service_test.test.embeddings HTTP: disconnect waits for terminal completion before borrowed request storage ends...OK
+414/883 embedding_service_test.test.embeddings HTTP: generation routes refuse the encoder and consume only their own body...OK
+415/883 http_limits_test.test.HTTP limits: request-line drips cannot refresh the total head deadline...OK
+416/883 http_limits_test.test.HTTP limits: header lines share the request-line deadline and cannot become a ready request on timeout...OK
+417/883 http_limits_test.test.HTTP limits: keep-alive idle wait is separate and first bytes start a fresh head budget...OK
+418/883 http_limits_test.test.HTTP limits: trickling a length-scaled body expires even while every idle wait makes progress...OK
+419/883 http_limits_test.test.HTTP limits: an adequate declared upload completes and releases its timer before inference...OK
+420/883 http_limits_test.test.HTTP limits: chunk metadata and trailers cannot reset the original body deadline...OK
+421/883 http_limits_test.test.HTTP limits: production admission returns 503 and Retry-After without reserving an excess thread...OK
+422/883 http_limits_test.test.HTTP limits: concurrent admission never exceeds the independent connection cap...OK
+423/883 http_limits_test.test.HTTP limits: successful keep-alive heads release and renew their budgets...OK
+424/883 http_limits_test.test.HTTP limits: defaults and the maximum declared body have finite total budgets...OK
+425/883 done_times_test.test.done times: normal request keeps every existing field and appends its own seconds...OK
+426/883 done_times_test.test.done times: a resumed prompt logs its own cache count and times rather than global sums...OK
+427/883 done_times_test.test.done times: a client-left request logs only its existing ended line...OK
+428/883 done_times_test.test.request seed: omitted and null keys draw different 63-bit OS seeds for one prompt...OK
+429/883 done_times_test.test.request seed: the serve flag preserves prompt keys and salt without drawing...OK
+430/883 done_times_test.test.request seed: explicit signed, wide, string and float keys preserve their old bits...OK
+431/883 done_times_test.test.request seed: injected configured keys precede entropy while explicit requests still win...OK
+432/883 done_times_test.test.request seed: sampled defaults without a key still draw fresh seeds...OK
+433/883 done_times_test.test.request seed: entropy failure refuses instead of falling back, and greedy never draws...OK
+434/883 done_times_test.test.request seed: drawn sampling key reaches the engine and follows times on the done line...OK
+435/883 done_times_test.test.request seed: an explicit unsigned key is logged without truncating its engine bits...OK
+436/883 done_times_test.test.done times: a request queued behind another stream gets its own admission wait...OK
+437/883 done_times_test.test.done times: family-planned admission logs the queued request's two-second wait...OK
+438/883 done_times_test.test.done times: tok/s uses this request's tokens minus one and its fixed-clock decode span...OK
+439/883 drain_test.test.SIGTERM drains: 503 + Retry-After and /health draining while a reply finishes; at the deadline the rest end "server restarting" at a round boundary, then the engine closes...[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+OK
+440/883 drain_test.test.a stop that lands between a request's count and its drain check: the request is refused (503) and the drain waited for it, never lost...[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+OK
+441/883 keepalive_test.test.a silent engine's stream gets keepalives before its first token (chat: SSE comments, messages: ping events)...[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+OK
+442/883 name_priority_http_test.test.name priority: the named ids' default applies unless the request sets its own priority...OK
+443/883 name_priority_http_test.test.name priority: the served name's default also answers an unknown id through the fallback...OK
+444/883 name_priority_http_test.test.name priority: parse takes ID=background, case and whitespace on the word, and refuses the rest...OK
+445/883 name_priority_http_test.test.name priority: an id that is neither the served name nor an alias is refused by name...OK
+446/883 std_options.test.a backend's std options pass through, and a backend without them keeps the defaults...OK
+447/883 tool_lfm2_stream_test.test.tool_lfm2: each call of a list is sent as soon as it ends, in either spelling...OK
+448/883 tool_lfm2_stream_test.test.tool_lfm2: a block that is not a list of calls shows no markup, and streams no call when its first is bad...OK
+449/883 tool_lfm2_stream_test.test.tool_lfm2: what follows a sent call and is not a call is dropped from the stream, and the whole reply stays text...OK
+450/883 tool_grammar_lfm2_test.test.lfm2 grammar: a named tool, or the only offered one, is one call in one list with no more...OK
+451/883 tool_grammar_lfm2_test.test.lfm2 grammar: required tools are alternatives, and without parallel_tool_calls=false calls repeat...OK
+452/883 tool_grammar_lfm2_test.test.lfm2 grammar: each argument is a keyword typed by its schema, required ones forced, a separator only after one...OK
+453/883 tool_grammar_lfm2_test.test.lfm2 grammar: the structural tag holds the grammar as its one format...OK
+454/883 tool_grammar_lfm2_test.test.lfm2 grammar: only a template that writes the probe call in LFM2's form picks it...OK
+455/883 tool_grammar_lfm2_test.test.lfm2 grammar: replies the grammar admits read through the parser as calls with typed arguments...OK
+456/883 tool_required_test.test.required tools: unsupported required tools name the actual backend before any grammar or admission...OK
+457/883 tool_required_test.test.required tools: Gemma and unknown templates can constrain required calls on a grammar backend...OK
+458/883 tool_required_test.test.required tools: an LFM2 template gets the Pythonic grammar, one call or several, and other forms do not...OK
+459/883 tool_required_test.test.required tools: both routes parse required and named calls and enforce a complete tool reply with drafted equals plain...OK
+460/883 tool_required_test.test.required tools: required without tools, unknown names and competing grammars are refused while auto and none stay optional...OK
+461/883 tool_required_test.test.required tools: Gemma constrained JSON arguments preserve punctuation inside string values...OK
+462/883 tool_required_test.test.qwen27 tool calls: required and named calls use the masked lane fake through both routes...OK
+463/883 tool_required_test.test.a request's compiled grammar is kept for the engine, freed once at release, and an overridden one at once...OK
+464/883 tool_required_test.test.grammar_budget: a boolean that marks a covered grammar, refused when malformed, unbuilt or not covered...OK
+465/883 cli_test.test.max frames CLI bounds and engine request preserve the default...OK
+466/883 cli_test.test.voices: CLI defaults and explicit catalog...OK
+467/883 cli_test.test.vision image budget: explicit large budgets reach the engine, with bounded CLI inputs...OK
+468/883 cli_test.test.allowed controls CLI is opt-in and validates name syntax only...OK
+469/883 cli_test.test.silence redraw flags are opt-in and need a redraw count and the guard...OK
+470/883 cli_test.test.register flags are opt-in, all or none, and may set a redraw budget without silence redraws...OK
+471/883 cli_test.test.parse and capabilities share the table...OK
+472/883 cli_test.test.learned disk floor parses once with a finite byte-safe default and is a native capability...OK
+473/883 cli_test.test.an engine is asked for what the flags say, and the defaults of the flags not given...OK
+474/883 cli_test.test.--device and --segments: CUDA builds serve them, values checked; --speed-up is the Mac build's...OK
+475/883 cli_test.test.the GPU engine's flags: refused and unlisted unless the backend serves them, values checked...OK
+476/883 cli_test.test.--spill-gib asks the engine for the conversation store, spilling only what RAM evicts, and is off without it...OK
+477/883 cli_test.test.silence guard flags are opt-in and reach native open options...OK
+478/883 cli_test.test.runtime library: capabilities serializes found and missing dependencies with escaped descriptions...OK
+479/883 cli_test.test.capabilities: a p2p summary appears only when the engine gives one, as its own object...OK
+480/883 cli_test.test.--silence-mid-s is opt-in, needs the tail guard and reaches native open options...OK
+481/883 cli_test.test.prompt precision: parsing and request forwarding cover defaults, explicit modes and refusals...OK
+482/883 listener.test.the descriptor log fires once per burst...OK
+483/883 listener.test.peer text...OK
+484/883 listener.test.accepted IPv4 and IPv6 TCP streams disable Nagle for incremental responses...OK
+485/883 listener.test.the accepted-stream test stops when no usable connection arrives...OK
+486/883 hub.test.repo ids...OK
+487/883 speech_cfg_test.test.whole and streamed reference CFG carries only the plain prompt; default stays unguided...OK
+488/883 speech_cfg_test.test.invalid opted-in CFG header is refused before engine submission...OK
+489/883 speech_stream_test.test.a complete stream carries every frame in order, converted, then the terminating chunk...OK
+490/883 speech_stream_test.test.audio published before the route reads it goes out as one chunk...OK
+491/883 speech_stream_test.test.a full speech output budget refuses before starting another synthesis...OK
+492/883 speech_stream_test.test.audio is on the wire before the synthesis ends; frame 0 alone when sent before more is published...OK
+493/883 speech_stream_test.test.a failure after audio ends the stream without its terminating chunk...OK
+494/883 speech_stream_test.test.audio clipped at the frame limit ends the stream with the length trailer...OK
+495/883 speech_stream_test.test.a whole reply returns audio clipped at the frame limit and names its finish reason...OK
+496/883 speech_stream_test.test.a failure before any audio is an error reply...OK
+497/883 speech_stream_test.test.a reply with no frames is an empty audio reply, not a fault...OK
+498/883 speech_stream_test.test.a stream with no frames is an empty stream, not a fault...OK
+499/883 speech_stream_test.test.a client that leaves after the first chunk cancels the synthesis, which is waited out...OK
+500/883 speech_stream_test.test.a client that stops reading is cut off at the write stall limit and the synthesis cancelled...OK
+501/883 speech_stream_test.test.stream needs pcm and HTTP/1.1; stream false is the whole reply...OK
+502/883 speech_stream_test.test.silence keeps audio with a whole header or stream trailer...OK
+503/883 speech_stream_test.test.a whole reply whose ending fell in a long silence says so in X-Silence-Mid-Trips; a stream ends as silence...OK
+504/883 speech_stream_test.test.the mid header is absent with the guard off even if the engine reports a trip...OK
+505/883 speech_stream_test.test.voices: HTTP listing and reference rows use the family CLI builder...OK
+506/883 speech_stream_test.test.voices: without configuration the default prompt rows stay unchanged...OK
+507/883 speech_lane_release_test.test.invalid advertised speech output releases the lane before the first write...invalid output: first-write inflight=0
+OK
+508/883 speech_lane_release_test.test.speech submit errors release the lane before the first write...Busy: first-write inflight=0
+Closed: first-write inflight=0
+InvalidRequest: first-write inflight=0
+Unsupported: first-write inflight=0
+OK
+509/883 speech_lane_release_test.test.the speech lane is free while the reply body is still being written...OK
+510/883 speech_lane_release_test.test.the speech lane is free while an error reply body is still being written...OK
+511/883 speech_lane_release_test.test.a completed non-empty stream releases the lane before its first write...completed stream: first-write inflight=0
+OK
+512/883 speech_lane_release_test.test.the speech lane is free while a completed stream's body is still being written...OK
+513/883 speech_lane_release_test.test.a stream the engine is still writing holds its lane at its first audio write...OK
+514/883 speech_speakers_test.test.speakers: whole and streamed HTTP preserve dialogue, catalog tags and exact code rows...OK
+515/883 speech_speakers_test.test.speakers: catalog accepts every canonical ID and refuses malformed or structural tags...OK
+516/883 speech_speakers_test.test.speakers: malformed dialogue refuses before engine submission with default or catalog voice...OK
+517/883 speech_sampling_test.test.speech sampling: omitted and null controls retain default parameters and PCM...OK
+518/883 speech_sampling_test.test.speech sampling: custom parameters and exact integer seeds reach whole and streamed requests...OK
+519/883 speech_sampling_test.test.speech sampling: invalid controls fail before any engine submission...OK
+520/883 speech_sampling_test.test.speech sampling: references and re-prompts retain overrides and wrap explicit retry seeds...OK
+521/883 speech_sampling_test.test.speech sampling: no seed keeps prompt-keyed redraws after stripping controls...OK
+522/883 speech_sampling_test.test.speech sampling: a silenced stream retains controls and does not redraw...OK
+523/883 drama_voice_tool.test.voice tool: a synthetic tone's encoder codes become an attested file the catalog loads...OK
+524/883 drama_voice_tool.test.voice tool: refusals happen before encoding and encoder failures leave existing files alone...OK
+525/883 drama_voice_tool.test.voice tool: cleanup restores private directory permissions after encoder exit...OK
+526/883 drama_voice_tool.test.voice tool: cleanup failure warns after publication and accompanies encoder failure...OK
+527/883 drama_voice_tool.test.voice tool: allocation failures leave no private directory and encoding uses owner-only access...OK
+528/883 speech_redraw_test.test.redraws off, omitted or an explicit 0, send a silenced reply once and never read X-Deadline-S...OK
+529/883 speech_redraw_test.test.a silenced reply is redrawn with seed salt + k until a take finishes...OK
+530/883 speech_redraw_test.test.the last silenced take is sent once redraws run out...OK
+531/883 speech_redraw_test.test.a refused or failed redraw leaves the last take with audio as the reply...OK
+532/883 speech_redraw_test.test.no redraw starts past the server budget or X-Deadline-S...OK
+533/883 speech_redraw_test.test.a malformed X-Deadline-S is refused when redraws are on...OK
+534/883 speech_redraw_test.test.redraw controls filter the redrawn input; an input with nothing left is not redrawn...OK
+535/883 speech_redraw_test.test.a stop under the ratio of its expected length is redrawn with seed salt + k while redraws last...OK
+536/883 speech_redraw_test.test.a stop at or above the ratio of its expected length is sent...OK
+537/883 speech_redraw_test.test.a length finish, or a stop of fewer than 200 characters, is never judged short...OK
+538/883 speech_redraw_test.test.a redraw is judged short by the input it spoke after its controls...OK
+539/883 speech_redraw_test.test.without the short reply flags a short stop is sent once...OK
+540/883 speech_redraw_test.test.an empty redraw list seeds the reference plain text...OK
+541/883 speech_redraw_test.test.streams are never redrawn and report zero redraws...OK
+542/883 speech_redraw_test.test.stream deadlines are checked only with redraws enabled...OK
+543/883 speech_redraw_test.test.an enabled guard reports zero without a trip and on a request refusal...OK
+544/883 speech_redraw_test.test.a busy redraw is admitted after backoff within its deadline...OK
+545/883 speech_redraw_test.test.a busy redraw stops at its latest start without counting an unsubmitted take...OK
+546/883 speech_register_test.test.the register rule is off unless every threshold is set, each in range...OK
+547/883 speech_register_test.test.a phrase opening far above the others trips; a flat reply, a high first phrase or a jump under the line does not...OK
+548/883 speech_register_test.test.steady phrases 3 and 7 semitones up read the larger jump across the pitch range and sample rates...OK
+549/883 speech_register_test.test.non-finite audio is refused and audio under 8 kHz is not measured...OK
+550/883 speech_register_test.test.a high-onset take is redrawn once and the take with the smaller jump is sent...OK
+551/883 speech_register_test.test.an unmeasured redraw keeps the tripping first take; an unmeasured first take does not trip...OK
+552/883 speech_register_test.test.the register guard measures the take silence redraws leave, and off sends the first take unmeasured...OK
+553/883 speech_register_test.test.speech sampling: silence then register redraws retain parameters and advance the explicit seed...OK
+554/883 speech_register_test.test.register metadata counts admission not selection and latches trips even without budget...OK
+555/883 speech_register_test.test.register selection keeps ties, accepts a lower length take, and rejects silence...OK
+556/883 speech_register_test.test.an unmeasured register redraw can win only with the silence guard on and no silence finish...OK
+557/883 speech_register_test.test.register headers are absent on streams and errors, and register-only streams validate deadlines...OK
+558/883 speech_register_test.test.register retries reenter the silence pipeline before comparison without overwriting the held take...OK
+559/883 speech_register_test.test.short and register rules together: short takes go unmeasured, and a short register retry keeps the held take...OK
+560/883 health_test.test.the open health names the release, backend and GPU the builder reads, after its earlier keys...OK
+561/883 health_test.test.the open health always names the release, and leaves out a backend or GPU the binary does not know...OK
+562/883 health_test.test.with keys configured, /health sends only its status, with and without a valid key, whatever the identity...OK
+563/883 health_test.test.unavailable health is minimal HTTP 503 with keys enabled or disabled and with or without a valid key...OK
+564/883 health_test.test.the manifest names the rank count and revision from the server's environment, and nothing it was not given...OK
+565/883 health_test.test.benchmark manifest: an unknown server backend is never attested as CUDA...OK
+566/883 health_test.test.public health is read only for every reset spelling with keys enabled or disabled...OK
+567/883 health_test.test.malformed heads cannot hide origins and public exceptions do not open other methods...OK
+568/883 health_test.test.System One wire aliases require keys before scoring and valid keys reach the successful handler...OK
+569/883 health_test.test.browser guards close before Expect or pipelined work and recheck every pooled request...OK
+570/883 health_test.test.HEAD refusals preserve representation lengths without sending any body bytes...OK
+571/883 images_video_marker_test.test.literal video spellings in a text-only message never become video placeholders...OK
+572/883 images_video_marker_test.test.one real video beside both literal spellings produces exactly one video placeholder...OK
+573/883 images_video_marker_test.test.empty and identical video aliases keep the token spelling protected and the template marker intact...OK
+574/883 image_reuse_test.test.image reuse: text turns after an image resume past it, feed no image rows and equal a fresh server...OK
+575/883 image_reuse_test.test.image reuse: another picture under the same placeholders never resumes past them, in or across conversations...OK
+576/883 image_reuse_test.test.image reuse: a repeated picture, and two pictures in one turn, resume what is kept and run only new rows...OK
+577/883 image_reuse_test.test.image reuse: a picture whose shared budget shrinks when a turn adds one is prepared again, not resumed...OK
+578/883 image_reuse_test.test.image reuse: switching conversations and concurrent clients resume each its own images...OK
+579/883 image_reuse_test.test.image reuse: a cancelled image pass and an evicting cache leave later turns equal to a fresh server...OK
+580/883 image_reuse_test.test.image reuse: the planted control without image keys resumes another picture's state and the check sees it...OK
+581/883 stream_preflight_test.test.a streamed chat over the window reports context_length_exceeded after the role chunk...OK
+582/883 stream_preflight_test.test.a streamed chat with tools over the window reports the context error with no role chunk...OK
+583/883 stream_preflight_test.test.a streamed Messages request over the window reports the context error in the stream...OK
+584/883 stream_preflight_test.test.a streamed Responses request over the window reports the context error in the stream...OK
+585/883 stream_preflight_test.test.a valid streamed chat still opens with the role chunk and gives the preparing count back...OK
+586/883 stream_preflight_test.test.a stream whose client is gone when it opens gives the preparing count back...OK
+587/883 stream_preflight_test.test.disconnect at the admitted stream boundary cancels and drains its mailbox...OK
+588/883 stream_preflight_test.test.a reply labels a greedy request greedy and a sampled one exact...OK
+589/883 stream_preflight_test.test.a streamed chat tool reply sends no whitespace that the whole reply does not show...OK
+590/883 stream_preflight_test.test.a streamed Messages tool reply sends no whitespace that the whole reply does not show...OK
+591/883 stream_preflight_test.test.a streamed Responses tool reply sends no whitespace that the whole reply does not show...OK
+592/883 stream_preflight_test.test.a greedy-only engine's sampled request is a 400 before the stream opens; greedy ones are served...OK
+593/883 stream_preflight_test.test.a greedy-only engine's refusal names --temperature 0 when the server's own default samples...OK
+594/883 stream_preflight_test.test.an unsupported positive thinking budget is refused before streaming or submission even without a close marker...OK
+595/883 stream_preflight_test.test.an unsupported configured thinking budget is refused when the request leaves it unset or zero...OK
+596/883 stream_preflight_test.test.a supported positive thinking budget serves both whole and streamed replies...OK
+597/883 stream_preflight_test.test.unsupported budgets leave zero unset and thinking-disabled requests valid...OK
+598/883 stream_preflight_test.test.closed, busy or memory-pressure admission is service unavailable across chat, messages and responses...OK
+599/883 stream_preflight_test.test.Unicode stop strings end JSON and SSE replies with byte-sized tokens...OK
+600/883 stream_dsml_test.test.DSML literal calls and adjacent XML calls agree in whole and streamed consumer replies...OK
+601/883 stream_dsml_test.test.unfinished and malformed DSML never emit their complete nested call in consumer replies...OK
+602/883 stream_dsml_test.test.DSML and adjacent existing non-XML envelopes preserve whole and SSE calls without duplicates...OK
+603/883 stream_dsml_test.test.a supported bare JSON call containing a literal DSML opener agrees in whole and SSE replies...OK
+604/883 stream_dsml_test.test.DSML spellings mixed in one block stay text in whole and streamed consumer replies...OK
+605/883 stream_dsml_test.test.a <tool_call> envelope holding only a DSML opener is text, not a panic, whole and streamed...OK
+606/883 stream_dsml_test.test.closed rejected calls and literal less-than prose preserve later consumer calls...OK
+607/883 stream_dsml_test.test.DeepSeek-V4.1's spaced DSML call is the reply's tool call, whole and streamed (#1324)...OK
+608/883 stream_dsml_test.test.a DSML call max_tokens cuts gives the same reply whole and streamed in either spelling...OK
+609/883 tool_cut_test.test.a call max_tokens cuts is the whole reply's tool call, cut, as the stream's is...OK
+610/883 tool_cut_test.test.the one-call policy and a cut before any call is named keep their replies...OK
+611/883 tool_cut_test.test.a GLM call max_tokens cuts is the whole reply's tool call, cut, as an XML call is (#1298)...OK
+612/883 tool_cut_test.test.a cut GLM call keeps the one-call policy, and one not yet named or not offered stays text...OK
+613/883 tool_cut_test.test.a chunked XML cut drops only the pending framing newline...OK
+614/883 logprobs_test.test.issue 969: a first EOS counts in usage but sends no text and classifies as empty_output...OK
+615/883 logprobs_test.test.with thinking on, the rows start at the answer: after </think> and the newlines the text drops, no end token...OK
+616/883 logprobs_test.test.a reply cut inside its reasoning has no rows...OK
+617/883 logprobs_test.test.with thinking off every reply token has a row, and top_logprobs 0 gives none of the alternatives...OK
+618/883 logprobs_test.test.a streamed reply's rows, joined over its chunks, are the whole reply's and spell its streamed content...OK
+619/883 logprobs_test.test.logprobs refuse tools, stop strings, structured output, a thinking budget and other routes...OK
+620/883 logprobs_test.test./v1/completions gives the legacy form, whole and streamed: texts, logprobs, alternatives by text and offsets...OK
+621/883 logprobs_test.test.prompt_logprobs: null first, then each prompt token with its rank before the best tokens, and the refusals...OK
+622/883 think_split_test.test.the reasoning ends at the close token, so a quoted tag stays reasoning...OK
+623/883 think_split_test.test.a tokenizer without a close token keeps the text split...OK
+624/883 think_split_test.test.the stream's reasoning and content end at the close token too...OK
+625/883 think_split_test.test.WordPiece whole replies keep the answer after a decoder inserts space before the close token...OK
+626/883 think_split_test.test.WordPiece streams keep the answer after a decoder inserts space before the close token...OK
+627/883 thinking_reserve_test.test.the thinking reserve adds to the engine's limit and keeps max_tokens for the answer...OK
+628/883 thinking_reserve_test.test.the thinking reserve stops at the context window...OK
+629/883 thinking_reserve_test.test.without thinking, an answer limit, or a reserve, max_tokens limits the whole reply...OK
+630/883 thinking_reserve_test.test.the thinking reserve saturates huge positive values before window and u32 caps...OK
+631/883 loop_stop_test.test.loop stop: a stopped chat reply carries its reasoning, no content or calls, content_filter and the loop error...OK
+632/883 loop_stop_test.test.loop stop: off, the guarded reply closes and answers as before, with no error or stopped mark...OK
+633/883 loop_stop_test.test.loop stop: a stopped Responses reply is incomplete for content_filter, its output the reasoning alone...OK
+634/883 loop_stop_test.test.loop stop: a stopped Messages reply is a refusal, streamed without an error event...OK
+635/883 loop_stop_test.test.loop stop: --loop-guard-stop parses as a native serve flag...OK
+636/883 late_system_test.test./v1/imprint: without --learn-conversations each route refuses and names the flag; with it, the engine answers...OK
+637/883 late_system_test.test.a mid-conversation system message renders the same prompt on Messages and on chat...OK
+638/883 late_system_test.test.tool reply prose survives whole chat, Messages and Responses and their warm prompts...OK
+639/883 late_system_test.test.legacy tool stream sends prose before and after exactly one call and warms the same history...OK
+640/883 late_system_test.test.single-call whole replies retain prose and tool-only replies still have null content...OK
+641/883 late_system_test.test.a reply's drafter counters are written from the request's own copy, after the engine's and mailbox's are gone...OK
+642/883 late_system_test.test.GET and DELETE /v1/recall: 404 without a record, its state, emptied, and 409 for a reader...OK
+643/883 late_system_test.test.tool visibility HTTP: whole replies retain an unoffered call...OK
+644/883 late_system_test.test.tool visibility HTTP: streamed replies retain an unoffered call...OK
+645/883 compact_test.test.a text-only Flash Next server refuses image parts before prompt rendering...OK
+646/883 compact_test.test.rewind boundary follows the latest actual user and stops before content...OK
+647/883 compact_test.test.auto reserve, note budget and keep tokens...OK
+648/883 compact_test.test.off leaves the runtime object unchanged and a short request only reports the window...OK
+649/883 compact_test.test.the kept span never starts between a tool call and its results...OK
+650/883 compact_test.test.the compacted prompt fits and the same request compacts the same way...OK
+651/883 compact_test.test.a request that cannot fit after compaction is still context_length_exceeded...OK
+652/883 compact_test.test.a split turn is summarized on its own and placed before the kept reply...OK
+653/883 compact_test.test.the files section is filled from tool call arguments...OK
+654/883 compact_test.test.a returned note is updated from the new middle...OK
+655/883 compact_test.test.a long cut is summarized in chunks...OK
+656/883 compact_test.test.an incremental request summarizes only the new middle and a user edit is the next note...OK
+657/883 compact_test.test.a stream compacts and admits its final request before it opens...OK
+658/883 compact_test.test.a content-part turn counts its joined text toward the kept span...OK
+659/883 compact_test.test.an image part does not count toward the kept span...OK
+660/883 compact_test.test.compaction's note prompt includes joined text parts...OK
+661/883 completion_prompt_test.test.a completion prompt's ids up to the vocabulary's last id are served, nested or not...OK
+662/883 completion_prompt_test.test.a completion prompt's ids outside the vocabulary get a 400, nested or not...OK
+663/883 completion_prompt_test.test.a completion prompt's boolean ids get a 400, nested or not...OK
+664/883 hf_eos_http_test.test.EOS policy: HTTP stops on both checkpoint EOS ids with exact usage hashes and streamed whole parity...OK
+665/883 hf_eos_http_test.test.EOS policy: HTTP ignore_eos preserves tokens and a pad not declared as EOS keeps decoding...OK
+666/883 hf_eos_http_test.test.EOS policy: HTTP preserves ordinary answer text before either declared EOS...OK
+667/883 hf_eos_http_test.test.return_token_ids: the ids equal the reply's tokens and their sha, whole and streamed...OK
+668/883 hf_eos_http_test.test.return_token_ids: unset keeps the tensorfold block without token_ids...OK
+669/883 reply_gpu_seconds_test.test.gpu_seconds: a reply whose engine did not time it is byte-identical, whole and streamed...OK
+670/883 server_init_test.test.an init that fails after the keepalive started stops its thread and frees everything it allocated...OK
+671/883 server_init_test.test.init reads the template once and keeps its thinking switch for model discovery...OK
+672/883 connection_arena_test.test.Connection arena: after two long non-streaming requests a kept-alive connection holds at most the limit...[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+OK
+673/883 decisions_test.test.server cleanup releases request counters...OK
+674/883 decisions_test.test.a decisions body is refused with 0.6.6's sentences...OK
+675/883 decisions_test.test.the engine hook scores a choice and a missing hook is refused...OK
+676/883 decisions_test.test.a prompt past the context window is refused before scoring...OK
+677/883 decisions_test.test.an engine with no score hook refuses after the checks pass...OK
+678/883 systemone_test.test.System One answers and prompts equal the goldens, packed or a pass a question...OK
+679/883 systemone_test.test.System One refuses in the goldens' words, before any scoring...OK
+680/883 systemone_test.test.pictures reach the engine in llama-server's order, the state's image parts taken out of its text...OK
+681/883 slide_context_test.test.lesson conversations: the 256-row reader avoids new checks and writing it cannot use...OK
+682/883 slide_context_test.test.lesson conversations: tapped readers retain both held-out conversation verdicts...OK
+683/883 slide_stream_test.test.lesson stream: learner progress reaches the SSE connection...OK
+684/883 slide_stream_test.test.lesson stream: heartbeat precedes a blocked unit and stops before DONE...OK
+685/883 slide_save_stream_test.test.lesson stream: a slow final save reports saving before DONE...OK
+686/883 slide_save_stream_test.test.lesson stream: a failed final save reports failure before DONE...OK
+687/883 slide_save_stream_test.test.lesson stream: a closed writer still saves on cleanup, including errors...OK
+688/883 slide_writer_test.test.lesson writer: cold bank and keep prompts overlap and retain their ordered answers...OK
+689/883 slide_writer_test.test.lesson writer: a failed cold batch publishes no partial cache and a retry completes...OK
+690/883 slide_writer_test.test.lesson writer: missing thinking head preserves the plain example as each thinking twin...OK
+691/883 slide_key.test.--slide starts only with a key: --api-key, --api-key-file or TENSORFOLD_API_KEY...OK
+692/883 slide_key.test.--slide refuses before any load a key file or a key the server's store would refuse, naming the file...OK
+693/883 slide_graph_test.test.facts persist across a reopen, link by a shared key word, and clear without reusing ids...OK
+694/883 slide_graph_test.test.a lesson's phases, loss trace and neurons show while it learns; a learned fact keeps its neurons on disk...OK
+695/883 slide_graph_test.test.a save is measured against the shards as they were before it: the files it changed, how long it took...OK
+696/883 slide_forget_test.test.a delete is refused without --slide (501) and while a learn or delete runs (503), the lock left free...OK
+697/883 slide_forget_test.test.a replaced, deleted, missed or neuron-less fact has nothing to delete; a learned one with neurons does...OK
+698/883 slide_forget_test.test.a delete whose checks hold is written, and the graph marks the fact deleted with its time and reason...OK
+699/883 slide_forget_test.test.a delete that costs a kept fact its answer is put back and nothing is written...OK
+700/883 slide_forget_test.test.a deleted fact that still answers is put back, unless the model as shipped gives the same answer...OK
+701/883 slide_forget_test.test.a test build's failing check puts the delete back; an engine that finds nothing held writes nothing...OK
+702/883 slide_forget_test.test.deleting a fact that replaced an older one leaves the older one replaced, and says so...OK
+703/883 slide_forget_test.test.a reply quoted in a put-back's message is cut at 240 bytes where a character begins...OK
+704/883 slide_forget_test.test.a graph file that cannot be written before the shards stops the delete: put back, nothing written anywhere...OK
+705/883 slide_forget_test.test.a graph file that cannot be written after the shards leaves the fact deleting on disk, and a second delete settles it...OK
+706/883 slide_forget_test.test.shards that cannot be written are written again as they were; when that fails too, the file says deleting...OK
+707/883 slide_forget_test.test.a lesson placed on a neuron a fact left deleting lists takes it; a learned fact's listing stays...OK
+708/883 slide_forget_test.test.an allocation that fails anywhere in recording a delete leaves the graph in memory as its file says; a retry records it...OK
+709/883 slide_forget_test.test.a put-back the device does not take refuses replies and requests in words, and a retry lands it once it can...OK
+710/883 slide_forget_test.test.a delete keeps the folder's original files before anything changes, and a broken way back refuses it...OK
+711/883 slide_teacher_test.test.a given-up lesson leaves the next kept lesson's checks as if it never ran...OK
+712/883 slide_teacher_test.test.lesson accounting: repeated failures retain all original successful rotations...OK
+713/883 slide_learn_path_test.test.through slide.learn, a lesson given up between two kept ones leaves the second kept lesson's checks...OK
+714/883 slide_learn_path_test.test.lesson accounting: construction refusal and no clean plan leave the next accepted checks unchanged...OK
+715/883 slide_learn_path_test.test.lesson accounting: a failed learner is taken out without rotating the next accepted checks...OK
+716/883 slide_learn_path_test.test.lesson accounting: a persistence failure retains accepted live lessons and their next check rotation...OK
+717/883 slide_learn_path_test.test.lesson accounting: batching accepted and rejected facts does not alter later training chunks...OK
+718/883 slide_learn_path_test.test.lesson accounting: concurrent learn routes serialize the same accepted check rotations...OK
+719/883 slide_learn_path_test.test.lesson fixture: refused record allocations retain no partial owned training chunk...OK
+720/883 slide_learn_path_test.test.lesson fixture: rendered byte tokens preserve request provenance and allocation ownership...OK
+721/883 startup.test.a text that fails after the engine opened closes the engine...OK
+722/883 startup.test.an engine that fails or refuses after the text loaded frees the text...OK
+723/883 startup.test.both failing reports the text's error, as when it loaded first; both up hands both back...OK
+724/883 responses_include_test.test.OpenAI's include values are accepted, others refused by name...OK
+725/883 benchmark_suite.test.the suites text re-derives the pinned manifest digest and its own sha256 field...OK
+726/883 benchmark_suite.test.negative control: integer temperatures give another manifest digest...OK
+727/883 benchmark_suite.test.cells need every repeat ok, and a kept failed warm-up makes a cell incomplete...OK
+728/883 benchmark_suite.test.temperatures print as Python's g format...OK
+729/883 benchmark_receipt_test.test.the receipt built from the golden facts equals the golden canonical bytes...OK
+730/883 benchmark_receipt_test.test.the golden compare fails when 10.0 is written as an integer...OK
+731/883 benchmark_receipt_test.test.the parsed golden writes back byte for byte, and previews as json.dumps(indent=2)...OK
+732/883 benchmark_receipt_test.test.a saved receipt is private, atomic and loads back equal...OK
+733/883 benchmark_receipt_test.test.oversized, duplicate-key, non-finite and deeply nested files are refused with fixed words...OK
+734/883 benchmark_receipt_test.test.created_at has microseconds only when present, and run ids are lowercase v4...OK
+735/883 benchmark_receipt_test.test.a managed native runtime with python_version none passes publish; null and empty do not...OK
+736/883 benchmark_receipt_test.test.every live-board mutation fails with a message naming its field...OK
+737/883 benchmark_receipt_test.test.positive controls pass the publish rules...OK
+738/883 benchmark_receipt_test.test.a local checkpoint and an over-budget sample save, and publishing refuses them before any network...OK
+739/883 benchmark_receipt_test.test.a rocm receipt on linux saves but never publishes; rocm on macos fails both modes...OK
+740/883 benchmark_receipt_test.test.a receipt path is checked before a run: a directory name is refused, its directory is made, a file fits, nothing is left...OK
+741/883 benchmark_receipt_test.test.issue 969 v2: legacy receipts retain v1 completion and ranking partitions...OK
+742/883 benchmark_receipt_test.test.the receipt names the cache format a managed run used and leaves an attached run's unknown...OK
+743/883 benchmark_stop_test.test.the production modules import no test fake...OK
+744/883 benchmark_stop_test.test.the first signal wins and maps to the shell's exit codes...OK
+745/883 benchmark_stop_test.test.a second Ctrl-C kills the guarded child, and a released child is left alone...OK
+746/883 benchmark_stop_test.test.through the real handler, a second Ctrl-C kills the guarded child and ends the process by SIGINT...OK
+747/883 benchmark_stop_test.test.through the real handler, HUP, TERM and a first INT are recorded and the first one wins...OK
+748/883 benchmark_stop_test.test.a second Ctrl-C at the hidden prompt turns echo back on...OK
+749/883 benchmark_sse_test.test.CRLF data lines of one event and a keepalive comment make one event...OK
+750/883 benchmark_sse_test.test.the finishing chunk's speculative counters reach the sample only when all three are counts and accepted fits drafted...OK
+751/883 benchmark_sse_test.test.one stamp is unmeasured, two are ok, and missing telemetry stays null...OK
+752/883 benchmark_sse_test.test.usage and the stream end decide the error codes...OK
+753/883 benchmark_sse_test.test.fewer tokens than asked is early_eos with a rate...OK
+754/883 benchmark_sse_test.test.server errors, bad JSON, a missing blank line and an empty reply keep fixed codes and no server text...OK
+755/883 benchmark_sse_test.test.bad telemetry values are null, a null tensorfold block hides runtime, and hashes are lowercased...OK
+756/883 benchmark_sse_test.test.choice shapes and finish order are checked, and reasoning counts as delivery...OK
+757/883 benchmark_sse_test.test.line, event, stream and UTF-8 limits give invalid_stream...OK
+758/883 benchmark_sse_test.test.the delivery rate is (completion - 1) / delivery_seconds in the same f64 the receipt holds...OK
+759/883 benchmark_sse_test.test.issue 969 v2: natural sampled stops at 128 qualify, short, greedy, length and empty do not...OK
+760/883 benchmark_stream_test.test.request bodies equal the golden bytes, routes and headers, and a chat reply is measured...OK
+761/883 benchmark_stream_test.test.writes apart are measured, one write is unmeasured, and the head's bytes take its time...OK
+762/883 benchmark_stream_test.test.bytes one at a time keep UTF-8 and CRLF, and a final carriage return without a newline never dispatches...OK
+763/883 benchmark_stream_test.test.status, media type and redirects decide before any line is read...OK
+764/883 benchmark_stream_test.test.a trickling reply times out, and Ctrl-C cancels the attempt and ends the run...OK
+765/883 benchmark_stream_test.test.a closed port is a connection error, chunked SSE is read, and a cut chunk is truncated...OK
+766/883 benchmark_stream_test.test.the run sends a warm-up and the repeats per cell, keeping only a failed warm-up...OK
+767/883 benchmark_stream_test.test.the endpoint keeps a prefix, adds /v1 once and refuses other schemes, credentials and queries...OK
+768/883 benchmark_stream_test.test.with no task to run it on, a request is a connection error and is never sent...OK
+769/883 benchmark_stream_test.test.a reply of exactly the limit is read, and one byte more is too large...OK
+770/883 benchmark_stream_test.test.an https exchange is never sent through a proxy that refuses to tunnel...OK
+771/883 benchmark_stream_test.test.an https exchange is never sent in clear text through a tunnel the proxy opened...OK
+772/883 benchmark_stream_test.test.a refused attempt keeps its fixed sample and code and hands back the server's reason, cleaned, waiting 100 ms at most...OK
+773/883 benchmark_stream_test.test.an unbuffered refusal body is read after its head without a timed sender pause...OK
+774/883 benchmark_server_test.test.the child's flags parse as serve flags and carry none that native serve refuses; adding --tp fails...OK
+775/883 benchmark_server_test.test.drafts stay on unless serial: only serial adds --no-drafts, and a drafter directory goes to --drafter...OK
+776/883 benchmark_server_test.test.the child's environment drops the key, log, salt and token and turns off the live line...OK
+777/883 benchmark_server_test.test.the port comes from serve's serving line, whose format serve.zig still prints...OK
+778/883 benchmark_server_test.test.a ready child is served, then stopped and reaped; its log is private and unlinked, the lock stays...OK
+779/883 benchmark_server_test.test.warming, a missing name or a starting status time out; an exited child is named without paths...OK
+780/883 benchmark_server_test.test.a child that exits during startup hands back its last log lines, cleaned for a terminal; a timeout names its limit...OK
+781/883 benchmark_server_test.test.an engine's load-limit hint before its error is kept with the error, three lines at most, in their order...OK
+782/883 benchmark_server_test.test.the startup timeout grows with the weights past 20 GB, 6 s per GB from 600 s, to 3600 s...OK
+783/883 benchmark_server_test.test.a child that ignores SIGTERM is killed and reaped after the grace period...OK
+784/883 benchmark_server_test.test.a second benchmark finds the lock busy and spawns nothing...OK
+785/883 benchmark_server_test.test.Ctrl-C during startup stops and reaps the child and frees the lock...OK
+786/883 benchmark_server_test.test.a lock path that is a symlink is refused and its target is never created...OK
+787/883 benchmark_server_test.test.an allocation failure before the spawn leaves the lock free...OK
+788/883 benchmark_server_test.test.a second Ctrl-C kills the running serve child before the benchmark exits...OK
+789/883 benchmark_server_test.test.a lock path that is a symlink to an existing file, or a FIFO, is refused and left as it was...OK
+790/883 benchmark_server_test.test.benchmarks that race to create the first lock: one wins and every other one is told a benchmark is running...OK
+791/883 benchmark_server_test.test.an allocation failure while waiting for readiness stops the child and frees the lock...OK
+792/883 benchmark_server_test.test.an exited child is seen without being reaped, and once stopped it is released from a second Ctrl-C...OK
+793/883 benchmark_server_test.test.the child's flags carry the cache format the benchmark asked for...OK
+794/883 benchmark_facts_test.test.a local checkpoint yields hashes and labels but never its name or path...OK
+795/883 benchmark_facts_test.test.a cached repo takes its revision from the snapshot directory; a drafter repo is named, a drafter path is not...OK
+796/883 benchmark_facts_test.test.a server's manifest names the checkpoint a managed run records: the snapshot's revision and the same hashes...OK
+797/883 benchmark_facts_test.test.a HIP or Metal server's manifest names the receipt's backend, so an attached rocm or mlx run reads it...OK
+798/883 benchmark_facts_test.test.the attested revision: the loaded snapshot's; the environment's only where the directory names none; never a disagreeing one...OK
+799/883 benchmark_facts_test.test.a manifest's GPU cores reach the attached receipt; cores past the board's range refuse the manifest...OK
+800/883 benchmark_facts_test.test.a known drafter is named only for a target of its family and shape...OK
+801/883 benchmark_facts_test.test.the tokenizer hash covers the chat template and not the weights; malformed config is refused...OK
+802/883 benchmark_facts_test.test.quantization labels come only from the allowlist...OK
+803/883 benchmark_facts_test.test.hardware names pass only the allowlist; Mac and NVIDIA probes keep only names, memory and cores...OK
+804/883 benchmark_facts_test.test./proc text gives the CPU name and memory...OK
+805/883 benchmark_facts_test.test.a rocm probe names rocminfo's GPU agents, runs no nvidia-smi, reports no driver, and passes the save rules...OK
+806/883 benchmark_facts_test.test.rocm GPUs: discrete cards are dedicated, visible-device indices select, and missing rocminfo leaves the GPUs unknown...OK
+807/883 benchmark_facts_test.test.rocm visible-device indices count every GPU agent: selecting an unreportable agent lists no GPU, never the next...OK
+808/883 benchmark_rocm_test.test.rocminfo lists only the GPUs ROCR_VISIBLE_DEVICES leaves, renumbered; the probe applies HIP's list on top, once...OK
+809/883 benchmark_rocm_test.test.HIP's list: the first bad or out-of-range entry ends it, a repeat is skipped, and GPU- text matches rocminfo's Uuid...OK
+810/883 benchmark_drafts.test.the file's name sits beside the receipt...OK
+811/883 benchmark_drafts.test.totals sum only the attempts that reported counts, and the verdict says when a passed drafter drafted nothing...OK
+812/883 benchmark_drafts.test.sums that would pass 64 bits give no totals rather than a panic, and the attempts keep their own counts...OK
+813/883 benchmark_upload.test.upload URLs need HTTPS unless loopback, and no credentials, query or fragment...OK
+814/883 benchmark_upload.test.tokens follow the receiver's rule...OK
+815/883 benchmark_upload_test.test.login stores the token 0600 for its API, never shows it, and logout removes it...OK
+816/883 benchmark_upload_test.test.stored credentials refuse broad permissions, another receiver and a malformed file...OK
+817/883 benchmark_upload_test.test.a refused upload shows a fixed text and never the receiver's, and a redirect is not followed...OK
+818/883 benchmark_upload_test.test.only a public checkpoint passes, checked without credentials for the model and the drafter...OK
+819/883 benchmark_upload_test.test.the receiver's reply may be 1 MiB and not one byte more...OK
+820/883 benchmark_upload_test.test.proxy variables are never used, so the token cannot reach a proxy in clear text...OK
+821/883 benchmark_args.test.the checks run in a fixed order with fixed words; parse errors are usage errors...OK
+822/883 benchmark_args.test.--backend takes rocm, and the usage line, help and invalid choice name it...OK
+823/883 benchmark_args.test.the --drafter help says how to name a drafter, that auto passes the family's cached one and none passes none...OK
+824/883 benchmark_args.test.--kv-cache takes bf16 or fp8, and only a managed run takes it...OK
+825/883 benchmark_cli_test.test.an attached run saves an unranked receipt that publishes with explicit consent and the token...OK
+826/883 benchmark_cli_test.test.without --yes a pipe is refused before any upload, and a terminal's no keeps the receipt local...OK
+827/883 benchmark_cli_test.test.login reads the token from stdin and never prints it; a refused upload shows no server text...OK
+828/883 benchmark_cli_test.test.failed warm-ups and repeats stay in the receipt with fixed codes and exit 2...OK
+829/883 benchmark_cli_test.test.a cancelled local run saves its receipt, exits 130 and never publishes...OK
+830/883 benchmark_cli_test.test.attach and managed checks refuse before any request, and parse errors exit 2...OK
+831/883 benchmark_cli_test.test.a checkpoint that is not public stops publishing before the preview, with one unauthenticated lookup...OK
+832/883 benchmark_cli_test.test.a managed run starts its own serve, measures through it, stops it and saves a native receipt...OK
+833/883 benchmark_cli_test.test.Ctrl-C mid-run saves the receipt and exits 130; SIGTERM and SIGHUP stop the child and save nothing...OK
+834/883 benchmark_cli_test.test.a drafter directory named like owner/name is never recorded as a public drafter...OK
+835/883 benchmark_cli_test.test.--publish with rocm is refused before the run starts, with no request and no receipt...OK
+836/883 benchmark_cli_test.test.an attached rocm run saves a local receipt that inspect accepts and publish refuses before any request...OK
+837/883 benchmark_cli_test.test.a receipt path that cannot be written is refused before any request or serve child...OK
+838/883 benchmark_cli_test.test.v2 publish is off before the run, and legacy publish needs a token before lookup or prompt...OK
+839/883 benchmark_cli_test.test.the hidden login prompt reads with echo off and a guarded terminal, then restores and releases it...OK
+840/883 benchmark_cli_test.test.with no task to read input on, login fails with a message instead of a cancel...OK
+841/883 benchmark_cli_test.test.issue 969 v2: disabled submissions refuse saved, run and direct uploads without requests...OK
+842/883 benchmark_run_test.test.a serve child that exits during startup has its last log line printed after the message, and nothing is saved...OK
+843/883 benchmark_run_test.test.an --output naming a directory is refused before the run; a save that fails after the run still shows the table...OK
+844/883 benchmark_run_test.test.a run refused before it starts leaves no benchmarks directory; the default path is checked before the serve child...OK
+845/883 benchmark_run_test.test.--drafter auto passes the family's drafter only when it is cached and says which; only --serial adds --no-drafts...OK
+846/883 benchmark_run_test.test.a rocm run refuses a named --drafter before any serve child, and auto names no drafter on rocm...OK
+847/883 benchmark_run_test.test.a greedy-only engine's refusal is printed once with its reason and what to run instead, never saved...OK
+848/883 benchmark_run_test.test.distinct refusals are printed at most three times, and a greedy-only reason at temperature 0 adds no advice...OK
+849/883 benchmark_run_test.test.a serve child's load-limit hint is printed with its error, and a big checkpoint gets a longer startup...OK
+850/883 benchmark_run_test.test.an attached run copies an accepted server manifest into its receipt and is not called unranked...OK
+851/883 benchmark_run_test.test.an attached run whose accepted manifest lacks its rank count or revision is called unranked...OK
+852/883 benchmark_run_test.test.the draft counts beside the receipt show whether a passed drafter drafted, and the receipt keeps the board's fields...OK
+853/883 benchmark_early_test.test.issue 969: sampled early stops keep counts and seeds, suppress aggregates and explain exit 2...OK
+854/883 benchmark_publication_test.test.benchmark publication: saved v2 refuses every effect while v1 still reaches the services...OK
+855/883 benchmark_publication_test.test.benchmark publication: run publish refuses before credentials, server work or a saved receipt...OK
+856/883 benchmark_chat_only_test.test.benchmark routing: attached server needs its explicit chat-only flag...OK
+857/883 benchmark_chat_only_test.test.benchmark routing: managed run uses the matched native family declaration...OK
+858/883 benchmark_chat_only_test.test.benchmark routing: empty output never guesses a different route or becomes a success...OK
+859/883 benchmark_chat_only_test.test.benchmark routing: v1 stays raw and its frozen receipt has no route field...OK
+860/883 benchmark_chat_only_test.test.benchmark routing: attached-only flag does not bypass the local-only publication guard...OK
+861/883 benchmark_chat_only_test.test.benchmark routing: receipt checks reject unknown, inconsistent and wrong-workload routes...OK
+862/883 benchmark_config_test.test.issue 934: an 8668620 byte Super VL config reaches the managed benchmark and fills its receipt...OK
+863/883 benchmark_config_test.test.issue 934: describe preserves the large config hash family quantization and cached revision...OK
+864/883 benchmark_config_test.test.issue 934: an oversized config reports its actual size and shared limit...OK
+865/883 benchmark_config_test.test.issue 934: an unreadable config reports a config error with size and limit...OK
+866/883 benchmark_config_test.test.issue 934: a missing config still reports an incomplete checkpoint...OK
+867/883 benchmark_config_test.test.issue 934: a malformed config reports a config error with size and limit...OK
+868/883 serve.test.the targets are the hard limit, or the fallbacks under an unlimited one...OK
+869/883 serve.test.the raise lifts a low soft limit, and a second raise does nothing...OK
+870/883 serve.test.Failure boundaries: drain and SSE duration settings refuse non-finite or unrepresentable values...OK
+871/883 serve.test.Failure boundaries: engine close waits for handlers and connections to leave...OK
+872/883 serve.test.idle deadline: a counted request waits for reload before its drain halt on every cycle...OK
+873/883 late_system_retained_test.test.a stream ends with a call to a tool the request did not offer as text, as the whole reply keeps it...OK
+874/883 late_system_retained_test.test.stream replay retains the unoffered envelope after an offered call...OK
+875/883 late_system_retained_test.test.stream retained envelope preserves the leading newline...OK
+876/883 late_system_retained_test.test.stream retained envelope precedes later prose with the leading newline...OK
+877/883 late_system_retained_test.test.stream replays an offered call once before retained envelopes and later prose...OK
+878/883 late_system_retained_test.test.stream replay with leading whitespace retains malformed envelope and later prose...OK
+879/883 late_system_retained_test.test.stream retains a malformed closed envelope with whitespace and later prose...OK
+880/883 late_system_retained_test.test.stream without accepted calls preserves a space after streamed reasoning...OK
+881/883 late_system_retained_test.test.stream retains an unoffered closed envelope promoted from unclosed reasoning...OK
+882/883 late_system_retained_test.test.stream without accepted calls sends the role before deferred leading-whitespace prose...OK
+883/883 late_system_retained_test.test.stream content and tool calls occur exactly once across all chunks...OK
+All 883 tests passed.
+1 fuzz tests found.

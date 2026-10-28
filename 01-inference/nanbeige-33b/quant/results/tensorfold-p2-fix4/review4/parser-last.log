@@ -1,0 +1,23 @@
+1/1 parser.test.independent differential...RESULT {"reasoning":"","content":"","calls":[{"id":"call_9651c38f92dd466b0792b7e2","type":"function","function":{"name":"run","arguments":"{\"i\":\"١\"}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_79cc4d478f5b220f7e4ff2b3","type":"function","function":{"name":"run","arguments":"{\"i\":\"１\"}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_f0413733f7bc54f8348b7d3b","type":"function","function":{"name":"run","arguments":"{\"n\":\"١\"}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_5b74b408ee7ff91786d9b562","type":"function","function":{"name":"run","arguments":"{\"n\":100.0}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_95d35946b69191f93c7eacc0","type":"function","function":{"name":"run","arguments":"{\"n\":\"nan\"}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_9934a5bfe23fda81a9def2a0","type":"function","function":{"name":"run","arguments":"{\"n\":\"inf\"}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_0ce068e0eb565ba85d9ef298","type":"function","function":{"name":"run","arguments":"{\"n\":\"1e309\"}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_dec48600116643d132bce09b","type":"function","function":{"name":"run","arguments":"{\"n\":1.0}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_6f6f62f2c9f8b5316c954105","type":"function","function":{"name":"run","arguments":"{\"n\":-0.0}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_4a471033ecfbf91dd6541fb2","type":"function","function":{"name":"run","arguments":"{\"o\":{\"a\":1}}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_dd28012d3a5811e8621ee4b0","type":"function","function":{"name":"run","arguments":"{\"o\":{\"1\":\"x\"}}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_0cfaa43ef38e674345bc0e57","type":"function","function":{"name":"run","arguments":"{\"o\":\"{'x':r'\\n'}\"}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_cc20e2b8b87db17aac59a55c","type":"function","function":{"name":"run","arguments":"{\"o\":null}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_1194550abcde0a79e8820097","type":"function","function":{"name":"run","arguments":"{\"o\":true}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_6e56447a5beee9ac8f33c478","type":"function","function":{"name":"run","arguments":"{\"o\":false}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_fa7a45bb1d8052ab62f5a1f9","type":"function","function":{"name":"run","arguments":"{\"o\":null}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_e3b7015cc8d9729d6cd2b127","type":"function","function":{"name":"run","arguments":"{\"a\":[1]}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_be90ca460e042c6d51164c6a","type":"function","function":{"name":"run","arguments":"{\"a\":[1]}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_d04630e29ee087d2a16a6f7e","type":"function","function":{"name":"run","arguments":"{\"a\":[1]}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_4c8957c0806ee005231bae94","type":"function","function":{"name":"run","arguments":"{\"a\":[1]}"}}]}
+RESULT {"reasoning":"","content":"","calls":[{"id":"call_8390faf1063697c4bdae52ea","type":"function","function":{"name":"run","arguments":"{\"a\":[1]}"}}]}
+OK
+All 1 tests passed.

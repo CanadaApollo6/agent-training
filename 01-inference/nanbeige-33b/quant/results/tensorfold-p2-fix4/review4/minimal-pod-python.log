@@ -1,0 +1,21 @@
+i='١' semantic_equal=False pod={"i": 1} engine={"i":"١"}
+i='１' semantic_equal=False pod={"i": 1} engine={"i":"１"}
+n='١' semantic_equal=False pod={"n": 1} engine={"n":"١"}
+n='1e2' semantic_equal=True pod={"n": 100} engine={"n":100.0}
+n='nan' semantic_equal=False pod={"n": NaN} engine={"n":"nan"}
+n='inf' semantic_equal=False pod={"n": Infinity} engine={"n":"inf"}
+n='1e309' semantic_equal=False pod={"n": Infinity} engine={"n":"1e309"}
+n='1.0' semantic_equal=True pod={"n": 1.0} engine={"n":1.0}
+n='-0' semantic_equal=True pod={"n": 0} engine={"n":-0.0}
+o="{'a': 1}\n " semantic_equal=False pod={"o": "{'a': 1}\n "} engine={"o":{"a":1}}
+o="{1:'x'}\n " semantic_equal=False pod={"o": "{1:'x'}\n "} engine={"o":{"1":"x"}}
+o="{'x':r'\n'}" semantic_equal=True pod={"o": "{'x':r'\n'}"} engine={"o":"{'x':r'\n'}"}
+o='None' semantic_equal=True pod={"o": null} engine={"o":null}
+o='TRUE' semantic_equal=False pod={"o": "TRUE"} engine={"o":true}
+o='False' semantic_equal=True pod={"o": false} engine={"o":false}
+o='NULL' semantic_equal=True pod={"o": null} engine={"o":null}
+a='(1,)\n ' semantic_equal=False pod={"a": "(1,)\n "} engine={"a":[1]}
+a='[0x1]\n ' semantic_equal=False pod={"a": "[0x1]\n "} engine={"a":[1]}
+a='[1,]\n ' semantic_equal=False pod={"a": "[1,]\n "} engine={"a":[1]}
+a='[0x1]' semantic_equal=True pod={"a": [1]} engine={"a":[1]}
+a='[1,]' semantic_equal=True pod={"a": [1]} engine={"a":[1]}

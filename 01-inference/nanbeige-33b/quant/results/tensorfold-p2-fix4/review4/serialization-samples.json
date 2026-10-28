@@ -1,0 +1,2420 @@
+[
+  {
+    "index": 1,
+    "case": {
+      "label": "param-newline",
+      "raw": "</think><tool_call><function=run><parameter=s>hi\n\n</tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-01a136f3f7a54c7f",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\": \"hi\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_c1f55b2772dd5586f537fe55",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\":\"hi\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 2,
+    "case": {
+      "label": "function-newline",
+      "raw": "</think><tool_call><function=run><parameter=s>hi\n\n</function></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-ce9e53b449724056",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\": \"hi\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_c2ef0680306b74ebb234a25c",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\":\"hi\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 3,
+    "case": {
+      "label": "tool-newline",
+      "raw": "</think><tool_call><function=run><parameter=s>hi\n\n\n",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-c67d941f116b4b6a",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\": \"hi\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_2fb71db2f53000c28e3f2aaf",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\":\"hi\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 4,
+    "case": {
+      "label": "trailing-spaces",
+      "raw": "</think><tool_call><function=run><parameter=s>hi  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-f5869716019a4845",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\": \"hi  \"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_f499d1a4525a6329d8e4f638",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\":\"hi  \"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 6,
+    "case": {
+      "label": "grammar-1",
+      "raw": "\n  plan  \n</think><tool_call><function=bad\n><function=run><parameter=<parameter=u>\n-2\n\n</parameter></function></tool_call>\n\n",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-206e155f60bc4095",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"<parameter=u\": \"-2\\n\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_39f5df912beb2455dfdb0f87",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"<parameter=u\":\"-2\\n\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 8,
+    "case": {
+      "label": "grammar-3",
+      "raw": "\n  plan  \n</think> <tool_call><function=><function=run><parameter=u>\n\n3\n\n</parameter></function></tool_call>\nafter",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-4d4728da7ad0416b",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\": 3}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_13018754ff196519efbf8346",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\":3}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 9,
+    "case": {
+      "label": "grammar-4",
+      "raw": "</think> \t<tool_call><function=run><parameter=</parameter>-Infinity\n\n</parameter><parameter",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-e83918bbcc74427e",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"</parameter\": \"-Infinity\\n\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_b09903cdc9ca9fa4642bb29d",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"</parameter\":\"-Infinity\\n\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 10,
+    "case": {
+      "label": "grammar-5",
+      "raw": "计划💡。</think> \t<tool_call><function=bad\n><function=run><parameter=e>  auto  \n\n</parameter></function>\n\n",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-0786fd2dd20f4c8c",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"e\": \"  auto  \\n\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_c537c9954891953531ea99bf",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"e\":\"  auto  \\n\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 11,
+    "case": {
+      "label": "grammar-6",
+      "raw": "计划💡。</think> <tool_call><function=run><parameter= a >\n\n(1, 2)\n\n</parameter><parameter=>\n{'x': 0x10}</parameter><parameter=e>\n\ninvalid\n\n</parameter><parameter=b>\n\nbad\n\n</parameter><parameter=u>\n3</function></tool_call>\nafter",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-1ed7f62ed0b24d64",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"a\": [1, 2], \"e\": \"\\ninvalid\\n\", \"b\": false, \"u\": 3}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_05772bb9fdf607c370748990",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"a\":[1,2],\"e\":\"\\ninvalid\\n\",\"b\":false,\"u\":3}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 13,
+    "case": {
+      "label": "grammar-8",
+      "raw": "\n  plan  \n</think><tool_call><function=run><parameter=<parameter=a>[True, None, {'x': 2}]<\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-9d302c189d05493c",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"<parameter=a\": \"[True, None, {'x': 2}]<\\n  \"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_0f3e464f13e15462ed09972a",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"<parameter=a\":\"[True, None, {'x': 2}]<\\n  \"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 14,
+    "case": {
+      "label": "grammar-9",
+      "raw": "计划💡。</think>\n  Checking.  \n<tool_call><function=><function=run><parameter=>\n\nnull\n</parameter><parameter=N>\n 3.5 \n</parameter><parameter=u>\n3</parameter></function></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "计划💡。",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-73fedcfb7cc243b1",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"N\": \" 3.5 \", \"u\": 3}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "计划💡。",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "call_2b33948203e119b98a31f262",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"N\":\" 3.5 \",\"u\":3}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 15,
+    "case": {
+      "label": "grammar-10",
+      "raw": "\n  plan  \n</think> <tool_call><function=run><parameter=i>\n\n1e2</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-4dcd69152bce4710",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"i\": \"\\n1e2\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_5b29c94c30091df07d1be6d1",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"i\":\"\\n1e2\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 16,
+    "case": {
+      "label": "grammar-11",
+      "raw": "计划💡。</think><tool_call>broken</tool_call><tool_call>\n<function=<function=run><parameter=>bad\n\n</parameter><parameter=u>-2\n\n</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-47c22b720999490f",
+          "type": "function",
+          "function": {
+            "name": "<function=run",
+            "arguments": "{\"u\": \"-2\\n\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_8dcb30977b9c05fe0b8c4b47",
+          "type": "function",
+          "function": {
+            "name": "<function=run",
+            "arguments": "{\"u\":\"-2\\n\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 18,
+    "case": {
+      "label": "grammar-13",
+      "raw": "Plan.</think> \t<tool_call><function=run><parameter=<parameter=i>\n\nNULL</parameter></function></tool_call>\n\n",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-8d1d3dd8c374494b",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"<parameter=i\": \"\\nNULL\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_83a30018c1914fa4978ddcfd",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"<parameter=i\":\"\\nNULL\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 19,
+    "case": {
+      "label": "grammar-14",
+      "raw": "<think>\nPlan.\n</think><tool_call><function=run><parameter=b>\nbad</parameter></function></tool_call>\n<tool_call><function=run><parameter=b>\nbad</parameter></function></tool_call>\n",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-4f73601fcb654bf4",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"b\": false}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-4d737b3eb3414838",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"b\": false}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_f599580aa2468f0056badf22",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"b\":false}"
+          }
+        },
+        {
+          "id": "call_74051da21dc4610a0d990016",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"b\":false}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 20,
+    "case": {
+      "label": "grammar-15",
+      "raw": "</think> \t<tool_call><function=><function= run ><parameter=n>\n\n0</parameter><parameter=s></function>\n</parameter><parameter=<parameter=e>auto\n\n</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-5cf8662cd16f435b",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"n\": 0, \"s\": \"\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_695e56d8026913f54da47bf1",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"n\":0.0,\"s\":\"\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 23,
+    "case": {
+      "label": "grammar-18",
+      "raw": "Plan.</think>\n  Checking.  \n<tool_call><function=><function=run><parameter=a>\n[1, 2.5, false, null]</parameter><parameter=i>\n 42 </parameter></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-4bc2c66d013d4a55",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"a\": [1, 2.5, false, null], \"i\": 42}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "call_874e970ccdc1ffac43ccfcf4",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"a\":[1,2.5,false,null],\"i\":42}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 25,
+    "case": {
+      "label": "grammar-20",
+      "raw": "<think>\nPlan.\n</think>\n  Checking.  \n<tool_call><function=run><parameter=s><parameter=>bad\n</parameter><parameter=b>\n\n1\n\n</parameter><parameter= u >\n3\n\n</parameter  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-3a846d600c394198",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\": \"\", \"b\": false, \"u\": \"3\\n\\n</parameter  \"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "call_f84b0743a09b015af56f03ce",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\":\"\",\"b\":false,\"u\":\"3\\n\\n</parameter  \"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 26,
+    "case": {
+      "label": "grammar-21",
+      "raw": "Plan.</think> <tool_call><function=><function=run><parameter=>[]</parameter><parameter=u>\n3.5\n</parameter><parameter=b>\n\n1</parameter><parameter=s><parameter=s>inner\n</parameter></function></tool_call>\n<tool_call><function=><function=run><parameter=>[]</parameter><parameter=u>\n3.5\n</parameter><parameter=b>\n\n1</parameter><parameter=s><parameter=s>inner\n</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-6a4fc2df07db4784",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\": \"3.5\", \"b\": false, \"s\": \"inner\"}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-bdcb42d27ec04f9d",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\": \"3.5\", \"b\": false, \"s\": \"inner\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_2c0d0e9a18c6c5273e1cdd8b",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\":\"3.5\",\"b\":false,\"s\":\"inner\"}"
+          }
+        },
+        {
+          "id": "call_25f879e2767979a8a641a727",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\":\"3.5\",\"b\":false,\"s\":\"inner\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 27,
+    "case": {
+      "label": "grammar-22",
+      "raw": "\n  plan  \n</think> <tool_call>broken</tool_call><tool_call>\n<function=run><parameter=s>\n\n<parameter=>bad\n</parameter><parameter=u\nx>\n\n１２\n\n</parameter><parameter=A>bad\n</parameter><parameter=</parameter>auto\n</parameter><parameter=b>\n0\n</parameter></function></tool_call>  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-4d677ca3abe041c4",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\": \"\", \"A\": \"bad\", \"</parameter\": \"auto\", \"b\": false}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_29a34e7646a91cbff3390cfa",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"s\":\"\",\"A\":\"bad\",\"</parameter\":\"auto\",\"b\":false}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 28,
+    "case": {
+      "label": "grammar-23",
+      "raw": "</think> <tool_call><function=><function=run><parameter=u>3.5\n\n</parameter><parameter=a>\nnull\n</parameter><parameter=b>1</parameter><parameter=n>\n\n1.0</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-8f73e2e2cf9e4169",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\": \"3.5\\n\", \"a\": null, \"b\": false, \"n\": 1.0}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_c581e64cb6d937a926f0e62b",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\":\"3.5\\n\",\"a\":null,\"b\":false,\"n\":1.0}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 29,
+    "case": {
+      "label": "grammar-24",
+      "raw": "Plan.</think><tool_call><function=run><parameter= u >\n\n3</parameter><parameter=i>\n\n0\n\n<parameter=</parameter>\n\nNULL\n\n</parameter><  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-61419f5d681d4c6a",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\": 3, \"i\": 0, \"</parameter\": \"\\nNULL\\n\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_fd1dd65798c127aac2f2df4e",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\":3,\"i\":0,\"</parameter\":\"\\nNULL\\n\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 30,
+    "case": {
+      "label": "grammar-25",
+      "raw": "<think>\nPlan.\n</think>\n  Checking.  \n<tool_call><function=bad\n><function=run><parameter=N>\n\n1e309\n</parameter><parameter=o>\n\n{1: 'x'}\n\n</parameter><parameter=e>\n\n  auto  </parameter><parameter=u\nx>\n3\n\n</parameter></function></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-7d6286e13376493d",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"N\": \"\\n1e309\", \"o\": {\"1\": \"x\"}, \"e\": \"\\n  auto  \"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "call_eddaf5ed62c0f334113ff144",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"N\":\"\\n1e309\",\"o\":{\"1\":\"x\"},\"e\":\"\\n  auto  \"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 31,
+    "case": {
+      "label": "grammar-26",
+      "raw": "</think> \t<tool_call>\n<function=run><parameter=o>null</parameter></function>\nafter",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-af0f513ece2149dc",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"o\": null}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_1e32e9519759691e338b4f0a",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"o\":null}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 32,
+    "case": {
+      "label": "grammar-27",
+      "raw": "计划💡。</think><tool_call>\n<function= run ><parameter=n>\n\n2.5\n\n</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-494bb3d974e948a7",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"n\": 2.5}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_aa6283d3c53475292231ae3f",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"n\":2.5}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 34,
+    "case": {
+      "label": "grammar-29",
+      "raw": "<think>\nPlan.\n</think> <tool_call><function=other><parameter=s\nx>\n\n<parameter=>bad\n\n</parameter><parameter=b>\n\nFalse\n</parameter><parameter=n> 3.5 </parameter><parameter=i>１２</parameter><parameter=o>{'x': 0x10}\n</function></tool_call>",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-1a928610639c4c96",
+          "type": "function",
+          "function": {
+            "name": "other",
+            "arguments": "{\"b\": \"\\nFalse\", \"n\": \" 3.5 \", \"i\": \"１２\", \"o\": \"{'x': 0x10}\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_29b7f994ddd6402e8cfdf0a1",
+          "type": "function",
+          "function": {
+            "name": "other",
+            "arguments": "{\"b\":\"\\nFalse\",\"n\":\" 3.5 \",\"i\":\"１２\",\"o\":\"{'x': 0x10}\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 35,
+    "case": {
+      "label": "grammar-30",
+      "raw": "\n  plan  \n</think><tool_call><function=bad\n><function=other><parameter= s >\n  echo hi  \n</parameter><parameter=</parameter>\n\n3.5</parameter><parameter=>\nnull</parameter><parameter= o >\ntrue\n\n</parameter><parameter=a>\n(1, 2)\n\n</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-d7b0a05bbca64afc",
+          "type": "function",
+          "function": {
+            "name": "other",
+            "arguments": "{\"s\": \"  echo hi  \", \"</parameter\": \"\\n3.5\", \"o\": \"true\\n\", \"a\": \"(1, 2)\\n\"}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "  plan  ",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_c7570508d9efca2f8127a114",
+          "type": "function",
+          "function": {
+            "name": "other",
+            "arguments": "{\"s\":\"  echo hi  \",\"</parameter\":\"\\n3.5\",\"o\":\"true\\n\",\"a\":\"(1, 2)\\n\"}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 36,
+    "case": {
+      "label": "grammar-31",
+      "raw": "</think>\n  Checking.  \n<tool_call><function=run><parameter=e>never\n\n</parameter><parameter= n >\n\n 3.5 \n\n</parameter><parameter=o>\n\ntrue\n</parameter><parameter=a>\n[1, 2.5, false, null]</parameter><parameter=u>NULL\n</parameter></function></tool_call>\n\n",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-50613bcd92df4c5c",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"e\": \"never\\n\", \"n\": 3.5, \"o\": true, \"a\": [1, 2.5, false, null], \"u\": null}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "call_042eb8da8e4bbb87097bcdf7",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"e\":\"never\\n\",\"n\":3.5,\"o\":true,\"a\":[1,2.5,false,null],\"u\":null}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 38,
+    "case": {
+      "label": "grammar-33",
+      "raw": "计划💡。</think> \t<tool_call>broken</tool_call><tool_call>\n<function=run><parameter=u>\n\n-2\n</parameter><parameter=i>+7\n</parameter><parameter=<parameter=n>\n\n1.0\n</parameter><parameter=>null\n</parameter><parameter=b>\nTRUE</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-b2bd497828834ed2",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\": -2, \"i\": 7, \"<parameter=n\": \"\\n1.0\", \"b\": true}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "计划💡。",
+      "content": "",
+      "calls": [
+        {
+          "id": "call_d140368a81a123f16a72a972",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"u\":-2,\"i\":7,\"<parameter=n\":\"\\n1.0\",\"b\":true}"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "index": 40,
+    "case": {
+      "label": "grammar-35",
+      "raw": "<think>\nPlan.\n</think>\n  Checking.  \n<tool_call>\n<function=run><parameter=e>never\n</parameter><parameter=u>\n\nnull\n\n</parameter><parameter=i>\n-1</parameter></function></tool_call>\n<tool_call>\n<function=run><parameter=e>never\n</parameter><parameter=u>\n\nnull\n\n</parameter><parameter=i>\n-1</parameter></function></tool_call>\n  ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "pod": {
+      "reasoning": "Plan.",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "chatcmpl-tool-4c70f3ba4b7641b8",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"e\": \"never\", \"u\": \"\\nnull\\n\", \"i\": -1}"
+          }
+        },
+        {
+          "id": "chatcmpl-tool-58c2ccd1772741df",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"e\": \"never\", \"u\": \"\\nnull\\n\", \"i\": -1}"
+          }
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "Plan.",
+      "content": "Checking.",
+      "calls": [
+        {
+          "id": "call_19fe792f583f53f7d521efa6",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"e\":\"never\",\"u\":\"\\nnull\\n\",\"i\":-1}"
+          }
+        },
+        {
+          "id": "call_57112e3a3f3dfb572f407aa4",
+          "type": "function",
+          "function": {
+            "name": "run",
+            "arguments": "{\"e\":\"never\",\"u\":\"\\nnull\\n\",\"i\":-1}"
+          }
+        }
+      ]
+    }
+  }
+]

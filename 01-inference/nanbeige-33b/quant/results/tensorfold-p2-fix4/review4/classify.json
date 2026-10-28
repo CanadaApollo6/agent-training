@@ -1,0 +1,35 @@
+{
+  "counts": {
+    "unicode number": 1763,
+    "nonfinite": 967,
+    "overparsed list": 3,
+    "overparsed dict": 1
+  },
+  "samples": {
+    "unicode number": {
+      "raw": "</think><tool_call><function=run><parameter=n>١٢\n",
+      "pod": 12,
+      "engine": "١٢"
+    },
+    "nonfinite": {
+      "raw": "<think>\nPlan.\n</think> <tool_call><function=run><parameter=n>\n\n1e309\n\n\n\n",
+      "pod": Infinity,
+      "engine": "\n1e309"
+    },
+    "overparsed list": {
+      "raw": "\n  plan  \n</think> <tool_call>\n<function=run><parameter=a>[0x10, 0b11]\n  ",
+      "pod": "[0x10, 0b11]\n  ",
+      "engine": [
+        16,
+        3
+      ]
+    },
+    "overparsed dict": {
+      "raw": "<think>\nPlan.\n</think>\n  Checking.  \n<tool_call><function=><function=run><parameter=s>\n\necho hi\n</parameter><parameter=</parameter>never\n\n</parameter><parameter=u>１２\n\n</parameter><parameter=o>{1: 'x'}\n  ",
+      "pod": "{1: 'x'}\n  ",
+      "engine": {
+        "1": "x"
+      }
+    }
+  }
+}

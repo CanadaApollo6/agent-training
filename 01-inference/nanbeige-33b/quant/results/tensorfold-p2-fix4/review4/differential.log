@@ -1,0 +1,67 @@
+{
+  "cases": 24005,
+  "with_calls": 18917,
+  "semantic_mismatches": 2323,
+  "serialization_only_mismatches": 15590,
+  "mismatched_keys": {
+    "u": 1110,
+    "o": 685,
+    "<parameter=n": 27,
+    "b": 715,
+    "i": 1096,
+    "n": 1673,
+    "a": 719,
+    "s": 681,
+    "e": 695,
+    "<parameter=u": 44,
+    "S": 65,
+    "</parameter": 324,
+    "I": 32,
+    "U": 32,
+    "A": 49,
+    "<parameter=o": 54,
+    "N": 17,
+    "<parameter=a": 50,
+    "<parameter=i": 35,
+    "<parameter=s": 42,
+    "B": 42,
+    "O": 48,
+    "<parameter=b": 47,
+    "<parameter=e": 55,
+    "E": 47
+  },
+  "directed": [
+    {
+      "label": "header-close",
+      "equal": true
+    },
+    {
+      "label": "param-newline",
+      "equal": true
+    },
+    {
+      "label": "function-newline",
+      "equal": true
+    },
+    {
+      "label": "tool-newline",
+      "equal": true
+    },
+    {
+      "label": "trailing-spaces",
+      "equal": true
+    }
+  ]
+}
+{"raw": "</think><tool_call><function=run><parameter=n>١٢\n", "pod": {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"n": 12}}]}, "engine": {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"n": "١٢"}}]}}
+{"raw": "</think> <tool_call><function=run><parameter=i>\n١٢</parameter></fu\n", "pod": {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"i": 12}}]}, "engine": {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"i": "١٢"}}]}}
+{"raw": "\n  plan  \n</think> \t<tool_call>\n<function=run><parameter=n>\n\n１２\n\n\n\n", "pod": {"reasoning": "  plan  ", "content": "", "calls": [{"name": "run", "arguments": {"n": 12}}]}, "engine": {"reasoning": "  plan  ", "content": "", "calls": [{"name": "run", "arguments": {"n": "\n１２"}}]}}
+{"raw": "Plan.</think>\n  Checking.  \n<tool_call><function=run><parameter=n>\n\n１  ", "pod": {"reasoning": "Plan.", "content": "Checking.", "calls": [{"name": "run", "arguments": {"n": 1}}]}, "engine": {"reasoning": "Plan.", "content": "Checking.", "calls": [{"name": "run", "arguments": {"n": "\n１  "}}]}}
+{"raw": "<think>\nPlan.\n</think> <tool_call><function=run><parameter=n>\n\n1e309\n\n\n\n", "pod": {"reasoning": "Plan.", "content": "", "calls": [{"name": "run", "arguments": {"n": Infinity}}]}, "engine": {"reasoning": "Plan.", "content": "", "calls": [{"name": "run", "arguments": {"n": "\n1e309"}}]}}
+{"raw": "\n  plan  \n</think> <tool_call>\n<function=run><parameter=a>[0x10, 0b11]\n  ", "pod": {"reasoning": "  plan  ", "content": "", "calls": [{"name": "run", "arguments": {"a": "[0x10, 0b11]\n  "}}]}, "engine": {"reasoning": "  plan  ", "content": "", "calls": [{"name": "run", "arguments": {"a": [16, 3]}}]}}
+{"raw": "Plan.</think> \t<tool_call>\n<function=run><parameter=n>\n١٢\n\n</parameter><p  ", "pod": {"reasoning": "Plan.", "content": "", "calls": [{"name": "run", "arguments": {"n": 12}}]}, "engine": {"reasoning": "Plan.", "content": "", "calls": [{"name": "run", "arguments": {"n": "١٢\n"}}]}}
+{"raw": "\n  plan  \n</think><tool_call>\n<function=run><parameter=n>\ninf</tool_call>  ", "pod": {"reasoning": "  plan  ", "content": "", "calls": [{"name": "run", "arguments": {"n": Infinity}}]}, "engine": {"reasoning": "  plan  ", "content": "", "calls": [{"name": "run", "arguments": {"n": "inf"}}]}}
+{"raw": "计划💡。</think> \t<tool_call><function= run ><parameter=n>\n\nnan\n</parameter><par", "pod": {"reasoning": "计划💡。", "content": "", "calls": [{"name": "run", "arguments": {"n": NaN}}]}, "engine": {"reasoning": "计划💡。", "content": "", "calls": [{"name": "run", "arguments": {"n": "\nnan"}}]}}
+{"raw": "</think> \t<tool_call>\n<function=run><parameter=i>１２\n</function></tool_call>\n", "pod": {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"i": 12}}]}, "engine": {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"i": "１２"}}]}}
+{"raw": "</think><tool_call>\n<function=run><parameter=u>\n\n１２\n\n</parameter></function>\n", "pod": {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"u": 12}}]}, "engine": {"reasoning": "", "content": "", "calls": [{"name": "run", "arguments": {"u": "\n１２\n"}}]}}
+{"raw": "Plan.</think><tool_call><function=run><parameter=i>١٢\n\n<parameter=A>[1e2, -0.", "pod": {"reasoning": "Plan.", "content": "", "calls": [{"name": "run", "arguments": {"i": 12, "A": "[1e2, -0."}}]}, "engine": {"reasoning": "Plan.", "content": "", "calls": [{"name": "run", "arguments": {"i": "١٢\n", "A": "[1e2, -0."}}]}}

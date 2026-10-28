@@ -1,0 +1,7 @@
+{"value": "{1,2}", "pod": "TypeError", "engine": "{\"o\": \"{1,2}\"}"}
+{"value": "b'abc'", "pod": "TypeError", "engine": "{\"o\": \"b'abc'\"}"}
+{"value": "1+2j", "pod": "TypeError", "engine": "{\"o\": \"1+2j\"}"}
+{"value": "...", "pod": "TypeError", "engine": "{\"o\": \"...\"}"}
+{"value": "{(1,2):3}", "pod": "TypeError", "engine": "{\"o\": \"{(1,2):3}\"}"}
+{"value": "{'x': '\\N{LATIN CAPITAL LETTER A}'}", "pod": "{\"o\": {\"x\": \"A\"}}", "engine": "{\"o\": \"{'x': '\\\\N{LATIN CAPITAL LETTER A}'}\"}"}
+6 documented divergences checked

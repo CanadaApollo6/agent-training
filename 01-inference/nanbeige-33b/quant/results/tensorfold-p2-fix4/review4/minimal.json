@@ -1,0 +1,1493 @@
+[
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=i>١",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "i='١'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"i\": 1}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"i\":\"١\"}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=i>１",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "i='１'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"i\": 1}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"i\":\"１\"}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=n>١",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "n='١'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\": 1}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\":\"١\"}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=n>1e2",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "n='1e2'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\": 100}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\":100.0}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=n>nan",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "n='nan'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\": NaN}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\":\"nan\"}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=n>inf",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "n='inf'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\": Infinity}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\":\"inf\"}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=n>1e309",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "n='1e309'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\": Infinity}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\":\"1e309\"}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=n>1.0",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "n='1.0'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\": 1.0}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\":1.0}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=n>-0",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "n='-0'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\": 0}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"n\":-0.0}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=o>{'a': 1}\n ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "o=\"{'a': 1}\\n \""
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\": \"{'a': 1}\\n \"}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\":{\"a\":1}}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=o>{1:'x'}\n ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "o=\"{1:'x'}\\n \""
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\": \"{1:'x'}\\n \"}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\":{\"1\":\"x\"}}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=o>{'x':r'\n'}",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "o=\"{'x':r'\\n'}\""
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\": \"{'x':r'\\n'}\"}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\":\"{'x':r'\\n'}\"}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=o>None",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "o='None'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\": null}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\":null}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=o>TRUE",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "o='TRUE'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\": \"TRUE\"}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\":true}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=o>False",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "o='False'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\": false}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\":false}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=o>NULL",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "o='NULL'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\": null}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"o\":null}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=a>(1,)\n ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "a='(1,)\\n '"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\": \"(1,)\\n \"}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\":[1]}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=a>[0x1]\n ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "a='[0x1]\\n '"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\": \"[0x1]\\n \"}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\":[1]}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=a>[1,]\n ",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "a='[1,]\\n '"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\": \"[1,]\\n \"}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\":[1]}"
+        }
+      ]
+    },
+    "semantic_equal": false
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=a>[0x1]",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "a='[0x1]'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\": [1]}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\":[1]}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  },
+  {
+    "case": {
+      "raw": "</think><tool_call><function=run><parameter=a>[1,]",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "run",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "s": {
+                  "type": "string"
+                },
+                "i": {
+                  "type": "integer"
+                },
+                "n": {
+                  "type": "number"
+                },
+                "b": {
+                  "type": "boolean"
+                },
+                "o": {
+                  "type": "object"
+                },
+                "a": {
+                  "type": "array"
+                },
+                "e": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "u": {
+                  "type": [
+                    "null",
+                    "integer"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "label": "a='[1,]'"
+    },
+    "pod": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\": [1]}"
+        }
+      ]
+    },
+    "engine": {
+      "reasoning": "",
+      "content": "",
+      "calls": [
+        {
+          "name": "run",
+          "arguments": "{\"a\":[1]}"
+        }
+      ]
+    },
+    "semantic_equal": true
+  }
+]
