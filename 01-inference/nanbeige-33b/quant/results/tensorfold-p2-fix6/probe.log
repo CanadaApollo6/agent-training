@@ -1,0 +1,45 @@
+"b'a'" TypeError: Object of type bytes is not JSON serializable {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'{1}' TypeError: Object of type set is not JSON serializable {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'set()' TypeError: Object of type set is not JSON serializable {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'1j' TypeError: Object of type complex is not JSON serializable {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'1+2j' TypeError: Object of type complex is not JSON serializable {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'...' TypeError: Object of type ellipsis is not JSON serializable {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'frozenset()' None {'type': 'http.response.start', 'status': 200, 'headers': [(b'content-length', b'490'), (b'content-type', b'application/json')]} True
+'Ellipsis' None {'type': 'http.response.start', 'status': 200, 'headers': [(b'content-length', b'487'), (b'content-type', b'application/json')]} True
+'{[]:1}' TypeError: unhashable type: 'list' {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'{(1,):1}' TypeError: keys must be str, int, float, bool or None, not tuple {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'{[1]}' TypeError: unhashable type: 'list' {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+"{'x':1e999}" None {'type': 'http.response.start', 'status': 200, 'headers': [(b'content-length', b'492'), (b'content-type', b'application/json')]} True
+"'\\ud800'" UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 356: surrogates not allowed {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'"\\ud800"' UnicodeEncodeError: 'utf-8' codec can't encode character '\ud800' in position 356: surrogates not allowed {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+"'\\ud83d\\ude00'" UnicodeEncodeError: 'utf-8' codec can't encode characters in position 356-357: surrogates not allowed {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'999999999999999999999999999999999999999999999999999999999999' None {'type': 'http.response.start', 'status': 200, 'headers': [(b'content-length', b'4780'), (b'content-type', b'application/json')]} True
+'0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' ValueError: Exceeds the limit (4300 digits) for integer string conversion; use sys.set_int_max_str_digits() to increase the limit {'type': 'http.response.start', 'status': 500, 'headers': [(b'content-length', b'21'), (b'content-type', b'text/plain; charset=utf-8')]} True
+'((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((' None {'type': 'http.response.start', 'status': 200, 'headers': [(b'content-length', b'882'), (b'content-type', b'application/json')]} True
+depth 200 None
+depth 900 None
+depth 950 None
+depth 970 None
+depth 975 None
+depth 976 None
+depth 977 None
+depth 978 None
+depth 979 None
+depth 980 None
+depth 981 None
+depth 982 None
+depth 983 None
+depth 984 None
+depth 985 None
+depth 990 None
+depth 995 None
+depth 1000 None
+depth 1100 None
+'{[]:1, bad:2}' TypeError: unhashable type: 'list'
+'{bad:2,[]:1}' None
+"[b'a',bad]" None
+"{b'a':bad}" None
+'0x0000000000000000000000000000' None
+'0xffffffffffffffffffffffffffff' ValueError: Exceeds the limit (4300 digits) for integer string conversion; use sys.set_int_max_str_digits() to increase the limit
+{'error': 'TypeError: Object of type bytes is not JSON serializable', 'start': {'type': 'http.response.start', 'status': 200, 'headers': [(b'content-type', b'text/event-stream; charset=utf-8')]}, 'body': 'data: {"id": "chatcmpl-99050f5791ca40d0afa13466fac09e93", "object": "chat.completion.chunk", "created": 1793219647, "model": "nanbeige", "choices": [{"index": 0, "delta": {"role": "assistant", "content": ""}, "logprobs": null, "finish_reason": null}]}\n\ndata: {"id": "chatcmpl-99050f5791ca40d0afa13466fac09e93", "object": "chat.completion.chunk", "created": 1793219647, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "Plan.", "reasoning_content": "Plan."}, "logprobs": null, "finish_reason": null}]}\n\n', 'complete': False}
+{'error': "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 323: surrogates not allowed", 'start': {'type': 'http.response.start', 'status': 200, 'headers': [(b'content-type', b'text/event-stream; charset=utf-8')]}, 'body': 'data: {"id": "chatcmpl-039bdbbeb4cd4eed95d675ad4b454235", "object": "chat.completion.chunk", "created": 1793219647, "model": "nanbeige", "choices": [{"index": 0, "delta": {"role": "assistant", "content": ""}, "logprobs": null, "finish_reason": null}]}\n\ndata: {"id": "chatcmpl-039bdbbeb4cd4eed95d675ad4b454235", "object": "chat.completion.chunk", "created": 1793219647, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "Plan.", "reasoning_content": "Plan."}, "logprobs": null, "finish_reason": null}]}\n\ndata: {"id": "chatcmpl-039bdbbeb4cd4eed95d675ad4b454235", "object": "chat.completion.chunk", "created": 1793219647, "model": "nanbeige", "choices": [{"index": 0, "delta": {"content": "prefix"}, "logprobs": null, "finish_reason": null}]}\n\n', 'complete': False}

@@ -1,0 +1,28 @@
+{
+  "cpu_final_exit": 0,
+  "cpu_total": 1015,
+  "cpu_fresh_final": 971,
+  "cpu_unchanged_cached": 44,
+  "native_exit": 0,
+  "native_steps": 116,
+  "extended_exit": 0,
+  "main_exit": 0,
+  "targeted_exit": 0,
+  "review5_rerun_exit": 1,
+  "review5_rerun_stop": "lean_check inherited findings",
+  "lean_new_exit": 0,
+  "new_lean_findings": 0,
+  "tcp_exit": 0,
+  "tcp_cases": 20,
+  "fixture_repro": {
+    "failures.json": true,
+    "failure_faults.json": true,
+    "failures.sources.json": true
+  },
+  "gpu_execution": "NOT RUN",
+  "push": "NOT RUN",
+  "permanent_cases": 148,
+  "whole_failures": 89,
+  "stream_aborts": 82,
+  "injected_faults": 7
+}

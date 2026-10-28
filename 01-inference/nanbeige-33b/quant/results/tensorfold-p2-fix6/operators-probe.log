@@ -1,0 +1,14 @@
+'*' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'/' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'//' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'%' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'**' 2987 2988 MemoryError: Parser stack overflowed - Python source too complex to parse
+'<<' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'>>' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'|' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'^' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'&' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+'@' 9996 9997 RecursionError: maximum recursion depth exceeded during ast construction
+' and ' no failure at 11000
+' or ' no failure at 11000
+' if 1 else ' 5974 5975 MemoryError: Parser stack overflowed - Python source too complex to parse

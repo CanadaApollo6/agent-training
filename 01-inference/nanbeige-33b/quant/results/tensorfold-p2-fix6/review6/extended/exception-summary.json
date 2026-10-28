@@ -1,0 +1,20 @@
+{
+  "counts": {
+    "UnicodeEncodeError": 14,
+    "TypeError": 205
+  },
+  "examples": {
+    "UnicodeEncodeError": {
+      "name": "edge-01407",
+      "literal": "\"\\ud800\"",
+      "error": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 353: surrogates not allowed",
+      "engine": "{\"id\":\"chatcmpl-00000000000000000000000000000000\",\"object\":\"chat.completion\",\"created\":0,\"model\":\"nanbeige\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":null,\"reasoning\":null,\"reasoning_content\":null,\"tool_calls\":[{\"id\":\"chatcmpl-tool-0000000000000000\",\"type\":\"function\",\"function\":{\"name\":\"probe\",\"arguments\":\"{\\\"payload\\\": \\\"\ud800\\\"}\"}}]},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":270,\"completion_tokens\":22,\"total_tokens\":292}}"
+    },
+    "TypeError": {
+      "name": "edge-01687",
+      "literal": "b'\\777'",
+      "error": "TypeError: Object of type bytes is not JSON serializable",
+      "engine": "{\"id\":\"chatcmpl-00000000000000000000000000000000\",\"object\":\"chat.completion\",\"created\":0,\"model\":\"nanbeige\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":null,\"reasoning\":null,\"reasoning_content\":null,\"tool_calls\":[{\"id\":\"chatcmpl-tool-0000000000000000\",\"type\":\"function\",\"function\":{\"name\":\"probe\",\"arguments\":\"{\\\"payload\\\": \\\"b'\\\\\\\\777'\\\"}\"}}]},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":270,\"completion_tokens\":22,\"total_tokens\":292}}"
+    }
+  }
+}

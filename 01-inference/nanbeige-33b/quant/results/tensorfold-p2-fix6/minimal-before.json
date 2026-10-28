@@ -1,0 +1,34 @@
+{
+  "bytes": {
+    "json": {
+      "status": 200,
+      "content_type": "application/json",
+      "valid_utf8": true,
+      "done": false,
+      "matches": false
+    },
+    "sse": {
+      "status": 200,
+      "content_type": "text/event-stream",
+      "valid_utf8": true,
+      "done": true,
+      "matches": false
+    }
+  },
+  "lone-high": {
+    "json": {
+      "status": 200,
+      "content_type": "application/json",
+      "valid_utf8": false,
+      "done": false,
+      "matches": false
+    },
+    "sse": {
+      "status": 200,
+      "content_type": "text/event-stream",
+      "valid_utf8": false,
+      "done": true,
+      "matches": false
+    }
+  }
+}

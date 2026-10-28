@@ -1,0 +1,29 @@
+1/1 measure.test.independent allocation and lifetime...MEASURE 0 'A' ns_per_parse=643 arena_capacity=264 checked=100
+MEASURE 1 'A' ns_per_parse=463 arena_capacity=264 checked=100
+MEASURE 2 'A' ns_per_parse=395 arena_capacity=264 checked=100
+MEASURE 3 'A' ns_per_parse=377 arena_capacity=264 checked=100
+MEASURE 4 'A' ns_per_parse=433 arena_capacity=264 checked=100
+MEASURE 0 '\N{CJK UNIFIED IDEOGRAPH-4E00}' ns_per_parse=746 arena_capacity=450 checked=100
+MEASURE 1 '\N{CJK UNIFIED IDEOGRAPH-4E00}' ns_per_parse=653 arena_capacity=328 checked=100
+MEASURE 2 '\N{CJK UNIFIED IDEOGRAPH-4E00}' ns_per_parse=696 arena_capacity=328 checked=100
+MEASURE 3 '\N{CJK UNIFIED IDEOGRAPH-4E00}' ns_per_parse=673 arena_capacity=328 checked=100
+MEASURE 4 '\N{CJK UNIFIED IDEOGRAPH-4E00}' ns_per_parse=693 arena_capacity=328 checked=100
+MEASURE 0 '\N{SNOWMAN}' ns_per_parse=3189020 arena_capacity=3338710 checked=100
+MEASURE 1 '\N{SNOWMAN}' ns_per_parse=3195054 arena_capacity=3338710 checked=100
+MEASURE 2 '\N{SNOWMAN}' ns_per_parse=3263676 arena_capacity=3338710 checked=100
+MEASURE 3 '\N{SNOWMAN}' ns_per_parse=3172884 arena_capacity=3338710 checked=100
+MEASURE 4 '\N{SNOWMAN}' ns_per_parse=3163721 arena_capacity=3338710 checked=100
+MEASURE 0 '\N{NOT A REAL NAME}' ns_per_parse=3244997 arena_capacity=4708864 checked=100
+MEASURE 1 '\N{NOT A REAL NAME}' ns_per_parse=3310042 arena_capacity=4708864 checked=100
+MEASURE 2 '\N{NOT A REAL NAME}' ns_per_parse=3335189 arena_capacity=4708864 checked=100
+MEASURE 3 '\N{NOT A REAL NAME}' ns_per_parse=3260424 arena_capacity=4708864 checked=100
+MEASURE 4 '\N{NOT A REAL NAME}' ns_per_parse=3229093 arena_capacity=4708864 checked=100
+MEASURE 0 '\N{SNOWMAN}\N{SNOWMAN}' ns_per_parse=3292291 arena_capacity=4708912 checked=100
+MEASURE 1 '\N{SNOWMAN}\N{SNOWMAN}' ns_per_parse=3254647 arena_capacity=4708912 checked=100
+MEASURE 2 '\N{SNOWMAN}\N{SNOWMAN}' ns_per_parse=3223989 arena_capacity=4708912 checked=100
+MEASURE 3 '\N{SNOWMAN}\N{SNOWMAN}' ns_per_parse=3223797 arena_capacity=4708912 checked=100
+MEASURE 4 '\N{SNOWMAN}\N{SNOWMAN}' ns_per_parse=3238728 arena_capacity=4708912 checked=100
+TABLE bytes=1154877 arena_capacity=3337952 repeated_lookups=1000 no_growth=true
+CONCURRENT threads=8 checks=800 elapsed_ns=470460408
+OK
+All 1 tests passed.

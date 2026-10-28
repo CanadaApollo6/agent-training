@@ -1,0 +1,310 @@
+{
+ "uvicorn": "0.54.0",
+ "cases": [
+  {
+   "name": "bytes",
+   "mode": "json",
+   "status": 500,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 500 Internal Server Error\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 21\r\ncontent-type: text/plain; charset=utf-8\r\n\r\nInternal Server Error"
+  },
+  {
+   "name": "bytes",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "complete": false,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10d\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n"
+  },
+  {
+   "name": "lone-high",
+   "mode": "json",
+   "status": 500,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 500 Internal Server Error\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 21\r\ncontent-type: text/plain; charset=utf-8\r\n\r\nInternal Server Error"
+  },
+  {
+   "name": "lone-high",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"prefix\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "complete": false,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10d\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\nee\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"prefix\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n"
+  },
+  {
+   "name": "frozenset-fallback",
+   "mode": "json",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "500",
+    "content-type": "application/json",
+    "connection": "close"
+   },
+   "body": "{\"id\":\"chatcmpl-00000000000000000000000000000000\",\"object\":\"chat.completion\",\"created\":0,\"model\":\"nanbeige\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"prefix\",\"reasoning\":\"Plan.\",\"reasoning_content\":\"Plan.\",\"tool_calls\":[{\"id\":\"chatcmpl-tool-0000000000000000\",\"type\":\"function\",\"function\":{\"name\":\"run\",\"arguments\":\"{\\\"payload\\\": \\\"frozenset()\\\"}\"}}]},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":285,\"completion_tokens\":23,\"total_tokens\":308}}",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 500\r\ncontent-type: application/json\r\nConnection: close\r\n\r\n{\"id\":\"chatcmpl-00000000000000000000000000000000\",\"object\":\"chat.completion\",\"created\":0,\"model\":\"nanbeige\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"prefix\",\"reasoning\":\"Plan.\",\"reasoning_content\":\"Plan.\",\"tool_calls\":[{\"id\":\"chatcmpl-tool-0000000000000000\",\"type\":\"function\",\"function\":{\"name\":\"run\",\"arguments\":\"{\\\"payload\\\": \\\"frozenset()\\\"}\"}}]},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":285,\"completion_tokens\":23,\"total_tokens\":308}}"
+  },
+  {
+   "name": "frozenset-fallback",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "close"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"prefix\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"tool_calls\": [{\"index\": 0, \"id\": \"chatcmpl-tool-0000000000000000\", \"type\": \"function\", \"function\": {\"name\": \"run\", \"arguments\": \"{\\\"payload\\\": \\\"frozenset()\\\"}\"}}]}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {}, \"logprobs\": null, \"finish_reason\": \"tool_calls\"}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [], \"usage\": {\"prompt_tokens\": 285, \"completion_tokens\": 23, \"total_tokens\": 308}}\n\ndata: [DONE]\n\n",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10d\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\nee\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"prefix\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n17f\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"tool_calls\": [{\"index\": 0, \"id\": \"chatcmpl-tool-0000000000000000\", \"type\": \"function\", \"function\": {\"name\": \"run\", \"arguments\": \"{\\\"payload\\\": \\\"frozenset()\\\"}\"}}]}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\ne3\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {}, \"logprobs\": null, \"finish_reason\": \"tool_calls\"}]}\n\n\r\ne8\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [], \"usage\": {\"prompt_tokens\": 285, \"completion_tokens\": 23, \"total_tokens\": 308}}\n\n\r\ne\r\ndata: [DONE]\n\n\r\n0\r\n\r\n"
+  },
+  {
+   "name": "json-recursion",
+   "mode": "json",
+   "status": 500,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 500 Internal Server Error\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 21\r\ncontent-type: text/plain; charset=utf-8\r\n\r\nInternal Server Error"
+  },
+  {
+   "name": "json-recursion",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "complete": false,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10d\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n"
+  },
+  {
+   "name": "literal-parser-memory",
+   "mode": "json",
+   "status": 500,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 500 Internal Server Error\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 21\r\ncontent-type: text/plain; charset=utf-8\r\n\r\nInternal Server Error"
+  },
+  {
+   "name": "literal-parser-memory",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "complete": false,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10d\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n"
+  },
+  {
+   "name": "second-call-serialization",
+   "mode": "json",
+   "status": 500,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 500 Internal Server Error\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 21\r\ncontent-type: text/plain; charset=utf-8\r\n\r\nInternal Server Error"
+  },
+  {
+   "name": "second-call-serialization",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "complete": false,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10d\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n"
+  },
+  {
+   "name": "second-call-encoding",
+   "mode": "json",
+   "status": 500,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 500 Internal Server Error\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 21\r\ncontent-type: text/plain; charset=utf-8\r\n\r\nInternal Server Error"
+  },
+  {
+   "name": "second-call-encoding",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"prefix\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"tool_calls\": [{\"index\": 0, \"id\": \"chatcmpl-tool-0000000000000000\", \"type\": \"function\", \"function\": {\"name\": \"run\", \"arguments\": \"{\\\"payload\\\": 1}\"}}]}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "complete": false,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10d\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\nee\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"prefix\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n171\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"tool_calls\": [{\"index\": 0, \"id\": \"chatcmpl-tool-0000000000000000\", \"type\": \"function\", \"function\": {\"name\": \"run\", \"arguments\": \"{\\\"payload\\\": 1}\"}}]}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n"
+  },
+  {
+   "name": "model-surrogate",
+   "mode": "json",
+   "status": 500,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 500 Internal Server Error\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 21\r\ncontent-type: text/plain; charset=utf-8\r\n\r\nInternal Server Error"
+  },
+  {
+   "name": "model-surrogate",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked"
+   },
+   "body": "",
+   "complete": false,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\n\r\n"
+  },
+  {
+   "name": "memory-reasoning",
+   "mode": "json",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "495",
+    "content-type": "application/json",
+    "connection": "close"
+   },
+   "body": "{\"id\":\"chatcmpl-00000000000000000000000000000000\",\"object\":\"chat.completion\",\"created\":0,\"model\":\"nanbeige\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"prefix\",\"reasoning\":\"Plan.\",\"reasoning_content\":\"Plan.\",\"tool_calls\":[{\"id\":\"chatcmpl-tool-0000000000000000\",\"type\":\"function\",\"function\":{\"name\":\"run\",\"arguments\":\"{\\\"payload\\\": {\\\"x\\\": 1}}\"}}]},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":285,\"completion_tokens\":24,\"total_tokens\":309}}",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 495\r\ncontent-type: application/json\r\nConnection: close\r\n\r\n{\"id\":\"chatcmpl-00000000000000000000000000000000\",\"object\":\"chat.completion\",\"created\":0,\"model\":\"nanbeige\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"prefix\",\"reasoning\":\"Plan.\",\"reasoning_content\":\"Plan.\",\"tool_calls\":[{\"id\":\"chatcmpl-tool-0000000000000000\",\"type\":\"function\",\"function\":{\"name\":\"run\",\"arguments\":\"{\\\"payload\\\": {\\\"x\\\": 1}}\"}}]},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":285,\"completion_tokens\":24,\"total_tokens\":309}}"
+  },
+  {
+   "name": "memory-reasoning",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "close"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"error\": {\"message\": \"\", \"type\": \"InternalServerError\"}}\n\n",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n41\r\ndata: {\"error\": {\"message\": \"\", \"type\": \"InternalServerError\"}}\n\n\r\n0\r\n\r\n"
+  },
+  {
+   "name": "memory-producer-runtime",
+   "mode": "json",
+   "status": 500,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 500 Internal Server Error\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-length: 21\r\ncontent-type: text/plain; charset=utf-8\r\n\r\nInternal Server Error"
+  },
+  {
+   "name": "memory-producer-runtime",
+   "mode": "sse",
+   "status": 200,
+   "headers": {
+    "date": "Wed, 28 Oct 2026 21:09:03 GMT",
+    "server": "uvicorn",
+    "content-type": "text/event-stream; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "close"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"error\": {\"message\": \"generation failed\", \"type\": \"InternalServerError\"}}\n\n",
+   "complete": true,
+   "connection_end": "EOF",
+   "raw": "HTTP/1.1 200 OK\r\ndate: Wed, 28 Oct 2026 21:09:03 GMT\r\nserver: uvicorn\r\ncontent-type: text/event-stream; charset=utf-8\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\nfd\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n10d\r\ndata: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"reasoning\": \"Plan.\", \"reasoning_content\": \"Plan.\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n\r\n52\r\ndata: {\"error\": {\"message\": \"generation failed\", \"type\": \"InternalServerError\"}}\n\n\r\n0\r\n\r\n"
+  }
+ ]
+}

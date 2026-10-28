@@ -1,0 +1,36 @@
+[
+  {
+    "name": "minimal-0",
+    "json": {
+      "status_line": "HTTP/1.1 200 OK",
+      "valid_utf8": true,
+      "surrogate_bytes": false,
+      "done": false,
+      "body": "{\"id\":\"chatcmpl-2581056306c348dcb696ab8afcd14d2f\",\"object\":\"chat.completion\",\"created\":1793219316,\"model\":\"nanbeige\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":null,\"reasoning\":null,\"reasoning_content\":null,\"tool_calls\":[{\"id\":\"chatcmpl-tool-dc003fedd8374007\",\"type\":\"function\",\"function\":{\"name\":\"probe\",\"arguments\":\"{\\\"payload\\\": \\\"b'a'\\\"}\"}}]},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":270,\"completion_tokens\":20,\"total_tokens\":290}}"
+    },
+    "sse": {
+      "status_line": "HTTP/1.1 200 OK",
+      "valid_utf8": true,
+      "surrogate_bytes": false,
+      "done": true,
+      "body": "data: {\"id\": \"chatcmpl-f4df80586c9b42e392965146732809eb\", \"object\": \"chat.completion.chunk\", \"created\": 1793219316, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-f4df80586c9b42e392965146732809eb\", \"object\": \"chat.completion.chunk\", \"created\": 1793219316, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"tool_calls\": [{\"index\": 0, \"id\": \"chatcmpl-tool-e746fe722e8e4c6f\", \"type\": \"function\", \"function\": {\"name\": \"probe\", \"arguments\": \"{\\\"payload\\\": \\\"b'a'\\\"}\"}}]}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-f4df80586c9b42e392965146732809eb\", \"object\": \"chat.completion.chunk\", \"created\": 1793219316, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {}, \"logprobs\": null, \"finish_reason\": \"tool_calls\"}]}\n\ndata: {\"id\": \"chatcmpl-f4df80586c9b42e392965146732809eb\", \"object\": \"chat.completion.chunk\", \"created\": 1793219316, \"model\": \"nanbeige\", \"choices\": [], \"usage\": {\"prompt_tokens\": 270, \"completion_tokens\": 20, \"total_tokens\": 290}}\n\ndata: [DONE]\n\n"
+    }
+  },
+  {
+    "name": "minimal-1",
+    "json": {
+      "status_line": "HTTP/1.1 200 OK",
+      "valid_utf8": false,
+      "surrogate_bytes": true,
+      "done": false,
+      "body": "{\"id\":\"chatcmpl-310337bb3aca49818ab99732256f0e8d\",\"object\":\"chat.completion\",\"created\":1793219316,\"model\":\"nanbeige\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":null,\"reasoning\":null,\"reasoning_content\":null,\"tool_calls\":[{\"id\":\"chatcmpl-tool-695bafdf11724f12\",\"type\":\"function\",\"function\":{\"name\":\"probe\",\"arguments\":\"{\\\"payload\\\": \\\"\ud800\\\"}\"}}]},\"logprobs\":null,\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":270,\"completion_tokens\":22,\"total_tokens\":292}}"
+    },
+    "sse": {
+      "status_line": "HTTP/1.1 200 OK",
+      "valid_utf8": false,
+      "surrogate_bytes": true,
+      "done": true,
+      "body": "data: {\"id\": \"chatcmpl-6d15ac378d124dafbd7b5b1a6246effa\", \"object\": \"chat.completion.chunk\", \"created\": 1793219316, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-6d15ac378d124dafbd7b5b1a6246effa\", \"object\": \"chat.completion.chunk\", \"created\": 1793219316, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"tool_calls\": [{\"index\": 0, \"id\": \"chatcmpl-tool-e6bf792355d74acf\", \"type\": \"function\", \"function\": {\"name\": \"probe\", \"arguments\": \"{\\\"payload\\\": \\\"\ud800\\\"}\"}}]}, \"logprobs\": null, \"finish_reason\": null}]}\n\ndata: {\"id\": \"chatcmpl-6d15ac378d124dafbd7b5b1a6246effa\", \"object\": \"chat.completion.chunk\", \"created\": 1793219316, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {}, \"logprobs\": null, \"finish_reason\": \"tool_calls\"}]}\n\ndata: {\"id\": \"chatcmpl-6d15ac378d124dafbd7b5b1a6246effa\", \"object\": \"chat.completion.chunk\", \"created\": 1793219316, \"model\": \"nanbeige\", \"choices\": [], \"usage\": {\"prompt_tokens\": 270, \"completion_tokens\": 22, \"total_tokens\": 292}}\n\ndata: [DONE]\n\n"
+    }
+  }
+]

@@ -1,0 +1,4601 @@
+{
+ "edge-01406": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 353: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 320: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01407": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 353: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 320: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01408": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 361: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 328: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01409": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\udfff' in position 353: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\udfff' in position 320: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01410": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\udfff' in position 353: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\udfff' in position 320: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01411": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\udfff' in position 361: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\udfff' in position 328: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01412": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 353: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 320: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01413": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 353: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 320: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01414": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 361: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 328: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01428": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 353: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 320: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01429": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 353: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 320: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01430": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 361: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 328: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01431": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode characters in position 353-354: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode characters in position 320-321: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01433": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode characters in position 361-362: surrogates not allowed",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "UnicodeEncodeError: 'utf-8' codec can't encode characters in position 328-329: surrogates not allowed",
+   "complete": false
+  }
+ },
+ "edge-01683": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01684": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01685": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01687": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01688": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01689": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01690": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01692": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01694": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01695": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01696": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01698": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01699": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01700": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01701": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01703": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01705": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01706": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01707": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01709": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01710": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01711": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01714": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01716": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01717": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01718": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01720": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01721": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01722": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01725": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01727": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01728": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01729": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01731": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01732": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01733": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01734": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01736": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01738": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01739": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01740": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01742": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01743": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01744": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01745": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01747": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01749": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01750": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01751": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01753": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01754": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01755": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01758": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01760": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01761": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01762": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01764": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01765": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01766": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01769": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01771": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01772": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01773": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01774": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01775": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01776": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01777": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01778": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01780": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01782": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01783": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01784": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01785": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01786": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01787": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01788": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01789": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01791": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01793": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01794": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01795": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01796": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01797": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01798": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01799": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01802": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01804": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01805": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01806": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01807": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01808": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01809": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01810": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01813": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01815": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01816": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01817": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01818": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01819": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01820": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01821": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01822": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01824": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01826": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01827": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01828": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01829": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01830": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01831": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01832": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01833": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01835": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01837": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01838": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01839": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01840": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01841": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01842": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01843": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01846": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01848": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01849": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01850": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01851": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01852": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01853": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01854": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01857": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01859": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01860": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01861": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01862": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01863": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01864": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01865": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01866": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01868": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01870": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01871": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01872": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01873": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01874": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01875": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01876": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01877": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01879": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01881": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01882": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01883": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01884": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01885": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01886": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01887": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01890": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01892": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01893": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01894": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01895": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01896": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01897": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01898": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01901": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01903": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01904": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01905": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01906": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01907": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01908": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01909": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01910": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01912": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01914": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01915": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01916": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01917": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01918": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01919": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01920": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01921": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01923": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01925": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01926": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01927": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01928": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01929": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01930": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01931": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01934": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01936": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01937": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01938": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01939": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01940": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01941": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01942": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-01945": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-02311": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-02312": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type set is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type set is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-02313": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type set is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type set is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-02314": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type ellipsis is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type ellipsis is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-02315": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type complex is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type complex is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-02316": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: keys must be str, int, float, bool or None, not bytes",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: keys must be str, int, float, bool or None, not bytes",
+   "complete": false
+  }
+ },
+ "edge-02317": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: keys must be str, int, float, bool or None, not tuple",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: keys must be str, int, float, bool or None, not tuple",
+   "complete": false
+  }
+ },
+ "edge-02328": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ },
+ "edge-02329": {
+  "json": {
+   "status": 500,
+   "headers": {
+    "content-length": "21",
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "body": "Internal Server Error",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": true
+  },
+  "sse": {
+   "status": 200,
+   "headers": {
+    "content-type": "text/event-stream; charset=utf-8"
+   },
+   "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+   "exception": "TypeError: Object of type bytes is not JSON serializable",
+   "complete": false
+  }
+ }
+}

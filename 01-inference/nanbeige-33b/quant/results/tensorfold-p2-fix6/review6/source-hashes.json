@@ -1,0 +1,43 @@
+{
+  "head": "891015b9952fc3cbadb6859149fe810ac5dcf826",
+  "source": {
+    "docs/recipes/nanbeige-pod.md": "b2a5a79e56656748f5b6c4679fa59292e00a290c5fef3ee99dd19ea21f33d732",
+    "tools/zig/llama_serve_escapes.py": "3ea109b8194016d3c2668ff26e2538bb1c119a2fb22adde507373555e77bdaae",
+    "tools/zig/llama_serve_reference.py": "71f53c2bb4929e917be6ff899710b4c1d07976bc102d0a6a746eb2f24aa87492",
+    "tools/zig/llama_serve_unicode.py": "f987e25450569206c171f21aef8a2a95df0c409f338beef21c0152542dfd158b",
+    "tools/zig/llama_unicode_check.zig": "d59f9dd2a56a9276719ddab7012e2ca4887bf70f7446770fb2a10ee9ad84e344",
+    "zig/src/server/fixtures/llama/outputs_escapes.json": "5b2c2f3559135ddb4a9cbea689fbaa5bad72fb4672b03c40310180fa0515ed5e",
+    "zig/src/server/fixtures/llama/responses.json": "6ac2fac8a6f3e250151b4873af5b5d413a4fced6a41f526e9b6ed0e5c669d301",
+    "zig/src/server/fixtures/llama/unicode-15.LICENSE.txt": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+    "zig/src/server/fixtures/llama/unicode-15.names.gz": "b0526c06eb8bac3552c997c574cb952c322f21bb1049d82a6349f9798dd4d3e1",
+    "zig/src/server/llama_bytes_test.zig": "6e34eb67a50170e8458030152f6c81094df0a98986d4664310a4817ba1156f6f",
+    "zig/src/server/nanbeige_literal.zig": "0bf4f053eb6ad3d34834535b577cdf33b9e87adc2f766826a94537d0bdbb3aef",
+    "zig/src/server/nanbeige_unicode.zig": "9e9d39370351ba5df2ca25f753bff640d8f8e27dab0d45084bf3ff4b09d0167c",
+    "zig/src/server/nanbeige_unicode_data.zig": "49d7774a07a37a31b040968a1c7241ed21a1b4fb6f67c8f55e0c697ad7147eaf",
+    "zig/src/server/openai.zig": "7eb6eb59276f7ba99485269e49ffe78395d6bfa50906464f2797782c8322b0ee",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/serve_exl3.py": "b46fae9c5ae7655c05eae16918237d3a8ccacbad6e775f0f843834f3cc19f7f1"
+  },
+  "artifacts": {
+    "minimal.py": "e9e02e3a5d9d1a97db5e5ff7339da842bb1c3356fee4871eb38d83c44abccf2a",
+    "exceptions.py": "3aefb0028fa70118d296d0bb3bb79dffb2a7df176e96a441ec8d124a0d176ca7",
+    "bench_cases.py": "7d3dd8aba77ff2f5e4079bb9df6be40ef8e141cdd568add270c593cc8c76f8b4",
+    "build_routes_measure.py": "e2eca9ee7b923a1bfd379dfc62d8c49cebe5098b0a7e677dba176b7293f3378b",
+    "run_extended.py": "403d4a072d9ec9b076bb30ef81decc06de97436b0224ff18671e37a8181a26c5",
+    "extended.py": "9c56490614a8ea6c585090f61383f3f1cf9ae40cfa1cd374e0bcd48f858ed7d5",
+    "build_measure.py": "af6554832237c591d14b47d3a47b2509e72fa77c63ad9cb9db3e81c77607fa7b",
+    "targeted.py": "1e3f21f9f248c9b155439ccf585466490c981c0c345715a25240d0254385f8f9",
+    "independent.py": "ceba07f07befae197942d53e13111b6c13a9f86d7b8dea757eaa018b1ae4f8e9",
+    "build_routes.py": "7120d84cd9e064e4dff3aeb4266ac3ad1eab3f1cf8c7d83460f751282e782c4e",
+    "routes.zig": "6b155b47addfafb29f6b976f02361f5083fc595a541130b8941b9b97725cca90",
+    "routes": "61241a488d37d249dc46c49d25e0d5cdcd852d2f8b006499d9dbaed8a8e4022e",
+    "measure.zig": "214d459ecbc4fb827a2fcedddefd8921bd993ff5de2a1451ce1c467c6bd9be04",
+    "routes_measure.zig": "c00a0f48bfbc9dd9d09f7e1ab9af87ddef26427dfa3868de88e567e78191e7bc",
+    "extended/input.jsonl": "09c4d7024269bc0a889adb3ba8141529ec55baa096d3d3b7ef58dc58de7294cc",
+    "extended/expected.jsonl": "645e9ca2e50be668384fe96d4a4687eeaa92d04465961e1f7b54277f9c891ffe",
+    "extended/routes.log": "678a3da6c213d8d13515faf2c6eee7aae9a1877a8a6459a86fc0290cd1cd6244",
+    "tests-fresh.log": "faf42175442fd8342b5e40af9787ee84a09156da84d8b646ab6da6f497656d82",
+    "minimal-engine.log": "0aa984457a5b763a417d953316a511ddd031f9c76a4f7a7367f9c42a0b28ce46",
+    "exceptions-asgi.json": "3f8103b368cd9a4a12141f558815027717062dce6d36a659ff1dc5cf93105dfe"
+  },
+  "git_status": ""
+}

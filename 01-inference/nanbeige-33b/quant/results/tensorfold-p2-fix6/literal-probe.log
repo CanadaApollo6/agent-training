@@ -1,0 +1,24 @@
+200 unary None
+200 binary None
+500 unary None
+500 binary None
+1000 unary None
+1000 binary None
+2000 unary None
+2000 binary None
+3000 unary None
+3000 binary None
+4000 unary None
+4000 binary None
+5000 unary None
+5000 binary None
+6000 unary MemoryError: Parser stack overflowed - Python source too complex to parse
+6000 binary None
+8000 unary MemoryError: Parser stack overflowed - Python source too complex to parse
+8000 binary None
+10000 unary MemoryError: Parser stack overflowed - Python source too complex to parse
+10000 binary RecursionError: maximum recursion depth exceeded during ast construction
+15000 unary MemoryError: Parser stack overflowed - Python source too complex to parse
+15000 binary RecursionError: maximum recursion depth exceeded during ast construction
+20000 unary MemoryError: Parser stack overflowed - Python source too complex to parse
+20000 binary RecursionError: maximum recursion depth exceeded during ast construction

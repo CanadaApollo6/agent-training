@@ -1,0 +1,66 @@
+[
+  {
+    "literal": "b'a'",
+    "stream": false,
+    "status": 500,
+    "body": "Internal Server Error",
+    "exception": "TypeError: Object of type bytes is not JSON serializable",
+    "complete": true
+  },
+  {
+    "literal": "b'a'",
+    "stream": true,
+    "status": 200,
+    "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+    "exception": "TypeError: Object of type bytes is not JSON serializable",
+    "complete": false
+  },
+  {
+    "literal": "'\\ud800'",
+    "stream": false,
+    "status": 500,
+    "body": "Internal Server Error",
+    "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 353: surrogates not allowed",
+    "complete": true
+  },
+  {
+    "literal": "'\\ud800'",
+    "stream": true,
+    "status": 200,
+    "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+    "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 320: surrogates not allowed",
+    "complete": false
+  },
+  {
+    "literal": "{'x':b'a'}",
+    "stream": false,
+    "status": 500,
+    "body": "Internal Server Error",
+    "exception": "TypeError: Object of type bytes is not JSON serializable",
+    "complete": true
+  },
+  {
+    "literal": "{'x':b'a'}",
+    "stream": true,
+    "status": 200,
+    "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+    "exception": "TypeError: Object of type bytes is not JSON serializable",
+    "complete": false
+  },
+  {
+    "literal": "{'x':'\\ud800'}",
+    "stream": false,
+    "status": 500,
+    "body": "Internal Server Error",
+    "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 361: surrogates not allowed",
+    "complete": true
+  },
+  {
+    "literal": "{'x':'\\ud800'}",
+    "stream": true,
+    "status": 200,
+    "body": "data: {\"id\": \"chatcmpl-00000000000000000000000000000000\", \"object\": \"chat.completion.chunk\", \"created\": 0, \"model\": \"nanbeige\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\", \"content\": \"\"}, \"logprobs\": null, \"finish_reason\": null}]}\n\n",
+    "exception": "UnicodeEncodeError: 'utf-8' codec can't encode character '\\ud800' in position 328: surrogates not allowed",
+    "complete": false
+  }
+]

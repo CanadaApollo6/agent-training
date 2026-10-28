@@ -1,0 +1,288 @@
+test-llama-server-host
++- run test w
+PROMPT p1-chat tokens=195 equal
+PROMPT system-user tokens=24 equal
+PROMPT default-system tokens=34 equal
+PROMPT reasoning-history tokens=48 equal
+PROMPT reasoning-alias tokens=48 equal
+PROMPT embedded-thinking tokens=47 equal
+PROMPT tools tokens=254 equal
+PROMPT calls-with-tools tokens=350 equal
+PROMPT calls-without-tools tokens=120 equal
+PROMPT tool-results tokens=382 equal
+PROMPT preserve-false tokens=44 equal
+PROMPT thinking-off tokens=28 equal
+PROMPT json-calls tokens=316 equal
+PROMPT bad-json-arguments tokens=278 equal
+PROMPT special-user tokens=39 equal
+PROMPT special-tool tokens=375 equal
+PROMPT developer-leading tokens=42 equal
+PROMPT developer-mixed tokens=42 equal
+PROMPT kwargs-effort tokens=24 equal
+PROMPT kwargs-top-effort tokens=24 equal
+PROMPT kwargs-top-only tokens=24 equal
+PROMPT spaced-history-call tokens=346 equal
+PROMPT text-parts tokens=34 equal
+PROMPT json-history-scalar tokens=60 equal
+PROMPT json-history-null tokens=58 equal
+PROMPT json-history-array tokens=62 equal
+PROMPT json-history-spaces tokens=58 equal
+PROMPT json-history-duplicate tokens=68 equal
+PROMPT special-user tokens=39 equal
+PROMPT special-tool tokens=375 equal
+PROMPT developer-leading tokens=42 equal
+PROMPT developer-mixed tokens=42 equal
+PROMPT kwargs-effort tokens=24 equal
+PROMPT kwargs-top-effort tokens=24 equal
+PROMPT kwargs-top-only tokens=24 equal
+OUTPUT spaced-function equal
+OUTPUT spaced-parameter equal
+OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+OUTPUT spaced-empty equal
+OUTPUT name-newline equal
+OUTPUT name-inner-space equal
+OUTPUT name-unicode-space equal
+OUTPUT unicode equal
+OUTPUT plain equal
+OUTPUT no-close equal
+OUTPUT no-close-call equal
+OUTPUT typed equal
+OUTPUT multiple equal
+OUTPUT no-tools equal
+OUTPUT unclosed-call equal
+OUTPUT trailing-prose equal
+OUTPUT reasoning-spaces equal
+OUTPUT typed-edge equal
+OUTPUT truncated-params equal
+OUTPUT unknown-function equal
+OUTPUT malformed-first equal
+OUTPUT no-function equal
+OUTPUT recover-empty-header equal
+OUTPUT recover-newline-header equal
+OUTPUT recover-unclosed-header equal
+OUTPUT recover-close-in-header equal
+OUTPUT end-newlines-param equal
+OUTPUT end-newlines-function equal
+OUTPUT end-newlines-text equal
+OUTPUT spaced-function equal
+OUTPUT spaced-parameter equal
+OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+OUTPUT recover-empty-header equal
+OUTPUT recover-newline-header equal
+OUTPUT recover-unclosed-header equal
+OUTPUT recover-close-in-header equal
+OUTPUT end-newlines-param equal
+OUTPUT end-newlines-function equal
+OUTPUT end-newlines-text equal
+FUZZ 3000 cases equal
+ROUTE spaced-function JSON+SSE equal
+ROUTE spaced-parameter JSON+SSE equal
+ROUTE case-function JSON+SSE equal
+ROUTE case-parameter JSON+SSE equal
+ROUTE case-collision JSON+SSE equal
+ROUTE case-collision-upper JSON+SSE equal
+ROUTE case-tags JSON+SSE equal
+ROUTE spaced-empty JSON+SSE equal
+ROUTE name-newline JSON+SSE equal
+ROUTE name-inner-space JSON+SSE equal
+ROUTE name-unicode-space JSON+SSE equal
+ROUTE unicode JSON+SSE equal
+ROUTE plain JSON+SSE equal
+ROUTE no-close JSON+SSE equal
+ROUTE no-close-call JSON+SSE equal
+ROUTE typed JSON+SSE equal
+ROUTE multiple JSON+SSE equal
+ROUTE no-tools JSON+SSE equal
+ROUTE unclosed-call JSON+SSE equal
+ROUTE trailing-prose JSON+SSE equal
+ROUTE reasoning-spaces JSON+SSE equal
+ROUTE typed-edge JSON+SSE equal
+ROUTE truncated-params JSON+SSE equal
+ROUTE unknown-function JSON+SSE equal
+ROUTE malformed-first JSON+SSE equal
+ROUTE no-function JSON+SSE equal
+ROUTE recover-empty-header JSON+SSE equal
+ROUTE recover-newline-header JSON+SSE equal
+ROUTE recover-unclosed-header JSON+SSE equal
+ROUTE recover-close-in-header JSON+SSE equal
+ROUTE end-newlines-param JSON+SSE equal
+ROUTE end-newlines-function JSON+SSE equal
+ROUTE end-newlines-text JSON+SSE equal
+BYTE parser 1005 cases equal
+BYTE parser 226 cases equal
+BYTE parser 128 cases equal
+BYTE HTTP 189 JSON + 189 SSE cases equal
+failed command: /tmp/nanbeige-review-891015b9/cache/o/82c8f900e66600ed1229bea414544372/test --cache-dir=/tmp/nanbeige-review-891015b9/cache --seed=0xfee8d68b --listen=-
+
+test-server-cpu
++- run test w
+PROVENANCE_FIELDS fixtures=3 fields=14 plus decision labels
+PROVENANCE_TIMING mode=raw one=0 bytes=409600 added=1000 rounds=12 ns_per=7784101
+PROVENANCE_TIMING mode=masked one=0 bytes=409600 added=1000 rounds=12 ns_per=3773677
+PROVENANCE_MASK_WORK one=0 spans=3 matcher=3 output=409603
+PROVENANCE_TIMING mode=raw one=1 bytes=409600 added=1000 rounds=12 ns_per=7937137
+PROVENANCE_TIMING mode=masked one=1 bytes=409600 added=1000 rounds=12 ns_per=3751764
+PROVENANCE_MASK_WORK one=1 spans=3 matcher=3 output=409603
+[default] (warn): TENSORFOLD_REQUEST_LOG .zig-cache/tmp/pBmdZbrL-XBzp-YA/taken.jsonl gets no requests: it is not a regular file only its owner can read
+DEEPSEEK_CHAT_GOLDENS 178 committed encoding.py cases
+PROMPT p1-chat tokens=195 equal
+PROMPT system-user tokens=24 equal
+PROMPT default-system tokens=34 equal
+PROMPT reasoning-history tokens=48 equal
+PROMPT reasoning-alias tokens=48 equal
+PROMPT embedded-thinking tokens=47 equal
+PROMPT tools tokens=254 equal
+PROMPT calls-with-tools tokens=350 equal
+PROMPT calls-without-tools tokens=120 equal
+PROMPT tool-results tokens=382 equal
+PROMPT preserve-false tokens=44 equal
+PROMPT thinking-off tokens=28 equal
+PROMPT json-calls tokens=316 equal
+PROMPT bad-json-arguments tokens=278 equal
+PROMPT special-user tokens=39 equal
+PROMPT special-tool tokens=375 equal
+PROMPT developer-leading tokens=42 equal
+PROMPT developer-mixed tokens=42 equal
+PROMPT kwargs-effort tokens=24 equal
+PROMPT kwargs-top-effort tokens=24 equal
+PROMPT kwargs-top-only tokens=24 equal
+PROMPT spaced-history-call tokens=346 equal
+PROMPT text-parts tokens=34 equal
+PROMPT json-history-scalar tokens=60 equal
+PROMPT json-history-null tokens=58 equal
+PROMPT json-history-array tokens=62 equal
+PROMPT json-history-spaces tokens=58 equal
+PROMPT json-history-duplicate tokens=68 equal
+PROMPT special-user tokens=39 equal
+PROMPT special-tool tokens=375 equal
+PROMPT developer-leading tokens=42 equal
+PROMPT developer-mixed tokens=42 equal
+PROMPT kwargs-effort tokens=24 equal
+PROMPT kwargs-top-effort tokens=24 equal
+PROMPT kwargs-top-only tokens=24 equal
+OUTPUT spaced-function equal
+OUTPUT spaced-parameter equal
+OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+OUTPUT spaced-empty equal
+OUTPUT name-newline equal
+OUTPUT name-inner-space equal
+OUTPUT name-unicode-space equal
+OUTPUT unicode equal
+OUTPUT plain equal
+OUTPUT no-close equal
+OUTPUT no-close-call equal
+OUTPUT typed equal
+OUTPUT multiple equal
+OUTPUT no-tools equal
+OUTPUT unclosed-call equal
+OUTPUT trailing-prose equal
+OUTPUT reasoning-spaces equal
+OUTPUT typed-edge equal
+OUTPUT truncated-params equal
+OUTPUT unknown-function equal
+OUTPUT malformed-first equal
+OUTPUT no-function equal
+OUTPUT recover-empty-header equal
+OUTPUT recover-newline-header equal
+OUTPUT recover-unclosed-header equal
+OUTPUT recover-close-in-header equal
+OUTPUT end-newlines-param equal
+OUTPUT end-newlines-function equal
+OUTPUT end-newlines-text equal
+OUTPUT spaced-function equal
+OUTPUT spaced-parameter equal
+OUTPUT case-function equal
+OUTPUT case-parameter equal
+OUTPUT case-collision equal
+OUTPUT case-collision-upper equal
+OUTPUT case-tags equal
+OUTPUT recover-empty-header equal
+OUTPUT recover-newline-header equal
+OUTPUT recover-unclosed-header equal
+OUTPUT recover-close-in-header equal
+OUTPUT end-newlines-param equal
+OUTPUT end-newlines-function equal
+OUTPUT end-newlines-text equal
+FUZZ 3000 cases equal
+ROUTE spaced-function JSON+SSE equal
+ROUTE spaced-parameter JSON+SSE equal
+ROUTE case-function JSON+SSE equal
+ROUTE case-parameter JSON+SSE equal
+ROUTE case-collision JSON+SSE equal
+ROUTE case-collision-upper JSON+SSE equal
+ROUTE case-tags JSON+SSE equal
+ROUTE spaced-empty JSON+SSE equal
+ROUTE name-newline JSON+SSE equal
+ROUTE name-inner-space JSON+SSE equal
+ROUTE name-unicode-space JSON+SSE equal
+ROUTE unicode JSON+SSE equal
+ROUTE plain JSON+SSE equal
+ROUTE no-close JSON+SSE equal
+ROUTE no-close-call JSON+SSE equal
+ROUTE typed JSON+SSE equal
+ROUTE multiple JSON+SSE equal
+ROUTE no-tools JSON+SSE equal
+ROUTE unclosed-call JSON+SSE equal
+ROUTE trailing-prose JSON+SSE equal
+ROUTE reasoning-spaces JSON+SSE equal
+ROUTE typed-edge JSON+SSE equal
+ROUTE truncated-params JSON+SSE equal
+ROUTE unknown-function JSON+SSE equal
+ROUTE malformed-first JSON+SSE equal
+ROUTE no-function JSON+SSE equal
+ROUTE recover-empty-header JSON+SSE equal
+ROUTE recover-newline-header JSON+SSE equal
+ROUTE recover-unclosed-header JSON+SSE equal
+ROUTE recover-close-in-header JSON+SSE equal
+ROUTE end-newlines-param JSON+SSE equal
+ROUTE end-newlines-function JSON+SSE equal
+ROUTE end-newlines-text JSON+SSE equal
+BYTE parser 1005 cases equal
+BYTE parser 226 cases equal
+BYTE parser 128 cases equal
+BYTE HTTP 189 JSON + 189 SSE cases equal
+VISION_MARKERS all 8 fields refuse plain vocabulary; unflagged additions pass
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+invalid output: first-write inflight=0
+Busy: first-write inflight=0
+Closed: first-write inflight=0
+InvalidRequest: first-write inflight=0
+Unsupported: first-write inflight=0
+completed stream: first-write inflight=0
+[default] (warn): libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+failed command: /tmp/nanbeige-review-891015b9/cache/o/41d73d40c581f2e3a4c8e7f89ed599ac/test --cache-dir=/tmp/nanbeige-review-891015b9/cache --seed=0xfee8d68b --listen=-
+
+Build Summary: 17/17 steps succeeded; 1009/1009 tests passed
+test-tool-visibility-http-host success
++- run test 17 pass (17 total) 421ms MaxRSS:13M
+   +- compile test debug native success 2s MaxRSS:354M
+test-server-recovery-host success
++- run test 23 pass (23 total) 30ms MaxRSS:9M
+   +- compile test debug native success 1s MaxRSS:352M
+test-tool-parse-host success
++- run test 39 pass (39 total) 5s MaxRSS:20M
+   +- compile test debug native success 398ms MaxRSS:201M
+test-server-cpu success
++- run test 888 pass (888 total) 2m MaxRSS:256M
+|  +- compile test debug native success 3s MaxRSS:546M
++- run test 5 pass (5 total) 5ms MaxRSS:8M
+   +- compile test debug native success 348ms MaxRSS:167M
+test-llama-server-host success
++- run test 37 pass (37 total) 13s MaxRSS:243M
+   +- compile test debug native success 1s MaxRSS:359M
+

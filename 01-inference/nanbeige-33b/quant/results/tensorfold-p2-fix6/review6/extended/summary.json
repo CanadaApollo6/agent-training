@@ -1,0 +1,23 @@
+{
+  "counts": {
+    "cases": 22155,
+    "valid-names_cases": 1673,
+    "invalid-names_cases": 18152,
+    "edge_cases": 2330,
+    "json_oracle_errors": 219,
+    "sse_oracle_errors": 219,
+    "missing_engine_results": 0
+  },
+  "first_mismatches": [
+    "edge-01407",
+    "edge-01431",
+    "edge-01687",
+    "edge-01695",
+    "edge-01703",
+    "edge-01711",
+    "edge-01727",
+    "edge-01743",
+    "edge-01751",
+    "edge-01775"
+  ]
+}
