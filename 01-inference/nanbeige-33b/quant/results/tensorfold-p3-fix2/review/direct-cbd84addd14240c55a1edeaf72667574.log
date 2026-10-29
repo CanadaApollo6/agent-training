@@ -1,0 +1,40 @@
+1/39 tool_parse_test.test.families...OK
+2/39 tool_parse_test.test.a parameter whose schema is a union comes back as the value the model wrote...OK
+3/39 tool_parse_test.test.a quoted string under a union stays the text the model wrote...OK
+4/39 tool_parse_test.test.a parameter whose schema points at a definition comes back as the value the model wrote...OK
+5/39 tool_parse_test.test.a parameter whose schema combines branches comes back as the value the model wrote...OK
+6/39 tool_parse_test.test.a parameter whose schema names a number and an integer takes the integer...OK
+7/39 tool_parse_test.test.a parameter whose schema constrains the value with every keyword comes back as the value the model wrote...OK
+8/39 tool_parse_test.test.a parameter whose schema points at a definition by pointer comes back as the value the model wrote...OK
+9/39 tool_parse_test.test.a parameter whose schema names no kinds constrains nothing...OK
+10/39 tool_parse_test.test.a reply of many calls searches each opener once, not again after every call...OK
+11/39 tool_parse_test.test.a call the end token left open closes when it parses whole...OK
+12/39 tool_parse_test.test.a call left open that would not parse whole stays the reply's text...OK
+13/39 tool_parse_test.test.replies that end outside a call close nothing...OK
+14/39 tool_parse_test.test.a call to a tool the request did not declare stays text...OK
+15/39 tool_parse_test.test.a GLM call's keys without values search their key and value ends once...OK
+16/39 tool_parse_test.test.GLM calls keep a declared name with spaces, dots, colons or unicode; an undeclared one stays text...OK
+17/39 tool_parse_test.test.namespaced openers without closers read in linear time...OK
+18/39 tool_parse_test.test.a closer found by name is the one a search for it finds...OK
+19/39 tool_parse_test.test.DSML parameters contain complete and unfinished legacy calls without consuming adjacent calls...OK
+20/39 tool_parse_test.test.an unfinished DSML envelope never parses or autocompletes its nested legacy call...OK
+21/39 tool_parse_test.test.closeCall skips a closed DSML parameter's unfinished legacy opener and completes the adjacent call...OK
+22/39 tool_parse_test.test.bare JSON calls keep literal unfinished DSML markers as argument data...OK
+23/39 tool_parse_test.test.a GLM call whose <arg_key> the model wrote as whitespace gets it back...OK
+24/39 tool_parse_test.test.a repaired GLM call parses, in both modes and once the end token closed it...OK
+25/39 tool_parse_test.test.a GLM call the end token left open closes as #285 closed it...OK
+26/39 tool_parse_test.test.a Gemma call's strings go back in one pass...OK
+27/39 tool_parse_test.test.putBack gives the text that replacing the marks in turn gives...OK
+28/39 tool_parse_test.test.GLM pairs from the cached key and value ends are the pairs each key's own search found...OK
+29/39 tool_parse_test.test_0...OK
+30/39 tool_parse_visibility_test.test.tool visibility: a first unoffered call remains content in single-call mode...OK
+31/39 tool_parse_visibility_test.test.tool visibility: rejected text does not consume a valid call and the second accepted call stays limited...OK
+32/39 tool_params.test.decode parameters...OK
+33/39 reply_text.test.splits and holds...OK
+34/39 reply_text.test.a reply that writes its own think opener keeps the tag out of its reasoning...OK
+35/39 reply_text.test.an opener the reply names in prose keeps the text after it, streamed and whole...OK
+36/39 log.test.a request's refused and ended lines...OK
+37/39 tool_kinds.test.a chain of definitions is resolved once each, not once per path...OK
+38/39 fields.test.efforts and numbers...OK
+39/39 linear_time.test.the CPU clock leaves out a sleep that the awake clock counts...OK
+All 39 tests passed.

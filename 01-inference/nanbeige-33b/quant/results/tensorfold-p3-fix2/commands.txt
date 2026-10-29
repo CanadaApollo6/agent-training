@@ -1,0 +1,38 @@
+Engine root /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama
+All runtime validation was CPU-only, with CUDA_VISIBLE_DEVICES='' for Zig invocations. No nvidia-smi was executed here.
+Zig /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig
+Model /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb
+Receipts /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3-fix2
+
+Fresh host aggregate, host.log (1200/1200, before the later forced-wire and descending-prefix tests):
+CUDA_VISIBLE_DEVICES='' TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-server-host test-server-cpu test-tool-parse-host test-server-recovery-host test-tool-visibility-http-host test-llama-host test-dflash2-host test-qwen27-ane-policy-host test-qwen27-speed-host test-qwen27-bank-host test-qwen27-keep-host test-qwen27-plans-host test-qwen27-equality-host test-qwen27-masks-host test-qwen27-required-host -j4 --summary all --cache-dir /var/tmp/tf-p3-fix2-host-cache
+The identical command on final source is host-final.log. It reruns invalidated server targets and uses the other verified cached targets.
+
+Final focused host receipts:
+CUDA_VISIBLE_DEVICES='' TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-server-host test-llama-host -j4 --summary all --cache-dir /var/tmp/tf-p3-fix2-host-cache
+CUDA_VISIBLE_DEVICES='' /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test zig/tests/cuda/llama_prefill.zig
+CUDA_VISIBLE_DEVICES='' /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test -lc --dep lanes -Mroot=zig/src/server/llama_gpu_forced.zig -Mlanes=zig/src/core/lanes/lanes.zig --test-filter 'forced draws'
+The negative prefill mutation copies the final llama_prefill.zig to /var/tmp/tf-p3-fix2-mutation/red.zig and replaces ONLY 'scored or pos + 1 == seq.len' with 'scored'.
+CUDA_VISIBLE_DEVICES='' /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test /var/tmp/tf-p3-fix2-mutation/red.zig
+Red exits 1 at UninitializedLogits in the timing-prefill assertion. Final original source passes 3/3.
+
+CPU orchestration and Python checks:
+CUDA_VISIBLE_DEVICES='' python3 tools/zig/llama_full_gate.py --dry-run --out /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3-fix2/dry
+python3 tools/zig/test_llama_gates.py
+python3 -m compileall -q tools/zig/llama_full_gate.py tools/zig/llama_gate_*.py tools/zig/llama_draft_*.py tools/zig/llama_kv_*.py tools/zig/test_llama_gates.py
+bash -n tools/zig/llama_hf_job.sh
+
+Final native compile commands, sequential, no binary execution on CUDA:
+CUDA_VISIBLE_DEVICES='' /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build native tf-llama-test tf-llama-wire-test -Dnvcc=/opt/cuda/bin/nvcc -Dsm=86 -j4 --summary all
+CUDA_VISIBLE_DEVICES='' /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build native tf-llama-test tf-llama-wire-test -Dnvcc=/opt/cuda/bin/nvcc -Dsm=89 -j4 --summary all
+
+CPU allocator query (llama_main dispatches this before opening the CUDA driver):
+CUDA_VISIBLE_DEVICES='' zig-out/bin/tf-llama-test llama-capacity /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb 46068 100128
+
+Lint:
+python3 tools/zig/lean_check.py > /tmp/h.txt
+python3 tools/zig/lean_new.py /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/lean-base.txt /tmp/h.txt
+426 inherited, 0 new.
+git diff --check
+
+The HF Jobs launch commands in README.md are operator instructions only. They were NOT RUN.

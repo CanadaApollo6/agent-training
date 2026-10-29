@@ -1,0 +1,7 @@
+1/6 qwen27_required_host.test.qwen27 masks: greedy and keyed draws honor allowed bits and reject malformed masks...OK
+2/6 qwen27_required_host.test.qwen27 masks: proposal masks follow each branch and restore the grammar before and after the first commit...OK
+3/6 qwen27_required_host.test.qwen27 masks: a required tool call through the lane fake is identical plain and drafted...OK
+4/6 qwen27_required_host.test.qwen27 masks: proposal allocation failures restore the matcher and keep the original owned tree...OK
+5/6 qwen27_required_host.test.qwen27 masks: thinking activation and EOS prune only the constrained suffix of each draft branch...OK
+6/6 qwen27_required_host.test.qwen27 masks: shared windows keep each stream's mask and keyed positions independent...OK
+All 6 tests passed.

@@ -1,0 +1,23 @@
+1/22 qwen27_keep_test.test_0...OK
+2/22 families.qwen27.gdn_test.test.GDN Metal records have fixed offsets without enum padding...OK
+3/22 families.qwen27.gdn_test.test.compact GDN schedules isolate unequal streams and overflow keeps the snapshot plan valid...OK
+4/22 families.qwen27.gdn_test.test.native storage keeps all sixteen combinations and refuses an implicit F16 cast...OK
+5/22 families.qwen27.gdn_test.test.actual target widths and snapshot bytes preserve FP32 state...OK
+6/22 families.qwen27.gdn_test.test.wrong shape flags and dimensions refuse before an encoder exists...OK
+7/22 families.qwen27.gdn_test.test.unequal windows flatten conv rows without shifting history or local parents...OK
+8/22 families.qwen27.gdn_test.test.empty keep retains the base and duplicate destination slots refuse...OK
+9/22 families.qwen27.gdn_test.test.a bad accepted path or input extent cannot become replay indices...OK
+10/22 families.qwen27.gdn_test.test.snapshot scratch scales with the aggregate round instead of layers or slots...OK
+11/22 families.qwen27.gdn_test.test.native byte spans accept BF16 alignment and reject unsafe range arithmetic...OK
+12/22 families.qwen27.gdn_test.test.a plan from a larger slot pool cannot index the committed state bank...OK
+13/22 families.qwen27.gdn_test.test.cross-stream conv rows and a broken retained path refuse before encoding...OK
+14/22 families.qwen27.attention_plan.test.siblings at one absolute position see only their own ancestors and committed keys...OK
+15/22 families.qwen27.attention_plan.test.absolute64tile512chunk boundaries retain prefix continuation without sibling padding...OK
+16/22 families.qwen27.attention_plan.test.mixed streams keep distinct physical windows and reject capacity and parent defects...OK
+17/22 families.qwen27.attention_plan.test.nonprefix keep uses two-pass gather rows rather than clobbering a later source...OK
+18/22 families.qwen27.attention_plan.test.canonical tail keeps the same causal and ancestor map across multiple key chunks...OK
+19/22 families.qwen27.attention_plan.test.a chain's prefix runs to its last key and leaves no tail chunk, any other round keeps the tail kernel...OK
+20/22 families.qwen27.attention_plan.test.each row cuts its keys as its own one-row step does, in windows, trees and beside other streams across 8192...OK
+21/22 families.qwen27.attention_plan.test.a window that starts below 8192 keeps its partials within the scratch's chunks...OK
+22/22 families.qwen27.attention_plan.test.target attention reads every config dimension without widening kernel qualification...OK
+All 22 tests passed.

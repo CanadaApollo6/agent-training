@@ -1,0 +1,5 @@
+1/4 qwen27_speed_test.test.qwen27 speed: secondary tap chunks preserve source indices, guards, tails and restored rings...OK
+2/4 qwen27_speed_test.test.qwen27 speed: prompt parts fit the actual fused or unfused attention plan...OK
+3/4 qwen27_speed_test.test.qwen27 speed: every cache buffer failure frees the complete CPU allocation and all device owners...OK
+4/4 families.qwen27.dflash.config.test_0...OK
+All 4 tests passed.

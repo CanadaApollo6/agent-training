@@ -1,0 +1,24 @@
+1/23 root.test_0...OK
+2/23 root.test_1...OK
+3/23 root.test_2...OK
+4/23 root.test_3...OK
+5/23 root.test_4...OK
+6/23 root.test_5...OK
+7/23 server_recovery_test.test.Server recovery: a complete reply reuses the connection but does not complete the next request...OK
+8/23 server_recovery_test.test.Server recovery: a failed response head clears earlier completion before closing...OK
+9/23 server_recovery_test.test.Server recovery: an allocation failure before a reply closes the keep-alive connection...OK
+10/23 server_recovery_test.test.Server recovery: SSE data and typed frames retain no per-event allocations...OK
+11/23 server_recovery_test.test.Server recovery: failed SSE writes and allocation failures release frame storage...OK
+12/23 server_recovery_test.test.Server recovery: both fetchers refuse cloud metadata and retain public address controls...OK
+13/23 public_address.test.Server recovery: shared hostname policy blocks metadata names before resolution...OK
+14/23 auth.test_0...OK
+15/23 idle_unload.test_0...OK
+16/23 cortheon.cortheon.test_0...OK
+17/23 request_guard.test_0...OK
+18/23 drama_allow.test_0...OK
+19/23 chat.test.Server recovery: token staging allocation failure ends the loop without consuming tokens...OK
+20/23 tool_stream.test_0...OK
+21/23 speech.test_0...OK
+22/23 speech_plain.test_0...OK
+23/23 hf_text.test_0...OK
+All 23 tests passed.

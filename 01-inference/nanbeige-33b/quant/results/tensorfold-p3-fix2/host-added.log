@@ -1,0 +1,10 @@
+Build Summary: 8/8 steps succeeded; 1/1 tests passed
+test-llama-host success
++- run test cached
+   +- compile test debug native cached 12ms MaxRSS:41M
+   |  +- options cached
+   +- run test cached
+   |  +- compile test debug native cached 12ms MaxRSS:40M
+   +- run test 1 pass (1 total) 7ms MaxRSS:9M
+      +- compile test debug native success 600ms MaxRSS:187M
+

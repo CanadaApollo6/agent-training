@@ -1,0 +1,5 @@
+1/4 ane_policy.test.ANE policy: the default is off and an explicit column count selects the opt-in...OK
+2/4 ane_policy.test.ANE policy: older GPUs never request a share, and tensor units alone do not turn it on...OK
+3/4 ane_policy.test.ANE policy: malformed and overflowing overrides keep refusing...OK
+4/4 ane_policy.test.ANE policy: the measured private-overhead price is 32 MiB independent of columns...OK
+All 4 tests passed.

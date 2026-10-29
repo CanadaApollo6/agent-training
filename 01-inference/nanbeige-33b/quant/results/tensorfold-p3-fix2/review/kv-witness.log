@@ -1,0 +1,5 @@
+1/1 witness.test.review real dump rows zero reads logits before they were computed...rows=0 reached greedy without any logits-producing forward
+QUALITY mode=bf16 sequence=0 prompt=512 scored=512 prefill_seconds=0.000000 prefill_tok_s=inf decode_forwards=127 decode_seconds=0.000000 decode_tok_s=inf
+SUMMARY kv-quality mode=bf16 sequences=1 context=640 peak_bytes=0
+OK
+All 1 tests passed.

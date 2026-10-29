@@ -1,0 +1,584 @@
+native
++- install tensorfold-native
+   +- compile exe tensorfold-native safe native
+      +- run /opt/cuda/bin/nvcc (drama3_fp8.fatbin) w
+./zig/kernels/cuda/drama3_fp8.cu(188): warning #177-D: variable "RW" was declared but never referenced
+    constexpr int RW = PromptCfg<M, RT, CW>::RW;
+                  ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+
+native
++- install tensorfold-native
+   +- compile exe tensorfold-native safe native
+      +- run /opt/cuda/bin/nvcc (prefill_attention.fatbin) w
+./zig/kernels/cuda/prefill_attention.cu(20): warning #177-D: variable "tf_prefill_attention::SMEM_MAX" was declared but never referenced
+  constexpr int SMEM_MAX = 96 * 1024;
+                ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+
+native
++- install tensorfold-native
+   +- compile exe tensorfold-native safe native
+      +- run /opt/cuda/bin/nvcc (flashnext_attn.fatbin) w
+./zig/kernels/cuda/flashnext_attn.cu(452): warning #128-D: loop is not reachable
+      for (int h = 0; h < 2; ++h) {
+      ^
+          detected during instantiation of "void attn_chunks<NB,ONE,FUSE,PAGED>(const __nv_bfloat16 *, const __nv_bfloat16 *, const __nv_bfloat16 *, const int *, float *, float *, float *, const int *, const int *, const int *, int, int, int, int, int, float, int, int, fn_attn::Pg) [with NB=1, ONE=true, FUSE=true, PAGED=false]" at line 499
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+./zig/kernels/cuda/flashnext_attn.cu(452): warning #128-D: loop is not reachable
+      for (int h = 0; h < 2; ++h) {
+      ^
+          detected during instantiation of "void attn_chunks<NB,ONE,FUSE,PAGED>(const __nv_bfloat16 *, const __nv_bfloat16 *, const __nv_bfloat16 *, const int *, float *, float *, float *, const int *, const int *, const int *, int, int, int, int, int, float, int, int, fn_attn::Pg) [with NB=1, ONE=true, FUSE=true, PAGED=true]" at line 528
+
+
+native
++- install tensorfold-native
+   +- compile exe tensorfold-native safe native
+      +- run /opt/cuda/bin/nvcc (glm_mm.fatbin) w
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=16, BM=64, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=16, BM=32, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=16, BM=16, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=8, BM=128, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=8, BM=64, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=8, BM=32, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=8, BM=16, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=6, BM=128, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=6, BM=64, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=6, BM=32, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=6, BM=16, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=4, BM=128, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=4, BM=64, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=4, BM=32, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=4, BM=16, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=16, BM=128, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+
+native
++- install tensorfold-native
+   +- compile exe tensorfold-native safe native
+      +- run /opt/cuda/bin/nvcc (fp8_experts.fatbin) w
+./zig/kernels/cuda/fp8_experts.cu(153): warning #177-D: variable "RW" was declared but never referenced
+    constexpr int RW = PromptCfg<M, RT, CW>::RW;
+                  ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+
+native
++- install tensorfold-native
+   +- compile exe tensorfold-native safe native
+      +- run /opt/cuda/bin/nvcc (flashnext_fact.fatbin) w
+./zig/kernels/cuda/flashnext_fact.cu(175): warning #128-D: loop is not reachable
+              for (int kt = 0; kt < GS / 16; ++kt) {
+              ^
+          detected during instantiation of "void fact::fact_kernel<BM,BN,WM,WN,STAGES,GPS,DBUF,MINB,FOLD,OUT16,BLOCKED>(const __nv_bfloat16 *, const float *, const uint32_t *, const __nv_bfloat16 *, const __nv_bfloat16 *, void *, float *, int, int, int, int, int, int, int) [with BM=64, BN=128, WM=2, WN=4, STAGES=3, GPS=2, DBUF=false, MINB=2, FOLD=true, OUT16=true, BLOCKED=true]" at line 264
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+
+Build Summary: 126/126 steps succeeded
+tf-llama-wire-test success
++- install tf-llama-wire-test success
+   +- compile exe tf-llama-wire-test safe native success 1m MaxRSS:1G
+      +- options cached
+      +- WriteFile drama_prompt.zig cached
+      +- WriteFile exlr8_alias.zig cached
+      +- options cached
+      +- run /opt/cuda/bin/nvcc (qwen4_projection.fatbin) success 441ms
+      |  +- run /opt/cuda/bin/nvcc success 2ms
+      +- run /opt/cuda/bin/nvcc (qwen4_gdn.fatbin) success 797ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      |  +- WriteFile qwen4_gdn.cu cached
+      +- run /opt/cuda/bin/nvcc (qwen4_hc.fatbin) success 524ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen4_ple.fatbin) success 715ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      |  +- WriteFile qwen4_ple.cu cached
+      +- run /opt/cuda/bin/nvcc (attn_train.fatbin) success 540ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen27_train.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_train.fatbin) success 647ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train_q4.fatbin) success 769ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train_attn.fatbin) success 540ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_train.fatbin) success 922ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_gdn.fatbin) success 437ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_batch.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_mtp.fatbin) success 383ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_rows.fatbin) success 603ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (route_rows.fatbin) success 520ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_hc.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_attn.fatbin) success 8s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts3.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts3_prefill.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (moe.fatbin) success 446ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen36_mtp.fatbin) success 499ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ggml.fatbin) success 7s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (probe.fatbin) success 240ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm_group.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm_prefill.fatbin) success 987ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_fact.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_hcf.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_fexp.fatbin) success 666ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (w4a8_prefill.fatbin) success 728ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_prefill.fatbin) success 772ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_pack.fatbin) success 303ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (prefill_attention.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (scan_rows.fatbin) success 518ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_ops.fatbin) success 866ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine4_pack.fatbin) success 262ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine8.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine_prefill.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (fp8_experts.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exlr8.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exlr8_dense.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts_tile.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts.fatbin) success 9s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (rank_sum.fatbin) success 263ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (lane_gemv.fatbin) success 715ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (sample.fatbin) success 4s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_draft.fatbin) success 708ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_keep.fatbin) success 382ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen_vision.fatbin) success 623ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_prefill.fatbin) success 441ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_kv8.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_bf16_rows.fatbin) success 425ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_norms.fatbin) success 567ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_route.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_mamba.fatbin) success 771ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_attention.fatbin) success 675ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_keyed.fatbin) success 299ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_latent.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ck_lane.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ck_experts.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (norms.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (embed_rows.fatbin) success 375ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (lfm2.fatbin) success 545ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (vit.fatbin) success 617ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (tree_round.fatbin) success 362ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (act_rows.fatbin) success 666ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_prep.fatbin) success 542ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qk_rows.fatbin) success 619ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmmf.fatbin) success 13s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (prompt16.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (kv4.fatbin) success 609ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (tree_attention.fatbin) success 6s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (block_attention.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_attention.fatbin) success 4s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_rows.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_pages.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (moe_glue.fatbin) success 791ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (dense_rows.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (modelopt_pack.fatbin) success 346ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_kda.fatbin) success 604ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_glue.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_ops.fatbin) success 373ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_index.fatbin) success 656ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_quant.fatbin) success 517ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_linear.fatbin) success 10s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_experts.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_candidate.fatbin) success 9s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_vision.fatbin) success 536ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_mm.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_dflash.fatbin) success 622ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_argmax.fatbin) success 467ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_topk.fatbin) success 316ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (dense_pointwise.fatbin) success 359ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_pointwise.fatbin) success 444ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_indexing.fatbin) success 258ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_movement.fatbin) success 256ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_nemotron_constants.fatbin) success 256ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (roce_gather.fatbin) success 243ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_staged_gemv.fatbin) success 403ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_fp8.fatbin) success 899ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_codec.fatbin) success 518ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- WriteFile draft_ids.txt cached
+tf-llama-test success
++- install tf-llama-test success
+   +- compile exe tf-llama-test fast native success 37s MaxRSS:1G
+      +- options cached
+      +- run /opt/cuda/bin/nvcc (contract_controls.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- options (reused)
+      +- run /opt/cuda/bin/nvcc (qwen4_projection.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen4_gdn.fatbin) (+2 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen4_hc.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen4_ple.fatbin) (+2 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (attn_train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen27_train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (gdn_train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (train_q4.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (train_attn.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_gdn.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_batch.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_mtp.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qmm.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (route_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_hc.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_attn.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts3.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts3_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (moe.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen36_mtp.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (ggml.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (gdn.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (probe.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qmm_group.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qmm_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_fact.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_hcf.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_fexp.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (w4a8_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts_pack.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (prefill_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (scan_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_ops.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (affine4_pack.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (affine8.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (affine_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (fp8_experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exlr8.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exlr8_dense.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts_tile.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (rank_sum.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (lane_gemv.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (sample.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35_draft.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35_keep.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen_vision.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (gdn_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35_kv8.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35_bf16_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_norms.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_route.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_mamba.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_keyed.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_latent.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (ck_lane.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (ck_experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (norms.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (embed_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (lfm2.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (vit.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (tree_round.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (act_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (gdn_prep.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qk_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qmmf.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (prompt16.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (kv4.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (tree_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (block_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (window_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (window_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (window_pages.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (moe_glue.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (dense_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (modelopt_pack.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_kda.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_glue.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_ops.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_index.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_quant.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exl3_linear.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exl3_experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exl3_candidate.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_vision.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_mm.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_dflash.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_argmax.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_topk.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (dense_pointwise.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_pointwise.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_indexing.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_movement.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_nemotron_constants.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (roce_gather.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (drama3_staged_gemv.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (drama3.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (drama3_fp8.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (drama3_codec.fatbin) (+1 more reused dependencies)
+native success
++- install tensorfold-native success
+   +- compile exe tensorfold-native safe native success 2m MaxRSS:4G
+      +- options (reused)
+      +- WriteFile drama_prompt.zig cached
+      +- WriteFile exlr8_alias.zig (reused)
+      +- options (reused)
+      +- run /opt/cuda/bin/nvcc (qwen4_projection.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen4_gdn.fatbin) (+2 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen4_hc.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen4_ple.fatbin) (+2 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (attn_train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen27_train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (gdn_train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (train_q4.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (train_attn.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_gdn.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_batch.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_mtp.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qmm.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (route_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_hc.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_attn.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts3.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts3_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (moe.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen36_mtp.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (ggml.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (gdn.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (probe.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qmm_group.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qmm_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_fact.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_hcf.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (flashnext_fexp.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (w4a8_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (experts_pack.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (prefill_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (scan_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_ops.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (affine4_pack.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (affine8.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (affine_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (fp8_experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exlr8.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exlr8_dense.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts_tile.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (rank_sum.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (lane_gemv.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (sample.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (train.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35_draft.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35_keep.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen_vision.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (gdn_prefill.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35_kv8.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qwen35_bf16_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_norms.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_route.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_mamba.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_keyed.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (nemotron_latent.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (ck_lane.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (ck_experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (norms.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (embed_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (lfm2.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (vit.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (tree_round.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (act_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (gdn_prep.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qk_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (qmmf.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (prompt16.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (kv4.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (tree_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (block_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (window_attention.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (window_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (window_pages.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (moe_glue.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (dense_rows.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (modelopt_pack.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_kda.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_glue.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_ops.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_index.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_quant.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exl3_linear.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exl3_experts.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (exl3_candidate.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_vision.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_mm.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (glm_dflash.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_argmax.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_topk.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (dense_pointwise.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_pointwise.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_indexing.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_movement.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (torch_nemotron_constants.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (roce_gather.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (drama3_staged_gemv.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (drama3.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (drama3_fp8.fatbin) (+1 more reused dependencies)
+      +- run /opt/cuda/bin/nvcc (drama3_codec.fatbin) (+1 more reused dependencies)
+      +- WriteFile draft_ids.txt (reused)
+

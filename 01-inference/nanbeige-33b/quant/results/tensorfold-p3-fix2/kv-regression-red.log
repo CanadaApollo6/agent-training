@@ -1,0 +1,14 @@
+1/3 red.test.descending quality and decode preserve the shorter causal prefixes...OK
+2/3 red.test.timing prefill produces final logits with no scored downloads...FAIL (UninitializedLogits)
+/var/tmp/tf-p3-fix2-mutation/red.zig:91:23: 0x1255009 in greedy (red.zig)
+        if (!m.valid) return error.UninitializedLogits;
+                      ^
+/var/tmp/tf-p3-fix2-mutation/red.zig:60:46: 0x12569ea in test.timing prefill produces final logits with no scored downloads (red.zig)
+    try std.testing.expectEqual(@as(u32, 7), try m.greedy());
+                                             ^
+3/3 red.test.quality prefill downloads exactly the final 512 initialized rows...OK
+2 passed; 0 skipped; 1 failed.
+error: the following test command failed with exit code 1:
+.zig-cache/o/fb4944ea79eb7ed90122456681d1ebe9/test --seed=0x1e8d7068
+
+exit=1

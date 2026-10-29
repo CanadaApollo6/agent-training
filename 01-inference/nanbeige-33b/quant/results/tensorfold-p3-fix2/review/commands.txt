@@ -1,0 +1,45 @@
+All execution CPU only. CUDA_VISIBLE_DEVICES='' for Zig/test runner invocations. No nvidia-smi or model GPU process was executed. The GPU query in gate_review.py was mocked.
+Engine root: /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama
+Head: 97d4ac9caf8fcbdadd5ced51cd8fc2c54bc4c17d
+Zig: /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig
+TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb
+
+zig build test-llama-server-host test-server-cpu test-tool-parse-host test-server-recovery-host test-tool-visibility-http-host test-llama-host test-dflash2-host test-qwen27-ane-policy-host test-qwen27-speed-host test-qwen27-bank-host test-qwen27-keep-host test-qwen27-plans-host test-qwen27-equality-host test-qwen27-masks-host test-qwen27-required-host -j4 --summary all --cache-dir /tmp/nanbeige-review-97d4ac9c/cache
+First fresh aggregate exited 0. Its log was truncated by the tmpfs user quota. Repeat aggregate summary is host-summary.log; it captures only test counts/errors to avoid truncation. Existing run metadata can make its count report omit cached tests.
+
+zig test -lc --dep lanes -Mroot=/tmp/nanbeige-review-97d4ac9c/repro/repro.zig -Mlanes=zig/src/core/lanes/lanes.zig --test-filter 'fully accepted'
+Reproducer uses current backend.zig byte-for-byte and original fake Model/Attachment. Assertions changed from stale/error to equal/success. 1/1, target=5 draft=5.
+zig test -lc --dep lanes -Mroot=/tmp/nanbeige-review-97d4ac9c/repro/acceptance.zig -Mlanes=zig/src/core/lanes/lanes.zig --test-filter review
+2/2; 2048 keyed cases, 65536 tokens, 21 stopping cases.
+zig test --dep kv -Mroot=/tmp/nanbeige-review-97d4ac9c/repro/codec.zig -Mkv=zig/src/cuda/kv4_ref.zig
+2/2; 82 boundary/rollback/nonfinite cases; 1032 inverse rotations. CPU codec reference, no CUDA arithmetic.
+
+Scratch archive /tmp/nanbeige-review-97d4ac9c/head is git archive 97d4ac9c, not a worktree. Scratch setup_probes.py extends production backend_test with 12000 mixed rounds and four restarts. Production backend remains unchanged. Model and drafter are CPU fakes; sliding positions use the runtime's 2047 retained-slot rule, not a CUDA ring.
+In scratch: zig build test-llama-host test-llama-server-host -j4 --summary all --cache-dir /tmp/nanbeige-review-97d4ac9c/probe-cache
+66 Llama host tests pass. Server 40 pass, 1 extra stop test failed because the two X token IDs decode to 'X X', not 'XX'. Golden fixtures all passed with default delivery block=8. The test expectation was corrected, not production behavior.
+In scratch: zig build test-llama-blocks-host -j4 --summary all --cache-dir /tmp/nanbeige-review-97d4ac9c/probe-cache
+16/16 pass after adding disconnect test to the compile filter. blocks-disconnect-final.log.
+The disconnect script withholds .finished until cancel; sink returns Closed at emission offsets 1..8; check requires cancellation and next request byte equality. Stop string 'X X' spans two emitted tokens and is tested at all 36 block/offset arrangements. Max_tokens/EOS offsets 1..8 remain covered.
+
+zig test /tmp/nanbeige-review-97d4ac9c/kv-witness/witness.zig
+1/1 confirms actual llama_kv_gate.dump, with CPU API doubles, calls greedy with no logits-producing forward when rows=0.
+zig test /tmp/nanbeige-review-97d4ac9c/kv-witness/fixed.zig
+1/1 confirms scratch-only change 'scored or pos + 1 == seq.len' produces logits for rows=0 and preserves rows=512 execution.
+
+Qwen fixture trace comparison:
+zig test -lc --dep lanes -Mroot=zig/qwen27_lanes_host.zig -Mlanes=zig/src/core/lanes/lanes.zig --test-filter 'qwen27 speed:'
+Run in three scratch archives of 97d4ac9c/b84fc6c8/9a5732e0. Only added printing of each fixture's output tokens before return. All three 1/1; 327 trace rows each; exact byte equality. SHA256 of joined trace lines: 67916fea4bde73c628c454395c56fa00f4257b9b5f496caa70b12325f95d9149.
+Source comparison qwen-source.json covers 179 Qwen27/fixture paths. All unchanged versus b84; 9a differs in six shared-module facades and the previously repaired keep test.
+Baseline aggregate attempts were quota-blocked; no baseline aggregate pass claimed. Archives b84/9a and their caches removed to recover quota. Trace logs retained.
+
+PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp/nanbeige-review-97d4ac9c python3 tools/zig/test_llama_gates.py
+5/5.
+PYTHONDONTWRITEBYTECODE=1 python3 /tmp/nanbeige-review-97d4ac9c/gate_review.py
+Actual plan-only creates 22 jobs. Subsequent CPU mocked-interruption experiment confirms restart discards prior PASS statuses and starts at p1-reference. P4 schedules 5,400,000 prompt-token forwards. No runtime estimate is provided.
+python3 tools/zig/lean_check.py > /tmp/nanbeige-review-97d4ac9c/h.txt
+python3 tools/zig/lean_new.py /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/lean-base.txt /tmp/nanbeige-review-97d4ac9c/h.txt
+426 inherited, 0 new. Changed files <=600 lines, single-line comments <=120 columns. git diff --check b84fc6c8 97d4ac9c passed. Tracked checkout remains clean.
+
+Memory audit: target runtimeBytesMode + batchBytes admission precedes Model.initRows; all EXL3 reserve calls run within initRows. Attachment peak includes loader transient, resident pool, ring, captures and affine split scratch. Pool growth now refuses DraftPoolExceeded. Native captured-kernel input is explicitly refused; no CUDA graph-capture path. Configured-cap refusal runs errdefers for target/runtime ownership. Actual GPU allocation-refusal recovery is NOT RUN.
+
+Final count reconciliation: repeated aggregate succeeded 49/49 build steps with 985 executed tests and cached targets. Both server binaries freshly passed 892 and 41 tests. run_cached.py then directly ran every other original-head binary, 14 executables, all exit 0, 265/265 tests. Total independently executed original-head coverage is 933 + 265 = 1198/1198. See host-summary.log and direct-summary.json. This includes requested five steps 1017, Llama 65, DFlash2 57, Qwen27 59.

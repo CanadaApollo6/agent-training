@@ -1,0 +1,67 @@
+1/65 llama_cuda.test_0...OK
+2/65 src.families.llama.cuda.test_0...OK
+3/65 src.families.llama.config.test.Nanbeige geometry admits GQA seven and accounts BF16 KV...OK
+4/65 src.families.llama.config.test.unsupported rope scaling and quantization refuse before loading...OK
+5/65 src.families.llama.names.test.EXL3 mul1 admission rejects a changed marker and mismatched projection geometry...OK
+6/65 src.families.llama.backend_test.test.fully accepted rounds and later rejection preserve committed drafter position...after full acceptance target=5 draft=5 accepted=2 proposed=2
+OK
+7/65 src.families.llama.backend_test.test.target draws and EOS or length at every output offset preserve committed taps...OK
+8/65 src.families.llama.memory.test.Llama host budget refuses KV beyond a 15 GiB cap and preserves a larger reserve...OK
+9/65 src.families.llama.memory.test.draft batch buffers count against the configured target cap...OK
+10/65 src.families.llama.validation.test.Llama layer comparison rejects zeros and nonfinite references...OK
+11/65 src.families.llama.validation.test.Llama position bounds expose corruption hidden by another position's residual scale...OK
+12/65 src.families.dflash2.cuda_weights.test.draft storage is explicit and codebooks do not occupy device memory...OK
+13/65 src.families.dflash2.admission.test.configured cap admits target but refuses attachment resident or loader peak...OK
+14/65 src.families.dflash2.weights.test.inventory is81exact names including unsuffixed BF16codebooks...OK
+15/65 src.families.qwen27.dflash.execution_test.test.actual five-layer schedule consumes anchor plus masks and only emits seven mask positions...OK
+16/65 src.families.qwen27.dflash.execution_test.test.taps absorbed in the block's frame give the separate path's tree, one staged append and no commit...OK
+17/65 src.families.qwen27.dflash.execution_test.test.context append failure aborts before session metadata or readiness advances...OK
+18/65 src.families.qwen27.dflash.execution_test.test.default preparation and wrong operator dtype refuse before claiming native parity...OK
+19/65 src.families.qwen27.dflash.execution_test.test.selector conditions descendants on parent tokens and shifts the native verify root exactly once...OK
+20/65 src.families.qwen27.dflash.execution_test.test.forward sink retains the complete checked schedule without host lattice readback...OK
+21/65 src.families.qwen27.dflash.execution_test.test.normalized sibling ties preserve candidate order before heap token tie-breaking...OK
+22/65 src.families.qwen27.dflash.execution_test.test.runtime blocks2 through16 preserve checkpoint block8 and uninterrupted convolution geometry...OK
+23/65 src.families.qwen27.dflash.execution_test.test.tiny conditional score differences collapse before sibling selection...OK
+24/65 src.families.qwen27.dflash.fixtures.test.complete tiny graph preserves every native tensor and target binding pointer...OK
+25/65 src.families.qwen27.dflash.fixtures.test.wrong BF16 metadata or shape cannot be fixed through a cast...OK
+26/65 src.families.dflash2.config.test.stock contracts count81native tensors47eligiblelinears and seven mask predictions...OK
+27/65 src.families.dflash2.config.test.tap convention is fixed after decoder blocks and cannot be shifted...OK
+28/65 src.families.dflash2.config.test.block slots and finite dimensions are admitted before operators...OK
+29/65 src.families.dflash2.config.test.actual nested cached schema resolves the stock noncausal draft and tap order...OK
+30/65 src.families.dflash2.config.test.a causal reading or changed native storage cannot silently become the default...OK
+31/65 src.families.qwen27.checkpoint.test.native packed words and mixed scale dtypes remain borrowed unchanged...OK
+32/65 src.families.qwen27.checkpoint.test.dense projections preserve native f16 bf16 and f32...OK
+33/65 src.families.qwen27.checkpoint.test.packed shapes require matching metadata and declared affine format...OK
+34/65 src.families.qwen27.checkpoint.test.wrong native tensor dtype and truncated bytes refuse...OK
+35/65 src.families.qwen27.checkpoint.test.source lookup applies a dense module override without converting its bytes...OK
+36/65 src.families.qwen27.checkpoint.test.shared checkpoint source preserves borrowed bytes and used tensor accounting...OK
+37/65 src.families.qwen27.checkpoint.test.invalid affine spec or integer scale cannot reach quantized arithmetic...OK
+38/65 src.families.qwen27.dflash.weights.test_0...OK
+39/65 src.families.qwen27.dflash.config.test_0...OK
+40/65 src.families.qwen27.affine.test.affine formats preserve all declared bit widths and groups...OK
+41/65 src.families.qwen27.affine.test.module overrides preserve dense and mixed native formats...OK
+42/65 src.families.qwen27.affine.test.root quantization precedes text aliases and nested metadata is accepted...OK
+43/65 src.families.qwen27.affine.test.conflicting path aliases refuse the module...OK
+44/65 src.families.qwen27.affine.test.unsupported methods and malformed native affine metadata refuse...OK
+45/65 src.families.qwen27.affine.test.no affine metadata remains explicit rather than guessing four bits...OK
+46/65 src.families.qwen27.config.test.flat config preserves dimensions and interval schedule...OK
+47/65 src.families.qwen27.config.test.nested config merges generation EOS in stable order...OK
+48/65 src.families.qwen27.config.test.explicit layer types preserve their order...OK
+49/65 src.families.qwen27.config.test.rope parameters preserve precision and section metadata...OK
+50/65 src.families.qwen27.config.test.dense config refuses MoE and tied embedding heads...OK
+51/65 src.families.qwen27.config.test.invalid scalar shapes and types fail without a cast trap...OK
+52/65 src.families.qwen27.config.test.missing and out of vocabulary EOS fail...OK
+53/65 src.families.qwen27.config.test.malformed layer and rope metadata fail...OK
+54/65 src.families.qwen27.config.test.head grouping requires complete key and value groups...OK
+55/65 src.families.qwen27.config.test.text execution refuses unsupported gates and activation contracts...OK
+56/65 src.families.qwen27.dflash.operators.test_0...OK
+57/65 src.families.dflash2.operators.test.unprepared default cannot claim parity while explicit BF16 reference remains possible...OK
+58/65 src.families.dflash2.operators.test.operator dtype and physical width cannot be silently cast...OK
+59/65 src.families.qwen27.dflash.selector.test_0...OK
+60/65 src.families.dflash2.selector.test.draft roots shift to pending row while descendants retain topology...OK
+61/65 src.families.qwen27.dflash.execution.test_0...OK
+62/65 src.families.qwen27.dflash.session.test_0...OK
+63/65 src.families.dflash2.session.test.committed tap admission excludes pending and future rows and shifts the draw once...OK
+64/65 src.families.dflash2.session.test.cropping moves only the context beginning while absolute anchor stays committed end...OK
+65/65 src.families.dflash2.session.test.wrong tap reading or dtype fails before a cache transaction...OK
+All 65 tests passed.

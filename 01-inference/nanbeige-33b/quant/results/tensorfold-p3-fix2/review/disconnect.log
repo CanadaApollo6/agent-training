@@ -1,0 +1,166 @@
+test-llama-server-host
++- run test 39 pass, 2 fail (41 total)
+error: 'llama_regression_test.test.Llama serve: resolved template controls retain upstream precedence outside Nanbeige' failed:
+       PROMPT p1-chat tokens=195 equal
+       PROMPT system-user tokens=24 equal
+       PROMPT default-system tokens=34 equal
+       PROMPT reasoning-history tokens=48 equal
+       PROMPT reasoning-alias tokens=48 equal
+       PROMPT embedded-thinking tokens=47 equal
+       PROMPT tools tokens=254 equal
+       PROMPT calls-with-tools tokens=350 equal
+       PROMPT calls-without-tools tokens=120 equal
+       PROMPT tool-results tokens=382 equal
+       PROMPT preserve-false tokens=44 equal
+       PROMPT thinking-off tokens=28 equal
+       PROMPT json-calls tokens=316 equal
+       PROMPT bad-json-arguments tokens=278 equal
+       PROMPT special-user tokens=39 equal
+       PROMPT special-tool tokens=375 equal
+       PROMPT developer-leading tokens=42 equal
+       PROMPT developer-mixed tokens=42 equal
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       PROMPT spaced-history-call tokens=346 equal
+       PROMPT text-parts tokens=34 equal
+       PROMPT json-history-scalar tokens=60 equal
+       PROMPT json-history-null tokens=58 equal
+       PROMPT json-history-array tokens=62 equal
+       PROMPT json-history-spaces tokens=58 equal
+       PROMPT json-history-duplicate tokens=68 equal
+       PROMPT special-user tokens=39 equal
+       PROMPT special-tool tokens=375 equal
+       PROMPT developer-leading tokens=42 equal
+       PROMPT developer-mixed tokens=42 equal
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       OUTPUT spaced-function equal
+       OUTPUT spaced-parameter equal
+       OUTPUT case-function equal
+       OUTPUT case-parameter equal
+       OUTPUT case-collision equal
+       OUTPUT case-collision-upper equal
+       OUTPUT case-tags equal
+       OUTPUT spaced-empty equal
+       OUTPUT name-newline equal
+       OUTPUT name-inner-space equal
+       OUTPUT name-unicode-space equal
+       OUTPUT unicode equal
+       OUTPUT plain equal
+       OUTPUT no-close equal
+       OUTPUT no-close-call equal
+       OUTPUT typed equal
+       OUTPUT multiple equal
+       OUTPUT no-tools equal
+       OUTPUT unclosed-call equal
+       OUTPUT trailing-prose equal
+       OUTPUT reasoning-spaces equal
+       OUTPUT typed-edge equal
+       OUTPUT truncated-params equal
+       OUTPUT unknown-function equal
+       OUTPUT malformed-first equal
+       OUTPUT no-function equal
+       OUTPUT recover-empty-header equal
+       OUTPUT recover-newline-header equal
+       OUTPUT recover-unclosed-header equal
+       OUTPUT recover-close-in-header equal
+       OUTPUT end-newlines-param equal
+       OUTPUT end-newlines-function equal
+       OUTPUT end-newlines-text equal
+       OUTPUT spaced-function equal
+       OUTPUT spaced-parameter equal
+       OUTPUT case-function equal
+       OUTPUT case-parameter equal
+       OUTPUT case-collision equal
+       OUTPUT case-collision-upper equal
+       OUTPUT case-tags equal
+       OUTPUT recover-empty-header equal
+       OUTPUT recover-newline-header equal
+       OUTPUT recover-unclosed-header equal
+       OUTPUT recover-close-in-header equal
+       OUTPUT end-newlines-param equal
+       OUTPUT end-newlines-function equal
+       OUTPUT end-newlines-text equal
+       FUZZ 3000 cases equal
+       ROUTE spaced-function JSON+SSE equal
+       ROUTE spaced-parameter JSON+SSE equal
+       ROUTE case-function JSON+SSE equal
+       ROUTE case-parameter JSON+SSE equal
+       ROUTE case-collision JSON+SSE equal
+       ROUTE case-collision-upper JSON+SSE equal
+       ROUTE case-tags JSON+SSE equal
+       ROUTE spaced-empty JSON+SSE equal
+       ROUTE name-newline JSON+SSE equal
+       ROUTE name-inner-space JSON+SSE equal
+       ROUTE name-unicode-space JSON+SSE equal
+       ROUTE unicode JSON+SSE equal
+       ROUTE plain JSON+SSE equal
+       ROUTE no-close JSON+SSE equal
+       ROUTE no-close-call JSON+SSE equal
+       ROUTE typed JSON+SSE equal
+       ROUTE multiple JSON+SSE equal
+       ROUTE no-tools JSON+SSE equal
+       ROUTE unclosed-call JSON+SSE equal
+       ROUTE trailing-prose JSON+SSE equal
+       ROUTE reasoning-spaces JSON+SSE equal
+       ROUTE typed-edge JSON+SSE equal
+       ROUTE truncated-params JSON+SSE equal
+       ROUTE unknown-function JSON+SSE equal
+       ROUTE malformed-first JSON+SSE equal
+       ROUTE no-function JSON+SSE equal
+       ROUTE recover-empty-header JSON+SSE equal
+       ROUTE recover-newline-header JSON+SSE equal
+       ROUTE recover-unclosed-header JSON+SSE equal
+       ROUTE recover-close-in-header JSON+SSE equal
+       ROUTE end-newlines-param JSON+SSE equal
+       ROUTE end-newlines-function JSON+SSE equal
+       ROUTE end-newlines-text JSON+SSE equal
+       FAILURE HTTP 148 JSON + 148 SSE cases equal
+       FAULT 7 pod-labelled allocation boundaries equal
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/Io/File.zig:611:5: 0x12fd94a in writeStreaming (std.zig)
+           return (try io.operate(.{ .file_write_streaming = .{
+           ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/Io/File.zig:623:18: 0x1517038 in writeStreamingAll (std.zig)
+               index += try writeStreaming(file, io, &.{}, &.{bytes[index..]}, 1);
+                        ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/Io/Dir.zig:664:5: 0x1516cce in writeFile (std.zig)
+           try file.writeStreamingAll(io, options.data);
+           ^
+       /tmp/nanbeige-review-97d4ac9c/head/zig/src/server/llama_regression_test.zig:13:5: 0x1cf0b79 in test.Llama serve: resolved template controls retain upstream precedence outside Nanbeige (root.zig)
+           try tmp.dir.writeFile(std.testing.io, .{ .sub_path = "tokenizer.json", .data =
+           ^
+error: 'llama_blocks_test.test.Llama serve: stop, EOS and length at every accepted block offset preserve bytes and usage' failed:
+       BYTE parser 1005 cases equal
+       BYTE parser 226 cases equal
+       BYTE parser 128 cases equal
+       BYTE HTTP 189 JSON + 189 SSE cases equal
+       
+       ====== expected this output: =========
+       stop␃
+       
+       ======== instead found this: =========
+       length␃
+       
+       ======================================
+       First difference occurs on line 1:
+       expected:
+       stop
+       ^ ('\x73')
+       found:
+       length
+       ^ ('\x6c')
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x1345085 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /tmp/nanbeige-review-97d4ac9c/head/zig/src/server/llama_blocks_test.zig:70:9: 0x1349f3a in test.Llama serve: stop, EOS and length at every accepted block offset preserve bytes and usage (root.zig)
+               try std.testing.expectEqualStrings(if (kind == 2) "length" else "stop", whole.get("choices").?.array[0].strField("finish_reason").?);
+               ^
+failed command: /tmp/nanbeige-review-97d4ac9c/probe-cache/o/de7b8a9024d54ee3fcbc990555bd5712/test --cache-dir=/tmp/nanbeige-review-97d4ac9c/probe-cache --seed=0x9b2cafa9 --listen=-
+
+Build Summary: 1/3 steps succeeded (1 failed); 39/41 tests passed (2 failed)
+test-llama-server-host transitive failure
++- run test 39 pass, 2 fail (41 total)
+   +- compile test debug native success 1s MaxRSS:357M
+

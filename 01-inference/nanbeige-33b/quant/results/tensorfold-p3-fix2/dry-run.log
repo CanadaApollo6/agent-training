@@ -1,0 +1,22 @@
+{
+  "state": "PASS",
+  "jobs": 16,
+  "crash_exit": 73,
+  "resumed_jobs": 14,
+  "completed_reruns": 0,
+  "changed_model_refused": true,
+  "gpu_calls": 0,
+  "projection": {
+    "seconds_by_job": {
+      "p3-affine4-kv4-wire": 150
+    },
+    "total_seconds": 150,
+    "rates": {
+      "prefill": 800.0,
+      "decode": 66.66666666666667
+    },
+    "basis": "measured with 25% reserve",
+    "elapsed_seconds": 0.6153843209904153,
+    "projected_session_seconds": 150.61538432099042
+  }
+}

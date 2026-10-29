@@ -1,0 +1,146 @@
+{
+  "commit": "a3c96094081d20cb879807f66a39120948bb4d2f",
+  "base": "97d4ac9caf8fcbdadd5ced51cd8fc2c54bc4c17d",
+  "branch": "nanbeige",
+  "source": {
+    "tools/zig/llama_draft_full.py": {
+      "sha256": "01cb23754e4c98ddacafac0521cea21bdd9621f2c3119a271157090a5bb553dc",
+      "lines": 108
+    },
+    "tools/zig/llama_draft_stats.py": {
+      "sha256": "1f6519e9e2d2b6a97a4358aa173a5959b6fa118c67a9945f686c6e508144bc9f",
+      "lines": 38
+    },
+    "tools/zig/llama_draft_wire.py": {
+      "sha256": "f51a8a4000db8da29a94d73054b0e4a3c552c01a96a1588d3c0235d6543b0f54",
+      "lines": 209
+    },
+    "tools/zig/llama_full_gate.py": {
+      "sha256": "58703a70137a256c1f9363e559b1795bbd5e6d6d57b698af637e45b863bb2159",
+      "lines": 243
+    },
+    "tools/zig/llama_gate_budget.py": {
+      "sha256": "f8881b7a1ffa6d89629f1dad91e9eb34fd08d706be41df177096bd7e2ea07ca3",
+      "lines": 33
+    },
+    "tools/zig/llama_gate_dry.py": {
+      "sha256": "be94bf92fcf4bc58d257d3b53ee80cca9cc65dcc3db77d35639c5eb663a75218",
+      "lines": 90
+    },
+    "tools/zig/llama_gate_state.py": {
+      "sha256": "60593e5c1e0a2b4622a6f1ebd1715b3453c90cbc180eec78d733173adb6f7be9",
+      "lines": 62
+    },
+    "tools/zig/llama_hf_job.sh": {
+      "sha256": "0bd6488c152837440440ec876ede34c326164e1e28f98218dc40d045a837cea2",
+      "lines": 71
+    },
+    "tools/zig/llama_kv_compare.py": {
+      "sha256": "31e683ce62655b755a6b59314d8268e85237677bb0c76d4e65cc1c22f9ce30a3",
+      "lines": 70
+    },
+    "tools/zig/llama_kv_full.py": {
+      "sha256": "318a89a9eae3f866115604da5e334773cba53ed4cfcc1c0e512496d7c96115b0",
+      "lines": 88
+    },
+    "tools/zig/test_llama_gates.py": {
+      "sha256": "1dbed57a2809862e28ada0202a0938b4c382118cfb947995cd3698dbda162989",
+      "lines": 198
+    },
+    "zig/build/cuda.zig": {
+      "sha256": "b78f362f4bbf220c7b3248f303315a88db9d4d91d47b697916bb666ba04ff40c",
+      "lines": 567
+    },
+    "zig/build/llama.zig": {
+      "sha256": "94568c066941f8c3f3941062c82b3e9f20e4882d31013fe482aa0ab8c4e34305",
+      "lines": 28
+    },
+    "zig/src/server/llama_blocks_test.zig": {
+      "sha256": "654f706b979e9e94ca22abeb2ad7ab9f7b8713e56393341c6095be4e9cbb6e2d",
+      "lines": 103
+    },
+    "zig/src/server/llama_gpu_forced.zig": {
+      "sha256": "767f92d44611f3c7272337ee4511b7e9cf55a90fce7080f406b7440072f6aef6",
+      "lines": 107
+    },
+    "zig/src/server/llama_gpu_wire.zig": {
+      "sha256": "4fddc6e30dd14ae0fe73e767f167afb40b6710e9ab88bc49f0d6c604f02c0322",
+      "lines": 121
+    },
+    "zig/tests/cuda/llama_capacity.zig": {
+      "sha256": "8be57e773c611181a66aa951428a2194cccf09b85d3597e9baac40afb5ac107f",
+      "lines": 32
+    },
+    "zig/tests/cuda/llama_draft_distribution.zig": {
+      "sha256": "b31d17b0f6a9ff2078bc8d49d4a4a9012af399c2057b27dd6239e9b98013ff8f",
+      "lines": 54
+    },
+    "zig/tests/cuda/llama_draft_full.zig": {
+      "sha256": "e3a4333f8f24648a354f4fcd8e861e6748631b0da3a8bcd8517031b1112a46de",
+      "lines": 82
+    },
+    "zig/tests/cuda/llama_kv_gate.zig": {
+      "sha256": "04991c1a03d43f6b2317ab0db11002601c4ef8632ffc7c48531d8b0f1085fe12",
+      "lines": 93
+    },
+    "zig/tests/cuda/llama_main.zig": {
+      "sha256": "7f6872698d365178370a2c4a8bded08c3fe90bd2c2800b3b6fdab690d2cde6e9",
+      "lines": 57
+    },
+    "zig/tests/cuda/llama_prefill.zig": {
+      "sha256": "435adcd6df088bf7a5530b133f00d22c3907ac95e0769c99a051e2d57d3e9e16",
+      "lines": 94
+    }
+  },
+  "installed_binaries_sm89": {
+    "zig-out/bin/tf-llama-test": "77a7c2f46e788c11e60193cb003d8463395fdc7cb680f94d92a958da0b1fa31c",
+    "zig-out/bin/tf-llama-wire-test": "7fae2a37f9f4d25d30ce46f7409048642b5c8adfe58ea73cfdf2aba708bb903d",
+    "zig-out/native/bin/tensorfold-native": "1c58abc373366eab27ca8b94c7714bed9656d67824223d0e7658fb76ae93c062"
+  },
+  "tests": {
+    "covered": 1205,
+    "final_aggregate_executed": 1026,
+    "final_aggregate_cached_verified": 179,
+    "requested_server_parser": 1020,
+    "llama_host": 69,
+    "dflash2_host": 57,
+    "qwen27_host": 59,
+    "python": 14,
+    "forced_wire_writer_cases": 42,
+    "kv_regression": 3,
+    "sm86_build_steps": 126,
+    "sm89_build_steps": 126,
+    "lean_inherited": 426,
+    "lean_new": 0
+  },
+  "gpu_execution": "NOT RUN",
+  "cloud_entrypoint": "bash -n passed; installation, cloud launch, sync NOT RUN",
+  "gate_runtime": "planning 140.526 minutes, not measured; runtime calibration may refuse the plan",
+  "receipts": {
+    "build-first.log": "c7b4907c2eccebafc894def6b51c2428c1979658b3fc044b723cbf5588466e5f",
+    "build-sm86.log": "045104c7fddc51efd5f094083dadb89c25006825ca08aee3ae30e6a2cf3ee8c6",
+    "python-tests.log": "bf5bbf328c0f282566f33941ad67ea882340cd2f5f73f22af31128b6ae25af45",
+    "host.log": "587d2e68a1ecc7b810adb0da1174909a2e6ac8ddc09a38656e4634888ddb1d15",
+    "runtime-projection.json": "706739d3ddfe12acab4b6de32119d550180d14b692430157b1ef0a5e65ac2df4",
+    "forced-host.log": "759d701f1c6a30049c02e13c437d0523e2ef03f0d5d6533f9fe38a1e98d533c9",
+    "build-sm86-final.log": "7936dcf4aeec54bdca26a898207acff7994af125e55aa5a616a78f2d90e949fd",
+    "host-added.log": "2076981aad6ed914d19118080632c4e98c21fe38e022c9cf50d84d88b995eae6",
+    "sampling-design.json": "f7fc3de06fa5f2b7214cc94ae98477d024aa76fa44b0c70f86d04155a06bf368",
+    "dry-run.log": "36b9ec35b017f8ac3e3ccdbc3b33629360dd5ee3ef33d133fd8cfacc9823869a",
+    "lean-new.txt": "54f93ef243b173f41d1bb0637e3bb2e41d2271c3ed8cad6c57958394e24bd207",
+    "host-wire.log": "904441c7dc71fded73176095dc549f9caaa55b498e975d944d69e2b2be7db0e7",
+    "kv-regression-red.log": "9c8649a8b844ed5baf8b3b582de7ab31c22e67f6183f8af0ad6cba42959898d2",
+    "kv-regression-green.log": "c00fbd986b45e4ce7c3340d076046389e66e3bf7f5dabf267bb4f6ef17ac2ba2",
+    "build-sm86-verified.log": "b575c518d737edfbc16319afffee90a3fe59ec7c6d681d7aee8b7b6c8ae91946",
+    "host-wire-final.log": "face1222095c68af154f564dc301bc4e51d8b804bffaa0eb6d64c0a59255abb7",
+    "build-sm86-complete.log": "23100861cdbf0bfe19806a3174ec483355b43dd75a6686529577efbe1c1754b5",
+    "host-sweep.log": "128b8bc872f7e8c57d9141abe2d76c0a1c51fa291b1c5ef54c2f0694a13dde19",
+    "capacity-cpu-early.log": "68b63a07468163b3d65efd835cdbe8eab782debc3d6a0a1af3d02ae658e729eb",
+    "README.md": "e2b0c95354b78b029dc082f6f8ff58ee126b3c8e69a7f3d1450ab6b9c137268a",
+    "capacity-cpu.log": "68b63a07468163b3d65efd835cdbe8eab782debc3d6a0a1af3d02ae658e729eb",
+    "build-sm89-complete.log": "18be1bd0357808d2231279f4e8833c5f272bd0a81f45ca2719af2066325697eb",
+    "host-final.log": "582b8141b9c28fbf2698b7f132803dde6263988710cedf5a14018435e5e25ac5",
+    "commands.txt": "2b7643d6df034d8ff20be55ec30a34035354ff2b8bfa92637aa930645c0bc4ab",
+    "dry/dry-run.json": "3ecbdab8ec6a4fcff47ce07d4022006f7259d837ab028272d4e8274c12eef1af"
+  }
+}

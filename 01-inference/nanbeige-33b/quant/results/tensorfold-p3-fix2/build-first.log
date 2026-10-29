@@ -1,0 +1,365 @@
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (fp8_experts.fatbin) w
+./zig/kernels/cuda/fp8_experts.cu(153): warning #177-D: variable "RW" was declared but never referenced
+    constexpr int RW = PromptCfg<M, RT, CW>::RW;
+                  ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (drama3_fp8.fatbin) w
+./zig/kernels/cuda/drama3_fp8.cu(188): warning #177-D: variable "RW" was declared but never referenced
+    constexpr int RW = PromptCfg<M, RT, CW>::RW;
+                  ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (glm_mm.fatbin) w
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=16, BM=64, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=16, BM=32, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=16, BM=16, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=8, BM=128, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=8, BM=64, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=8, BM=32, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=8, BM=16, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=6, BM=128, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=6, BM=64, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=6, BM=32, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=6, BM=16, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=4, BM=128, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=4, BM=64, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=4, BM=32, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=4, BM=16, WM=1, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+./zig/kernels/cuda/glm_mm.cu(84): warning #177-D: member "<unnamed>::Tile<BITS, BM, WM, STAGES>::SMEM [with BITS=16, BM=128, WM=2, STAGES=3]" was declared but never referenced
+      static constexpr int SMEM = STAGES * STAGE;
+                           ^
+
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_attn.fatbin) w
+./zig/kernels/cuda/flashnext_attn.cu(452): warning #128-D: loop is not reachable
+      for (int h = 0; h < 2; ++h) {
+      ^
+          detected during instantiation of "void attn_chunks<NB,ONE,FUSE,PAGED>(const __nv_bfloat16 *, const __nv_bfloat16 *, const __nv_bfloat16 *, const int *, float *, float *, float *, const int *, const int *, const int *, int, int, int, int, int, float, int, int, fn_attn::Pg) [with NB=1, ONE=true, FUSE=true, PAGED=false]" at line 499
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+./zig/kernels/cuda/flashnext_attn.cu(452): warning #128-D: loop is not reachable
+      for (int h = 0; h < 2; ++h) {
+      ^
+          detected during instantiation of "void attn_chunks<NB,ONE,FUSE,PAGED>(const __nv_bfloat16 *, const __nv_bfloat16 *, const __nv_bfloat16 *, const int *, float *, float *, float *, const int *, const int *, const int *, int, int, int, int, int, float, int, int, fn_attn::Pg) [with NB=1, ONE=true, FUSE=true, PAGED=true]" at line 528
+
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (prefill_attention.fatbin) w
+./zig/kernels/cuda/prefill_attention.cu(20): warning #177-D: variable "tf_prefill_attention::SMEM_MAX" was declared but never referenced
+  constexpr int SMEM_MAX = 96 * 1024;
+                ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+
+tf-llama-test
++- install tf-llama-test
+   +- compile exe tf-llama-test fast native
+      +- run /opt/cuda/bin/nvcc (flashnext_fact.fatbin) w
+./zig/kernels/cuda/flashnext_fact.cu(175): warning #128-D: loop is not reachable
+              for (int kt = 0; kt < GS / 16; ++kt) {
+              ^
+          detected during instantiation of "void fact::fact_kernel<BM,BN,WM,WN,STAGES,GPS,DBUF,MINB,FOLD,OUT16,BLOCKED>(const __nv_bfloat16 *, const float *, const uint32_t *, const __nv_bfloat16 *, const __nv_bfloat16 *, void *, float *, int, int, int, int, int, int, int) [with BM=64, BN=128, WM=2, WN=4, STAGES=3, GPS=2, DBUF=false, MINB=2, FOLD=true, OUT16=true, BLOCKED=true]" at line 264
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+
+Build Summary: 124/124 steps succeeded; 2/2 tests passed
+tf-llama-test success
++- install tf-llama-test success
+   +- compile exe tf-llama-test fast native success 35s MaxRSS:1G
+      +- options cached
+      +- run /opt/cuda/bin/nvcc (contract_controls.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc success 11ms
+      +- options cached
+      +- run /opt/cuda/bin/nvcc (qwen4_projection.fatbin) success 447ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen4_gdn.fatbin) success 740ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      |  +- WriteFile qwen4_gdn.cu cached
+      +- run /opt/cuda/bin/nvcc (qwen4_hc.fatbin) success 534ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen4_ple.fatbin) success 885ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      |  +- WriteFile qwen4_ple.cu cached
+      +- run /opt/cuda/bin/nvcc (attn_train.fatbin) success 656ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen27_train.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_train.fatbin) success 788ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train_q4.fatbin) success 764ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train_attn.fatbin) success 599ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_train.fatbin) success 792ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_gdn.fatbin) success 508ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_batch.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_mtp.fatbin) success 422ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_rows.fatbin) success 608ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (route_rows.fatbin) success 562ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_hc.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_attn.fatbin) success 9s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts3.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts3_prefill.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (moe.fatbin) success 506ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen36_mtp.fatbin) success 677ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ggml.fatbin) success 8s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (probe.fatbin) success 281ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm_group.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmm_prefill.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_fact.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_hcf.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (flashnext_fexp.fatbin) success 946ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (w4a8_prefill.fatbin) success 629ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_prefill.fatbin) success 792ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (experts_pack.fatbin) success 267ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (prefill_attention.fatbin) success 4s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (scan_rows.fatbin) success 540ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_ops.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine4_pack.fatbin) success 260ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine8.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (affine_prefill.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (fp8_experts.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exlr8.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exlr8_dense.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts_tile.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nvfp4_experts.fatbin) success 9s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (rank_sum.fatbin) success 369ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (lane_gemv.fatbin) success 630ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (sample.fatbin) success 4s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (train.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_draft.fatbin) success 716ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_keep.fatbin) success 586ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen_vision.fatbin) success 589ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_prefill.fatbin) success 588ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_kv8.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qwen35_bf16_rows.fatbin) success 430ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_norms.fatbin) success 599ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_route.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_mamba.fatbin) success 578ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_attention.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_keyed.fatbin) success 498ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (nemotron_latent.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ck_lane.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (ck_experts.fatbin) success 992ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (norms.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (embed_rows.fatbin) success 461ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (lfm2.fatbin) success 590ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (vit.fatbin) success 718ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (tree_round.fatbin) success 474ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (act_rows.fatbin) success 737ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (gdn_prep.fatbin) success 550ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qk_rows.fatbin) success 637ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (qmmf.fatbin) success 12s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (prompt16.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (kv4.fatbin) success 764ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (tree_attention.fatbin) success 6s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (block_attention.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_attention.fatbin) success 4s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_rows.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (window_pages.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (moe_glue.fatbin) success 539ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (dense_rows.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (modelopt_pack.fatbin) success 291ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_kda.fatbin) success 553ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_glue.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_ops.fatbin) success 357ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_index.fatbin) success 716ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_quant.fatbin) success 491ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_linear.fatbin) success 11s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_experts.fatbin) success 3s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (exl3_candidate.fatbin) success 8s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_vision.fatbin) success 797ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_mm.fatbin) success 2s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (glm_dflash.fatbin) success 654ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_argmax.fatbin) success 440ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_topk.fatbin) success 304ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (dense_pointwise.fatbin) success 450ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_pointwise.fatbin) success 458ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_indexing.fatbin) success 290ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_movement.fatbin) success 423ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (torch_nemotron_constants.fatbin) success 444ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (roce_gather.fatbin) success 423ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_staged_gemv.fatbin) success 383ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3.fatbin) success 1s
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_fp8.fatbin) success 873ms
+      |  +- run /opt/cuda/bin/nvcc (reused)
+      +- run /opt/cuda/bin/nvcc (drama3_codec.fatbin) success 497ms
+         +- run /opt/cuda/bin/nvcc (reused)
+test-dflash2-host success
++- run test cached
+   +- compile test debug native cached 12ms MaxRSS:34M
+test-llama-host success
++- run test cached
+   +- compile test debug native cached 12ms MaxRSS:34M
+   |  +- options cached
+   +- run test 2 pass (2 total) 4ms MaxRSS:7M
+      +- compile test debug native success 214ms MaxRSS:160M
+

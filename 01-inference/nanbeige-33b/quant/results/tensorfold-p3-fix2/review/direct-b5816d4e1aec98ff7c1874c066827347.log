@@ -1,0 +1,6 @@
+1/5 qwen27_bank_test.test.qwen27 bank: construction does not allocate rollback storage for idle or lone use...OK
+2/5 qwen27_bank_test.test.qwen27 bank: constructor allocation failures unwind every earlier buffer...OK
+3/5 qwen27_bank_test.test.qwen27 bank: actual plans allocate only the one-row rollback extent...OK
+4/5 qwen27_bank_test.test.qwen27 bank: growth shrink reuse and failed allocation leave committed words intact...OK
+5/5 qwen27_bank_test.test.qwen27 bank: real two-layer verify and empty keep use partial strides and retain rollback until commit...OK
+All 5 tests passed.

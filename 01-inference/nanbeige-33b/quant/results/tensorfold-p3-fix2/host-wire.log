@@ -1,0 +1,146 @@
+test-llama-server-host
++- run test 41 pass, 1 fail (42 total)
+error: 'llama_blocks_test.test.Llama serve: GPU wire harness runs exact stop cases with CPU forwards' failed:
+       PROMPT p1-chat tokens=195 equal
+       PROMPT system-user tokens=24 equal
+       PROMPT default-system tokens=34 equal
+       PROMPT reasoning-history tokens=48 equal
+       PROMPT reasoning-alias tokens=48 equal
+       PROMPT embedded-thinking tokens=47 equal
+       PROMPT tools tokens=254 equal
+       PROMPT calls-with-tools tokens=350 equal
+       PROMPT calls-without-tools tokens=120 equal
+       PROMPT tool-results tokens=382 equal
+       PROMPT preserve-false tokens=44 equal
+       PROMPT thinking-off tokens=28 equal
+       PROMPT json-calls tokens=316 equal
+       PROMPT bad-json-arguments tokens=278 equal
+       PROMPT special-user tokens=39 equal
+       PROMPT special-tool tokens=375 equal
+       PROMPT developer-leading tokens=42 equal
+       PROMPT developer-mixed tokens=42 equal
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       PROMPT spaced-history-call tokens=346 equal
+       PROMPT text-parts tokens=34 equal
+       PROMPT json-history-scalar tokens=60 equal
+       PROMPT json-history-null tokens=58 equal
+       PROMPT json-history-array tokens=62 equal
+       PROMPT json-history-spaces tokens=58 equal
+       PROMPT json-history-duplicate tokens=68 equal
+       PROMPT special-user tokens=39 equal
+       PROMPT special-tool tokens=375 equal
+       PROMPT developer-leading tokens=42 equal
+       PROMPT developer-mixed tokens=42 equal
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       OUTPUT spaced-function equal
+       OUTPUT spaced-parameter equal
+       OUTPUT case-function equal
+       OUTPUT case-parameter equal
+       OUTPUT case-collision equal
+       OUTPUT case-collision-upper equal
+       OUTPUT case-tags equal
+       OUTPUT spaced-empty equal
+       OUTPUT name-newline equal
+       OUTPUT name-inner-space equal
+       OUTPUT name-unicode-space equal
+       OUTPUT unicode equal
+       OUTPUT plain equal
+       OUTPUT no-close equal
+       OUTPUT no-close-call equal
+       OUTPUT typed equal
+       OUTPUT multiple equal
+       OUTPUT no-tools equal
+       OUTPUT unclosed-call equal
+       OUTPUT trailing-prose equal
+       OUTPUT reasoning-spaces equal
+       OUTPUT typed-edge equal
+       OUTPUT truncated-params equal
+       OUTPUT unknown-function equal
+       OUTPUT malformed-first equal
+       OUTPUT no-function equal
+       OUTPUT recover-empty-header equal
+       OUTPUT recover-newline-header equal
+       OUTPUT recover-unclosed-header equal
+       OUTPUT recover-close-in-header equal
+       OUTPUT end-newlines-param equal
+       OUTPUT end-newlines-function equal
+       OUTPUT end-newlines-text equal
+       OUTPUT spaced-function equal
+       OUTPUT spaced-parameter equal
+       OUTPUT case-function equal
+       OUTPUT case-parameter equal
+       OUTPUT case-collision equal
+       OUTPUT case-collision-upper equal
+       OUTPUT case-tags equal
+       OUTPUT recover-empty-header equal
+       OUTPUT recover-newline-header equal
+       OUTPUT recover-unclosed-header equal
+       OUTPUT recover-close-in-header equal
+       OUTPUT end-newlines-param equal
+       OUTPUT end-newlines-function equal
+       OUTPUT end-newlines-text equal
+       FUZZ 3000 cases equal
+       ROUTE spaced-function JSON+SSE equal
+       ROUTE spaced-parameter JSON+SSE equal
+       ROUTE case-function JSON+SSE equal
+       ROUTE case-parameter JSON+SSE equal
+       ROUTE case-collision JSON+SSE equal
+       ROUTE case-collision-upper JSON+SSE equal
+       ROUTE case-tags JSON+SSE equal
+       ROUTE spaced-empty JSON+SSE equal
+       ROUTE name-newline JSON+SSE equal
+       ROUTE name-inner-space JSON+SSE equal
+       ROUTE name-unicode-space JSON+SSE equal
+       ROUTE unicode JSON+SSE equal
+       ROUTE plain JSON+SSE equal
+       ROUTE no-close JSON+SSE equal
+       ROUTE no-close-call JSON+SSE equal
+       ROUTE typed JSON+SSE equal
+       ROUTE multiple JSON+SSE equal
+       ROUTE no-tools JSON+SSE equal
+       ROUTE unclosed-call JSON+SSE equal
+       ROUTE trailing-prose JSON+SSE equal
+       ROUTE reasoning-spaces JSON+SSE equal
+       ROUTE typed-edge JSON+SSE equal
+       ROUTE truncated-params JSON+SSE equal
+       ROUTE unknown-function JSON+SSE equal
+       ROUTE malformed-first JSON+SSE equal
+       ROUTE no-function JSON+SSE equal
+       ROUTE recover-empty-header JSON+SSE equal
+       ROUTE recover-newline-header JSON+SSE equal
+       ROUTE recover-unclosed-header JSON+SSE equal
+       ROUTE recover-close-in-header JSON+SSE equal
+       ROUTE end-newlines-param JSON+SSE equal
+       ROUTE end-newlines-function JSON+SSE equal
+       ROUTE end-newlines-text JSON+SSE equal
+       FAILURE HTTP 148 JSON + 148 SSE cases equal
+       FAULT 7 pod-labelled allocation boundaries equal
+       BYTE parser 1005 cases equal
+       BYTE parser 226 cases equal
+       BYTE parser 128 cases equal
+       BYTE HTTP 189 JSON + 189 SSE cases equal
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_gpu_wire.zig:102:84: 0x135216f in checkCases__func_976 (root.zig)
+                   if (std.mem.indexOf(u8, actual, "\"finish_reason\":\"stop\"") == null) return error.StopNotObserved;
+                                                                                          ^
+       /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig/src/server/llama_blocks_test.zig:102:5: 0x1353406 in test.Llama serve: GPU wire harness runs exact stop cases with CPU forwards (root.zig)
+           try @import("llama_gpu_wire.zig").checkCases(a, std.testing.io, text.text(), inner, .{ .exact_width = 8, .copy_drafts = false, .gpu_tokens = false, .mtp = true, .speculate = true, .drafts = 7, .batch_rows = 8, .max_streams = 1 });
+           ^
+failed command: /var/tmp/tf-p3-fix2-host-cache/o/84c7d7cae82f672911ba53b9aa58eed6/test --cache-dir=/var/tmp/tf-p3-fix2-host-cache --seed=0xb7e1d220 --listen=-
+
+Build Summary: 9/11 steps succeeded (1 failed); 41/42 tests passed (1 failed)
+test-llama-host success
++- run test cached
+   +- compile test debug native cached 11ms MaxRSS:40M
+   |  +- options cached
+   +- run test cached
+   |  +- compile test debug native cached 12ms MaxRSS:40M
+   +- run test cached
+      +- compile test debug native cached 11ms MaxRSS:40M
+test-llama-server-host transitive failure
++- run test 41 pass, 1 fail (42 total)
+   +- compile test debug native success 2s MaxRSS:367M
+

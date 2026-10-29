@@ -1,0 +1,4 @@
+actual plan-only: 22 jobs; no GPU query or launch
+after interrupted job 3: ['PASS', 'PASS', 'NOT RUN', 'NOT RUN'] overall=NOT RUN
+restart launches p1-reference again and resets all previous PASS statuses to NOT RUN
+P4 prompt forwards = 5400000

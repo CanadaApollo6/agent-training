@@ -1,0 +1,264 @@
+{
+  "test": "two-sample simultaneous Hoeffding equivalence on token_id % 8 bins",
+  "alpha": 0.01,
+  "draws_per_side": 8192,
+  "cells": [
+    {
+      "prompt": 0,
+      "row": 1,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 1,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 1,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 1,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 4,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 4,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 4,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 4,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 7,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 7,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 7,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 0,
+      "row": 7,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 1,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 1,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 1,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 1,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 4,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 4,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 4,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 4,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 7,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 7,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 7,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 1,
+      "row": 7,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 1,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 1,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 1,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 1,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 4,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 4,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 4,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 4,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 7,
+      "variant": 0,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 7,
+      "variant": 1,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 7,
+      "variant": 2,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    },
+    {
+      "prompt": 2,
+      "row": 7,
+      "variant": 3,
+      "max_bin_difference": 0.0,
+      "simultaneous_upper": 0.05334152800742564
+    }
+  ],
+  "equivalence_margin": 0.1,
+  "minimum_detectable_bin_difference": 0.1,
+  "rejection_power_at_margin_lower_bound": 0.99,
+  "power_at_equal_distributions_lower_bound": 0.8455354165576242,
+  "limitation": "eight predeclared frequency bins; not proof of token-level distribution identity"
+}
