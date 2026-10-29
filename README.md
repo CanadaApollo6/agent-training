@@ -400,6 +400,21 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     $10B a year, so training on its outputs is allowed.
   - For us: this is the teacher endpoint for SFT on teacher traces. GLM's tokenizer isn't Ornith's (Qwen3.5), so its
     logprobs can't drive token-level or on-policy distillation directly. The teacher contributes whole trajectories.
+- [Prime Mega MoE](https://www.primeintellect.ai/blog/prime-mega-moe) (Mario Sieg, Prime Intellect, 2026-10-29):
+  training kernels, not a model. DeepSeek's Mega MoE kernel (DeepGEMM) is forward-only. It fuses token routing, the
+  expert MLPs and the combine step into one persistent kernel that overlaps the GPU-to-GPU traffic with the math.
+  Prime added a backward pass so it can train. They report MoE layers up to 3.11x faster than plain PyTorch, and
+  trainer steps 1.34x faster than prime-rl's default, on Qwen3-30B-A3B and 235B-A22B over 8xH200 nodes.
+  - It's in prime-rl as `[trainer.model.moe.dispatch] type = "mega_moe"`. But `docs/scaling.md` says the kernels
+    ship as a closed-source `deep_gemm` wheel "from Prime Intellect", with no public download. Without that wheel,
+    the option fails at startup.
+  - Hopper or Blackwell only (bf16 needs SM90+), and it needs EP > 1. It can't run on the 3090.
+  - For us: Ornith 35B-A3B RL on h200x8 (ep=4, `04-post-training/rl-smoke/`) fits the shape rules. It only speeds
+    up the trainer half of a step, not vLLM rollouts. In agentic RL, rollouts take most of the time, so the
+    real-world gain is well under 1.34x. Worth asking Prime for the wheel only if a long Ornith RL run gets
+    trainer-bound.
+  - Worth reading for the concept: one kernel that does dispatch, compute and combine. The docs also explain a
+    deadlock where the kernel occupies every SM and leaves none for NCCL, so it must reserve some (`num_reserved_sms`).
 - [Kled AI datasets](https://www.kled.ai/datasets): a marketplace selling exclusive-rights data licenses at quoted
   prices. It has film and animation video, 50M de-identified US medical records, 12M radiology reports, 200M
   claims/billing entries and 8M papers. Sourcing and consent details aren't published.
