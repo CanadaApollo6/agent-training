@@ -1,0 +1,18 @@
+{
+  "job_id": "6ae393825ddcdc0830264492",
+  "flavor": "cpu-basic",
+  "hf_status": "ERROR",
+  "exit_code": 1,
+  "status_txt": "FAIL",
+  "checksum_pass_count": 54,
+  "engine_commit": "a5454ed3931caa5dee27ef45c468f44f8ea76b82",
+  "error": "ModuleNotFoundError: No module named 'click'",
+  "classification": "Reviewed engine llama-hf.lock omits click; staging verified; engine not changed",
+  "container_start": "2026-10-29T18:42:49+00:00",
+  "output_last_written": "2026-10-29T18:45:38.369000+00:00",
+  "observed_container_seconds": 169.369,
+  "hourly_usd": 0.01,
+  "estimated_container_usd": 0.00047046944444444446,
+  "actual_billing": "NOT AVAILABLE",
+  "gpu_execution": "NOT RUN"
+}

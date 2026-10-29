@@ -1,0 +1,55 @@
+[
+  {
+    "id": "6ae393825ddcdc0830264492",
+    "created_at": "2026-10-29 18:42:10.704000+00:00",
+    "docker_image": "nvidia/cuda:12.8.1-devel-ubuntu22.04@sha256:6617a625f4090c76c545a0e7d63f2e441718ef9af7f4efe7dd1242a29e289fd7",
+    "space_id": null,
+    "command": [
+      "bash",
+      "/inputs/llama_hf_job.sh"
+    ],
+    "arguments": [],
+    "environment": {
+      "CONTAINER_IMAGE": "nvidia/cuda:12.8.1-devel-ubuntu22.04@sha256:6617a625f4090c76c545a0e7d63f2e441718ef9af7f4efe7dd1242a29e289fd7",
+      "DRY": "1",
+      "ENGINE_COMMIT": "a5454ed3931caa5dee27ef45c468f44f8ea76b82",
+      "JOB_SECONDS": "1800",
+      "OUT_BUCKET": "hf://buckets/CanadaApollo6/nanbeige-gate-outputs/dry-fix3-a5454ed3-20261029T183916Z",
+      "RESUME": "0",
+      "SM": "89"
+    },
+    "flavor": "cpu-basic",
+    "labels": {
+      "name": "nanbeige-full-gate-fix3-dry"
+    },
+    "volumes": [
+      {
+        "type": "bucket",
+        "source": "CanadaApollo6/nanbeige-gate-inputs",
+        "mount_path": "/inputs",
+        "revision": null,
+        "read_only": true,
+        "path": "fix3-a5454ed3-20261029T183916Z"
+      },
+      {
+        "type": "bucket",
+        "source": "CanadaApollo6/nanbeige-gate-outputs",
+        "mount_path": "/out",
+        "revision": null,
+        "read_only": false,
+        "path": "dry-fix3-a5454ed3-20261029T183916Z"
+      }
+    ],
+    "status": {
+      "stage": "ERROR",
+      "message": "Job failed with exit code: 1. Reason: Error"
+    },
+    "owner": {
+      "id": "6a346995824183fe7b798983",
+      "name": "CanadaApollo6",
+      "type": "user"
+    },
+    "endpoint": "https://huggingface.co",
+    "url": "https://huggingface.co/jobs/CanadaApollo6/6ae393825ddcdc0830264492"
+  }
+]

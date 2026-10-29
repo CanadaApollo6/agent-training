@@ -1,0 +1,8 @@
+ts	phase	decision	why	evidence	result
+2026-10-29T18:41:13Z	histories	Selected three actual requests from three distinct TB2 tasks	Each rendered request exceeds 100000 tokens without padding and matches recorded pilot usage	histories-provenance.json	PASS; 115488,114476,113322 tokens
+2026-10-29T18:41:13Z	bundle	Rebuilt bundle in a temporary bare repository with complete upstream ancestors	The first shallow-source bundle failed a fresh clone	bundle-check.log	Fresh clone and checkout a5454ed3 PASS
+2026-10-29T18:41:13Z	setup	Pinned CUDA 12.8.1 devel Ubuntu22.04 amd64 and resolved missing debs in that image	The offline install must match the exact image used on HF	offline-setup.log	Network-disabled dpkg, bootstrap Python and uv, venv and Zig PASS
+2026-10-29T18:42:57Z	upload	Uploaded sources directly into a verified private prefix; compared remote file set and sizes	Avoid copying 20.8GB of weights on the tight local disk	bucket-list.json,SHA256SUMS	PASS;55 files;20998793879 bytes;SHA256SUMS readback identical
+2026-10-29T18:42:57Z	dry	Submitted only the cpu-basic DRY job using a staging stdin symlink and name label	Pinned CLI has no --name and treats secrets-file dash as a literal path	dry-submit.log	job=6ae393825ddcdc0830264492;GPU NOT RUN
+2026-10-29T18:47:13Z	result	Stopped after the terminal CPU DRY failure without modifying the engine lock	The exact reviewed HF lock omits click and its first CLI import fails	container.log:329,status.txt,dry-result.json	HF ERROR;exit=1;54 checksum passes;CPU_DRY_PASS not reached
+2026-10-29T18:47:13Z	cleanup	Removed all large staging intermediates and the pulled Docker image	Inputs are verified in the private bucket and local disk is tight	docker-cleanup.log	Home free space restored to about24GiB;no weight copies
