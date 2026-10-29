@@ -1,0 +1,176 @@
+{
+  "base": "b84fc6c852efb30ebef213040d57d232503f2d17",
+  "head": "97d4ac9caf8fcbdadd5ced51cd8fc2c54bc4c17d",
+  "branch": "nanbeige",
+  "scope": "CPU-only implementation and verification; local commit only",
+  "source": [
+    {
+      "path": "tools/zig/llama_draft_full.py",
+      "sha256": "2495581604a88192b57ba02708de96bfeaa4dd82ecb9a3a3a712a3fde07a4bb8",
+      "lines": 106
+    },
+    {
+      "path": "tools/zig/llama_draft_wire.py",
+      "sha256": "b3d7b498587853dea26189bab5cd179630d9a3fba664c7e53058915cea4b54e5",
+      "lines": 199
+    },
+    {
+      "path": "tools/zig/llama_full_gate.py",
+      "sha256": "99c600262eb1de49b1953d443ba6d6d34573a79eeaa975ddab3d58e3b7ceb9b5",
+      "lines": 130
+    },
+    {
+      "path": "tools/zig/llama_gpu_run.py",
+      "sha256": "b0d373e0f100ca5847c9d3e2c0edcd1243b30d2925ad1dec4977650944f5c5c1",
+      "lines": 66
+    },
+    {
+      "path": "tools/zig/llama_kv_full.py",
+      "sha256": "8bf7efa5d613ba01c38d5d52ec47040508e7b978d906d42711cf15673e4d8015",
+      "lines": 89
+    },
+    {
+      "path": "tools/zig/llama_kv_prepare.py",
+      "sha256": "ff56aee9db33a48c9d6a12301daf35700712b3bf83bacb991aa3b5093420d9fd",
+      "lines": 58
+    },
+    {
+      "path": "tools/zig/llama_serve_envelopes.py",
+      "sha256": "5050ac14311ece0340501457cccf26e2052d222eb4ccca3d223385c595903aa6",
+      "lines": 137
+    },
+    {
+      "path": "tools/zig/test_llama_gates.py",
+      "sha256": "08aa4c1af803a36f2693e9bb3ba5494f578fd3015531092e98764f02faa9ead8",
+      "lines": 156
+    },
+    {
+      "path": "zig/build/server.zig",
+      "sha256": "3bc66784420c51f911f19810ed49d418c450758c121a0f4fda1294292c44cc11",
+      "lines": 129
+    },
+    {
+      "path": "zig/src/families/dflash2/admission.zig",
+      "sha256": "9f30c94ab96ea438148835101e1daa15672544353ab5ae8e60d34dbb01810db0",
+      "lines": 25
+    },
+    {
+      "path": "zig/src/families/dflash2/cuda_runtime.zig",
+      "sha256": "36a891f6603161f7592d7a5cd2db7c2b4bb002bcfff4ef66185a7cafb51be07c",
+      "lines": 173
+    },
+    {
+      "path": "zig/src/families/llama/backend.zig",
+      "sha256": "1d89b6372e6cb9a981606c31384128975f6958306a862f89d05cd31ace5cfe0b",
+      "lines": 221
+    },
+    {
+      "path": "zig/src/families/llama/backend_test.zig",
+      "sha256": "0c818b18e213b36022d0e25135aab0c47f7d578b61a2a7a2d429813daab504cd",
+      "lines": 109
+    },
+    {
+      "path": "zig/src/families/llama/cuda.zig",
+      "sha256": "621beafe38a9ec311927deeccd65f045181e650706928f3915df22af3e6ad266",
+      "lines": 32
+    },
+    {
+      "path": "zig/src/families/llama/draft.zig",
+      "sha256": "350e2fc260a3bf04e4ed92b6186d633fbca47e6be11b08cff2d7c0dbe413bd7f",
+      "lines": 51
+    },
+    {
+      "path": "zig/src/families/llama/memory.zig",
+      "sha256": "200846a7f292568bc3d0091b8cabc6dcba3ecd449e520b65228cb1b6089bcdb4",
+      "lines": 94
+    },
+    {
+      "path": "zig/src/families/llama/native.zig",
+      "sha256": "b5d426f65946abf9187a465d3faa92ffe8693b5e4f988a464737a1e303572087",
+      "lines": 91
+    },
+    {
+      "path": "zig/src/server/chat.zig",
+      "sha256": "e02fc2f4df7067b162cf3985443caafe60f60dde2a2022551783ef33db4ce1a2",
+      "lines": 599
+    },
+    {
+      "path": "zig/src/server/llama_blocks_test.zig",
+      "sha256": "285d295242425ef2cacb7a3f797a7fa5150c81684ab65dc534377f6ccae1594a",
+      "lines": 83
+    },
+    {
+      "path": "zig/src/server/llama_bytes_test.zig",
+      "sha256": "5ceaa997f9a310ed58a5286139c80a6457881e85da8ff6782630eec004fd783e",
+      "lines": 187
+    },
+    {
+      "path": "zig/src/server/llama_failure_test.zig",
+      "sha256": "ebb88481da1317abbb56a3be47719b6b06cce9e27f68a061827f3f0659109144",
+      "lines": 161
+    },
+    {
+      "path": "zig/src/server/llama_output_test.zig",
+      "sha256": "4436967aee498dc710539481709d38e698da6c6f483b55e0e754be67168b1b78",
+      "lines": 327
+    },
+    {
+      "path": "zig/src/server/root.zig",
+      "sha256": "43abb35094e0c363e0e1197b933e12d4936841482c7d6068c14a4ea66ec862cd",
+      "lines": 202
+    },
+    {
+      "path": "zig/tests/cuda/llama_capacity.zig",
+      "sha256": "3b45e8c568463967eab7dd50564c2824baa719786e7b098c70a4dd1d24cf9c74",
+      "lines": 30
+    },
+    {
+      "path": "zig/tests/cuda/llama_draft_forced.zig",
+      "sha256": "348de16e881fdb31075eaadf9a64914aa368d94b6d7cd474020f4f8addb666b0",
+      "lines": 36
+    },
+    {
+      "path": "zig/tests/cuda/llama_draft_full.zig",
+      "sha256": "7ebb59111b72f22b3b3bdb72b9f4a3f915060907254180fb71502b51252f12b3",
+      "lines": 76
+    },
+    {
+      "path": "zig/tests/cuda/llama_draft_partial.zig",
+      "sha256": "8722a8293255d2b06387f16a97dc857968106e18aac0e7c3af9bdbc3ddf9ba19",
+      "lines": 112
+    },
+    {
+      "path": "zig/tests/cuda/llama_kv_gate.zig",
+      "sha256": "1b7d2f1e9dcbc2de6f22d571bef1afa13bfbfb5a3563100d3583396c982ea547",
+      "lines": 56
+    },
+    {
+      "path": "zig/tests/cuda/llama_main.zig",
+      "sha256": "27520dba52aba8db682ce96103623b0a1b5c46a64d734b740d522dfa0e51b6d7",
+      "lines": 55
+    }
+  ],
+  "host": {
+    "passed": 1198,
+    "total": 1198,
+    "requested_server_steps": 1017,
+    "llama": 65,
+    "dflash2": 57,
+    "qwen27": 59
+  },
+  "native_builds": {
+    "sm_86": "122/122 compile steps PASS",
+    "sm_89": "122/122 compile steps PASS"
+  },
+  "python_tests": {
+    "passed": 5,
+    "total": 5
+  },
+  "lean": {
+    "inherited": 426,
+    "new": 0
+  },
+  "gpu": "NOT RUN",
+  "installed_sm": "86",
+  "restore_build": "122/122 steps PASS"
+}

@@ -1,0 +1,268 @@
+test-llama-server-host
++- run test 38 pass, 2 fail (40 total)
+error: 'llama_failure_test.test.Llama serve: pod failures preserve HTTP bytes and the exact SSE prefix' failed:
+       PROMPT p1-chat tokens=195 equal
+       PROMPT system-user tokens=24 equal
+       PROMPT default-system tokens=34 equal
+       PROMPT reasoning-history tokens=48 equal
+       PROMPT reasoning-alias tokens=48 equal
+       PROMPT embedded-thinking tokens=47 equal
+       PROMPT tools tokens=254 equal
+       PROMPT calls-with-tools tokens=350 equal
+       PROMPT calls-without-tools tokens=120 equal
+       PROMPT tool-results tokens=382 equal
+       PROMPT preserve-false tokens=44 equal
+       PROMPT thinking-off tokens=28 equal
+       PROMPT json-calls tokens=316 equal
+       PROMPT bad-json-arguments tokens=278 equal
+       PROMPT special-user tokens=39 equal
+       PROMPT special-tool tokens=375 equal
+       PROMPT developer-leading tokens=42 equal
+       PROMPT developer-mixed tokens=42 equal
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       PROMPT spaced-history-call tokens=346 equal
+       PROMPT text-parts tokens=34 equal
+       PROMPT json-history-scalar tokens=60 equal
+       PROMPT json-history-null tokens=58 equal
+       PROMPT json-history-array tokens=62 equal
+       PROMPT json-history-spaces tokens=58 equal
+       PROMPT json-history-duplicate tokens=68 equal
+       PROMPT special-user tokens=39 equal
+       PROMPT special-tool tokens=375 equal
+       PROMPT developer-leading tokens=42 equal
+       PROMPT developer-mixed tokens=42 equal
+       PROMPT kwargs-effort tokens=24 equal
+       PROMPT kwargs-top-effort tokens=24 equal
+       PROMPT kwargs-top-only tokens=24 equal
+       OUTPUT spaced-function equal
+       OUTPUT spaced-parameter equal
+       OUTPUT case-function equal
+       OUTPUT case-parameter equal
+       OUTPUT case-collision equal
+       OUTPUT case-collision-upper equal
+       OUTPUT case-tags equal
+       OUTPUT spaced-empty equal
+       OUTPUT name-newline equal
+       OUTPUT name-inner-space equal
+       OUTPUT name-unicode-space equal
+       OUTPUT unicode equal
+       OUTPUT plain equal
+       OUTPUT no-close equal
+       OUTPUT no-close-call equal
+       OUTPUT typed equal
+       OUTPUT multiple equal
+       OUTPUT no-tools equal
+       OUTPUT unclosed-call equal
+       OUTPUT trailing-prose equal
+       OUTPUT reasoning-spaces equal
+       OUTPUT typed-edge equal
+       OUTPUT truncated-params equal
+       OUTPUT unknown-function equal
+       OUTPUT malformed-first equal
+       OUTPUT no-function equal
+       OUTPUT recover-empty-header equal
+       OUTPUT recover-newline-header equal
+       OUTPUT recover-unclosed-header equal
+       OUTPUT recover-close-in-header equal
+       OUTPUT end-newlines-param equal
+       OUTPUT end-newlines-function equal
+       OUTPUT end-newlines-text equal
+       OUTPUT spaced-function equal
+       OUTPUT spaced-parameter equal
+       OUTPUT case-function equal
+       OUTPUT case-parameter equal
+       OUTPUT case-collision equal
+       OUTPUT case-collision-upper equal
+       OUTPUT case-tags equal
+       OUTPUT recover-empty-header equal
+       OUTPUT recover-newline-header equal
+       OUTPUT recover-unclosed-header equal
+       OUTPUT recover-close-in-header equal
+       OUTPUT end-newlines-param equal
+       OUTPUT end-newlines-function equal
+       OUTPUT end-newlines-text equal
+       FUZZ 3000 cases equal
+       ROUTE spaced-function JSON+SSE equal
+       ROUTE spaced-parameter JSON+SSE equal
+       ROUTE case-function JSON+SSE equal
+       ROUTE case-parameter JSON+SSE equal
+       ROUTE case-collision JSON+SSE equal
+       ROUTE case-collision-upper JSON+SSE equal
+       ROUTE case-tags JSON+SSE equal
+       ROUTE spaced-empty JSON+SSE equal
+       ROUTE name-newline JSON+SSE equal
+       ROUTE name-inner-space JSON+SSE equal
+       ROUTE name-unicode-space JSON+SSE equal
+       ROUTE unicode JSON+SSE equal
+       ROUTE plain JSON+SSE equal
+       ROUTE no-close JSON+SSE equal
+       ROUTE no-close-call JSON+SSE equal
+       ROUTE typed JSON+SSE equal
+       ROUTE multiple JSON+SSE equal
+       ROUTE no-tools JSON+SSE equal
+       ROUTE unclosed-call JSON+SSE equal
+       ROUTE trailing-prose JSON+SSE equal
+       ROUTE reasoning-spaces JSON+SSE equal
+       ROUTE typed-edge JSON+SSE equal
+       ROUTE truncated-params JSON+SSE equal
+       ROUTE unknown-function JSON+SSE equal
+       ROUTE malformed-first JSON+SSE equal
+       ROUTE no-function JSON+SSE equal
+       ROUTE recover-empty-header JSON+SSE equal
+       ROUTE recover-newline-header JSON+SSE equal
+       ROUTE recover-unclosed-header JSON+SSE equal
+       ROUTE recover-close-in-header JSON+SSE equal
+       ROUTE end-newlines-param JSON+SSE equal
+       ROUTE end-newlines-function JSON+SSE equal
+       ROUTE end-newlines-text JSON+SSE equal
+       
+       ====== expected this output: =========
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"role": "assistant", "content": ""}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "<too", "reasoning_content": "<too"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "l", "reasoning_content": "l"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "_call><f", "reasoning_content": "_call><f"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "u", "reasoning_content": "u"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "nct", "reasoning_content": "nct"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "io", "reasoning_content": "io"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "n=run><pa", "reasoning_content": "n=run><pa"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "r", "reasoning_content": "r"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "ameter=", "reasoning_content": "ameter="}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "p", "reasoning_content": "p"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "a", "reasoning_content": "a"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "y", "reasoning_content": "y"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "l", "reasoning_content": "l"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "oad", "reasoning_content": "oad"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": ">b'a'</pa", "reasoning_content": ">b'a'</pa"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "ram", "reasoning_content": "ram"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "eter></f", "reasoning_content": "eter></f"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "u", "reasoning_content": "u"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "nction></too", "reasoning_content": "nction></too"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "l_call>", "reasoning_content": "l_call>"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {}, "logprobs": null, "finish_reason": "stop"}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [], "usage": {"prompt_tokens": 285, "completion_tokens": 19, "total_tokens": 304}}
+       
+       data: [DONE]
+       
+       ␃
+       
+       ======== instead found this: =========
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"role": "assistant", "content": ""}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "<tool_call><function=run><par", "reasoning_content": "<tool_call><function=run><par"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "ameter=payload>b'a'</param", "reasoning_content": "ameter=payload>b'a'</param"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "eter></function></too", "reasoning_content": "eter></function></too"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "l_call>", "reasoning_content": "l_call>"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {}, "logprobs": null, "finish_reason": "stop"}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [], "usage": {"prompt_tokens": 285, "completion_tokens": 19, "total_tokens": 304}}
+       
+       data: [DONE]
+       
+       ␃
+       
+       ======================================
+       First difference occurs on line 3:
+       expected:
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "<too", "reasoning_content": "<too"}, "logprobs": null, "finish_reason": null}]}
+                                                                                                                                                                                            ^ ('\x22')
+       found:
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "<tool_call><function=run><par", "reasoning_content": "<tool_call><function=run><par"}, "logprobs": null, "finish_reason": null}]}
+                                                                                                                                                                                            ^ ('\x6c')
+       FAILURE wire case no-think-close
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x132f045 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /tmp/nanbeige-review-b84fc6c8/grouped/zig/src/server/llama_failure_test.zig:53:5: 0x1cff871 in wire (root.zig)
+           try std.testing.expectEqualStrings(expected.strField("body").?, got.items);
+           ^
+       /tmp/nanbeige-review-b84fc6c8/grouped/zig/src/server/llama_failure_test.zig:80:9: 0x1d01207 in test.Llama serve: pod failures preserve HTTP bytes and the exact SSE prefix (root.zig)
+               try wire(srv, a, body, case.get("sse").?);
+               ^
+error: 'llama_bytes_test.test.Llama serve: real HTTP writer matches complete pod JSON and SSE bytes' failed:
+       FAULT 7 pod-labelled allocation boundaries equal
+       BYTE parser 1005 cases equal
+       BYTE parser 226 cases equal
+       BYTE parser 128 cases equal
+       
+       ====== expected this output: =========
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"role": "assistant", "content": ""}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "<", "reasoning_content": "<"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "thin", "reasoning_content": "thin"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "k", "reasoning_content": "k"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": ">", "reasoning_content": ">"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "\nPlan.\n", "reasoning_content": "\nPlan.\n"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {}, "logprobs": null, "finish_reason": "stop"}]}
+       
+       data: [DONE]
+       
+       ␃
+       
+       ======== instead found this: =========
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"role": "assistant", "content": ""}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "<think>", "reasoning_content": "<think>"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "\nPlan.\n", "reasoning_content": "\nPlan.\n"}, "logprobs": null, "finish_reason": null}]}
+       
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {}, "logprobs": null, "finish_reason": "stop"}]}
+       
+       data: [DONE]
+       
+       ␃
+       
+       ======================================
+       First difference occurs on line 3:
+       expected:
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "<", "reasoning_content": "<"}, "logprobs": null, "finish_reason": null}]}
+                                                                                                                                                                                         ^ ('\x22')
+       found:
+       data: {"id": "chatcmpl-00000000000000000000000000000000", "object": "chat.completion.chunk", "created": 0, "model": "nanbeige", "choices": [{"index": 0, "delta": {"reasoning": "<think>", "reasoning_content": "<think>"}, "logprobs": null, "finish_reason": null}]}
+                                                                                                                                                                                         ^ ('\x74')
+       BYTE response case no-answer
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/testing.zig:696:9: 0x132f045 in expectEqualStrings (std.zig)
+               return error.TestExpectedEqual;
+               ^
+       /tmp/nanbeige-review-b84fc6c8/grouped/zig/src/server/llama_bytes_test.zig:137:9: 0x1382726 in test.Llama serve: real HTTP writer matches complete pod JSON and SSE bytes (root.zig)
+               try std.testing.expectEqualStrings(case.strField("sse_bytes").?, try wire(srv, a, body, @intCast(case.get("status").?.int64().?)));
+               ^
+failed command: ./.zig-cache/o/a3c071a9684103e411274261b4218b03/test --cache-dir=./.zig-cache --seed=0xcefe7893 --listen=-
+
+Build Summary: 1/3 steps succeeded (1 failed); 38/40 tests passed (2 failed)
+test-llama-server-host transitive failure
++- run test 38 pass, 2 fail (40 total)
+   +- compile test debug native success 1s MaxRSS:389M
+

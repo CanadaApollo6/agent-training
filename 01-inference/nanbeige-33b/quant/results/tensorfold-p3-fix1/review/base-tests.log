@@ -1,0 +1,53 @@
+test-qwen27-keep-host
++- run test 1 pass, 1 crash (2 total)
+error: 'qwen27_keep_test.test.qwen27 speed: shared in-place verify then empty and full keeps restore state and retain conv histories' terminated with signal ABRT with stderr:
+       General protection exception (no address available)
+       /tmp/nanbeige-review-b84fc6c8/base/zig/src/families/qwen27/gdn_pool_gpu.zig:117:39: 0x1246cf6 in prepare (qwen27_keep_test.zig)
+               if (pool.residency) |f| f.join(f.ctx, pool.before.?);
+                                             ^
+       /tmp/nanbeige-review-b84fc6c8/base/zig/src/qwen27_keep_test.zig:81:25: 0x1276d3a in test.qwen27 speed: shared in-place verify then empty and full keeps restore state and retain conv histories (qwen27_keep_test.zig)
+               try pool.prepare(.{ .allocations = &allocations }, plan, false);
+                               ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/compiler/test_runner.zig:143:68: 0x11e991a in mainServer (test_runner.zig)
+                       const status: TestResults.Status = if (test_fn.func()) |v| s: {
+                                                                          ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/compiler/test_runner.zig:72:26: 0x11ea74d in main (test_runner.zig)
+               return mainServer(init) catch |err| panic("internal test runner failure: {t}", .{err});
+                                ^
+       /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/std/start.zig:789:88: 0x11e7458 in callMain (std.zig)
+           if (fn_info.param_types[0].? == std.process.Init.Minimal) return wrapMain(root.main(.{
+                                                                                              ^
+       ../sysdeps/nptl/libc_start_call_main.h:59:16: 0x7f1257227780 in __libc_start_call_main (../sysdeps/x86/libc-start.c)
+       ../csu/libc-start.c:372:3: 0x7f12572278b8 in __libc_start_main_impl (../sysdeps/x86/libc-start.c)
+       ???:?:?: 0x1293414 in _start (???)
+failed command: ./.zig-cache/o/0766404aac31558bec1148170b6d1921/test --cache-dir=./.zig-cache --seed=0xab905fee --listen=-
+
+Build Summary: 23/25 steps succeeded (1 failed); 57/58 tests passed (1 crashed)
+test-qwen27-required-host success
++- run test 15 pass (15 total) 508ms MaxRSS:11M
+   +- compile test debug native success 1s MaxRSS:335M
+test-qwen27-masks-host success
++- run test 6 pass (6 total) 91ms MaxRSS:9M
+   +- compile test debug native success 429ms MaxRSS:190M
+test-qwen27-equality-host success
++- run test 1 pass (1 total) 19s MaxRSS:10M
+   +- compile test debug native success 333ms MaxRSS:180M
+test-qwen27-plans-host success
++- run test 22 pass (22 total) 51ms MaxRSS:8M
+   +- compile test debug native success 288ms MaxRSS:173M
+      +- WriteFile qwen27-fake-source.zig success
+test-qwen27-keep-host transitive failure
++- run test 1 pass, 1 crash (2 total)
+   +- compile test debug native success 255ms MaxRSS:169M
+      +- WriteFile qwen27-fake-source.zig (reused)
+test-qwen27-bank-host success
++- run test 5 pass (5 total) 16ms MaxRSS:11M
+   +- compile test debug native success 445ms MaxRSS:169M
+      +- WriteFile qwen27-fake-source.zig (reused)
+test-qwen27-speed-host success
++- run test 3 pass (3 total) 92ms MaxRSS:8M
+   +- compile test debug native success 349ms MaxRSS:170M
+test-qwen27-ane-policy-host success
++- run test 4 pass (4 total) 5ms MaxRSS:7M
+   +- compile test debug native success 318ms MaxRSS:162M
+

@@ -1,0 +1,16 @@
+zig/src/families/qwen27/checkpoint.zig:6:25: error: root source file struct 'root' has no member named 'checkpoint_host'
+pub const Tensor = core.checkpoint_host.Tensor;
+                        ^~~~~~~~~~~~~~~
+zig/src/core/root.zig:1:1: note: struct declared here
+//! Backend-neutral engine parts: checkpoint files, the CUDA draft-depth rule, the copy index, the tokenizer.
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+referenced by:
+    src.families.qwen27.dflash.fixtures.Store: zig/src/families/qwen27/dflash/fixtures.zig:12:18
+    init: zig/src/families/qwen27/dflash/fixtures.zig:14:42
+    4 reference(s) hidden; use '-freference-trace=6' to see all references
+zig/src/families/qwen27/checkpoint.zig:7:24: error: root source file struct 'root' has no member named 'checkpoint_host'
+pub const DType = core.checkpoint_host.DType;
+                       ^~~~~~~~~~~~~~~
+zig/src/core/root.zig:1:1: note: struct declared here
+//! Backend-neutral engine parts: checkpoint files, the CUDA draft-depth rule, the copy index, the tokenizer.
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

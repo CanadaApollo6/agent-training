@@ -1,0 +1,32 @@
+All commands CPU only; CUDA_VISIBLE_DEVICES=''. No GPU kernels or GPU checks ran.
+Repository /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama, head b84fc6c852efb30ebef213040d57d232503f2d17.
+
+cd /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama
+export CUDA_VISIBLE_DEVICES=''
+export TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb
+~/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-server-host test-server-cpu test-tool-parse-host test-server-recovery-host test-tool-visibility-http-host test-llama-host test-dflash2-host test-qwen27-ane-policy-host test-qwen27-speed-host test-qwen27-bank-host test-qwen27-keep-host test-qwen27-plans-host test-qwen27-equality-host test-qwen27-masks-host test-qwen27-required-host -j4 --summary all --cache-dir /tmp/nanbeige-review-b84fc6c8/head-cache
+Result head-fresh.log: 1192/1192. Requested five steps: 1015/1015. Extra llama 61, dflash 57, Qwen 59.
+
+~/.local/share/zig-x86_64-linux-0.17.0/zig test -lc --dep lanes -Mroot=/tmp/nanbeige-review-b84fc6c8/repro/repro.zig -Mlanes=zig/src/core/lanes/lanes.zig --test-filter 'fully accepted'
+Result repro.log: 1/1, asserts the stale context and subsequent BadCommittedTaps error. Backend is copied verbatim; GPU operations and draft storage are CPU fakes.
+
+~/.local/share/zig-x86_64-linux-0.17.0/zig test -lc --dep lanes -Mroot=/tmp/nanbeige-review-b84fc6c8/repro/acceptance.zig -Mlanes=zig/src/core/lanes/lanes.zig --test-filter review
+Result acceptance.log: 2/2; 2048 keyed equality cases, 65536 generated tokens, 21 stopping cases. Uses host sampler and acceptPath, not CUDA arithmetic.
+
+~/.local/share/zig-x86_64-linux-0.17.0/zig test --dep kv -Mroot=/tmp/nanbeige-review-b84fc6c8/repro/codec.zig -Mkv=zig/src/cuda/kv4_ref.zig
+Result codec.log: 2/2; 82 row/group/rollback/nonfinite cases and 1032 inverse rotations. CPU reference only.
+
+python3 tools/zig/lean_check.py > /tmp/nanbeige-review-b84fc6c8/h.txt
+python3 tools/zig/lean_new.py /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/lean-base.txt /tmp/nanbeige-review-b84fc6c8/h.txt
+Result lean.txt: 426 inherited, 0 new. Changed files <=600 lines and single-line comments <=120 columns. git diff --check passes.
+
+python3 tools/zig/llama_kv_prepare.py --review /tmp/nanbeige-review-9a5732e0 --out /tmp/nanbeige-review-b84fc6c8/inputs
+Result: 3 short sequences, only 1 unique; 3 unique long sequences.
+
+CPU-only runner commands: llama-draft-capacity MODEL DRAFT 49152 512 4096; llama-draft-capacity MODEL DRAFT 24576 0; llama-draft-capacity MODEL DRAFT 24576 512.
+Source dispatches these before opening CUDA. All 18 capacity combinations match receipts. Outputs capacity*.log.
+
+Baseline archived with git archive 9a5732e0 under /tmp/nanbeige-review-b84fc6c8/base, Qwen build steps match head except test-dflash2-host/test-llama-host and five requested server suites. Result base-tests.log: 57/58, 1 existing undefined callback fixture crash; head Qwen 59/59.
+DFlash test command is in dflash-build-command.log; remove --listen=- to run standalone and use the base/head directory. Baseline requires a scratch compatibility alias `pub const checkpoint_host = checkpoint;` in core/root.zig. Baseline 51/51, head 57/57; same 49 named tests, six new anonymous import wrappers. The unadapted baseline compilation failure is retained in dflash-base.log.
+
+Grouped wire reproduction: archive b84fc6c8 under /tmp/nanbeige-review-b84fc6c8/grouped. In the scratch copy only, Script.submit in zig/src/server/llama_output_test.zig emits token slices of up to eight instead of single tokens. Run zig build test-llama-server-host -j4 --summary all there. Result grouped-wire.log: 38/40, two exact SSE-byte fixture failures. JSON/content checks still pass. No production source changed in this reproduction.

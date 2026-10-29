@@ -1,0 +1,33 @@
+All commands ran from /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama.
+CUDA_VISIBLE_DEVICES='' for every Zig build/test and Python test. No GPU inference or kernels executed.
+
+Original review repro, before production fixes:
+/home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test -lc --dep lanes -Mroot=/tmp/nanbeige-review-b84fc6c8/repro/repro.zig -Mlanes=zig/src/core/lanes/lanes.zig --test-filter 'fully accepted'
+
+New regressions before production fixes:
+TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-host test-llama-server-host -j4 --summary all
+
+Final fresh host suite:
+TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-server-host test-server-cpu test-tool-parse-host test-server-recovery-host test-tool-visibility-http-host test-llama-host test-dflash2-host test-qwen27-ane-policy-host test-qwen27-speed-host test-qwen27-bank-host test-qwen27-keep-host test-qwen27-plans-host test-qwen27-equality-host test-qwen27-masks-host test-qwen27-required-host -j4 --summary all --cache-dir /tmp/nanbeige-fix1-final-host-cache
+
+Focused stopping suite:
+TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-blocks-host -j4 --summary all
+
+Native compile only:
+/home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build native tf-llama-test -Dnvcc=/opt/cuda/bin/nvcc -Dsm=86 -j4 --summary all
+/home/riels/.local/share/zig-x86_64-linux-0.17.0/zig build native tf-llama-test -Dnvcc=/opt/cuda/bin/nvcc -Dsm=89 -j4 --summary all
+
+CPU script contracts:
+python3 tools/zig/test_llama_gates.py
+python3 -m py_compile tools/zig/llama_full_gate.py tools/zig/llama_draft_full.py tools/zig/llama_draft_wire.py tools/zig/llama_kv_full.py tools/zig/llama_kv_prepare.py tools/zig/llama_serve_envelopes.py tools/zig/llama_gpu_run.py tools/zig/test_llama_gates.py
+python3 tools/zig/llama_kv_prepare.py --review /tmp/nanbeige-review-9a5732e0 --out /tmp/nanbeige-fix1-inputs
+zig-out/bin/tf-llama-test llama-draft-capacity /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/drafter/data/draft-cool-step570 49152 512 4096
+
+Lint:
+python3 tools/zig/lean_check.py > /tmp/h.txt
+python3 tools/zig/lean_new.py /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/lean-base.txt /tmp/h.txt
+git diff --check
+Zig fmt --check was run on every changed Zig file.
+
+CPU-only fake-runner tests validate 22 planned full-model jobs and never invoke nvidia-smi or CUDA.
+Every real full-model GPU gate remains NOT RUN. See README.md for the portable rented-card command.

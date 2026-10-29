@@ -1,0 +1,52 @@
+1/51 dflash2_host.test_0...OK
+2/51 src.families.qwen27.dflash.root.test_0...OK
+3/51 src.families.qwen27.dflash.config.test.stock contracts count81native tensors47eligiblelinears and seven mask predictions...OK
+4/51 src.families.qwen27.dflash.config.test.tap convention is fixed after decoder blocks and cannot be shifted...OK
+5/51 src.families.qwen27.dflash.config.test.block slots and finite dimensions are admitted before operators...OK
+6/51 src.families.qwen27.dflash.config.test.actual nested cached schema resolves the stock noncausal draft and tap order...OK
+7/51 src.families.qwen27.dflash.config.test.a causal reading or changed native storage cannot silently become the default...OK
+8/51 src.families.qwen27.dflash.weights.test.inventory is81exact names including unsuffixed BF16codebooks...OK
+9/51 src.families.qwen27.dflash.operators.test.unprepared default cannot claim parity while explicit BF16 reference remains possible...OK
+10/51 src.families.qwen27.dflash.operators.test.operator dtype and physical width cannot be silently cast...OK
+11/51 src.families.qwen27.dflash.session.test.committed tap admission excludes pending and future rows and shifts the draw once...OK
+12/51 src.families.qwen27.dflash.session.test.cropping moves only the context beginning while absolute anchor stays committed end...OK
+13/51 src.families.qwen27.dflash.session.test.wrong tap reading or dtype fails before a cache transaction...OK
+14/51 src.families.qwen27.dflash.selector.test.draft roots shift to pending row while descendants retain topology...OK
+15/51 src.families.qwen27.dflash.runtime_head.test.draft vocabulary includes both stock spans and excludes their gap...OK
+16/51 src.families.qwen27.dflash.runtime_context.test.sliding context advances per query; trained slots see no later slot, later slots see every slot...OK
+17/51 src.families.qwen27.dflash.runtime_context.test.sliding context advances per query while every proposal slot remains visible...OK
+18/51 src.families.qwen27.dflash.fixtures.test.complete tiny graph preserves every native tensor and target binding pointer...OK
+19/51 src.families.qwen27.dflash.fixtures.test.wrong BF16 metadata or shape cannot be fixed through a cast...OK
+20/51 src.families.qwen27.dflash.execution_test.test.actual five-layer schedule consumes anchor plus masks and only emits seven mask positions...OK
+21/51 src.families.qwen27.dflash.execution_test.test.taps absorbed in the block's frame give the separate path's tree, one staged append and no commit...OK
+22/51 src.families.qwen27.dflash.execution_test.test.context append failure aborts before session metadata or readiness advances...OK
+23/51 src.families.qwen27.dflash.execution_test.test.default preparation and wrong operator dtype refuse before claiming native parity...OK
+24/51 src.families.qwen27.dflash.execution_test.test.selector conditions descendants on parent tokens and shifts the native verify root exactly once...OK
+25/51 src.families.qwen27.dflash.execution_test.test.forward sink retains the complete checked schedule without host lattice readback...OK
+26/51 src.families.qwen27.dflash.execution_test.test.normalized sibling ties preserve candidate order before heap token tie-breaking...OK
+27/51 src.families.qwen27.dflash.execution_test.test.runtime blocks2 through16 preserve checkpoint block8 and uninterrupted convolution geometry...OK
+28/51 src.families.qwen27.dflash.execution_test.test.tiny conditional score differences collapse before sibling selection...OK
+29/51 src.families.qwen27.checkpoint.test.native packed words and mixed scale dtypes remain borrowed unchanged...OK
+30/51 src.families.qwen27.checkpoint.test.dense projections preserve native f16 bf16 and f32...OK
+31/51 src.families.qwen27.checkpoint.test.packed shapes require matching metadata and declared affine format...OK
+32/51 src.families.qwen27.checkpoint.test.wrong native tensor dtype and truncated bytes refuse...OK
+33/51 src.families.qwen27.checkpoint.test.source lookup applies a dense module override without converting its bytes...OK
+34/51 src.families.qwen27.checkpoint.test.shared checkpoint source preserves borrowed bytes and used tensor accounting...OK
+35/51 src.families.qwen27.checkpoint.test.invalid affine spec or integer scale cannot reach quantized arithmetic...OK
+36/51 src.families.qwen27.affine.test.affine formats preserve all declared bit widths and groups...OK
+37/51 src.families.qwen27.affine.test.module overrides preserve dense and mixed native formats...OK
+38/51 src.families.qwen27.affine.test.root quantization precedes text aliases and nested metadata is accepted...OK
+39/51 src.families.qwen27.affine.test.conflicting path aliases refuse the module...OK
+40/51 src.families.qwen27.affine.test.unsupported methods and malformed native affine metadata refuse...OK
+41/51 src.families.qwen27.affine.test.no affine metadata remains explicit rather than guessing four bits...OK
+42/51 src.families.qwen27.config.test.flat config preserves dimensions and interval schedule...OK
+43/51 src.families.qwen27.config.test.nested config merges generation EOS in stable order...OK
+44/51 src.families.qwen27.config.test.explicit layer types preserve their order...OK
+45/51 src.families.qwen27.config.test.rope parameters preserve precision and section metadata...OK
+46/51 src.families.qwen27.config.test.dense config refuses MoE and tied embedding heads...OK
+47/51 src.families.qwen27.config.test.invalid scalar shapes and types fail without a cast trap...OK
+48/51 src.families.qwen27.config.test.missing and out of vocabulary EOS fail...OK
+49/51 src.families.qwen27.config.test.malformed layer and rope metadata fail...OK
+50/51 src.families.qwen27.config.test.head grouping requires complete key and value groups...OK
+51/51 src.families.qwen27.config.test.text execution refuses unsupported gates and activation contracts...OK
+All 51 tests passed.

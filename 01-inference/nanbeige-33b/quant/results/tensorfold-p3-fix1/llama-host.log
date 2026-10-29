@@ -1,0 +1,11 @@
+test-llama-host
++- run test w
+after full acceptance target=5 draft=5 accepted=2 proposed=2
+failed command: ./.zig-cache/o/a5f228f53bc1f76b38b4e855536818f2/test --cache-dir=./.zig-cache --seed=0x9b40ca18 --listen=-
+
+Build Summary: 4/4 steps succeeded; 65/65 tests passed
+test-llama-host success
++- run test 65 pass (65 total) 70ms MaxRSS:10M
+   +- compile test debug native success 543ms MaxRSS:207M
+      +- options cached
+

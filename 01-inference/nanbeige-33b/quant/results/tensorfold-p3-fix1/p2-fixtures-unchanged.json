@@ -1,0 +1,58 @@
+[
+  {
+    "path": "zig/src/server/fixtures/llama/prompts.json",
+    "sha256": "0c9cfc82f845f2deb37014f99f58603b6fa56f3ef63d317137a5ce0f1f572107"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/outputs.json",
+    "sha256": "e4be311b12d6c6c09ffd61dce9a4e71e7500d1129a5e955ae84afcc833611241"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/sources.json",
+    "sha256": "98adbfdabe486311658f781bec9792d13569870307a422740eced04078ee62e1"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/outputs_fuzz.json",
+    "sha256": "2f1d303e5cd6c26a62b3332cdf0fe39f5e21b33487aadb8e39d1e3032fd92079"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/outputs_grammar.json",
+    "sha256": "8330634fb566cdcf854555d45ad87bed34acf78b9fd2a9bd33df2665eebf1a3f"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/outputs_typed.json",
+    "sha256": "0667d649d3303ff1a1fe0fc936101a68b015335ca16a4688e63d8fd8b41c0b77"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/responses.json",
+    "sha256": "6ac2fac8a6f3e250151b4873af5b5d413a4fced6a41f526e9b6ed0e5c669d301"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/prepared.json",
+    "sha256": "0fb20e962a981ad02a4dc14d5597fd7c0df10cba21e132aa0998332a0f885acb"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/unicode-15.names.gz",
+    "sha256": "b0526c06eb8bac3552c997c574cb952c322f21bb1049d82a6349f9798dd4d3e1"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/outputs_escapes.json",
+    "sha256": "5b2c2f3559135ddb4a9cbea689fbaa5bad72fb4672b03c40310180fa0515ed5e"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/unicode-15.LICENSE.txt",
+    "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/failures.json",
+    "sha256": "9a75c54ba2c7c57293e63941a5dc0caf556c0f0c163532e5be453eb31f94e8f6"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/failures.sources.json",
+    "sha256": "280abc30d49f716bfefd0dbefa6eb3459701b2d30d12c3f37d086937e23caca8"
+  },
+  {
+    "path": "zig/src/server/fixtures/llama/failure_faults.json",
+    "sha256": "3349a14a08258b6e5e81d4337f21c9a9935e1603517a9c4c5402535e607ed9dc"
+  }
+]
