@@ -1,0 +1,13 @@
+PASS draft verify mode=bf16 width=2 rows=16 logits byte-equal
+PASS draft verify mode=bf16 width=3 rows=16 logits byte-equal
+PASS draft verify mode=bf16 width=8 rows=16 logits byte-equal
+PASS draft rollback mode=bf16 prefix=9
+PASS draft verify mode=q4 width=2 rows=16 logits byte-equal
+PASS draft verify mode=q4 width=3 rows=16 logits byte-equal
+PASS draft verify mode=q4 width=8 rows=16 logits byte-equal
+PASS draft rollback mode=q4 prefix=9
+PROPOSALS format=affine4 tokens={ 152367, 152361, 13, 152369, 152367, 152361, 13 }
+FOOTPRINT format=affine4 native=4047202816 codebooks_host=170917888 weight_device=1091091968 stage=144506880 loaded_delta=1156869696 warm_delta=1156869696 peak_delta=1156869696 runtime_pool=58909760 proposed=7
+PASS partial production lane equality greedy=32 sampled=32 penalties=2 window=8 diagnostic tap mapping
+SUMMARY draft partial target_layers=2 modes=2 widths=3 checked_logits=96 rollback=2 format=affine4
+{"command": ["zig-out/bin/tf-llama-test", "llama-draft-partial", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/drafter/data/draft-cool-step570", "/tmp/nanbeige-p3/taps.bf16", "/tmp/nanbeige-p3/native-affine4.bf16", "affine4"], "pid": 718715, "exit_code": 0, "seconds": 9.268916914996225, "timeout": false, "initial_free_mib": 13379, "minimum_free_mib": 10529, "peak_process_vram_mib": 2856, "sampling_ms": 200}

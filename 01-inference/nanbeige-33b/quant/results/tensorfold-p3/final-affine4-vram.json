@@ -1,0 +1,19 @@
+{
+  "command": [
+    "zig-out/bin/tf-llama-test",
+    "llama-draft-partial",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/drafter/data/draft-cool-step570",
+    "/tmp/nanbeige-p3/taps.bf16",
+    "/tmp/nanbeige-p3/native-affine4.bf16",
+    "affine4"
+  ],
+  "pid": 718715,
+  "exit_code": 0,
+  "seconds": 9.268916914996225,
+  "timeout": false,
+  "initial_free_mib": 13379,
+  "minimum_free_mib": 10529,
+  "peak_process_vram_mib": 2856,
+  "sampling_ms": 200
+}

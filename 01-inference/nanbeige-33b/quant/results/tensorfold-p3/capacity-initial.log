@@ -1,0 +1,8 @@
+CAPACITY draft=none kv=bf16 total_mib=24576 allowance_mib=512 weights=14356819968 extra=0 max_context=40700
+CAPACITY draft=none kv=q4 total_mib=24576 allowance_mib=512 weights=14356819968 extra=0 max_context=144424
+DRAFT format=bf16 native=4047202816 device_weights=3876634112 host_codebooks=170917888 pool=24187648 live_fixed=3949632768 total_extra=3957116192 stage=0
+CAPACITY draft=bf16 kv=bf16 total_mib=24576 allowance_mib=512 weights=14356819968 extra=3957116192 max_context=22127
+CAPACITY draft=bf16 kv=q4 total_mib=24576 allowance_mib=512 weights=14356819968 extra=3957116192 max_context=78630
+DRAFT format=affine4 native=4047202816 device_weights=1091091968 host_codebooks=170917888 pool=16966720 live_fixed=1156869696 total_extra=1249376800 stage=144506880
+CAPACITY draft=affine4 kv=bf16 total_mib=24576 allowance_mib=512 weights=14356819968 extra=1249376800 max_context=34836
+CAPACITY draft=affine4 kv=q4 total_mib=24576 allowance_mib=512 weights=14356819968 extra=1249376800 max_context=123651

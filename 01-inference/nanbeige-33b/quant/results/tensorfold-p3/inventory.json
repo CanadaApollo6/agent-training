@@ -1,0 +1,17 @@
+{
+  "checkpoint": "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/drafter/data/draft-cool-step570/model.safetensors",
+  "tensors": 81,
+  "bytes": 4047211776,
+  "categories": {
+    "selector": 3670016,
+    "codebooks": 170917888,
+    "fusion": 513802240,
+    "norms": 172032,
+    "conv": 257474560,
+    "mlp": 2367160320,
+    "attention": 734005760
+  },
+  "has_embedding": false,
+  "has_lm_head": false,
+  "config_sha256": "609afca8c979c1d5c84ddc1ddf980eeb328a3fc686814b51f709438ac55119bc"
+}

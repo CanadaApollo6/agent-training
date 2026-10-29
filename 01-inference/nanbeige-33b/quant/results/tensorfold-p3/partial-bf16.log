@@ -1,0 +1,11 @@
+PASS draft verify mode=bf16 width=2 rows=16 logits byte-equal
+PASS draft verify mode=bf16 width=3 rows=16 logits byte-equal
+PASS draft verify mode=bf16 width=8 rows=16 logits byte-equal
+PASS draft rollback mode=bf16 prefix=9
+PASS draft verify mode=q4 width=2 rows=16 logits byte-equal
+PASS draft verify mode=q4 width=3 rows=16 logits byte-equal
+PASS draft verify mode=q4 width=8 rows=16 logits byte-equal
+PASS draft rollback mode=q4 prefix=9
+FOOTPRINT format=bf16 native=4047202816 codebooks_host=170917888 weight_device=3876634112 stage=0 loaded_delta=3949632768 warm_delta=3949632768 peak_delta=3949632768 runtime_pool=66130688 proposed=7
+SUMMARY draft partial target_layers=2 modes=2 widths=3 checked_logits=96 rollback=2 format=bf16
+{"command": ["zig-out/bin/tf-llama-test", "llama-draft-partial", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb", "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/drafter/data/draft-cool-step570", "/tmp/nanbeige-p3/taps.bf16", "/tmp/nanbeige-p3/native-bf16.bf16", "bf16"], "pid": 563959, "exit_code": 0, "seconds": 11.997886769997422, "timeout": false, "initial_free_mib": 13469, "minimum_free_mib": 7983, "peak_process_vram_mib": 5476, "sampling_ms": 200}

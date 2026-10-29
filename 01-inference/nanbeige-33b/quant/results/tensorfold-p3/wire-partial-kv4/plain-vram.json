@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig-out/native/bin/tensorfold-native",
+    "serve",
+    "/tmp/nanbeige-p3/server-model",
+    "--port",
+    "42421",
+    "--name",
+    "gate",
+    "--parallel",
+    "1",
+    "--context",
+    "256",
+    "--prompt-cache-gib",
+    "0",
+    "--keep-warm",
+    "0",
+    "--no-update-check",
+    "--no-drafts"
+  ],
+  "pid": 706601,
+  "exit_code": 0,
+  "seconds": 5.133032261001063,
+  "timeout": false,
+  "initial_free_mib": 13395,
+  "minimum_free_mib": 10993,
+  "peak_process_vram_mib": 2392,
+  "sampling_ms": 200
+}

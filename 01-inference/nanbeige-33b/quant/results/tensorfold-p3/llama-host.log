@@ -1,0 +1,34 @@
+test-llama-host
++- run test
+   +- compile test debug native 3 errors
+zig/src/families/dflash2/cuda_runtime.zig:59:206: error: capture shadows declaration of 'bytes'
+        for (&r.modules, [_][]const u8{ cuda.kernels.qmm_group, cuda.kernels.qmm_prefill, cuda.kernels.lane_gemv, cuda.kernels.affine4_pack, cuda.kernels.qwen35_draft, cuda.kernels.torch_pointwise }) |*m, bytes| {
+                                                                                                                                                                                                             ^~~~~
+zig/src/families/dflash2/cuda_runtime.zig:98:9: note: declared here
+    pub fn bytes(r: *const Runtime) usize {
+    ~~~~^~
+zig/src/families/qwen27/checkpoint.zig:6:25: error: root source file struct 'root' has no member named 'checkpoint_host'
+pub const Tensor = core.checkpoint_host.Tensor;
+                        ^~~~~~~~~~~~~~~
+zig/src/core/root.zig:1:1: note: struct declared here
+//! Backend-neutral engine parts: checkpoint files, the CUDA draft-depth rule, the copy index, the tokenizer.
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+referenced by:
+    Tensor: zig/src/families/dflash2/weights.zig:4:22
+    test.draft storage is explicit and codebooks do not occupy device memory: zig/src/families/dflash2/cuda_weights.zig:124:21
+    4 reference(s) hidden; use '-freference-trace=6' to see all references
+zig/src/families/qwen27/checkpoint.zig:7:24: error: root source file struct 'root' has no member named 'checkpoint_host'
+pub const DType = core.checkpoint_host.DType;
+                       ^~~~~~~~~~~~~~~
+zig/src/core/root.zig:1:1: note: struct declared here
+//! Backend-neutral engine parts: checkpoint files, the CUDA draft-depth rule, the copy index, the tokenizer.
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+error: 3 compilation errors
+failed command: /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test -Odebug --dep cuda --dep core --dep lanes --dep sys --dep checkpoint_config --dep save_guard -Mroot=zig/llama_cuda.zig -Odebug --dep gpu_memory --dep kernel_options --dep stagger --dep sys --dep checkpoint_config --dep save_guard -Mcuda=zig/src/cuda/root.zig -Odebug --dep gpu_memory --dep tokenizer --dep living --dep sys --dep checkpoint_config --dep save_guard -Mcore=zig/src/core/root.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mlanes=zig/src/core/lanes/lanes.zig --dep checkpoint_config --dep save_guard -Msys=zig/src/platform/sys.zig --dep save_guard -Mcheckpoint_config=zig/src/core/checkpoint_config.zig -Msave_guard=zig/src/core/save_guard.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mgpu_memory=zig/src/gpu_memory.zig -Mkernel_options=.zig-cache/o/163d285497c58d762b93d74b6b1f42b0/options.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mstagger=zig/src/core/stagger.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mtokenizer=zig/src/core/tokenizer/tokenizer.zig -Odebug --dep sys --dep checkpoint_config --dep save_guard -Mliving=zig/src/living/living.zig -lc --cache-dir .zig-cache --global-cache-dir /home/riels/.cache/zig --build-root . --name test --zig-lib-dir /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/ --listen=-
+
+Build Summary: 1/4 steps succeeded (1 failed)
+test-llama-host transitive failure
++- run test transitive failure
+   +- compile test debug native 3 errors
+      +- options cached
+

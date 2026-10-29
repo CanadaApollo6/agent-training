@@ -1,0 +1,48 @@
+test-qwen27-plans-host
++- run test
+   +- compile test debug native 1 errors
+zig/src/families/qwen27/checkpoint.zig:7:24: error: root source file struct 'qwen27_speed_core' has no member named 'checkpoint'
+pub const DType = core.checkpoint.DType;
+                       ^~~~~~~~~~
+zig/qwen27_speed_core.zig:1:1: note: struct declared here
+//! Shared host planning and profiling used by the recording Metal fixture.
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+referenced by:
+    DType: zig/src/families/qwen27/gdn_contract.zig:4:40
+    storage: zig/src/families/qwen27/gdn_contract.zig:11:23
+    2 reference(s) hidden; use '-freference-trace=4' to see all references
+error: 1 compilation errors
+failed command: /home/riels/.local/share/zig-x86_64-linux-0.17.0/zig test -Odebug --dep metal --dep core --dep core_delta --dep sys --dep checkpoint_config --dep save_guard -Mroot=zig/src/qwen27_keep_test.zig --dep sys --dep checkpoint_config --dep save_guard -Mmetal=zig/src/qwen27_speed_metal.zig --dep metal --dep sys --dep checkpoint_config --dep save_guard -Mcore=zig/qwen27_speed_core.zig --dep metal --dep kernel_sources --dep sys --dep checkpoint_config --dep save_guard -Mcore_delta=zig/src/core/deltanet_kernels.zig --dep checkpoint_config --dep save_guard -Msys=zig/src/platform/sys.zig --dep save_guard -Mcheckpoint_config=zig/src/core/checkpoint_config.zig -Msave_guard=zig/src/core/save_guard.zig -Mkernel_sources=/tmp/nanbeige-p3-host-cache/o/6c8b6f9eeca16b06789d25ce4286d93f/qwen27-fake-source.zig -lc --test-filter "GDN Metal records have fixed offsets without enum padding" --test-filter "compact GDN schedules isolate unequal streams and overflow keeps the snapshot plan valid" --test-filter "native storage keeps all sixteen combinations and refuses an implicit F16 cast" --test-filter "actual target widths and snapshot bytes preserve FP32 state" --test-filter "wrong shape flags and dimensions refuse before an encoder exists" --test-filter "unequal windows flatten conv rows without shifting history or local parents" --test-filter "empty keep retains the base and duplicate destination slots refuse" --test-filter "a bad accepted path or input extent cannot become replay indices" --test-filter "snapshot scratch scales with the aggregate round instead of layers or slots" --test-filter "native byte spans accept BF16 alignment and reject unsafe range arithmetic" --test-filter "a plan from a larger slot pool cannot index the committed state bank" --test-filter "cross-stream conv rows and a broken retained path refuse before encoding" --test-filter "siblings at one absolute position see only their own ancestors and committed keys" --test-filter "absolute64tile512chunk boundaries retain prefix continuation without sibling padding" --test-filter "mixed streams keep distinct physical windows and reject capacity and parent defects" --test-filter "nonprefix keep uses two-pass gather rows rather than clobbering a later source" --test-filter "canonical tail keeps the same causal and ancestor map across multiple key chunks" --test-filter "a chain's prefix runs to its last key and leaves no tail chunk, any other round keeps the tail kernel" --test-filter "each row cuts its keys as its own one-row step does, in windows, trees and beside other streams across 8192" --test-filter "a window that starts below 8192 keeps its partials within the scratch's chunks" --test-filter "target attention reads every config dimension without widening kernel qualification" --cache-dir /tmp/nanbeige-p3-host-cache --global-cache-dir /home/riels/.cache/zig --build-root . --name test --zig-lib-dir /home/riels/.local/share/zig-x86_64-linux-0.17.0/lib/ --listen=-
+
+Build Summary: 25/28 steps succeeded (1 failed); 94/94 tests passed
+test-qwen27-masks-host success
++- run test 6 pass (6 total) 109ms MaxRSS:8M
+   +- compile test debug native success 497ms MaxRSS:188M
+test-qwen27-required-host success
++- run test 15 pass (15 total) 392ms MaxRSS:11M
+   +- compile test debug native success 1s MaxRSS:304M
+test-qwen27-equality-host success
++- run test 1 pass (1 total) 19s MaxRSS:10M
+   +- compile test debug native success 358ms MaxRSS:185M
+test-qwen27-plans-host transitive failure
++- run test transitive failure
+   +- compile test debug native 1 errors
+      +- WriteFile qwen27-fake-source.zig success
+test-qwen27-keep-host success
++- run test 2 pass (2 total) 13ms MaxRSS:10M
+   +- compile test debug native success 387ms MaxRSS:165M
+      +- WriteFile qwen27-fake-source.zig (reused)
+test-qwen27-bank-host success
++- run test 5 pass (5 total) 24ms MaxRSS:11M
+   +- compile test debug native success 386ms MaxRSS:168M
+      +- WriteFile qwen27-fake-source.zig (reused)
+test-qwen27-speed-host success
++- run test 4 pass (4 total) 72ms MaxRSS:8M
+   +- compile test debug native success 385ms MaxRSS:170M
+test-qwen27-ane-policy-host success
++- run test 4 pass (4 total) 9ms MaxRSS:8M
+   +- compile test debug native success 308ms MaxRSS:161M
+test-dflash2-host success
++- run test 57 pass (57 total) 67ms MaxRSS:9M
+   +- compile test debug native success 563ms MaxRSS:195M
+

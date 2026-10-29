@@ -1,0 +1,20 @@
+[
+  "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gpu_run.py",
+  "--need-mib",
+  "15449",
+  "--timeout",
+  "3600",
+  "--receipt",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3/full-short-kv16-affine4/vram.json",
+  "--",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/zig-out/bin/tf-llama-test",
+  "llama-draft-full",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/drafter/data/draft-cool-step570",
+  "/tmp/nanbeige-p4a/short/sequences.json",
+  "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3/full-short-kv16-affine4/pairs.json",
+  "256",
+  "32",
+  "5"
+]
