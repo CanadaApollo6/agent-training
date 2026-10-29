@@ -1,0 +1,14 @@
+PROJECTED {"seconds_by_job": {"p1-reference": 9010}, "total_seconds": 9010, "rates": null, "basis": "860 GB/s planning assumption", "elapsed_seconds": 9.379102266393602e-05, "projected_session_seconds": 9010.000093791023}
+{
+  "sigkill_exit": true,
+  "running_durable": true,
+  "restart_success": true,
+  "pass_not_rerun_running_retried": true,
+  "idempotent": true,
+  "torn_temporary_ignored": true,
+  "input_tamper_refused": true,
+  "artifact_tamper_refused": true,
+  "subset_partial": true,
+  "skip_dependency_refused": true,
+  "budget_refused": true
+}

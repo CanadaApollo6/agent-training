@@ -1,0 +1,56 @@
++- run test 41 pass, 1 crash (42 total)
+error: 'llama_failure_test.test.Llama serve: pod failures preserve HTTP bytes and the exact SSE prefix' terminated with signal TERM with stderr:
+failed command: ./.zig-cache/o/b9acccf23774525dd33a8433760b5816/test --cache-dir=./.zig-cache --seed=0x52f18849 --listen=-
+Build Summary: 51/53 steps succeeded (1 failed); 93/94 tests passed (1 crashed)
+test-qwen27-required-host success
++- run test cached
+   +- compile test debug native cached 15ms MaxRSS:40M
+test-qwen27-masks-host success
++- run test 6 pass (6 total) 71ms MaxRSS:9M
+   +- compile test debug native cached 12ms MaxRSS:37M
+test-qwen27-equality-host success
++- run test 1 pass (1 total) 19s MaxRSS:10M
+   +- compile test debug native cached 9ms MaxRSS:39M
+test-qwen27-plans-host success
++- run test 22 pass (22 total) 48ms MaxRSS:8M
+   +- compile test debug native cached 12ms MaxRSS:40M
+      +- WriteFile qwen27-fake-source.zig cached
+test-qwen27-keep-host success
++- run test 2 pass (2 total) 9ms MaxRSS:10M
+   +- compile test debug native cached 16ms MaxRSS:40M
+test-qwen27-bank-host success
++- run test cached
+   +- compile test debug native cached 12ms MaxRSS:36M
+test-qwen27-speed-host success
++- run test 4 pass (4 total) 61ms MaxRSS:8M
+   +- compile test debug native cached 10ms MaxRSS:39M
+test-qwen27-ane-policy-host success
++- run test cached
+   +- compile test debug native cached 10ms MaxRSS:41M
+test-dflash2-host success
++- run test cached
+   +- compile test debug native cached 14ms MaxRSS:39M
+test-llama-host success
++- run test cached
+   +- compile test debug native cached 14ms MaxRSS:39M
+   |  +- options cached
+   +- run test cached
+   |  +- compile test debug native cached 14ms MaxRSS:38M
+   +- run test cached
+      +- compile test debug native cached 11ms MaxRSS:40M
+test-tool-visibility-http-host success
++- run test 17 pass (17 total) 422ms MaxRSS:13M
+   +- compile test debug native cached 13ms MaxRSS:36M
+test-server-recovery-host success
++- run test cached
+   +- compile test debug native cached 12ms MaxRSS:39M
+test-tool-parse-host success
++- run test cached
+   +- compile test debug native cached 12ms MaxRSS:41M
+test-server-cpu success
++- run test cached
+|  +- compile test debug native cached 14ms MaxRSS:41M
++- run test cached
+   +- compile test debug native cached 11ms MaxRSS:40M
++- run test 41 pass, 1 crash (42 total)
+   +- compile test debug native cached 15ms MaxRSS:41M

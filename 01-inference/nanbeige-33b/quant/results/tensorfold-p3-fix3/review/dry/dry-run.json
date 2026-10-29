@@ -1,0 +1,68 @@
+{
+  "state": "PASS",
+  "jobs": 16,
+  "crash_exit": 73,
+  "resumed_jobs": 14,
+  "completed_reruns": 0,
+  "changed_model_refused": true,
+  "gpu_calls": 0,
+  "commands": [
+    {
+      "command": [
+        "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+        "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_dry.py",
+        "--phase",
+        "crash",
+        "/tmp/nanbeige-review-a3c96094/llama-gate-cpu-q0kzi0f9"
+      ],
+      "exit": 73,
+      "log": "PROJECTED {\"seconds_by_job\": {\"p4-100000-0\": 1684.71, \"p3-bf16-kv16\": 548.57, \"p3-bf16-kv4\": 548.57, \"p3-affine4-kv16\": 548.57, \"p3-affine4-kv4\": 548.57, \"p1-reference\": 180, \"p1-logits\": 60, \"p1-greedy\": 60, \"p1-speed\": 133.14, \"p2\": 150, \"p4-100000-1\": 1684.71, \"p4-100000-2\": 1684.71, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 8431.550000000001, \"rates\": null, \"basis\": \"860 GB/s planning assumption\", \"elapsed_seconds\": 0.0005520179984159768, \"projected_session_seconds\": 8431.550552018}\nPROJECTED {\"seconds_by_job\": {\"p3-bf16-kv16\": 444.75, \"p3-bf16-kv4\": 444.75, \"p3-affine4-kv16\": 444.75, \"p3-affine4-kv4\": 444.75, \"p1-reference\": 180, \"p1-logits\": 60, \"p1-greedy\": 60, \"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 4142.6, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.052732112002559006, \"projected_session_seconds\": 4142.652732112003}\nPROJECTED {\"seconds_by_job\": {\"p3-bf16-kv4\": 444.75, \"p3-affine4-kv16\": 444.75, \"p3-affine4-kv4\": 444.75, \"p1-reference\": 180, \"p1-logits\": 60, \"p1-greedy\": 60, \"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 3697.85, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.1095184409932699, \"projected_session_seconds\": 3697.959518440993}\n"
+    },
+    {
+      "command": [
+        "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+        "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_dry.py",
+        "--phase",
+        "resume",
+        "/tmp/nanbeige-review-a3c96094/llama-gate-cpu-q0kzi0f9"
+      ],
+      "exit": 0,
+      "log": "PROJECTED {\"seconds_by_job\": {\"p3-bf16-kv4\": 444.75, \"p3-affine4-kv16\": 444.75, \"p3-affine4-kv4\": 444.75, \"p1-reference\": 180, \"p1-logits\": 60, \"p1-greedy\": 60, \"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 3697.85, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.0007451600104104728, \"projected_session_seconds\": 3697.8507451600103}\nPROJECTED {\"seconds_by_job\": {\"p3-affine4-kv16\": 444.75, \"p3-affine4-kv4\": 444.75, \"p1-reference\": 180, \"p1-logits\": 60, \"p1-greedy\": 60, \"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 3253.1, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.05284154901164584, \"projected_session_seconds\": 3253.1528415490116}\nPROJECTED {\"seconds_by_job\": {\"p3-affine4-kv4\": 444.75, \"p1-reference\": 180, \"p1-logits\": 60, \"p1-greedy\": 60, \"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 2808.35, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.10192629101220518, \"projected_session_seconds\": 2808.451926291012}\nPROJECTED {\"seconds_by_job\": {\"p1-reference\": 180, \"p1-logits\": 60, \"p1-greedy\": 60, \"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 2363.6, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.15123384099570103, \"projected_session_seconds\": 2363.7512338409956}\nPROJECTED {\"seconds_by_job\": {\"p1-logits\": 60, \"p1-greedy\": 60, \"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 2183.6, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.2061275530140847, \"projected_session_seconds\": 2183.806127553014}\nPROJECTED {\"seconds_by_job\": {\"p1-greedy\": 60, \"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 2123.6, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.26075403499999084, \"projected_session_seconds\": 2123.860754035}\nPROJECTED {\"seconds_by_job\": {\"p1-speed\": 98.4, \"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 2063.6, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.3118630860117264, \"projected_session_seconds\": 2063.9118630860116}\nPROJECTED {\"seconds_by_job\": {\"p2\": 150, \"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 1965.2, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.3666204030159861, \"projected_session_seconds\": 1965.566620403016}\nPROJECTED {\"seconds_by_job\": {\"p4-100000-1\": 607.6, \"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 1815.2, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.4217995070212055, \"projected_session_seconds\": 1815.6217995070213}\nPROJECTED {\"seconds_by_job\": {\"p4-100000-2\": 607.6, \"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 1207.6, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.4829112240113318, \"projected_session_seconds\": 1208.0829112240112}\nPROJECTED {\"seconds_by_job\": {\"p3-bf16-kv16-wire\": 150, \"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 600, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.5522572600166313, \"projected_session_seconds\": 600.5522572600166}\nPROJECTED {\"seconds_by_job\": {\"p3-bf16-kv4-wire\": 150, \"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 450, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.6018108639982529, \"projected_session_seconds\": 450.60181086399825}\nPROJECTED {\"seconds_by_job\": {\"p3-affine4-kv16-wire\": 150, \"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 300, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.6454941090196371, \"projected_session_seconds\": 300.64549410901964}\nPROJECTED {\"seconds_by_job\": {\"p3-affine4-kv4-wire\": 150}, \"total_seconds\": 150, \"rates\": {\"prefill\": 800.0, \"decode\": 66.66666666666667}, \"basis\": \"measured with 25% reserve\", \"elapsed_seconds\": 0.6988717729982454, \"projected_session_seconds\": 150.69887177299825}\n"
+    },
+    {
+      "command": [
+        "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+        "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_dry.py",
+        "--phase",
+        "resume",
+        "/tmp/nanbeige-review-a3c96094/llama-gate-cpu-q0kzi0f9"
+      ],
+      "exit": 0,
+      "log": ""
+    },
+    {
+      "command": [
+        "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+        "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_dry.py",
+        "--phase",
+        "resume",
+        "/tmp/nanbeige-review-a3c96094/llama-gate-cpu-q0kzi0f9"
+      ],
+      "exit": 1,
+      "log": "Traceback (most recent call last):\n  File \"/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_dry.py\", line 90, in <module>\n    main()\n    ~~~~^^\n  File \"/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_dry.py\", line 84, in main\n    phase(Path(sys.argv[3]), sys.argv[2] == 'crash')\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_dry.py\", line 29, in phase\n    gate.main()\n    ~~~~~~~~~^^\n  File \"/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_full_gate.py\", line 120, in main\n    execute(args, jobs, binding, inputs)\n    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/riels/.local/share/mise/installs/python/3.15.2/lib/python3.15/unittest/mock.py\", line 1176, in __call__\n    return self._mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/home/riels/.local/share/mise/installs/python/3.15.2/lib/python3.15/unittest/mock.py\", line 1180, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n  File \"/home/riels/.local/share/mise/installs/python/3.15.2/lib/python3.15/unittest/mock.py\", line 1247, in _execute_mock_call\n    result = effect(*args, **kwargs)\n  File \"/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_dry.py\", line 24, in run\n    return execute(args, jobs, binding, inputs, worker=worker)\n  File \"/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_full_gate.py\", line 151, in execute\n    return execute_locked(args, jobs, binding, inputs, worker)\n  File \"/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_full_gate.py\", line 156, in execute_locked\n    summary = resume(path, binding, jobs)\n  File \"/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_state.py\", line 50, in resume\n    raise ValueError('resume fingerprint mismatch; use a new --work and --out for changed inputs')\nValueError: resume fingerprint mismatch; use a new --work and --out for changed inputs\n"
+    }
+  ],
+  "projection": {
+    "seconds_by_job": {
+      "p3-affine4-kv4-wire": 150
+    },
+    "total_seconds": 150,
+    "rates": {
+      "prefill": 800.0,
+      "decode": 66.66666666666667
+    },
+    "basis": "measured with 25% reserve",
+    "elapsed_seconds": 0.6988717729982454,
+    "projected_session_seconds": 150.69887177299825
+  }
+}

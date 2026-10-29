@@ -1,0 +1,74 @@
+[
+  {
+    "mutation": "residual_replaced",
+    "command": [
+      "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+      "tools/zig/llama_sample_gate.py",
+      "--mutation",
+      "residual_replaced",
+      "--out",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3-fix3/residual_replaced.json"
+    ],
+    "exit": 1
+  },
+  {
+    "mutation": "residual_reversed",
+    "command": [
+      "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+      "tools/zig/llama_sample_gate.py",
+      "--mutation",
+      "residual_reversed",
+      "--out",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3-fix3/residual_reversed.json"
+    ],
+    "exit": 1
+  },
+  {
+    "mutation": "draft_support",
+    "command": [
+      "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+      "tools/zig/llama_sample_gate.py",
+      "--mutation",
+      "draft_support",
+      "--out",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3-fix3/draft_support.json"
+    ],
+    "exit": 1
+  },
+  {
+    "mutation": "temperature_twice",
+    "command": [
+      "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+      "tools/zig/llama_sample_gate.py",
+      "--mutation",
+      "temperature_twice",
+      "--out",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3-fix3/temperature_twice.json"
+    ],
+    "exit": 1
+  },
+  {
+    "mutation": "penalties_draft_only",
+    "command": [
+      "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+      "tools/zig/llama_sample_gate.py",
+      "--mutation",
+      "penalties_draft_only",
+      "--out",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3-fix3/penalties_draft_only.json"
+    ],
+    "exit": 1
+  },
+  {
+    "mutation": "within_bin_transfer",
+    "command": [
+      "/home/riels/.local/share/mise/installs/python/latest/bin/python3",
+      "tools/zig/llama_sample_gate.py",
+      "--mutation",
+      "within_bin_transfer",
+      "--out",
+      "/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p3-fix3/within_bin_transfer.json"
+    ],
+    "exit": 1
+  }
+]

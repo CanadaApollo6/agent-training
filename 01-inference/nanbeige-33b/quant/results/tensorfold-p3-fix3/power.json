@@ -1,0 +1,58 @@
+{
+  "state": "PASS",
+  "baseline_cells": 12,
+  "draws": 32768,
+  "family_alpha": 0.01,
+  "radius": 0.018443703690956686,
+  "power": [
+    {
+      "mutation": "residual_replaced",
+      "tv": 0.0994431182583299,
+      "trials": 128,
+      "rejected": 128,
+      "power_lower_95": 0.9632885464099709,
+      "analytic_power_lower": 0.9998418870179925
+    },
+    {
+      "mutation": "residual_reversed",
+      "tv": 0.20378414659277114,
+      "trials": 128,
+      "rejected": 128,
+      "power_lower_95": 0.9632885464099709,
+      "analytic_power_lower": 0.9998418870179925
+    },
+    {
+      "mutation": "draft_support",
+      "tv": 0.06243033857742778,
+      "trials": 128,
+      "rejected": 128,
+      "power_lower_95": 0.9632885464099709,
+      "analytic_power_lower": 0.9998418870179925
+    },
+    {
+      "mutation": "temperature_twice",
+      "tv": 0.04906689076857981,
+      "trials": 128,
+      "rejected": 128,
+      "power_lower_95": 0.9632885464099709,
+      "analytic_power_lower": 0.9998418870179925
+    },
+    {
+      "mutation": "penalties_draft_only",
+      "tv": 0.0356808040753996,
+      "trials": 128,
+      "rejected": 128,
+      "power_lower_95": 0.9632885464099709,
+      "analytic_power_lower": 0.9998418870179925
+    },
+    {
+      "mutation": "within_bin_transfer",
+      "tv": 0.05521076878683713,
+      "trials": 128,
+      "rejected": 128,
+      "power_lower_95": 0.9632885464099709,
+      "analytic_power_lower": 0.9998418870179925
+    }
+  ],
+  "scope": "predeclared mutation directions with TV >= .03; not arbitrary alternatives"
+}

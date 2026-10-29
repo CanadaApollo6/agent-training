@@ -1,0 +1,60 @@
+Engine root /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama
+Base a3c96094081d20cb879807f66a39120948bb4d2f. Branch nanbeige. Initial worktree clean.
+
+Read /home/riels/.agents/skills/p3-mode/agents/p3-agent.md first: absent. Read /home/riels/.claude/skills/p3-mode/SKILL.md fallback.
+Read repository AGENTS.md, CONTRIBUTING.md, docs/atc/SKILL.md, docs/recipes/SKILL.md, RUNBOOK.md, recipe index.
+atc board --json: NOT AVAILABLE (command not found). No ATC publication or issue write.
+
+CPU model/engine host aggregate:
+TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb CUDA_VISIBLE_DEVICES='' ~/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-server-host test-server-cpu test-tool-parse-host test-server-recovery-host test-tool-visibility-http-host test-llama-host test-dflash2-host test-qwen27-ane-policy-host test-qwen27-speed-host test-qwen27-bank-host test-qwen27-keep-host test-qwen27-plans-host test-qwen27-equality-host test-qwen27-masks-host test-qwen27-required-host -j4 --summary all
+host.log. 53/53 build steps, 159/159 freshly executed tests. Other lanes are valid cached results, not new executions.
+
+CPU replay build:
+~/.local/share/zig-x86_64-linux-0.17.0/zig build tf-llama-replay -Doptimize=ReleaseFast -j4 --summary all
+4/4 steps, replay-build.log.
+
+Real-lane mutation power:
+python3 tools/zig/llama_sample_gate.py --power-trials 128 --out /tmp/power-final2.json
+power.json and power.log. 12 baseline cells. Six mutations x 128 trials x 32768 real emitted draws, disjoint deterministic seeds.
+Each CLI negative gate:
+python3 tools/zig/llama_sample_gate.py --mutation MUTATION --out RECEIPTS/MUTATION.json
+MUTATION is each of residual_replaced, residual_reversed, draft_support, temperature_twice, penalties_draft_only, within_bin_transfer.
+mutation-exits.json lists exact arguments and exit 1 for all six commands. These expected failures are evidence of rejection, not product failures.
+
+Python CPU regressions and real crash/resume:
+python3 -m unittest discover -s tools/zig -p 'test_llama*.py'
+18/18, python-tests.log. Includes parsing every planned Python CLI with its actual argument parser, without executing work.
+python3 tools/zig/llama_full_gate.py --dry-run --out /tmp/fix3-dry-final-head
+26 jobs; actual crash exit 73; 24 resumed jobs; zero completed reruns; tampered model refused; no GPU calls.
+dry/dry-run.json. Worker outputs are labelled CPU STUB and provide no model, GPU or throughput credit.
+Shell regressions include DRY=1 LOCAL_DRY=1 work failure, copy failure, upload failure and the verbatim sync function with mocked HF.
+No shell regression contacts HF.
+
+Native builds, compilation only:
+~/.local/share/zig-x86_64-linux-0.17.0/zig build native tf-llama-test tf-llama-wire-test -Dnvcc=/opt/cuda/bin/nvcc -Dsm=86 -j4 --summary all
+~/.local/share/zig-x86_64-linux-0.17.0/zig build native tf-llama-test tf-llama-wire-test -Dnvcc=/opt/cuda/bin/nvcc -Dsm=89 -j4 --summary all
+Final build-sm86.log and build-sm89.log each report 126/126. No model/device executable was run.
+Initial /usr/local/cuda/bin/nvcc attempt was NOT RUN because nvcc is at /opt/cuda/bin/nvcc on this host.
+Intermediate Zig spelling/type build errors were corrected. Only final complete logs count.
+
+Lint:
+python3 tools/zig/lean_check.py > /tmp/h.txt
+python3 tools/zig/lean_new.py /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/lean-base.txt /tmp/h.txt
+426 inherited, zero new. lean-head.txt and lean-new.txt.
+bash -n tools/zig/llama_hf_job.sh
+python3 -m py_compile tools/zig/llama*.py
+git diff --check
+PASS.
+
+Dependency locks resolved on CPU with uv 0.13.4, no Torch import or GPU use:
+uv pip compile tools/zig/llama-gate.in --python-version 3.12 --python-platform x86_64-manylinux_2_28 --generate-hashes -o /tmp/llama-gate.lock
+uv pip compile tools/zig/llama-hf.in --python-version 3.12 --python-platform x86_64-manylinux_2_28 --generate-hashes -o /tmp/llama-hf.lock
+Comment/continuation normalization retains all versions and hashes in checked-in lock files.
+Primary exllamav3 v1.6.5 model/cache source was read from raw.githubusercontent.com to check benchmark API usage.
+Inference installation, pinned base image/bootstrap/debs staging, cloud DRY=1, real upload and bucket restoration are NOT RUN.
+GPU equality, real cached-model sampling, 16-seed coupling, long-context KL, P1/P3 speed, HF/Prime launch are NOT RUN.
+
+No GPU execution. No HF/Prime API calls, uploads, job launches, pushes or PRs. No protected process touched.
+Only the engine worktree is committed. Receipts remain external in agent-training, as requested.
+
+Final engine HEAD a5454ed3931caa5dee27ef45c468f44f8ea76b82; local commits d1cf9fb4 and a5454ed3. Engine worktree clean.

@@ -1,0 +1,4 @@
+1/3 llama_prefill.test.descending quality and decode preserve the shorter causal prefixes...OK
+2/3 llama_prefill.test.timing prefill produces final logits with no scored downloads...OK
+3/3 llama_prefill.test.quality prefill downloads exactly the final 512 initialized rows...OK
+All 3 tests passed.

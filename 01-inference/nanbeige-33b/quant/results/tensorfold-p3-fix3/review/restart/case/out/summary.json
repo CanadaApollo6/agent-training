@@ -1,0 +1,110 @@
+{
+  "state": "PARTIAL",
+  "fingerprint": "04f9e58643c10d61db1d81973c2d5b42457082688434736816f62681a69b5b70",
+  "jobs": [
+    {
+      "label": "p1-reference",
+      "command": [
+        "cpu",
+        "p1-reference"
+      ],
+      "state": "PASS",
+      "attempts": 1,
+      "exit_code": 0,
+      "seconds": 2.6644993340596557e-05,
+      "artifacts": {
+        "/tmp/nanbeige-review-a3c96094/restart/case/out/p1-reference.log": "106675dc1490d5cdd6d1f0410731316ce93fc964c6cf6726e2b0d53e19688feb"
+      }
+    },
+    {
+      "label": "p1-logits",
+      "command": [
+        "cpu",
+        "p1-logits"
+      ],
+      "state": "PASS",
+      "attempts": 2,
+      "exit_code": 0,
+      "seconds": 2.7622998459264636e-05,
+      "artifacts": {
+        "/tmp/nanbeige-review-a3c96094/restart/case/out/p1-logits.log": "106675dc1490d5cdd6d1f0410731316ce93fc964c6cf6726e2b0d53e19688feb"
+      }
+    },
+    {
+      "label": "p1-greedy",
+      "command": [
+        "cpu",
+        "p1-greedy"
+      ],
+      "state": "PASS",
+      "attempts": 1,
+      "exit_code": 0,
+      "seconds": 2.1158019080758095e-05,
+      "artifacts": {
+        "/tmp/nanbeige-review-a3c96094/restart/case/out/p1-greedy.log": "106675dc1490d5cdd6d1f0410731316ce93fc964c6cf6726e2b0d53e19688feb"
+      }
+    }
+  ],
+  "inputs": {},
+  "budget_minutes": 150,
+  "selected": [
+    "p1-logits",
+    "p1-reference"
+  ],
+  "projection": {
+    "seconds_by_job": {
+      "p1-greedy": 60
+    },
+    "total_seconds": 60,
+    "rates": null,
+    "basis": "860 GB/s planning assumption",
+    "elapsed_seconds": 0.00039257900789380074,
+    "projected_session_seconds": 60.000392579007894
+  },
+  "projection_history": [
+    {
+      "seconds_by_job": {
+        "p1-reference": 180,
+        "p1-logits": 60,
+        "p1-greedy": 60
+      },
+      "total_seconds": 300,
+      "rates": null,
+      "basis": "860 GB/s planning assumption",
+      "elapsed_seconds": 8.811199222691357e-05,
+      "projected_session_seconds": 300.0000881119922
+    },
+    {
+      "seconds_by_job": {
+        "p1-logits": 60,
+        "p1-greedy": 60
+      },
+      "total_seconds": 120,
+      "rates": null,
+      "basis": "860 GB/s planning assumption",
+      "elapsed_seconds": 0.0003441349836066365,
+      "projected_session_seconds": 120.0003441349836
+    },
+    {
+      "seconds_by_job": {
+        "p1-logits": 60,
+        "p1-greedy": 60
+      },
+      "total_seconds": 120,
+      "rates": null,
+      "basis": "860 GB/s planning assumption",
+      "elapsed_seconds": 0.00014150200877338648,
+      "projected_session_seconds": 120.00014150200877
+    },
+    {
+      "seconds_by_job": {
+        "p1-greedy": 60
+      },
+      "total_seconds": 60,
+      "rates": null,
+      "basis": "860 GB/s planning assumption",
+      "elapsed_seconds": 0.00039257900789380074,
+      "projected_session_seconds": 60.000392579007894
+    }
+  ]
+}

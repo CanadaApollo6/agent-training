@@ -1,0 +1,120 @@
+{
+  "head": "a5454ed3931caa5dee27ef45c468f44f8ea76b82",
+  "commits": [
+    "d1cf9fb4d7566114b65979ead99c4956eff8fb1d",
+    "a5454ed3931caa5dee27ef45c468f44f8ea76b82"
+  ],
+  "base": "a3c96094081d20cb879807f66a39120948bb4d2f",
+  "branch": "nanbeige",
+  "sources": {
+    "tools/zig/llama-gate.in": {
+      "sha256": "f5f062ac42eada583ce57ebfc17ba759628af3b2a7050009301d49a419413392",
+      "lines": 11
+    },
+    "tools/zig/llama-gate.lock": {
+      "sha256": "15d912d6ddc4d6962f7866054dbe5392d786a7fd6cf1fad4766d3e2898795b27",
+      "lines": 64
+    },
+    "tools/zig/llama-hf.in": {
+      "sha256": "7ba5381fb304ea4b6407eb1e7b4778dc097cb6012205cfb76a521344894001b0",
+      "lines": 1
+    },
+    "tools/zig/llama-hf.lock": {
+      "sha256": "fc241eff6686a4515a843ca646549876c415325dc21b5a194abcfd8f82f6d613",
+      "lines": 21
+    },
+    "tools/zig/llama_decode_speed.py": {
+      "sha256": "f7c309e877df4154dd5f8a5e2e8424695c51fc0d4ae73a80a2a5ca603f6085a6",
+      "lines": 117
+    },
+    "tools/zig/llama_draft_full.py": {
+      "sha256": "20f610fd07f55c0481bf3e828d9ad145de89b342f4fbb0f7ada5201d178e0608",
+      "lines": 131
+    },
+    "tools/zig/llama_draft_stats.py": {
+      "sha256": "5541ab7d7bc9c61f613ccb77235540b9e048c4c521237354053d7bc9547098d6",
+      "lines": 13
+    },
+    "tools/zig/llama_full_gate.py": {
+      "sha256": "92bded7cc37f1bd52722bfcc8e2fd745c8184f28fe582cff0b1c0c4940869669",
+      "lines": 271
+    },
+    "tools/zig/llama_gate_budget.py": {
+      "sha256": "9e16e4a6d3ee112f9c10ff7821ad1c46e3beaaa0ab15b25ad94e903357506e19",
+      "lines": 35
+    },
+    "tools/zig/llama_gate_dry.py": {
+      "sha256": "e036384a510f232ec35ed3f6fecd669b7bc61b3d8437bc54041c3dd3e8d9e7b0",
+      "lines": 95
+    },
+    "tools/zig/llama_hf_job.sh": {
+      "sha256": "2c80256daccbb4d666a48d61d7c110631864d69e71b169fa193c2f72557f2149",
+      "lines": 128
+    },
+    "tools/zig/llama_sample_gate.py": {
+      "sha256": "229ec8cc60e0e00ed3297d514aa87b1a0d8a618b76a0984837bcc97e138d7b0a",
+      "lines": 91
+    },
+    "tools/zig/llama_sample_oracle.py": {
+      "sha256": "d85540b99d06744b286f532bb39404191061eeb0c03eb02ec10c99f41df46e12",
+      "lines": 73
+    },
+    "tools/zig/test_llama_gates.py": {
+      "sha256": "1abf23e9a02e98ac4d1bdf87aaa5424761e3f8ea30200beefec456751d2a0dce",
+      "lines": 191
+    },
+    "tools/zig/test_llama_paid_job.py": {
+      "sha256": "3b4964c697ee6f55cc22ee902492b46f67505701eff84b6adb7d7458e10c4c5e",
+      "lines": 76
+    },
+    "zig/build/llama.zig": {
+      "sha256": "d0b8c4e1b528e45aad6acad05279b3505d32e73ea42972f8d79554c9ed404d46",
+      "lines": 35
+    },
+    "zig/llama_cuda.zig": {
+      "sha256": "5de8e7b2b498f0b35bf6536bbe62b03170c263620fac7922b8c86f31a6ad3da1",
+      "lines": 17
+    },
+    "zig/src/families/llama/sample_host.zig": {
+      "sha256": "c5b2bbf2fe32c77f2e6816ba5d075928f71e0fc43b50595df796ed3f0ecc2e3f",
+      "lines": 67
+    },
+    "zig/tests/cuda/llama_draft_distribution.zig": {
+      "sha256": "9256de7c27355842d0bf1b3fd444e88e00600d0c330abcdc2940c6fb48001766",
+      "lines": 79
+    },
+    "zig/tests/cuda/llama_draft_full.zig": {
+      "sha256": "772546e6f1d4e572619b27e47299502483130bcc741a086e3ad76d4ca0691ef2",
+      "lines": 82
+    },
+    "zig/tests/cuda/llama_main.zig": {
+      "sha256": "c76403edd32a4736b1c770b3986e54db0771edc94a51fddc0b7526d36fd4f96b",
+      "lines": 57
+    },
+    "zig/tests/cuda/llama_replay.zig": {
+      "sha256": "65821b34edf1df4fd23a592af69cb1df61fdc30a537f0c6411a1553fea0fbf8b",
+      "lines": 125
+    }
+  },
+  "binaries_sm89": {
+    "zig-out/native/bin/tensorfold-native": "c4cad834cdf72d4755d3f7c3254e78e98f8990df49943c9f59078510789a2895",
+    "zig-out/bin/tf-llama-test": "55df2fc937431a7fbbd6a74a892747510104691a80d4a48c6425d2088672cee2",
+    "zig-out/bin/tf-llama-wire-test": "3729575022e1cbee2b7486fd45ab1ef99c2ce26fa8e766fa5b708151ce499870",
+    "zig-out/bin/tf-llama-replay": "20fde946ba73c4510b93a40cf6a7719cb5588e07303eabf9044ae056d113381f"
+  },
+  "tests": {
+    "fresh_host": 159,
+    "host_build_steps": 53,
+    "python": 18,
+    "real_lane_mutation_trials": 768,
+    "draws_per_trial": 32768,
+    "lint_inherited": 426,
+    "lint_new": 0,
+    "native_sm86": "126/126",
+    "native_sm89": "126/126",
+    "gpu": "NOT RUN",
+    "cloud_setup": "NOT RUN"
+  },
+  "zig": "0.17.0",
+  "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Tue_Sep_01_08:45:21_PDT_2026\nCuda compilation tools, release 13.4, V13.4.92\nBuild cuda_13.4.r13.4/compiler.38855100_0"
+}

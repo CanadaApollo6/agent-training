@@ -1,0 +1,95 @@
+{
+  "seed": 20261029,
+  "synthetic": true,
+  "vocab": 166912,
+  "trials": 2000,
+  "draws": 8192,
+  "radius": 0.05334152800742564,
+  "cutoff": 0.04665847199257436,
+  "summary": {
+    "residual uses p": {
+      "cells": 35,
+      "tv_range": [
+        0.0024771552450621173,
+        0.1700753758023335
+      ],
+      "old_power_mean": 0.25224285714285716,
+      "old_power_range": [
+        0.0,
+        1.0
+      ],
+      "new_tv03_cells": 27,
+      "new_tv03_min_power": 1.0
+    },
+    "residual reversed": {
+      "cells": 35,
+      "tv_range": [
+        0.009056178894172621,
+        0.501856002827135
+      ],
+      "old_power_mean": 0.5963571428571428,
+      "old_power_range": [
+        0.0,
+        1.0
+      ],
+      "new_tv03_cells": 32,
+      "new_tv03_min_power": 1.0
+    },
+    "top-k/p from draft": {
+      "cells": 22,
+      "tv_range": [
+        0.011202494515028583,
+        0.23260078670149936
+      ],
+      "old_power_mean": 0.1363863636363636,
+      "old_power_range": [
+        0.0,
+        1.0
+      ],
+      "new_tv03_cells": 15,
+      "new_tv03_min_power": 1.0
+    },
+    "temperature twice": {
+      "cells": 26,
+      "tv_range": [
+        0.018061155688524153,
+        0.2133170876960666
+      ],
+      "old_power_mean": 0.7776346153846153,
+      "old_power_range": [
+        0.0,
+        1.0
+      ],
+      "new_tv03_cells": 25,
+      "new_tv03_min_power": 1.0
+    },
+    "penalties draft only": {
+      "cells": 9,
+      "tv_range": [
+        0.1987532314134796,
+        0.25413001363867865
+      ],
+      "old_power_mean": 0.9997777777777779,
+      "old_power_range": [
+        0.998,
+        1.0
+      ],
+      "new_tv03_cells": 9,
+      "new_tv03_min_power": 1.0
+    },
+    "within-bin swap": {
+      "cells": 1,
+      "tv_range": [
+        0.08000000000000002,
+        0.08000000000000002
+      ],
+      "old_power_mean": 0.0,
+      "old_power_range": [
+        0.0,
+        0.0
+      ],
+      "new_tv03_cells": 1,
+      "new_tv03_min_power": 1.0
+    }
+  }
+}

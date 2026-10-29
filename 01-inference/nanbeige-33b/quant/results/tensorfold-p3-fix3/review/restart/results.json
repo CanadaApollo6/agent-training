@@ -1,0 +1,13 @@
+{
+  "sigkill_exit": true,
+  "running_durable": true,
+  "restart_success": true,
+  "pass_not_rerun_running_retried": true,
+  "idempotent": true,
+  "torn_temporary_ignored": true,
+  "input_tamper_refused": true,
+  "artifact_tamper_refused": true,
+  "subset_partial": true,
+  "skip_dependency_refused": true,
+  "budget_refused": true
+}

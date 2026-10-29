@@ -1,0 +1,12 @@
+1/3 prefill-mutant.test.descending quality and decode preserve the shorter causal prefixes...OK
+2/3 prefill-mutant.test.timing prefill produces final logits with no scored downloads...FAIL (UninitializedLogits)
+/tmp/nanbeige-review-a3c96094/prefill-mutant.zig:91:23: 0x1255009 in greedy (prefill-mutant.zig)
+        if (!m.valid) return error.UninitializedLogits;
+                      ^
+/tmp/nanbeige-review-a3c96094/prefill-mutant.zig:60:46: 0x12569ea in test.timing prefill produces final logits with no scored downloads (prefill-mutant.zig)
+    try std.testing.expectEqual(@as(u32, 7), try m.greedy());
+                                             ^
+3/3 prefill-mutant.test.quality prefill downloads exactly the final 512 initialized rows...OK
+2 passed; 0 skipped; 1 failed.
+error: the following test command failed with exit code 1:
+/tmp/nanbeige-review-a3c96094/prefill-cache/o/550e11ff00d63a3e9c82a8b1757117da/test --seed=0xa0c76724

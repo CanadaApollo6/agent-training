@@ -1,0 +1,51 @@
+[
+  {
+    "severity": "Major",
+    "file": "zig/tests/cuda/llama_draft_distribution.zig",
+    "line": 23,
+    "evidence": "Stream has null sampling. Actual proposals are ignored and verify sampled outputs discarded. Both distributions call the same m.pick directly at line 48. A backend sampling/penalty propagation mutation or common sampler bug is not tested.",
+    "fix": "Exercise production sampled lane and compare with an independent oracle, including rejection and accepted-prefix state."
+  },
+  {
+    "severity": "Major",
+    "file": "tools/zig/llama_draft_stats.py",
+    "line": 18,
+    "evidence": "Observed max-bin cutoff is 0.046658. Modulo bins lose token identity. Synthetic power.json shows low power for residual and filtering mutations, zero for a within-bin TV .08 shift.",
+    "fix": "Use predeclared token events and independently replayed full-vocabulary probabilities; explicitly power calibrated mutation fixtures."
+  },
+  {
+    "severity": "Major",
+    "file": "tools/zig/llama_hf_job.sh",
+    "line": 30,
+    "evidence": "Verbatim sync_out with mock work upload failure and receipt success returned 0. Conditional function invocation suppresses errexit; receipt references may not be restorable.",
+    "fix": "Make cp and each sync explicitly return on failure; publish receipts only after successful work upload. Bound final sync, serialize the periodic worker, install failure handling earlier."
+  },
+  {
+    "severity": "Major",
+    "file": "tools/zig/llama_gate_budget.py",
+    "line": 16,
+    "evidence": "589824 synchronized GPU picks per P3 job budgeted as constant 240s; not measured by the P4 prefill/decode calibration. All four P3 jobs run before P1 correctness. Fixed projections sum 140.525873 minutes leaving 7.474127 setup minutes. Fingerprinting is outside runner clock at full_gate:173.",
+    "fix": "Preflight P1 and short P4/P3 sampling and wire calibration; use absolute container deadline, measured costs, and prebuilt pinned environment."
+  },
+  {
+    "severity": "Major",
+    "file": "tools/zig/llama_full_gate.py",
+    "line": 82,
+    "evidence": "P1 speed calls llama_fix_bench with two Zig binaries, not exllamav3. The helper has no speed-ratio pass bar. Correctness PASS cannot establish requested exl3 speed comparison.",
+    "fix": "Add matched exllamav3 decode timing and the agreed comparison criterion."
+  },
+  {
+    "severity": "Minor",
+    "file": "tools/zig/llama_hf_job.sh",
+    "line": 19,
+    "evidence": "Python, Zig, torch, exl3 setup paths are root-compatible and inputs are read-only, secrets not echoed by entrypoint. uv installer, HF CLI, numpy, sentencepiece and several dependencies remain unpinned. Trap is set only after install/restore. Live container execution was not done.",
+    "fix": "Pin all dependencies in a prebuilt image, install the exit handler before fallible setup, and dry-run the staged container on CPU."
+  },
+  {
+    "severity": "Minor",
+    "file": "zig/tests/cuda/llama_draft_distribution.zig",
+    "line": 31,
+    "evidence": "expected[1..8] requires >=8 outputs. A legitimate early EOS in the short suffix prompt can terminate a correct model before this length. generate allows stop.",
+    "fix": "Use an explicitly non-stopping fixed-token conditioning fixture for row sampling and validate its length before paid execution."
+  }
+]

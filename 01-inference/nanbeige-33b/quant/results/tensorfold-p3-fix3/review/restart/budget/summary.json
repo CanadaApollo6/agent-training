@@ -1,0 +1,38 @@
+{
+  "state": "BUDGET",
+  "fingerprint": "budget",
+  "jobs": [
+    {
+      "label": "p1-reference",
+      "command": [],
+      "state": "NOT RUN"
+    }
+  ],
+  "inputs": {},
+  "budget_minutes": 150,
+  "selected": [
+    "p1-reference"
+  ],
+  "projection": {
+    "seconds_by_job": {
+      "p1-reference": 9010
+    },
+    "total_seconds": 9010,
+    "rates": null,
+    "basis": "860 GB/s planning assumption",
+    "elapsed_seconds": 9.379102266393602e-05,
+    "projected_session_seconds": 9010.000093791023
+  },
+  "projection_history": [
+    {
+      "seconds_by_job": {
+        "p1-reference": 9010
+      },
+      "total_seconds": 9010,
+      "rates": null,
+      "basis": "860 GB/s planning assumption",
+      "elapsed_seconds": 9.379102266393602e-05,
+      "projected_session_seconds": 9010.000093791023
+    }
+  ]
+}

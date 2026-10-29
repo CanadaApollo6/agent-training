@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/tmp/nanbeige-review-a3c96094/restart.py", line 21, in <module>
+    gate.execute(args,jobs,bind,{},worker=worker)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_full_gate.py", line 151, in execute
+    return execute_locked(args, jobs, binding, inputs, worker)
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_full_gate.py", line 156, in execute_locked
+    summary = resume(path, binding, jobs)
+  File "/home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama/tools/zig/llama_gate_state.py", line 50, in resume
+    raise ValueError('resume fingerprint mismatch; use a new --work and --out for changed inputs')
+ValueError: resume fingerprint mismatch; use a new --work and --out for changed inputs

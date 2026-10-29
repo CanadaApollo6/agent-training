@@ -1,0 +1,33 @@
+Repository /home/riels/Projects/Personal/Research/agent-training/01-inference/tools/TensorFold-llama
+Reviewed HEAD a3c96094081d20cb879807f66a39120948bb4d2f, diff against 97d4ac9c. git status --short clean.
+Scratch /tmp/nanbeige-review-a3c96094. No GPU or HF/Prime APIs used. GitHub raw source only was fetched through web to inspect dependency declarations.
+
+TF_LLAMA_MODEL=/home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/models/3.5-nb CUDA_VISIBLE_DEVICES='' ~/.local/share/zig-x86_64-linux-0.17.0/zig build test-llama-server-host test-server-cpu test-tool-parse-host test-server-recovery-host test-tool-visibility-http-host test-llama-host test-dflash2-host test-qwen27-ane-policy-host test-qwen27-speed-host test-qwen27-bank-host test-qwen27-keep-host test-qwen27-plans-host test-qwen27-equality-host test-qwen27-masks-host test-qwen27-required-host -j4 --summary all
+Log host-default.log. Earlier fresh aggregate --cache-dir /tmp/nanbeige-review-a3c96094/cache failed due to tmpfs user quota, left empty logs and earns no test or lint credit. Removed only this review's cache files. A sequential test-llama-server-host run using that cache then passed 42/42 (host-single.log). Aggregate rerun above uses the normal tool-managed build cache.
+
+PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp/nanbeige-review-a3c96094 CUDA_VISIBLE_DEVICES='' python3 tools/zig/llama_full_gate.py --dry-run --out /tmp/nanbeige-review-a3c96094/dry
+PASS. 16-job plan, crash exit 73, 14 resumed jobs, 0 completed reruns, model mutation refused.
+PYTHONDONTWRITEBYTECODE=1 TMPDIR=/tmp/nanbeige-review-a3c96094 CUDA_VISIBLE_DEVICES='' python3 tools/zig/test_llama_gates.py
+14/14 PASS (python.log).
+PYTHONDONTWRITEBYTECODE=1 python3 /tmp/nanbeige-review-a3c96094/restart.py
+11/11 independent checks PASS (restart/results.json). Actual SIGKILL, durable RUNNING, PASS skip, running retry, no-op rerun, torn .tmp, input/artifact mutations, subset PARTIAL, skip dependency refusal, budget abort.
+~/.local/share/zig-x86_64-linux-0.17.0/zig test zig/tests/cuda/llama_prefill.zig --cache-dir /tmp/nanbeige-review-a3c96094/prefill-cache
+3/3 PASS (prefill.log). Scratch mutant removes final-logits condition; same test command on prefill-mutant.zig fails exactly timing-prefill test with UninitializedLogits, 2 pass / 1 expected fail (prefill-mutant.log). Production file unchanged.
+python3 tools/zig/lean_check.py > /tmp/nanbeige-review-a3c96094/h.txt
+python3 tools/zig/lean_new.py /home/riels/Projects/Personal/Research/agent-training/01-inference/nanbeige-33b/quant/results/tensorfold-p2-fix1/lean-base.txt /tmp/nanbeige-review-a3c96094/h.txt
+426 inherited, 0 new (lean-new.txt); this rerun has nonempty input.
+bash -n tools/zig/llama_hf_job.sh
+PASS.
+git diff --check 97d4ac9c a3c96094
+PASS. source-check.json verifies all 22 changed files against supplied source manifest; max 567 lines; 0 comments >120 columns.
+
+OPENBLAS_NUM_THREADS=1 /home/riels/Projects/Personal/Research/agent-training/.venv/bin/python /tmp/nanbeige-review-a3c96094/power.py
+Deterministic seed 20261029. NumPy only; no Torch/GPU imports. Synthetic, not measured Nanbeige logits. Vocabulary 166912; Zipf exponents 1.05,1.25,1.6 plus logit jitter and realistic perturbed drafter logits; production four settings; 9 contexts; 2000 trials per affected cell. Counts sampled multinomially exactly match the distribution of 8192 individual categorical draws. Excludes mathematically unchanged mutation cells when reporting power, lists all cells in power.json. Estimates are conditional per-cell power, not whole-job power. No independence across actual production cells is asserted.
+Residual law is accepted=min(p,q) plus rejection mass times incorrect replacement p or positive(q-p), versus correct positive(p-q). This residual family is hypothetical: the current Llama lane uses target-token matching, not ratio/residual rejection sampling. Top-k/p mutation applies draft support to target probabilities. Temperature mutation uses T^2. Penalty mutation omits target penalties for repeated head tokens.
+Proposed test uses predeclared event {token: p(token)>p_bug(token)} and 32768 independent draws/side, 576 one-sided Hoeffding tests, family alpha .01. Require mutation fixtures with TV>=.03; gives >=.98 worst-case analytic power and 1.000 observed power for all such simulated cells. Cannot guarantee >=.95 against arbitrarily small or distribution-preserving bugs. The production sampled lane must actually be exercised and an independent oracle used; otherwise these power numbers do not apply.
+python3 /tmp/nanbeige-review-a3c96094/sync_repro.py
+Replays verbatim sync_out body with mocked HF command, no network. WORK_FAILED, RECEIPTS_UPLOADED, final_rc=0. Demonstrates || caller disables errexit inside function and last successful upload hides earlier failure.
+PYTHONDONTWRITEBYTECODE=1 python3 /tmp/nanbeige-review-a3c96094/runtime.py
+8431.552381 seconds = 140.525873 minutes. Headroom 7.474127 minutes after 2-minute final sync reserve. 589824 GPU pick calls per P3 job are assigned 240s, requiring <=0.407ms per call including launch/sync. P4 calibration does not measure this. P4 artifacts alone 6153043968 bytes.
+
+Final host-default.log reports exit 0, 53/53 build steps succeeded, 1030/1030 executed tests passed. Cached run targets cover the remaining 175 tests from the matching source/manifest (1205 total target coverage, not 1205 fresh executions). Requested five steps have 976 fresh tests plus cached parser and JSON tests; Llama prefill/codec 4 fresh plus cached 65; DFlash2 cached 57; Qwen 50 fresh plus cached 9. The separately fresh server-host run is duplicate coverage, not added to 1030. A second aggregate begun while the full log was still flushing was stopped after the original summary became available; its partial results are not counted.
