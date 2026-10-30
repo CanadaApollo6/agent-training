@@ -1,0 +1,20 @@
+M3TiS-33B
+An independent build by CanadaApollo6, not affiliated with Nanbeige or the TensorFold authors.
+
+The model
+---------
+Nanbeige4.3-33B, by the Nanbeige team. https://huggingface.co/Nanbeige/Nanbeige4.3-33B
+Licensed under the Apache License, Version 2.0 (LICENSE).
+
+Changed by CanadaApollo6:
+  model-*.safetensors   the weights, quantized to EXL3 3.5 bits per weight (exllamav3 1.6.5) on Nanbeige's own text
+  draft/                a DFlash2 draft head, trained by CanadaApollo6 on Nanbeige4.3-33B's outputs
+The tokenizer and config files are Nanbeige's, with the quantization settings added to config.json.
+README.md is this build's card, not Nanbeige's.
+
+The server
+----------
+bin/tensorfold-native is built from TensorFold (https://github.com/ashhart/TensorFold), Copyright 2026 TensorFold
+contributors, with changes by CanadaApollo6 (SOURCE.md). Licensed under the Apache License, Version 2.0
+(LICENSES/Apache-2.0.txt). TensorFold releases up to 0.5.0 were MIT-licensed, and code written before 0.6.0 keeps
+its MIT notice in LICENSES/MIT.txt. Third-party code and its licenses are listed in THIRD_PARTY_NOTICES.md.
