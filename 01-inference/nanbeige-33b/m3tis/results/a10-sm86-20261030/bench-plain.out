@@ -1,0 +1,9 @@
+{"case": "code", "mode": "greedy", "tok_s": 17.3, "all": [17.4, 17.3, 17.3], "tokens": [512, 512, 512], "finish": ["length", "length", "length"], "accepted": ["0/0", "0/0", "0/0"]}
+{"case": "code", "mode": "nanbeige default (T 1.0, top_p 0.95)", "tok_s": 17.2, "all": [17.2, 17.2, 17.2], "tokens": [512, 512, 512], "finish": ["length", "length", "length"], "accepted": ["0/0", "0/0", "0/0"]}
+{"case": "chat", "mode": "greedy", "tok_s": 17.1, "all": [17.2, 17.1, 17.1], "tokens": [512, 512, 512], "finish": ["length", "length", "length"], "accepted": ["0/0", "0/0", "0/0"]}
+{"case": "chat", "mode": "nanbeige default (T 1.0, top_p 0.95)", "tok_s": 17.1, "all": [17.1, 17.1, 17.1], "tokens": [512, 512, 512], "finish": ["length", "length", "length"], "accepted": ["0/0", "0/0", "0/0"]}
+{"case": "tool call", "mode": "greedy", "tok_s": 17.1, "all": [17.1, 17.1, 17.1], "tokens": [89, 89, 89], "finish": ["tool_calls", "tool_calls", "tool_calls"], "accepted": ["0/0", "0/0", "0/0"]}
+{"case": "tool call", "mode": "nanbeige default (T 1.0, top_p 0.95)", "tok_s": 17.1, "all": [17.1, 17.1, 17.1], "tokens": [87, 89, 95], "finish": ["tool_calls", "tool_calls", "tool_calls"], "accepted": ["0/0", "0/0", "0/0"]}
+{"case": "first token, code prompt, cold", "s": 0.1786320460000752, "all": [0.17900095100003455, 0.1786320460000752, 0.17817856300007406]}
+bench exit 0
+BENCHDONE

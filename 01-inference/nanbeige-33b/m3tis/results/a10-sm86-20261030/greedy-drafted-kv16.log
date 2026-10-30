@@ -1,0 +1,14 @@
+info: Llama experimental DFlash2 affine4, allocator device=1165502512, batched verification
+info: Llama verify windows 52.90 ms at 1 row, 61.32 ms at 8
+info: Llama KV bf16, 212992 bytes/token; BOS bf16
+[tensorfold] open-file limit raised: soft 1024 -> 1048576
+warning: libtfgrammar.so is required for structured output and required tool calls (HTTP 400 when missing); restore the matching release archive's lib/ directory or run zig build grammar -Dxgrammar=DIR; prepare DIR with git clone --branch v0.2.8 --recurse-submodules https://github.com/mlc-ai/xgrammar
+[tensorfold] CUDA sm_86 device 0 (NVIDIA A10): model 16.30 GiB; 1 stream at once, 1.63 GiB each at a 8192-token window, of 4.2 GiB left after a 1.0 GiB reserve; prompts in passes of up to 128 rows, no prompt cache; own glue kernels
+[tensorfold] serving m3tis at http://127.0.0.1:8091/v1 (sampling: greedy; drafts: on; context: 8192; loaded in 15.5s)
+[tensorfold] thinking on (the chat template's default): replies reason in reasoning_content before the answer in content, and max_tokens counts both. --no-thinking turns it off; a request can send chat_template_kwargs {"enable_thinking": false}
+[tensorfold] 127.0.0.1 "GET /v1/models HTTP/1.1" 200 -
+[tensorfold] done cmpl-ed98d35eb392dd5594e85ac08b385e49 prompt=195 cached=0 thinking=False effort=none tokens=128 sha=eb33473723a9 finish=length rounds=32 accepted=96/191 ttft=0.589 decode=2.277 elapsed=2.867 queued=0.000 tok/s=55.8
+[tensorfold] 127.0.0.1 "POST /v1/completions HTTP/1.1" 200 -
+[tensorfold] shutting down (SIGTERM): draining: new requests get 503; 0 request(s) in progress may finish within 20.0 s
+[tensorfold] shutting down: drained
+[tensorfold] shutting down: stopped

@@ -1,0 +1,193 @@
+[
+ {
+  "case": "code",
+  "mode": "greedy",
+  "tok_s": 73.4,
+  "all": [
+   73.3,
+   73.7,
+   73.4
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ],
+  "accepted": [
+   "411/694",
+   "411/693",
+   "411/693"
+  ]
+ },
+ {
+  "case": "code",
+  "mode": "nanbeige default (T 1.0, top_p 0.95)",
+  "tok_s": 61.1,
+  "all": [
+   58.9,
+   72.2,
+   61.1
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ],
+  "accepted": [
+   "386/816",
+   "411/670",
+   "391/804"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "greedy",
+  "tok_s": 39.6,
+  "all": [
+   40.1,
+   39.4,
+   39.6
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ],
+  "accepted": [
+   "326/1138",
+   "323/1139",
+   "324/1122"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "nanbeige default (T 1.0, top_p 0.95)",
+  "tok_s": 34.3,
+  "all": [
+   34.3,
+   39.4,
+   29.1
+  ],
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ],
+  "accepted": [
+   "295/1211",
+   "325/1149",
+   "256/1354"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "greedy",
+  "tok_s": 65.8,
+  "all": [
+   65.7,
+   65.8,
+   65.8
+  ],
+  "tokens": [
+   89,
+   89,
+   89
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ],
+  "accepted": [
+   "70/114",
+   "70/116",
+   "70/115"
+  ]
+ },
+ {
+  "case": "tool call",
+  "mode": "nanbeige default (T 1.0, top_p 0.95)",
+  "tok_s": 60.6,
+  "all": [
+   61.0,
+   54.3,
+   60.6
+  ],
+  "tokens": [
+   87,
+   89,
+   95
+  ],
+  "finish": [
+   "tool_calls",
+   "tool_calls",
+   "tool_calls"
+  ],
+  "accepted": [
+   "69/126",
+   "66/145",
+   "75/140"
+  ]
+ },
+ {
+  "case": "first token, code prompt, cold",
+  "s": 0.16866420099995594,
+  "all": [
+   0.16865562799989675,
+   0.16866420099995594,
+   0.17026207899994006
+  ]
+ },
+ {
+  "case": "long prompt a-16k.txt",
+  "prompt_tokens": 16445,
+  "read_s": 48.423500000000004,
+  "tok_s": 22.1,
+  "all_read_s": [
+   48.395,
+   48.452
+  ]
+ },
+ {
+  "case": "next turn after a-16k.txt",
+  "read_s": 8.109,
+  "cached_tokens": "14427",
+  "wall_s": 10.718811950999907
+ },
+ {
+  "case": "long prompt b-61k.txt",
+  "prompt_tokens": 61134,
+  "read_s": 273.12350000000004,
+  "tok_s": 12.35,
+  "all_read_s": [
+   273.166,
+   273.081
+  ]
+ },
+ {
+  "case": "next turn after b-61k.txt",
+  "read_s": 14.486,
+  "cached_tokens": "59116",
+  "wall_s": 18.28250660699996
+ }
+]
