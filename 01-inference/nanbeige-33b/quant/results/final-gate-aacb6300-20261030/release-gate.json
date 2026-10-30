@@ -1,0 +1,145 @@
+{
+ "engine": "aacb6300",
+ "gpu": "A100 80GB (HF Jobs a100-large, sm_80)",
+ "passed": 42,
+ "checks": {
+  "kv4-unit": "core",
+  "exl3-r32-unit": "core",
+  "draft-lattice-unit": "core",
+  "draft-rope-unit": "core",
+  "p1-reference": "speed",
+  "p1-logits": "core",
+  "p1-greedy": "core",
+  "p1-prefill": "core",
+  "p3-bf16-kv16": "core",
+  "p3-bf16-kv4": "core",
+  "p3-affine4-kv16": "core",
+  "p3-affine4-kv4": "core",
+  "p2": "core",
+  "p3-bf16-kv16-wire": "core",
+  "p3-bf16-kv4-wire": "core",
+  "p3-affine4-kv16-wire": "core",
+  "p3-affine4-kv4-wire": "core",
+  "prefill-20000-affine4-kv16": "pf20a16",
+  "prefill-20000-affine4-kv4": "pf20a4",
+  "prefill-20000-bf16-kv16": "pf20b16",
+  "prefill-20000-bf16-kv4": "pf20b4",
+  "prefill-20000-none-kv16": "pf20none",
+  "prefill-20000-none-kv4": "pf20none",
+  "prefill-2000-none-kv16": "pf2k",
+  "prefill-2000-none-kv4": "pf2k",
+  "prefill-2000-bf16-kv16": "pf2k",
+  "prefill-2000-bf16-kv4": "pf2k",
+  "prefill-2000-affine4-kv16": "pf2k",
+  "prefill-2000-affine4-kv4": "pf2k",
+  "prefill-speed-2000-kv16": "pf2k",
+  "prefill-speed-2000-kv4": "pf2k",
+  "prefill-speed-20000-kv16": "pf2k",
+  "prefill-speed-20000-kv4": "pf2k",
+  "prefill-speed-60000-kv16": "pf60",
+  "prefill-speed-60000-kv4": "pf60",
+  "p4-20000-timing-0": "pf60",
+  "p1-speed": "speed",
+  "p3-bf16-kv16-speed": "speed",
+  "p3-bf16-kv4-speed": "speed",
+  "p3-affine4-kv16-speed": "speed",
+  "p3-affine4-kv4-speed": "speed",
+  "draft-profile": "speed"
+ },
+ "not_run_by_design": {
+  "p4": "reused from engines 474fe6e4/44d04976 (KV4 path bit-identical since 474fe6e4); p4-20000-timing-0 rerun on aacb6300 reproduced mean_kl 0.03450298023704915 exactly",
+  "profiles": "opt-in diagnostics"
+ },
+ "prefill_speed_vs_exllamav3": {
+  "prefill-speed-2000-kv16": {
+   "ratio": 1.4,
+   "speed_state": "PASS"
+  },
+  "prefill-speed-2000-kv4": {
+   "ratio": 1.448,
+   "speed_state": "PASS"
+  },
+  "prefill-speed-20000-kv16": {
+   "ratio": 1.583,
+   "speed_state": "PASS"
+  },
+  "prefill-speed-20000-kv4": {
+   "ratio": 1.684,
+   "speed_state": "PASS"
+  },
+  "prefill-speed-60000-kv16": {
+   "ratio": 1.846,
+   "speed_state": "PASS"
+  },
+  "prefill-speed-60000-kv4": {
+   "ratio": 2.021,
+   "speed_state": "FAIL"
+  }
+ },
+ "prefill_60k_kv4_note": "2.02x exllamav3 vs the 2x bar; accepted by Riel 2026-10-30 (\"Ship it\"), documented in the release card",
+ "p4_parity": {
+  "state": "PASS",
+  "pooled": {
+   "state": "PASS",
+   "ratio": 0.9333835499859452,
+   "tensorfold_sum_mean_kl": 2.995499679548682,
+   "exllamav3_sum_mean_kl": 3.2092912710897763
+  },
+  "per_sequence": [
+   {
+    "length": 20000,
+    "seq": 0,
+    "ratio": 1.178,
+    "state": "PASS"
+   },
+   {
+    "length": 20000,
+    "seq": 1,
+    "ratio": 1.088,
+    "state": "PASS"
+   },
+   {
+    "length": 20000,
+    "seq": 2,
+    "ratio": 1.022,
+    "state": "PASS"
+   },
+   {
+    "length": 60000,
+    "seq": 0,
+    "ratio": 0.988,
+    "state": "PASS"
+   },
+   {
+    "length": 60000,
+    "seq": 1,
+    "ratio": 0.943,
+    "state": "PASS"
+   },
+   {
+    "length": 60000,
+    "seq": 2,
+    "ratio": 0.933,
+    "state": "PASS"
+   },
+   {
+    "length": 100000,
+    "seq": 0,
+    "ratio": 0.998,
+    "state": "PASS"
+   },
+   {
+    "length": 100000,
+    "seq": 1,
+    "ratio": 0.872,
+    "state": "PASS"
+   },
+   {
+    "length": 100000,
+    "seq": 2,
+    "ratio": 1.075,
+    "state": "PASS"
+   }
+  ]
+ }
+}

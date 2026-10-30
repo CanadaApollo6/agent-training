@@ -1,0 +1,193 @@
+{
+  "state": "PASS",
+  "sequence_ratio_bar": 1.25,
+  "pooled_ratio_bar": 1.05,
+  "results": [
+    {
+      "history_tokens": 20000,
+      "sequence": 0,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-20000-timing-0/quality-20000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-20000-0/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 0.03450298023704915,
+        "max_kl": 3.318647783378163,
+        "greedy_matching": 32,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 0.029285305343569854,
+        "max_kl": 2.527526458627874,
+        "greedy_matching": 5,
+        "greedy_equal": false
+      },
+      "ratio": 1.17816699646005
+    },
+    {
+      "history_tokens": 20000,
+      "sequence": 1,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-20000-timing-1/quality-20000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-20000-1/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 0.012897285682171177,
+        "max_kl": 0.6253535287296412,
+        "greedy_matching": 14,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 0.011852663153877988,
+        "max_kl": 0.6477770536563965,
+        "greedy_matching": 13,
+        "greedy_equal": false
+      },
+      "ratio": 1.0881339927349076
+    },
+    {
+      "history_tokens": 20000,
+      "sequence": 2,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-20000-timing-2/quality-20000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-20000-2/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 0.9178468559488191,
+        "max_kl": 18.456968191090013,
+        "greedy_matching": 11,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 0.8982145172173099,
+        "max_kl": 20.867148459553412,
+        "greedy_matching": 9,
+        "greedy_equal": false
+      },
+      "ratio": 1.0218570712844084
+    },
+    {
+      "history_tokens": 60000,
+      "sequence": 0,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-60000-kl-0/quality-60000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-60000-0/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 0.038342404591250594,
+        "max_kl": 0.5918838247715956,
+        "greedy_matching": 15,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 0.03880075677890802,
+        "max_kl": 1.0383557335189868,
+        "greedy_matching": 17,
+        "greedy_equal": false
+      },
+      "ratio": 0.9881870296945706
+    },
+    {
+      "history_tokens": 60000,
+      "sequence": 1,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-60000-kl-1/quality-60000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-60000-1/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 0.0643827755992813,
+        "max_kl": 2.9398002804480874,
+        "greedy_matching": 21,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 0.06829578054041867,
+        "max_kl": 1.988369218319954,
+        "greedy_matching": 2,
+        "greedy_equal": false
+      },
+      "ratio": 0.9427050264280736
+    },
+    {
+      "history_tokens": 60000,
+      "sequence": 2,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-60000-kl-2/quality-60000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-60000-2/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 0.09344918049368647,
+        "max_kl": 5.476289295018978,
+        "greedy_matching": 30,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 0.10014614185696603,
+        "max_kl": 3.2200076450359103,
+        "greedy_matching": 11,
+        "greedy_equal": false
+      },
+      "ratio": 0.9331281141829256
+    },
+    {
+      "history_tokens": 100000,
+      "sequence": 0,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-100000-kl-0/quality-100000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-100000-0/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 0.0414414975446797,
+        "max_kl": 4.7676543662107544,
+        "greedy_matching": 2,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 0.041540747188442965,
+        "max_kl": 4.073903577202918,
+        "greedy_matching": 1,
+        "greedy_equal": false
+      },
+      "ratio": 0.9976107881903752
+    },
+    {
+      "history_tokens": 100000,
+      "sequence": 1,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-100000-kl-1/quality-100000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-100000-1/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 1.6352807551376647,
+        "max_kl": 26.03698296645054,
+        "greedy_matching": 13,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 1.8747754845682494,
+        "max_kl": 27.25593316672763,
+        "greedy_matching": 17,
+        "greedy_equal": false
+      },
+      "ratio": 0.8722541811529293
+    },
+    {
+      "history_tokens": 100000,
+      "sequence": 2,
+      "tensorfold_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4-100000-kl-2/quality-100000.json",
+      "exllamav3_receipt": "/home/riels/.cache/nanbeige-gate-staging/release-p4-merged/receipts/p4ref-exl3-100000-2/summary.json",
+      "state": "PASS",
+      "tensorfold": {
+        "mean_kl": 0.1573559443140796,
+        "max_kl": 4.207511144428042,
+        "greedy_matching": 9,
+        "greedy_equal": false
+      },
+      "exllamav3": {
+        "mean_kl": 0.14637987444203346,
+        "max_kl": 2.485876771707864,
+        "greedy_matching": 10,
+        "greedy_equal": false
+      },
+      "ratio": 1.07498346281471
+    }
+  ],
+  "pooled": {
+    "state": "PASS",
+    "ratio": 0.9333835499859452,
+    "tensorfold_sum_mean_kl": 2.995499679548682,
+    "exllamav3_sum_mean_kl": 3.2092912710897763
+  }
+}
