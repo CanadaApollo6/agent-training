@@ -181,6 +181,20 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     the Ornith quantization work. Qwen3.8-27B exists as both EXL3 2.0 bpw and ternary Bonsai 2 (1.72 bpw, trained),
     so it's a clean rounding-vs-training comparison on one base model.
   - The figures are the kit author's measurements. The engine wheels come from turboderp's own releases.
+- [unsloth/Qwen3.8-27B-GGUF](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF) (Unsloth, Apache 2.0; "Dynamic 3.1"
+  refresh 2026-11-11; [docs](https://unsloth.ai/docs/models/qwen3.8)): the most-downloaded GGUF of the model (~5.9M
+  a month). 25 files, from UD-IQ1_S at 6.2 GB to Q8_0 at 29 GB, plus vision `mmproj` files, the imatrix, and a
+  separate 1.37 GB Q4_0 MTP head.
+  - 3090 fit: UD-Q4_K_M 16.6 GB, UD-Q4_K_XL 17.7 GB, UD-Q5_K_M 19.9 GB. Our MLX 4-bit build is in the same range.
+  - The quality claim ("5-10% more accuracy" on the card, "10-15%" on another docs page) has no table on either
+    page. The comparison set isn't named. The quant-level numbers are in plot images, and the 3.1 method isn't
+    described ("a preview of our new methods").
+  - Unsloth's grader fixes changed thousands of answers (8,520 on math alone). That's a useful warning for our own
+    probes: check the grader before trusting a gap.
+  - For us: a llama.cpp baseline and a quant-quality comparison point, not a replacement. Our TensorFold build with
+    the DFlash2 drafter does 140-225 tok/s on the 3090. Unsloth gives no 3090 speed. llama.cpp MTP is claimed at
+    "1.4-2.2x", and EXL3 4.0 + MTP measured 61.6 here. To test it: run KL vs bf16 on the same frozen tokens as
+    turboderp's EXL3 4.0 (mean 0.05), on a pod, before reading anything into the "accuracy" claim.
 - [SOL-ExecBench](https://research.nvidia.com/benchmarks/sol-execbench) (NVIDIA;
   [paper](https://arxiv.org/abs/2603.19173), [code](https://github.com/nvidia/sol-execbench),
   [data](https://huggingface.co/datasets/nvidia/SOL-ExecBench)): 235 CUDA kernel problems taken from 124 real models,
