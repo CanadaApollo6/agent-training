@@ -195,6 +195,36 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     the DFlash2 drafter does 140-225 tok/s on the 3090. Unsloth gives no 3090 speed. llama.cpp MTP is claimed at
     "1.4-2.2x", and EXL3 4.0 + MTP measured 61.6 here. To test it: run KL vs bf16 on the same frozen tokens as
     turboderp's EXL3 4.0 (mean 0.05), on a pod, before reading anything into the "accuracy" claim.
+- [harness-hub/Qwen3.8-27B-pi-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted) (Hugging Face's
+  harness-hub org, Apache 2.0, 2026-11-17; [GGUF](https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted-GGUF)):
+  a rank-32 LoRA (638 MB) on Qwen3.8-27B, trained with RL inside the pi harness. It's the closest public test of our
+  harness-training bet, on the same base model as M3TiS #1.
+  - Their numbers, under pi with thinking off, one attempt per task at temperature 0.8:
+    - TB2.1: base 39.5% → 55.8%. On the 68 tasks that weren't used to pick the checkpoint, +16.2 points (13 newly
+      solved, 2 lost, p = 0.007).
+    - SWE-bench Pro hard 51: 29.4% → 62.7%.
+    - Tool calls per task: −55 to −62%.
+  - Recipe: TRL AsyncGRPO ([`examples/async_grpo_harbor`](https://github.com/huggingface/trl/tree/main/examples/async_grpo_harbor)),
+    Harbor tasks through OpenEnv, 2× B200, step 160 of a run stopped at 191. Tasks: 750 scale800 (SWE) and 300
+    TermGrade (terminal). Reward: the verifier's score plus a 0.1-weight tool-efficiency bonus. Rollouts: 50 steps,
+    30 min.
+  - Caveats:
+    - The SWE-bench Pro number is in-sample: the checkpoint was picked partly on it. Trust the 68-task TB2.1 figure
+      more.
+    - Both arms ran thinking off, and the base model is weaker that way. Our Qwen3.8-27B runs use
+      reasoning_effort medium. Nobody has compared the adapter with the base model at medium.
+    - The training sets (`scale800-harbor`, `termgrade-train-harbor`) aren't public, so we can't check them against
+      TB2.
+    - The card's vLLM and merge commands load `harness-hub/Qwen3.8-27B-pi`, which no longer exists. Use the
+      `-adapted` name instead.
+    - The GGUF and other quantized versions weren't re-evaluated.
+  - The same org has adapters for LFM2.5-24B-A2B (base of M3TiS #3) for pi, Claude Code, Hermes and opencode. The pi
+    one trained on SmolDataEnvs data-analysis tasks. It kept accuracy flat (−4.2, within noise) and cut tool calls
+    by 39%. The 27B gain came from harder SWE and terminal tasks.
+  - For us: merge the adapter into bf16 and re-quantize it with the M3TiS #1 recipe. Then run TB2 held-out 20 × 3
+    under pi on a pod with three arms: base at medium effort, base with thinking off, and the adapter with thinking
+    off. Check the DFlash2 drafter's acceptance on the merged weights. If the adapter wins, it's a cheap M3TiS #1
+    variant, and its recipe is a ready-made template for RL on Ornith or Nanbeige.
 - [SOL-ExecBench](https://research.nvidia.com/benchmarks/sol-execbench) (NVIDIA;
   [paper](https://arxiv.org/abs/2603.19173), [code](https://github.com/nvidia/sol-execbench),
   [data](https://huggingface.co/datasets/nvidia/SOL-ExecBench)): 235 CUDA kernel problems taken from 124 real models,
