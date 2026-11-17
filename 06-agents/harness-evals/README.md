@@ -728,6 +728,64 @@ audit: `results/nanbeige-lookup-audit.md`.
   build or draft head for now. Draft-head generation started speculatively on the idle pods was stopped; the scripts
   and the 639 responses so far are kept for a later go (`01-inference/nanbeige-33b/drafter/`).
 
+## Qwen3.8-27B with harness-hub's pi adapter (2026-11-17)
+
+[harness-hub/Qwen3.8-27B-pi-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted) is a rank-32 LoRA
+that Hugging Face trained with RL inside pi. Its card reports TB2.1 39.5% → 55.8%, with thinking off in both arms. Does
+it hold up on our pilot? Does it beat the base model the way we run it, at reasoning effort medium?
+
+- **Setup:**
+  - Three arms, 3 attempts each, on the 20-task pilot under pi: 60 turns, 60 minutes, and a 32K reply cap for every
+    arm.
+  - Qwen/Qwen3.8-27B BF16 (rev 37561816), with the adapter at rev e786f849.
+  - Served by vLLM 0.34 on one Prime 8x A100 80GB pod, tensor parallel 2 per arm: prefix caching with
+    `--mamba-cache-mode align`, the `qwen3_xml` tool parser, and the `qwen3` reasoning parser.
+  - Arms:
+    - base at reasoning_effort medium, with the model's own sampling (T 1.0, top_k 20, top_p 0.95);
+    - base with thinking off at T 0.8;
+    - base + LoRA with thinking off at T 0.8.
+  - The two thinking-off arms use the card's eval settings.
+  - Before the run, a logprob check confirmed the LoRA is applied. The base model served from the LoRA arm's server
+    matched the base-off arm exactly, and the LoRA's logprobs differed.
+- **Scripts:** `setup_qwen27_pod.sh`, `serve_qwen27_pod.sh`, `run_q27pi.sh`, `q27pi_status.py`, and the `q27pi`
+  family in `compare_builds.py`. Pod times: `results/q27pi-pods.log`. Tables: `results/q27pi-tb2-compare.md`
+  (paired against medium) and `results/q27pi-tb2-compare-vs-off.md`.
+- **Spend:** $47.69, including ~35 minutes lost to a failed first start. Triton needs `Python.h`, which the
+  datacrunch image lacks (fixed in the setup script).
+
+| Arm | Solved per attempt (of 19) | Mean | vs base medium, task by task | Solved-run tokens vs medium |
+|---|---|---|---|---|
+| Base, thinking medium | 13, 11, 12 | 12.0 (63%) | - | - |
+| Base, thinking off | 8, 5, 8 | 7.0 (37%) | −26.3 points (better on 1, worse on 8), p = 0.021 | 0.55× |
+| pi adapter, thinking off | 14, 13, 12 | **13.0 (68%)** | +5.3 points (better on 5, worse on 3), p = 0.57 | **0.70×** (0.52–0.93) |
+| R1s (earlier pilot, 3090) | 11, 10, 9 | 10.0 (53%) | −10.5 points, p = 0.35 | 1.35× |
+| Nanbeige4.3-33B BF16 (earlier pilot) | 11, 10, 13 | 11.3 (60%) | −3.5 points, p = 0.85 | 3.39× |
+
+- **The adapter's training is real.** Against the base model with thinking off, its own baseline, it gains +31.6
+  points a task (better on 11 tasks, worse on 1, p = 0.004). The card's ~+16 points on TB2.1 shows up here at about
+  twice the size.
+- **Against medium it's a tie that leans its way.** 13.0 vs 12.0 is +1 task an attempt, and the paired test can't
+  tell that from noise. It reaches that score with no thinking: 0.70× the tokens on solved runs and 283 output
+  tokens a call vs 363. On shared solves it takes 9% fewer turns (median 9 vs 11 on solved runs).
+- **Most of its gain comes from fewer runs that go nowhere.** Base-off hits the 60-turn cap 22 times and the adapter
+  7 times (medium: 9). Wrong final answers: adapter 7, medium 9, base-off 11.
+- **Highest pilot mean so far,** above Nanbeige's 11.3, with a third of Nanbeige's tokens. Nobody looked the benchmark
+  up (`lookup_audit.py`: 0 of 180 runs).
+- **Where it differs from medium:**
+  - Better: sqlite-db-truncate 2/3 vs 0/3, git-multibranch 3/3, portfolio-optimization 3/3, and the first solves on
+    this pilot of schemelike-metacircular-eval (1/3) and mteb-retrieve (1/3).
+  - Worse: rstan-to-pystan 0/3 vs 1/3, financial-document-processor 2/3 vs 3/3, and modernize-scientific-stack 2/3
+    vs 3/3.
+- **Caveats:**
+  - The arms' sampling differs (T 1.0 for medium, T 0.8 for the off arms). Each arm uses its recommended setting,
+    but that's a confound.
+  - The 32K reply cap ended no run here (Other: 0).
+  - 14 model calls hit "Server disconnected" in total, spread over all arms. Each was retried by the harness, and no
+    run was lost.
+- **Verdict:** at least as good as how we run the base model, at 0.7× the tokens with no thinking. On a 3090 that is
+  a faster agent at the same accuracy. It's worth building as an M3TiS #1 variant. Before release, check two things
+  on the merged weights: drafter acceptance, and KL against BF16 after quantization.
+
 ## So far
 
 - **Harness choice:** pi is the safer default for self-hosted models today. prime_agent's continual-harness features
@@ -743,6 +801,10 @@ audit: `results/nanbeige-lookup-audit.md`.
   tokens per solve. It solves different tasks, but it doesn't beat R1s, so it isn't an M3TiS #4 build yet.
 - **Nanbeige4.3-33B BF16:** best mean yet (11.0 of 19 with the lookup run failed, 11.3 as scored, vs 10.0), but
   within noise (p ≈ 0.7) at 2.71× the tokens per solve. Gate not met; no 3090 build or draft head for now.
+- **Qwen3.8-27B + harness-hub pi LoRA (2026-11-17):** 13.0 of 19 with thinking off, the best pilot mean so far. It
+  ties the base model at medium effort (12.0, p = 0.57) at 0.70x the tokens and beats base with thinking off by
+  +31.6 points a task (p = 0.004). RL in the harness works on this base. Next: an M3TiS #1 variant (merge, quantize,
+  check drafter acceptance and KL).
 - **Proxy fixes:** keep the image fix; it is the clear win (30% → 47% on picture tasks). check is cheap and maybe
   helps; cutoff mostly turns cut-off failures into ordinary failures. Together about +5 points per task, not proven at
   2 tries. Prime sandbox terminations (half the reruns lost again) must be dealt with before RL on Prime sandboxes.

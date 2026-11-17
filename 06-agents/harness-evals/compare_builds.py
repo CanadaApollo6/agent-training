@@ -36,6 +36,12 @@ FAMILIES = {
                  "flint:bf16": "Flint BF16 (H200, Recursive's SGLang kit)",
                  "nanbeige:bf16": "Nanbeige4.3-33B BF16 (H200 per attempt, vLLM)",
                  "nanbeige:exl3": "Nanbeige4.3-33B EXL3 3.5 bpw own-text calibrated (H200, serve_exl3.py, 120-min cap)"},
+    # harness-hub pi adapter test (run_q27pi.sh): Qwen3.8-27B BF16 on vLLM 0.34, A100 TP2 per arm, 32K reply cap
+    "q27pi": {"q27pi:med": "Qwen3.8-27B base, reasoning_effort medium, T 1.0",
+              "q27pi:off": "Qwen3.8-27B base, thinking off, T 0.8",
+              "q27pi:ad": "Qwen3.8-27B + harness-hub pi LoRA, thinking off, T 0.8",
+              "ornith35b:r1s-c4s": "Ornith 35B R1s (3090, TensorFold)",
+              "nanbeige:bf16": "Nanbeige4.3-33B BF16 (H200 per attempt, vLLM)"},
 }
 BUILDS = FAMILIES["ornith35b"]
 

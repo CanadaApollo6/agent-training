@@ -1,0 +1,6 @@
+2026-11-17 15:59:09 create q27pi-adapter A100_80GBx8 datacrunch 35dca0 $19.28/h
+2026-11-17 16:14:18 ip q27pi-adapter 86.38.238.75 (pod 9a307837fa0a48489de3bf1b54774324)
+2026-11-17 16:21:06 setup done: vLLM 0.34.0, Qwen/Qwen3.8-27B rev 37561816, adapter rev e786f849
+2026-11-17 16:51:38 servers failed (no Python.h for Triton); python3.12-dev installed, restarted
+2026-11-17 16:57:02 servers up (KV 1.2M tokens each, align mode, LoRA logprobs differ from base); series started
+2026-11-17 18:27:33 terminate q27pi-adapter (series done) exit=0

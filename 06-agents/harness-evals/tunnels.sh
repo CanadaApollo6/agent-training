@@ -10,7 +10,7 @@ while true; do
     ss -ltn "sport = :$lport" | grep -q LISTEN && continue
     echo "$(date +%T) tunnel $lport -> $ip:$rport down; restarting" >> logs/tunnels.log
     setsid ssh -f -N -i ~/.ssh/prime_ed25519 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 \
-      -o ExitOnForwardFailure=yes -L "$lport:127.0.0.1:$rport" "ubuntu@$ip" < /dev/null
+      -o ExitOnForwardFailure=yes -L "$lport:127.0.0.1:$rport" "${POD_USER:-ubuntu}@$ip" < /dev/null
   done
   sleep 20
 done
