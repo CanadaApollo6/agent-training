@@ -80,6 +80,10 @@ def merge_lora(model, lora_dir):
 def encode(tok, row, max_len):
     ids = tok.apply_chat_template(row["messages"], tools=row["tools"], tokenize=True, add_generation_prompt=False,
                                   enable_thinking=row["thinking"], return_dict=False)
+    if hasattr(ids, "keys"):  # some transformers versions return a BatchEncoding regardless
+        ids = ids["input_ids"]
+    if ids and isinstance(ids[0], list):
+        ids = ids[0]
     ids = list(ids)[:max_len]
     start, end = tok.convert_tokens_to_ids("<|im_start|>"), tok.convert_tokens_to_ids("<|im_end|>")
     asst_tok = tok.encode("assistant", add_special_tokens=False)
