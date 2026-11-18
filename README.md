@@ -225,6 +225,32 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     under pi on a pod with three arms: base at medium effort, base with thinking off, and the adapter with thinking
     off. Check the DFlash2 drafter's acceptance on the merged weights. If the adapter wins, it's a cheap M3TiS #1
     variant, and its recipe is a ready-made template for RL on Ornith or Nanbeige.
+- [nvidia/Qwen3.5-4B-Qwen3.8-27B-Draft](https://huggingface.co/nvidia/Qwen3.5-4B-Qwen3.8-27B-Draft) (NVIDIA Open
+  Model Agreement, commercial use OK, 2026-11-17; siblings
+  [Qwen3.5-0.8B](https://huggingface.co/nvidia/Qwen3.5-0.8B-Qwen3.8-27B-Draft) and
+  [Llama-3.2-1B](https://huggingface.co/nvidia/Llama-3.2-1B-Qwen3.8-27B-Draft)): a whole Qwen3.5-4B model (4.21B,
+  8.4 GB BF16) trained as an external draft model for Qwen3.8-27B. It proposes 16 tokens one at a time, and the 27B
+  checks them by rejection sampling, so the output distribution is unchanged.
+  - Training: 200K Nemotron-Post-Training-v2 prompts with Qwen3.8-27B's own responses, matched to the target's top-20
+    distribution at every position under its serving policy (T 1.0, top-k 20, top-p 0.95). That's the same kind of
+    signal as our Nanbeige drafter data. Trained with Model Optimizer at 12,288 tokens.
+  - Their numbers, tokens per target step at block 16 on SPEED-Bench: 5.58 on the qualitative set and 5.11 on 32K
+    prompts. The model's own MTP head gets 3.81 and 3.86. The 0.8B draft gets 3.92 and the Llama 1B gets 3.42.
+  - Caveats:
+    - DFlash2 isn't in their comparison, only MTP.
+    - The target hardware is NVIDIA's Groq 3 LPU, where weights sit in on-chip memory and 16 small sequential steps
+      are cheap. The card gives no GPU speeds.
+    - The drafts were trained on single-turn prompts under 3K tokens with thinking on. Agent turns with tool output
+      and thinking off weren't tested.
+  - For us on a 3090: probably slower than what M3TiS #1 ships. Each of the 16 draft steps reads the whole 4B model
+    (~2.5 GB at 4-bit, ≥2.7 ms at 936 GB/s), so drafting costs 45-60 ms a round against ~17 ms for the 27B's check.
+    At 5.6 tokens a round that's under 100 tok/s. DFlash2 drafts a whole block in one pass and does 140-225 tok/s
+    on the 3090. Our A6000 run on 2026-11-17 measured DFlash2 at 4.1-9.7 tokens a round on code, chat and agent
+    turns, but on different prompts, so it isn't directly comparable. TensorFold has no path for an external
+    autoregressive draft.
+  - Where it could still pay off: batch serving in vLLM on datacenter cards, as a third drafter next to MTP and
+    DFlash2. A cheap check: our 12 agent turns on a vLLM pod, MTP vs this draft at block 4 and 8. A side question:
+    run it alone. It's a 4B distilled from the 27B, and might be a usable small Qwen3.8 for Smart Data's cheap jobs.
 - [SOL-ExecBench](https://research.nvidia.com/benchmarks/sol-execbench) (NVIDIA;
   [paper](https://arxiv.org/abs/2603.19173), [code](https://github.com/nvidia/sol-execbench),
   [data](https://huggingface.co/datasets/nvidia/SOL-ExecBench)): 235 CUDA kernel problems taken from 124 real models,
