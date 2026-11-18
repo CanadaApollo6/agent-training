@@ -1,0 +1,8 @@
+default 1024 mean NLL 0.554 first 200 0.506 at 59/71/95: [0.03, 2.47, 2.59] top at 59: ' bmp'
+nofla 1024 mean NLL 0.552 first 200 0.504 at 59/71/95: [0.04, 2.24, 1.61] top at 59: ' bmp'
+eager 1024 mean NLL 0.548 first 200 0.502 at 59/71/95: [0.06, 1.72, 3.78] top at 59: ' bmp'
+default 2048 mean NLL 1.876 first 200 0.508 at 59/71/95: [0.04, 2.58, 2.03] top at 59: ' bmp'
+default 6144 mean NLL 2.580 first 200 0.493 at 59/71/95: [0.03, 1.51, 2.94] top at 59: ' bmp'
+nofla 6144 mean NLL 2.580 first 200 0.510 at 59/71/95: [0.03, 1.91, 3.19] top at 59: ' bmp'
+eager 6144 mean NLL 2.582 first 200 0.513 at 59/71/95: [0.04, 1.81, 3.05] top at 59: ' bmp'
+vllm 6144 mean NLL 2.577 first 200 0.516 first 1023 0.553 1023-2047 3.195 at 59/71/95: [0.04, 1.81, 3.78]

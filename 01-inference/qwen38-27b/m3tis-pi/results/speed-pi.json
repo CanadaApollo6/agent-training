@@ -1,0 +1,222 @@
+[
+ {
+  "case": "code",
+  "mode": "greedy",
+  "tok_s": 279.6064816844804,
+  "all": [
+   279.9,
+   279.6,
+   279.0
+  ],
+  "tokens_per_round": 8.258064516129032,
+  "accept_rate": 0.48869752421959095,
+  "ttft_s": 0.049688761000084014,
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "greedy",
+  "tok_s": 138.92787146357892,
+  "all": [
+   138.9,
+   138.9,
+   139.0
+  ],
+  "tokens_per_round": 4.096,
+  "accept_rate": 0.20992984349703184,
+  "ttft_s": 0.05121955100003106,
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "agent turns (12)",
+  "mode": "greedy",
+  "tok_s": 209.38271321811737,
+  "all": [
+   226.4,
+   126.0,
+   163.5,
+   388.6,
+   191.0,
+   203.4,
+   298.1,
+   323.0,
+   215.4,
+   312.2,
+   140.4,
+   186.7
+  ],
+  "tokens_per_round": 6.336363636363636,
+  "accept_rate": 0.3634959349593496,
+  "ttft_s": 2.3368091420000496,
+  "tokens": [
+   340,
+   129,
+   97,
+   175,
+   160,
+   276,
+   64,
+   50,
+   227,
+   68,
+   125,
+   47
+  ],
+  "finish": [
+   "stop",
+   "tool_calls",
+   "tool_calls",
+   "tool_calls",
+   "stop",
+   "tool_calls",
+   "tool_calls",
+   "tool_calls",
+   "stop",
+   "tool_calls",
+   "tool_calls",
+   "stop"
+  ],
+  "prompt_tokens": [
+   3698,
+   10650,
+   7395,
+   10818,
+   2980,
+   2576,
+   5236,
+   4259,
+   3681,
+   4919,
+   2094,
+   2208
+  ]
+ },
+ {
+  "case": "code",
+  "mode": "T 0.8",
+  "tok_s": 286.18187810089734,
+  "all": [
+   286.2,
+   281.1,
+   296.1
+  ],
+  "tokens_per_round": 8.677966101694915,
+  "accept_rate": 0.5152542372881356,
+  "ttft_s": 0.05165988800001742,
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "chat",
+  "mode": "T 0.8",
+  "tok_s": 132.47041664951985,
+  "all": [
+   146.2,
+   124.3,
+   132.5
+  ],
+  "tokens_per_round": 4.0,
+  "accept_rate": 0.20167189132706373,
+  "ttft_s": 0.05305776600005174,
+  "tokens": [
+   512,
+   512,
+   512
+  ],
+  "finish": [
+   "length",
+   "length",
+   "length"
+  ]
+ },
+ {
+  "case": "agent turns (12)",
+  "mode": "T 0.8",
+  "tok_s": 200.36000230593726,
+  "all": [
+   232.0,
+   138.1,
+   126.3,
+   379.0,
+   175.5,
+   175.6,
+   293.4,
+   316.2,
+   221.3,
+   348.7,
+   179.4,
+   178.1
+  ],
+  "tokens_per_round": 6.075,
+  "accept_rate": 0.345,
+  "ttft_s": 2.381160396499979,
+  "tokens": [
+   399,
+   95,
+   512,
+   175,
+   167,
+   326,
+   64,
+   50,
+   77,
+   34,
+   124,
+   46
+  ],
+  "finish": [
+   "stop",
+   "tool_calls",
+   "length",
+   "tool_calls",
+   "stop",
+   "tool_calls",
+   "tool_calls",
+   "tool_calls",
+   "tool_calls",
+   "tool_calls",
+   "tool_calls",
+   "stop"
+  ],
+  "prompt_tokens": [
+   3698,
+   10650,
+   7395,
+   10818,
+   2980,
+   2576,
+   5236,
+   4259,
+   3681,
+   4919,
+   2094,
+   2208
+  ]
+ }
+]

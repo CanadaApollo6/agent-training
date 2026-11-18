@@ -77,8 +77,25 @@ def merge_lora(model, lora_dir):
     return {m + ".weight" for m in ab}
 
 
+def dict_args(messages):
+    """Qwen's template iterates tool-call arguments as a mapping; the exported traces carry OpenAI JSON strings."""
+    out = []
+    for m in messages:
+        if m.get("tool_calls"):
+            m = {**m, "tool_calls": [dict(tc) for tc in m["tool_calls"]]}
+            for tc in m["tool_calls"]:
+                f = tc["function"] = dict(tc.get("function", tc))
+                if isinstance(f.get("arguments"), str):
+                    try:
+                        f["arguments"] = json.loads(f["arguments"] or "{}")
+                    except json.JSONDecodeError:
+                        f["arguments"] = {"raw": f["arguments"]}
+        out.append(m)
+    return out
+
+
 def encode(tok, row, max_len):
-    ids = tok.apply_chat_template(row["messages"], tools=row["tools"], tokenize=True, add_generation_prompt=False,
+    ids = tok.apply_chat_template(dict_args(row["messages"]), tools=row["tools"], tokenize=True, add_generation_prompt=False,
                                   enable_thinking=row["thinking"], return_dict=False)
     if hasattr(ids, "keys"):  # some transformers versions return a BatchEncoding regardless
         ids = ids["input_ids"]

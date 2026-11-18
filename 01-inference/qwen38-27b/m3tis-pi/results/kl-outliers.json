@@ -1,0 +1,500 @@
+[
+ {
+  "task": "compile-compcert",
+  "set": "agent-ad",
+  "tokens": 6144,
+  "kl_mean": 1.0952121019363403,
+  "share_from_gt5": 0.7497037096495363,
+  "n_gt5": 426,
+  "gt5_by_role": {
+   "system": 59,
+   "user": 365,
+   "assistant": 2
+  },
+  "first_gt5": [
+   59,
+   71,
+   95,
+   102,
+   108,
+   130,
+   268,
+   272,
+   312,
+   357
+  ],
+  "r_logit_max": 50.25,
+  "q_logit_max": 47.5,
+  "worst": [
+   {
+    "pos": 3877,
+    "role": "user",
+    "kl": 28.13327980041504,
+    "entropy_r": 1.0552276372909546,
+    "context": "-1ubuntu4.9) ...\r\nSetting up libhe",
+    "next": "if",
+    "r_top": " a",
+    "q_top": "qc",
+    "r_p_top": 0.7613446712493896,
+    "q_p_rtop": 1.7396423657081023e-13
+   },
+   {
+    "pos": 5050,
+    "role": "user",
+    "kl": 26.759429931640625,
+    "entropy_r": 0.22540020942687988,
+    "context": "/refs/tags/v3.13.1\n40",
+    "next": "4",
+    "r_top": " GitHub",
+    "q_top": "4",
+    "r_p_top": 0.9585890769958496,
+    "q_p_rtop": 2.1296185301333814e-12
+   },
+   {
+    "pos": 2703,
+    "role": "user",
+    "kl": 25.512847900390625,
+    "entropy_r": 0.06885075569152832,
+    "context": "64 Packages\nmenhir:\n  Installed: (none",
+    "next": ")",
+    "r_top": " parser",
+    "q_top": " candidate",
+    "r_p_top": 0.9911223649978638,
+    "q_p_rtop": 7.83649534152886e-12
+   },
+   {
+    "pos": 3830,
+    "role": "user",
+    "kl": 24.801773071289062,
+    "entropy_r": 0.5065234899520874,
+    "context": "-9ubuntu5) ...\r\nSetting up libc-devtools (",
+    "next": "2",
+    "r_top": " proof",
+    "q_top": " Comp",
+    "r_p_top": 0.8712829351425171,
+    "q_p_rtop": 1.0451745371953258e-11
+   },
+   {
+    "pos": 5161,
+    "role": "user",
+    "kl": 24.234872817993164,
+    "entropy_r": 1.742355227470398,
+    "context": " 2 root root 4096 Nov 17",
+    "next": " ",
+    "r_top": " virtual",
+    "q_top": " ",
+    "r_p_top": 0.3101840317249298,
+    "q_p_rtop": 5.654051532522075e-11
+   },
+   {
+    "pos": 2741,
+    "role": "user",
+    "kl": 23.653831481933594,
+    "entropy_r": 0.8194451332092285,
+    "context": " 20231231+ds-1",
+    "next": " ",
+    "r_top": "df",
+    "q_top": " provides",
+    "r_p_top": 0.6074161529541016,
+    "q_p_rtop": 1.3559995140632886e-11
+   },
+   {
+    "pos": 3954,
+    "role": "user",
+    "kl": 23.09270668029785,
+    "entropy_r": 0.06434401869773865,
+    "context": "7 22:01 compcert-3.1",
+    "next": "3",
+    "r_top": "qc",
+    "q_top": "vo",
+    "r_p_top": 0.9885819554328918,
+    "q_p_rtop": 8.230206099968385e-11
+   },
+   {
+    "pos": 5166,
+    "role": "user",
+    "kl": 21.85634994506836,
+    "entropy_r": 2.3185136318206787,
+    "context": "4096 Nov 17 22:0",
+    "next": "2",
+    "r_top": " general",
+    "q_top": "1",
+    "r_p_top": 0.4854217767715454,
+    "q_p_rtop": 6.498257227455229e-12
+   }
+  ]
+ },
+ {
+  "task": "mteb-retrieve",
+  "set": "agent-ad",
+  "tokens": 2255,
+  "kl_mean": 0.6458929181098938,
+  "share_from_gt5": 0.42053055512862664,
+  "n_gt5": 75,
+  "gt5_by_role": {
+   "system": 61,
+   "user": 13,
+   "assistant": 1
+  },
+  "first_gt5": [
+   59,
+   71,
+   95,
+   102,
+   130,
+   268,
+   312,
+   313,
+   357,
+   475
+  ],
+  "r_logit_max": 47.25,
+  "q_logit_max": 47.5,
+  "worst": [
+   {
+    "pos": 1911,
+    "role": "user",
+    "kl": 21.756153106689453,
+    "entropy_r": 0.6321260333061218,
+    "context": "s on complicated tasks in the terminal\n29 /app/data",
+    "next": ".txt",
+    "r_top": " titles",
+    "q_top": ".txt",
+    "r_p_top": 0.8955018520355225,
+    "q_p_rtop": 1.7728334078537245e-10
+   },
+   {
+    "pos": 95,
+    "role": "system",
+    "kl": 21.252214431762695,
+    "entropy_r": 0.1059948056936264,
+    "context": " 50KB (whichever is hit first). Use offset",
+    "next": "/",
+    "r_top": " \\\"",
+    "q_top": "/",
+    "r_p_top": 0.9823578596115112,
+    "q_p_rtop": 3.877826393328121e-10
+   },
+   {
+    "pos": 1836,
+    "role": "user",
+    "kl": 20.88959503173828,
+    "entropy_r": 0.9928495287895203,
+    "context": "Beyond the Imitation Game collaborative benchmark for measuring and extrapolating",
+    "next": " the",
+    "r_top": "Beyond",
+    "q_top": " Terminal",
+    "r_p_top": 0.5283035039901733,
+    "q_p_rtop": 3.08485632871669e-11
+   },
+   {
+    "pos": 1863,
+    "role": "user",
+    "kl": 17.68828582763672,
+    "entropy_r": 1.0438746213912964,
+    "context": " Benchmark\nHumanity's Last Exam (HLE) is a",
+    "next": " multi",
+    "r_top": " file",
+    "q_top": "\n",
+    "r_p_top": 0.5870714783668518,
+    "q_p_rtop": 1.3449326097259018e-09
+   },
+   {
+    "pos": 1880,
+    "role": "user",
+    "kl": 17.262691497802734,
+    "entropy_r": 1.7876118421554565,
+    "context": " the frontier of human knowledge\nBRIGHT: A Realistic and",
+    "next": " Ch",
+    "r_top": " Local",
+    "q_top": " use",
+    "r_p_top": 0.32131829857826233,
+    "q_p_rtop": 3.542741655593318e-10
+   },
+   {
+    "pos": 1834,
+    "role": "user",
+    "kl": 15.076043128967285,
+    "entropy_r": 1.326889157295227,
+    "context": "<tool_response>\nBeyond the Imitation Game collaborative benchmark for measuring and",
+    "next": " extrapol",
+    "r_top": " evaluating",
+    "q_top": " m",
+    "r_p_top": 0.7084715962409973,
+    "q_p_rtop": 3.1176661252629856e-08
+   },
+   {
+    "pos": 475,
+    "role": "system",
+    "kl": 13.94565200805664,
+    "entropy_r": 0.4559018909931183,
+    "context": " lines, merge them into one edit instead of emitting overlapping edits.",
+    "next": " Do",
+    "r_top": " Constraints",
+    "q_top": " All",
+    "r_p_top": 0.92708420753479,
+    "q_p_rtop": 4.723534061668033e-07
+   },
+   {
+    "pos": 1870,
+    "role": "user",
+    "kl": 13.203965187072754,
+    "entropy_r": 0.78593510389328,
+    "context": " (HLE) is a multi-modal benchmark at the frontier of",
+    "next": " human",
+    "r_top": " m",
+    "q_top": " \"",
+    "r_p_top": 0.7389100790023804,
+    "q_p_rtop": 7.024295456403706e-08
+   }
+  ]
+ },
+ {
+  "task": "portfolio-optimization",
+  "set": "agent-ad",
+  "tokens": 6144,
+  "kl_mean": 1.0009348392486572,
+  "share_from_gt5": 0.7304091879175311,
+  "n_gt5": 377,
+  "gt5_by_role": {
+   "system": 59,
+   "user": 318
+  },
+  "first_gt5": [
+   59,
+   71,
+   95,
+   102,
+   108,
+   130,
+   268,
+   272,
+   312,
+   357
+  ],
+  "r_logit_max": 49.75,
+  "q_logit_max": 48.75,
+  "worst": [
+   {
+    "pos": 3874,
+    "role": "user",
+    "kl": 30.246185302734375,
+    "entropy_r": 1.9322919845581055,
+    "context": ": {risk_python:.12f}, C: {risk",
+    "next": "_c",
+    "r_top": " risk",
+    "q_top": "_squared",
+    "r_p_top": 0.5076265335083008,
+    "q_p_rtop": 1.6508587438691588e-14
+   },
+   {
+    "pos": 3764,
+    "role": "user",
+    "kl": 29.708255767822266,
+    "entropy_r": 0.6990234851837158,
+    "context": "(weights, cov)\n    return_python = portfolio_return_python(weights",
+    "next": ",",
+    "r_top": "/c",
+    "q_top": " data",
+    "r_p_top": 0.782962441444397,
+    "q_p_rtop": 8.875040120675214e-15
+   },
+   {
+    "pos": 3083,
+    "role": "user",
+    "kl": 29.053878784179688,
+    "entropy_r": 2.2712221145629883,
+    "context": "[] = {\n    {\"portfolio_risk_c\", portfolio_r",
+    "next": "isk",
+    "r_top": "copy",
+    "q_top": "isk",
+    "r_p_top": 0.529552698135376,
+    "q_p_rtop": 2.8519643803282023e-15
+   },
+   {
+    "pos": 3763,
+    "role": "user",
+    "kl": 28.735637664794922,
+    "entropy_r": 1.2761785984039307,
+    "context": "_python(weights, cov)\n    return_python = portfolio_return_python",
+    "next": "(weights",
+    "r_top": " left",
+    "q_top": "(weights",
+    "r_p_top": 0.6738932132720947,
+    "q_p_rtop": 4.0023258822798405e-14
+   },
+   {
+    "pos": 2999,
+    "role": "user",
+    "kl": 26.945873260498047,
+    "entropy_r": 2.0348775386810303,
+    "context": "    if (!PyArg_ParseTuple(args, \"O!O",
+    "next": "!\",",
+    "r_top": " lists",
+    "q_top": "!",
+    "r_p_top": 0.43735557794570923,
+    "q_p_rtop": 3.6460244545732934e-13
+   },
+   {
+    "pos": 3761,
+    "role": "user",
+    "kl": 26.778505325317383,
+    "entropy_r": 1.5561890602111816,
+    "context": "_risk_python(weights, cov)\n    return_python = portfolio",
+    "next": "_return",
+    "r_top": " medium",
+    "q_top": "_return",
+    "r_p_top": 0.37842825055122375,
+    "q_p_rtop": 3.2404607426192444e-13
+   },
+   {
+    "pos": 4317,
+    "role": "user",
+    "kl": 25.43552017211914,
+    "entropy_r": 2.033639669418335,
+    "context": "                          f\"({speedup:.1f}x >= {",
+    "next": "required",
+    "r_top": "cont",
+    "q_top": "ff",
+    "r_p_top": 0.31918415427207947,
+    "q_p_rtop": 8.291288662587437e-12
+   },
+   {
+    "pos": 4219,
+    "role": "user",
+    "kl": 25.25090789794922,
+    "entropy_r": 1.1767605543136597,
+    "context": "_time, risk_c = time_function(portfolio_risk_c,",
+    "next": " weights",
+    "r_top": " list",
+    "q_top": " risk",
+    "r_p_top": 0.692944347858429,
+    "q_p_rtop": 4.623536796477534e-12
+   }
+  ]
+ },
+ {
+  "task": "make-mips-interpreter",
+  "set": "agent-ad",
+  "tokens": 6144,
+  "kl_mean": 0.6275755167007446,
+  "share_from_gt5": 0.6362571595105125,
+  "n_gt5": 224,
+  "gt5_by_role": {
+   "system": 59,
+   "user": 165
+  },
+  "first_gt5": [
+   59,
+   71,
+   95,
+   102,
+   108,
+   130,
+   268,
+   272,
+   312,
+   357
+  ],
+  "r_logit_max": 47.25,
+  "q_logit_max": 47.5,
+  "worst": [
+   {
+    "pos": 6034,
+    "role": "user",
+    "kl": 25.903175354003906,
+    "entropy_r": 0.4168371558189392,
+    "context": "0x3 rs=0 rt=16 rd=1",
+    "next": " sh",
+    "r_top": " field",
+    "q_top": "6",
+    "r_p_top": 0.9241880178451538,
+    "q_p_rtop": 2.608830469361112e-12
+   },
+   {
+    "pos": 6032,
+    "role": "user",
+    "kl": 24.48651695251465,
+    "entropy_r": 0.9301081299781799,
+    "context": " op=0x3 rs=0 rt=16 rd",
+    "next": "=",
+    "r_top": " `",
+    "q_top": "=",
+    "r_p_top": 0.7478528618812561,
+    "q_p_rtop": 5.481221379555201e-12
+   },
+   {
+    "pos": 4598,
+    "role": "user",
+    "kl": 23.64773941040039,
+    "entropy_r": 2.964048385620117,
+    "context": "0: SRAV\n0x0043a",
+    "next": "2",
+    "r_top": " sign",
+    "q_top": " &",
+    "r_p_top": 0.47046220302581787,
+    "q_p_rtop": 3.2466534343779385e-13
+   },
+   {
+    "pos": 5907,
+    "role": "user",
+    "kl": 23.0720272064209,
+    "entropy_r": 0.608154296875,
+    "context": "\n0x0040011c 0",
+    "next": "x",
+    "r_top": "op",
+    "q_top": "x",
+    "r_p_top": 0.8542240262031555,
+    "q_p_rtop": 3.783669558221625e-11
+   },
+   {
+    "pos": 5983,
+    "role": "user",
+    "kl": 22.960935592651367,
+    "entropy_r": 1.177706003189087,
+    "context": "0 op=0x9 rs=0 rt=5 rd",
+    "next": "=",
+    "r_top": " rt",
+    "q_top": "=",
+    "r_p_top": 0.5448585152626038,
+    "q_p_rtop": 2.2020038570325084e-11
+   },
+   {
+    "pos": 6040,
+    "role": "user",
+    "kl": 22.723398208618164,
+    "entropy_r": 0.21345362067222595,
+    "context": " rt=16 rd=1 sh=30 f=",
+    "next": "0",
+    "r_top": " op",
+    "q_top": "=",
+    "r_p_top": 0.9578897356987,
+    "q_p_rtop": 8.297193487827315e-11
+   },
+   {
+    "pos": 5986,
+    "role": "user",
+    "kl": 22.608043670654297,
+    "entropy_r": 0.6997929215431213,
+    "context": "0x9 rs=0 rt=5 rd=0 sh",
+    "next": "=",
+    "r_top": ":",
+    "q_top": " SPECIAL",
+    "r_p_top": 0.6193768382072449,
+    "q_p_rtop": 1.6656928614189326e-10
+   },
+   {
+    "pos": 5888,
+    "role": "user",
+    "kl": 22.572097778320312,
+    "entropy_r": 0.9735956192016602,
+    "context": " rt=4 rd=0 sh=0 f=0x",
+    "next": "0",
+    "r_top": " sign",
+    "q_top": " funct",
+    "r_p_top": 0.7296366095542908,
+    "q_p_rtop": 5.366960348363037e-11
+   }
+  ]
+ }
+]

@@ -1,0 +1,20 @@
+LoRA: 256 weights, scale 2.0
+check layers.0.mlp.down_proj: packed words equal 0.987698, groups equal 0.999320, error ours 9.2440e-02 vs Vontra 9.2437e-02
+check layers.0.mlp.gate_proj: packed words equal 0.987531, groups equal 0.999329, error ours 9.1778e-02 vs Vontra 9.1776e-02
+check layers.0.mlp.up_proj: packed words equal 0.987570, groups equal 0.999339, error ours 9.1559e-02 vs Vontra 9.1557e-02
+check layers.1.mlp.down_proj: packed words equal 0.987719, groups equal 0.999354, error ours 9.3047e-02 vs Vontra 9.3045e-02
+check layers.1.mlp.gate_proj: packed words equal 0.987673, groups equal 0.999354, error ours 9.1749e-02 vs Vontra 9.1747e-02
+check layers.1.mlp.up_proj: packed words equal 0.987647, groups equal 0.999316, error ours 9.1712e-02 vs Vontra 9.1709e-02
+check layers.10.mlp.down_proj: packed words equal 0.987765, groups equal 0.999410, error ours 9.2127e-02 vs Vontra 9.2125e-02
+check layers.10.mlp.gate_proj: packed words equal 0.987660, groups equal 0.999381, error ours 9.1939e-02 vs Vontra 9.1937e-02
+check layers.10.mlp.up_proj: packed words equal 0.987598, groups equal 0.999320, error ours 9.1809e-02 vs Vontra 9.1806e-02
+check layers.11.mlp.down_proj: packed words equal 0.987650, groups equal 0.999370, error ours 9.1918e-02 vs Vontra 9.1916e-02
+check layers.11.mlp.gate_proj: packed words equal 0.987516, groups equal 0.999360, error ours 9.1692e-02 vs Vontra 9.1689e-02
+check layers.11.mlp.up_proj: packed words equal 0.987661, groups equal 0.999344, error ours 9.1752e-02 vs Vontra 9.1750e-02
+model-00001-of-00003.safetensors: done, 67 replaced so far, 170 s
+model-00002-of-00003.safetensors: done, 166 replaced so far, 354 s
+model-00003-of-00003.safetensors: done, 256 replaced so far, 514 s
+recipe check: 12 weights, worst group match 0.999316
+LoRA change, relative norm: median 1.80e-03, max 2.62e-03
+4-bit error, relative norm: median 9.27e-02, max 1.11e-01
+BUILD_DONE
