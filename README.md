@@ -1035,3 +1035,16 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
     hitting the cap sooner), and it ties results to a modded card, so speeds measured with it need labels. Install
     only with Riel's OK. Measure prompt speed and verify time before and after, on the 27B build first, then on
     Nanbeige once its drafter exists.
+- [Firecrawl Local](https://docs.firecrawl.dev/quickstarts/firecrawl-local) (firecrawl, crate `firecrawl-local`
+  0.1.0, 2026-11-11, AGPL-3.0): the Firecrawl v2 API as one Rust binary. `cargo install firecrawl-local`, then
+  `firecrawl-local serve` on port 3002. No Docker, Redis, or queue. Chrome is optional for JavaScript pages, and Node
+  22+ only for its MCP server.
+  - Local: `/v2/scrape`, `/v2/crawl`, `/v2/map`, `/v2/batch/scrape`, PDF and Office parsing, output as `markdown`,
+    `html`, `rawHtml`, or `links`. Not local: search, `/v2/extract`, the `json` and `summary` formats, and pages that
+    block both the plain fetch and the browser. Those go to Firecrawl Cloud by default; `FIRECRAWL_CLOUD=off` stops it.
+  - **For us:** a free, local "read this page as markdown" tool. Uses: (1) a web tool for agents trained in
+    prime_agent and for the Smart Data agent, with no per-call API bill; (2) turning docs sites into task and
+    training data; (3) an MCP tool for pi or Claude Code. It runs on the CPU, so it doesn't touch the 3090.
+  - Caveats: a week old, so expect rough edges. The silent cloud fallback means pages can leave the machine unless
+    `FIRECRAWL_CLOUD=off` is set; keep that on for any client data. Search still needs another tool (SearXNG, or a
+    paid API). AGPL only matters if we serve a modified copy to others.
