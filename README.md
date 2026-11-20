@@ -1048,3 +1048,32 @@ Measured on this card (`uv run 00-setup/roofline.py`): 829 GB/s DRAM (89% of spe
   - Caveats: a week old, so expect rough edges. The silent cloud fallback means pages can leave the machine unless
     `FIRECRAWL_CLOUD=off` is set; keep that on for any client data. Search still needs another tool (SearXNG, or a
     paid API). AGPL only matters if we serve a modified copy to others.
+- [Inkling 2 Mini](https://thinkingmachines.ai/news/inkling-2-mini/) (Thinking Machines Lab, US, 2026-11-20; Apache
+  2.0 plus a separate acceptable-use policy; [weights](https://huggingface.co/thinkingmachines/Inkling-2-Mini),
+  [Unsloth GGUF](https://huggingface.co/unsloth/Inkling-2-Mini-GGUF),
+  [ggml-org GGUF](https://huggingface.co/ggml-org/Inkling-2-Mini-GGUF)): an image+text MoE that runs its middle
+  layers three times per token, pitched as a Qwen3.8-27B peer.
+  - Shape (from `config.json`): 26.4B total, 24 stored layers, hidden 2304, 128 experts with 8 active (each expert
+    only 1152 wide), no shared expert. Layers 6-17 loop 3 times, so each token does 48 layer passes. 20 layers use
+    sliding-window attention (1024 tokens); 4 are global (5, 11, 17, 23). Vocabulary 201K (tiktoken), context up to
+    1M. Ships with a 3-layer block drafter (`mtp.safetensors`, block size 8) that reads hidden states from the
+    looped layers.
+  - Weights ship in NVFP4 (20 layers) and MXFP8 (last 4), about 19.5 GB. No BF16 release. The lab says this is the
+    precision it trained toward, so the GGUF quants are re-quantizations of 4-bit values.
+  - Lab's numbers against Qwen3.8-27B: SWE-bench Verified 79.2 vs 77.8, SWE-bench Pro Hard 77.9 vs 73.8, DeepSWE 48.2
+    vs 42.2, BrowseComp 79.0 vs 61.6, MCP Atlas 82.7 vs 77.3. Qwen leads Terminal-Bench 2.1 (73.0 vs 71.6),
+    AutomationBench (48.2 vs 41.8) and GDPVal (1427 vs 1319). They tie on the AA Index (20.1). All self-reported,
+    harnesses differ per row, and the blog's own Limitations text disagrees with its table on ComplexConstraints.
+    The model card warns that it sometimes gets stuck in long reasoning loops and says to cap output tokens and turns.
+  - The 3090: Unsloth's UD-Q4_K_XL is 17.6 GB, IQ4_XS 15.7 GB, Q3_K_XL 13.6 GB. Looping and the drafter need
+    Unsloth's llama.cpp build (`--spec-type draft-dspark`, drafts up to 7). My estimates from the config, not
+    measured: with 8 global-attention passes the cache is about 32 KB per token at 16 bits, so 100K context is ~3.3
+    GB and Q4_K_XL plus 100K fits in 24 GB. Each token reads ~4.4B parameters (about 2.5 GB at 4.5 bits), so
+    about one-sixth of what our 4-bit Qwen3.8-27B reads. The plain decode ceiling is ~370 tok/s vs ~65 for the
+    dense 27B. Tiny experts and 48 passes mean many small kernels, so the real number will land well below that.
+  - **For us:** the first model in a while that could beat our daily Qwen3.8-27B build on both speed and agent
+    score on one 3090. Order: (1) our 19-task TB2 harness on a pod with the NVFP4 weights (vLLM/SGLang), next to the
+    R1s and Qwen3.8-27B rows, with `lookup_audit.py` and token counts, since the card admits reasoning loops; (2)
+    if it holds up, llama.cpp Q4_K_XL plus DSpark on the 3090 for speed and fit; (3) the M3TiS angle: a TensorFold
+    kernel that reads NVFP4 directly on sm_86 would serve the exact shipped weights at ~4.5 bits, with zero
+    quantization loss by construction. That beats any GGUF re-quant on fidelity.
